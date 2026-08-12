@@ -561,7 +561,7 @@
             direction: auto; 
         }
 
-        /* --- دیزاینی نوێ بۆ کرتەکردن --- */
+        /* --- دیزاینی کرتەکردن و دوگمەی پلەی --- */
         .seek-clickable {
             cursor: pointer;
             transition: all 0.2s ease;
@@ -573,6 +573,36 @@
         .subtitle-orig.seek-clickable:hover {
             background-color: rgba(142, 182, 155, 0.2);
             border-right-color: #10b981;
+        }
+        
+        .play-sub-btn {
+            background: #eaf2ed;
+            border: 1px solid #8EB69B;
+            color: #8EB69B;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 0;
+            outline: none;
+        }
+        .play-sub-btn:hover { 
+            background: #8EB69B; 
+            color: white; 
+            transform: scale(1.1); 
+        }
+        .play-sub-btn svg { 
+            width: 14px; 
+            height: 14px; 
+            margin-left: 2px; /* بۆ ڕێککردنی ئایکۆنی پلەی لە ناوەڕاست */
+        }
+        html[dir="ltr"] .play-sub-btn svg {
+            margin-left: 0;
+            margin-right: -2px;
         }
 
         html[dir="ltr"] .subtitle-orig { border-right: none; border-left: 4px solid #8eb69b; }
@@ -903,7 +933,8 @@
                 errBrowserCopy: "ببورە، وێبگەڕەکەت ڕێگە بە کۆپیکردن نادات!",
                 errClipAccess: "ببورە، وێبگەڕەکەت ڕێگە بە خوێندنەوەی کۆپیکراوەکان نادات! خۆت بە دەست پەیستی بکە.",
                 errNoVid: "تکایە سەرەتا فایلی ڤیدیۆ هەڵبژێرە!",
-                errGeneral: "هەڵەیەک ڕوویدا!"
+                errGeneral: "هەڵەیەک ڕوویدا!",
+                resumePrompt: "ڤیدیۆکە پێشتر لێرە وەستابوو، دەتەوێت لە هەمان کاتەوە دەست پێ بکەیتەوە؟"
             },
             ar: {
                 loginTitle: "تسجيل دخول المترجم",
@@ -938,7 +969,8 @@
                 errBrowserCopy: "عذراً، متصفحك لا يدعم النسخ!",
                 errClipAccess: "عذراً، متصفحك لا يسمح بقراءة الحافظة! قم باللصق يدوياً.",
                 errNoVid: "يرجى اختيار ملف فيديو أولاً!",
-                errGeneral: "حدث خطأ ما!"
+                errGeneral: "حدث خطأ ما!",
+                resumePrompt: "تم إيقاف الفيديو سابقاً، هل تريد المتابعة من حيث توقفت؟"
             },
             en: {
                 loginTitle: "Translator Login",
@@ -973,7 +1005,8 @@
                 errBrowserCopy: "Sorry, your browser doesn't support copying!",
                 errClipAccess: "Sorry, your browser doesn't allow reading the clipboard! Please paste manually.",
                 errNoVid: "Please select a video file first!",
-                errGeneral: "An error occurred!"
+                errGeneral: "An error occurred!",
+                resumePrompt: "The video was paused previously. Do you want to resume from where you left off?"
             }
         };
 
@@ -1227,12 +1260,19 @@
             }).filter(item => item !== null);
         }
 
-        function setupVideoSync() {
+        // وەرگرتنی ناوی ڤیدیۆکە وەک پارامێتەر بۆ خەزنکردنی کاتەکەی
+        function setupVideoSync(vidName) {
             const video = document.getElementById('preview-video');
             const overlay = document.getElementById('video-subtitle-overlay');
             
             video.addEventListener('timeupdate', () => {
                 const currentTime = video.currentTime;
+                
+                // خەزنکردنی کاتی ڤیدیۆکە هەموو ساتێک
+                if(vidName) {
+                    localStorage.setItem('kf_vid_time_' + vidName, currentTime);
+                }
+
                 let foundText = '';
                 let foundIndex = -1;
                 
@@ -1260,14 +1300,12 @@
                 }
             });
 
-            // --- تایبەتمەندی نوێ: ڕۆشتنە سەر نووسین کاتێک ڤیدیۆ پۆز دەکرێت ---
             video.addEventListener('pause', () => {
                 let activeCard = document.querySelector('.subtitle-card.active-sub');
                 if(activeCard) {
                     activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     let textarea = activeCard.querySelector('textarea');
                     if(textarea) {
-                        // کەمێک چاوەڕێ دەکات تاوەکو سکڕۆڵەکە تەواو دەبێت ئینجا فۆکەس دەخاتە سەر نووسینەکە
                         setTimeout(() => {
                             textarea.focus();
                         }, 400); 
@@ -1276,7 +1314,7 @@
             });
         }
 
-        // --- تایبەتمەندی نوێ: چوونە سەر کاتی ڤیدیۆکە کاتێک کرتە لە کات یان دەق دەکرێت ---
+        // فەنکشنی ڕۆشتنە سەر کات بۆ دوگمە نوێیەکە
         function seekToSubtitle(index) {
             const video = document.getElementById('preview-video');
             const videoContainer = document.getElementById('video-container');
@@ -1349,11 +1387,27 @@
                 }
 
                 if (fileVideo) {
+                    const vidName = fileVideo.name;
                     const vidURL = URL.createObjectURL(fileVideo);
                     const videoEl = document.getElementById('preview-video');
                     videoEl.src = vidURL;
                     document.getElementById('video-container').style.display = 'block';
-                    setupVideoSync();
+                    
+                    // پشکنین بۆ ئەوەی بزانین ڤیدیۆکە پێشتر خەزن کراوە یان نا
+                    let savedTime = localStorage.getItem('kf_vid_time_' + vidName);
+                    if (savedTime && parseFloat(savedTime) > 0) {
+                        videoEl.addEventListener('loadedmetadata', function onLoaded() {
+                            if(confirm(dictionary[currentLang].resumePrompt)) {
+                                videoEl.currentTime = parseFloat(savedTime);
+                            } else {
+                                localStorage.removeItem('kf_vid_time_' + vidName);
+                            }
+                            // سڕینەوەی ئیڤێنتەکە بۆ ئەوەی دووبارە نەبێتەوە
+                            videoEl.removeEventListener('loadedmetadata', onLoaded);
+                        });
+                    }
+
+                    setupVideoSync(vidName);
                 } else {
                     document.getElementById('video-container').style.display = 'none';
                 }
@@ -1370,12 +1424,17 @@
                     const origItem = originalData[i] || { time: '00:00', text: '---' };
                     const kurdItem = kurdishData[i] || { text: '' };
 
-                    // --- لێرەدا کرتەکردنم بۆ دەق و کاتەکان زیاد کردووە تا بڕۆنە سەر کاتی ڤیدیۆکە ---
+                    // دوگمەی پلەی بۆ لێدانی ڤیدیۆ لێرەدا بۆ هیدەرەکە زیاد کراوە
                     htmlContent += `
                         <div class="subtitle-card" data-index="${i}">
-                            <div class="subtitle-header seek-clickable" onclick="seekToSubtitle(${i})" title="بۆ چوونە سەر ئەم کاتە کرتە بکە">
-                                <div class="subtitle-line-num">#${i + 1}</div>
-                                <div class="subtitle-time">${origItem.time}</div>
+                            <div class="subtitle-header">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="subtitle-line-num">#${i + 1}</div>
+                                    <button class="play-sub-btn" onclick="seekToSubtitle(${i})" title="لێدانی ڤیدیۆ لەم کاتەوە">
+                                        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                </div>
+                                <div class="subtitle-time seek-clickable" onclick="seekToSubtitle(${i})">${origItem.time}</div>
                             </div>
                             <div class="subtitle-orig seek-clickable" dir="auto" onclick="seekToSubtitle(${i})" title="بۆ چوونە سەر ئەم کاتە کرتە بکە">${origItem.text.replace(/\n/g, '<br>')}</div>
                             <div class="subtitle-kurd">
