@@ -1260,6 +1260,18 @@
             }).filter(item => item !== null);
         }
 
+        // --- فانکشنە لەبیرکراوەکە لێرە زیاد کرایەوە ---
+        function parseSubs(fileContent, fileName, isOriginal) {
+            if (fileName.toLowerCase().endsWith('.ass')) {
+                if (isOriginal) isAssFormat = true;
+                return parseASSContent(fileContent, isOriginal);
+            } else {
+                if (isOriginal) isAssFormat = false;
+                return parseSRTContent(fileContent);
+            }
+        }
+        // ----------------------------------------------
+
         // وەرگرتنی ناوی ڤیدیۆکە وەک پارامێتەر بۆ خەزنکردنی کاتەکەی
         function setupVideoSync(vidName) {
             const video = document.getElementById('preview-video');
