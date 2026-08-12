@@ -289,7 +289,7 @@
             align-items: center;
             justify-content: center;
             width: 100%; 
-            padding: 15px; 
+            padding: 15px; /* قەبارەی بنەڕەتی دوگمەکان */
             background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); 
             color: white; 
             border: 1px solid rgba(255, 255, 255, 0.3); 
@@ -391,7 +391,7 @@
             display: none;
             max-width: 800px;
             margin: 0 auto;
-            padding-bottom: 180px; 
+            padding-bottom: 110px; 
             animation: fadeIn 0.5s ease;
         }
 
@@ -410,6 +410,50 @@
             border-bottom: 1px solid var(--border-color);
             gap: 10px;
         }
+
+        /* --- بەشی ڤیدیۆی پێداچوونەوە --- */
+        #video-container {
+            display: none;
+            position: sticky;
+            top: 60px; /* دەکەوێتە ژێر ناڤبارەکە */
+            z-index: 45;
+            background: #000;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--primary);
+        }
+
+        #preview-video {
+            width: 100%;
+            max-height: 250px;
+            display: block;
+        }
+
+        #video-subtitle-overlay {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            /* سێبەرێکی ڕەش بۆ فۆنتەکە بۆ ئەوەی لەسەر هەر ڕەنگێک بێت بخوێنرێتەوە */
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 2px 6px rgba(0,0,0,0.9);
+            font-size: 16px;
+            font-weight: bold;
+            pointer-events: none;
+            padding: 0 10%;
+            line-height: 1.5;
+            direction: rtl;
+        }
+
+        .subtitle-card.active-sub {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            transition: all 0.2s ease;
+        }
+        /* -------------------------------- */
 
         .back-btn {
             display: flex;
@@ -442,6 +486,7 @@
             content-visibility: auto;
             contain-intrinsic-size: 200px;
             animation: slideUpFade 0.4s ease-out backwards;
+            scroll-margin-top: 330px; /* بۆ ئەوەی لە کاتی سکرۆڵ ڤیدیۆکە دای نەپۆشێت */
         }
 
         .subtitle-card:nth-child(1) { animation-delay: 0.05s; }
@@ -512,18 +557,30 @@
         .action-bar {
             display: grid; 
             grid-template-columns: 1fr 1fr;
-            gap: 12px; 
+            gap: 8px; 
             position: fixed; 
             bottom: 0; 
             left: 0;
             right: 0;
-            padding: 15px;
+            padding: 10px 12px; 
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-top: 1px solid var(--border-color);
             z-index: 100; 
             box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-            border-radius: 20px 20px 0 0;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .action-bar .btn {
+            padding: 10px 5px; 
+            font-size: 13.5px; 
+            border-radius: 10px;
+            gap: 5px; 
+        }
+
+        .action-bar .btn .icon {
+            width: 16px; 
+            height: 16px;
         }
 
         #ai-modal {
@@ -550,7 +607,6 @@
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* --- دیزاینی دوگمەی پەیستکردن --- */
         .paste-btn {
             background: #f2f7f4;
             color: #8EB69B;
@@ -568,7 +624,6 @@
         .paste-btn:hover { background: #eaf2ed; border-color: #8EB69B; }
         .paste-btn:active { transform: scale(0.95); }
         
-        /* چاککردنی شوێنی ئایکۆن بەپێی ئاڕاستەی زمان */
         .paste-btn svg { margin-left: 5px; margin-right: 0; }
         html[dir="ltr"] .paste-btn svg { margin-left: 0; margin-right: 5px; }
 
@@ -598,7 +653,9 @@
                 gap: 15px;
                 padding: 15px 30px;
             }
-            .action-bar .btn { width: auto; min-width: 180px; }
+            .action-bar .btn { width: auto; min-width: 180px; padding: 12px 15px; font-size: 14.5px; }
+            #preview-video { max-height: 400px; }
+            .subtitle-card { scroll-margin-top: 480px; }
         }
 
     </style>
@@ -667,6 +724,11 @@
             <label data-i18n="transFile">فایلی وەرگێڕدراو (ئارەزوومەندانەیە):</label>
             <input type="file" id="fileKurdish" accept=".srt,.ass">
         </div>
+
+        <div class="file-box">
+            <label data-i18n="vidFile">فایلی ڤیدیۆ (بۆ پێداچوونەوە - ئارەزوومەندانە):</label>
+            <input type="file" id="fileVideo" accept="video/mp4,video/x-m4v,video/*">
+        </div>
         
         <button class="btn" style="font-size: 16px; padding: 16px;" onclick="startEditing()">
             <span data-i18n="startBtn">دەستپێکردن</span>
@@ -692,6 +754,12 @@
                     <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
                 </div>
             </div>
+        </div>
+
+        <!-- بەشی ڤیدیۆ -->
+        <div id="video-container">
+            <video id="preview-video" controls playsinline></video>
+            <div id="video-subtitle-overlay"></div>
         </div>
 
         <div id="subtitles-container"></div>
@@ -724,7 +792,6 @@
             <h3 style="margin-top:0; color:var(--text-main);" data-i18n="modalTitle">دانانی وەرگێڕانی AI</h3>
             <p style="font-size:13px; color:var(--text-muted); line-height: 1.5; margin-bottom: 10px;" data-i18n="modalDesc">ئەو دەقەی AI وەریگێڕاوە لێرە پەیستی بکە (پێویستە ژمارەکانی وەک [1] پێوە مابێت):</p>
             
-            <!-- دوگمەی نوێی پەیستکردن لە تەنیشت بۆکسەکە -->
             <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
                 <button class="paste-btn" onclick="pasteFromClipboard()">
                     <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
@@ -741,7 +808,6 @@
         </div>
     </div>
 
-    <!-- شوێنی ئاگادارکەرەوە نوێیەکان -->
     <div id="toast-container"></div>
 
     <script>
@@ -755,6 +821,7 @@
                 welcome: "بەخێربێیتەوە",
                 origFile: "فایلی ئەسڵی (ئینگلیزی / عەرەبی):",
                 transFile: "فایلی وەرگێڕدراو (ئارەزوومەندانەیە):",
+                vidFile: "فایلی ڤیدیۆ (بۆ پێداچوونەوە - ئارەزوومەندانە):",
                 startBtn: "دەستپێکردن",
                 credit: "درووستکراوە لەلایەن محمد عبدالقادر",
                 back: "گەڕانەوە",
@@ -765,7 +832,7 @@
                 copyResult: "کۆپی ئەنجام",
                 modalTitle: "دانانی وەرگێڕانی AI",
                 modalDesc: "ئەو دەقەی AI وەریگێڕاوە لێرە پەیستی بکە (پێویستە ژمارەکانی وەک [1] پێوە مابێت):",
-                pasteFromClip: "پەیستکردن لە کۆپی کراوەکان", // وەرگێڕانی دوگمە نوێیەکە
+                pasteFromClip: "پەیستکردن لە کۆپی کراوەکان", 
                 applyBtn: "جێبەجێکردن",
                 closeBtn: "داخستن",
                 errReq: "تکایە بەلایەنی کەمەوە فایلی ئەسڵی هەڵبژێرە!",
@@ -776,7 +843,7 @@
                 msgFail: "هیچ فۆرماتێکی وەک [1] نەدۆزرایەوە.",
                 msgNoChange: "هیچ گۆڕانکارییەک نەکراوە بۆ سەیڤکردن!",
                 errBrowserCopy: "ببورە، وێبگەڕەکەت ڕێگە بە کۆپیکردن نادات!",
-                errClipAccess: "ببورە، وێبگەڕەکەت ڕێگە بە خوێندنەوەی کۆپیکراوەکان نادات! خۆت بە دەست پەیستی بکە.", // ئاگادارکەرەوەی سیکیوریتی وێبگەڕ
+                errClipAccess: "ببورە، وێبگەڕەکەت ڕێگە بە خوێندنەوەی کۆپیکراوەکان نادات! خۆت بە دەست پەیستی بکە.",
                 errGeneral: "هەڵەیەک ڕوویدا!"
             },
             ar: {
@@ -788,6 +855,7 @@
                 welcome: "مرحباً بك",
                 origFile: "الملف الأصلي (إنجليزي / عربي):",
                 transFile: "الملف المترجم (اختياري):",
+                vidFile: "ملف الفيديو (للمعاينة - اختياري):",
                 startBtn: "البدء",
                 credit: "تم الإنشاء بواسطة محمد عبدالقادر",
                 back: "رجوع",
@@ -821,6 +889,7 @@
                 welcome: "Welcome back",
                 origFile: "Original File (Eng / Ar):",
                 transFile: "Translated File (Optional):",
+                vidFile: "Video File (For preview - Optional):",
                 startBtn: "Start Editing",
                 credit: "Created by Mohammed Abdulqader",
                 back: "Back",
@@ -849,7 +918,6 @@
 
         let currentLang = 'ckb';
 
-        // --- سیستەمی نوێی ئاگادارکەرەوە (Toast Notification) ---
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -904,9 +972,11 @@
             if (lang === 'en') {
                 htmlTag.setAttribute('dir', 'ltr');
                 document.getElementById('ai-paste-area').style.direction = 'ltr';
+                document.getElementById('video-subtitle-overlay').style.direction = 'ltr';
             } else {
                 htmlTag.setAttribute('dir', 'rtl');
                 document.getElementById('ai-paste-area').style.direction = 'rtl';
+                document.getElementById('video-subtitle-overlay').style.direction = 'rtl';
             }
 
             let langName = lang === 'en' ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی');
@@ -967,6 +1037,14 @@
 
         window.addEventListener('popstate', function(event) {
             document.getElementById('editor-screen').style.display = 'none';
+            
+            // ئەگەر ڤیدیۆیەک دانرابوو بیوەستێنە کاتێک دەگەڕێیتەوە
+            const videoEl = document.getElementById('preview-video');
+            if (videoEl) {
+                videoEl.pause();
+                videoEl.src = "";
+            }
+
             checkLogin(); 
             document.body.className = 'startup-bg';
         });
@@ -994,13 +1072,12 @@
             document.body.removeChild(textArea);
         }
 
-        // --- فەنکشنی نوێ بۆ پەیستکردن ڕاستەوخۆ لە کۆپیکراوەکان ---
         async function pasteFromClipboard() {
             try {
                 const text = await navigator.clipboard.readText();
                 const textarea = document.getElementById('ai-paste-area');
                 textarea.value = text;
-                showToast(dictionary[currentLang].msgCopy.replace('کۆپی کران', 'پەیست کران'), 'success'); // گۆڕینی وشەی کۆپی بۆ پەیست بە خێرایی
+                showToast(dictionary[currentLang].msgCopy.replace('کۆپی کران', 'پەیست کران'), 'success');
             } catch (err) {
                 console.error('Failed to read clipboard contents: ', err);
                 showToast(dictionary[currentLang].errClipAccess, 'error');
@@ -1016,6 +1093,16 @@
                 const text = line.replace(tagRegex, '').trim();
                 return { tags, text };
             });
+        }
+
+        // گۆڕینی کات بۆ چرکە بۆ هاوکاتکردنی ڤیدیۆ
+        function timeToSeconds(timeStr) {
+            if(!timeStr) return 0;
+            let parts = timeStr.replace(',', '.').split(':');
+            let h = parseFloat(parts[0]) || 0;
+            let m = parseFloat(parts[1]) || 0;
+            let s = parseFloat(parts[2]) || 0;
+            return (h * 3600) + (m * 60) + s;
         }
 
         function parseASSContent(data, isOriginal) {
@@ -1039,6 +1126,8 @@
                         items.push({
                             id: idCounter++,
                             time: `${start} --> ${end}`,
+                            startSec: timeToSeconds(start),
+                            endSec: timeToSeconds(end),
                             assPrefix: prefix,
                             parsedLines: parsedLines,
                             text: cleanFullText
@@ -1056,13 +1145,20 @@
             return blocks.map(block => {
                 const lines = block.split('\n');
                 if (lines.length >= 3) {
+                    let timeLine = lines[1];
+                    let times = timeLine.split('-->');
+                    let start = times[0] ? times[0].trim() : '00:00:00,000';
+                    let end = times[1] ? times[1].trim() : '00:00:00,000';
+
                     let rawText = lines.slice(2).join('\n');
                     let parsedLines = extractLineData(rawText.replace(/\n/g, '\\N')); 
                     let cleanFullText = parsedLines.map(l => l.text).join('\n');
 
                     return {
                         id: lines[0],
-                        time: lines[1],
+                        time: timeLine,
+                        startSec: timeToSeconds(start),
+                        endSec: timeToSeconds(end),
                         assPrefix: '',
                         parsedLines: parsedLines,
                         text: cleanFullText
@@ -1082,9 +1178,48 @@
             }
         }
 
+        // کۆنترۆڵکردنی هاوکاتبوونی ڤیدیۆ و ژێرنووس
+        function setupVideoSync() {
+            const video = document.getElementById('preview-video');
+            const overlay = document.getElementById('video-subtitle-overlay');
+            
+            video.addEventListener('timeupdate', () => {
+                const currentTime = video.currentTime;
+                let foundText = '';
+                let foundIndex = -1;
+                
+                for(let i=0; i<originalData.length; i++) {
+                    if(!originalData[i]) continue;
+                    // پشکنین بۆ ئەوەی بزانین ڤیدیۆکە لەم کاتەدایە
+                    if(currentTime >= originalData[i].startSec && currentTime <= originalData[i].endSec) {
+                        foundIndex = i;
+                        // هێنانی دەقە تازەکە ئەگەر وەرگێڕدرابوو، یان هی ئەسڵییەکە
+                        let card = document.querySelector(`.subtitle-card[data-index="${i}"]`);
+                        if(card) {
+                            let ta = card.querySelector('textarea');
+                            foundText = ta ? ta.value : originalData[i].text;
+                        }
+                        break;
+                    }
+                }
+                
+                overlay.innerHTML = foundText.replace(/\n/g, '<br>');
+                
+                // ڕەنگکردنی بۆکسە چالاکەکە
+                document.querySelectorAll('.subtitle-card.active-sub').forEach(el => el.classList.remove('active-sub'));
+                if(foundIndex !== -1) {
+                    let activeCard = document.querySelector(`.subtitle-card[data-index="${foundIndex}"]`);
+                    if(activeCard) {
+                        activeCard.classList.add('active-sub');
+                    }
+                }
+            });
+        }
+
         async function startEditing() {
             const fileOrig = document.getElementById('fileOriginal').files[0];
             const fileKurd = document.getElementById('fileKurdish').files[0];
+            const fileVideo = document.getElementById('fileVideo').files[0];
 
             if (!fileOrig) {
                 showToast(dictionary[currentLang].errReq, 'error');
@@ -1115,6 +1250,17 @@
                     kurdishData = parseSubs(textKurd, fileKurd.name, false);
                 }
 
+                // ڕێکخستنی ڤیدیۆ ئەگەر هەڵبژێردرابوو
+                if (fileVideo) {
+                    const vidURL = URL.createObjectURL(fileVideo);
+                    const videoEl = document.getElementById('preview-video');
+                    videoEl.src = vidURL;
+                    document.getElementById('video-container').style.display = 'block';
+                    setupVideoSync();
+                } else {
+                    document.getElementById('video-container').style.display = 'none';
+                }
+
                 const container = document.getElementById('subtitles-container');
                 container.innerHTML = '';
 
@@ -1127,6 +1273,7 @@
                     const origItem = originalData[i] || { time: '00:00', text: '---' };
                     const kurdItem = kurdishData[i] || { text: '' };
 
+                    // ڕاستەوخۆ نوێکردنەوەی ڤیدیۆکە ئەگەر دەستکاری کرا لە کاتی پەخشکردندا
                     htmlContent += `
                         <div class="subtitle-card" data-index="${i}">
                             <div class="subtitle-header">
@@ -1135,7 +1282,7 @@
                             </div>
                             <div class="subtitle-orig" dir="auto">${origItem.text.replace(/\n/g, '<br>')}</div>
                             <div class="subtitle-kurd">
-                                <textarea dir="${textAreaDir}" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'">${kurdItem.text}</textarea>
+                                <textarea dir="${textAreaDir}" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'; if(this.closest('.subtitle-card').classList.contains('active-sub')) document.getElementById('video-subtitle-overlay').innerHTML = this.value.replace(/\\n/g, '<br>');">${kurdItem.text}</textarea>
                             </div>
                         </div>
                     `;
@@ -1176,33 +1323,37 @@
             let pastedText = document.getElementById('ai-paste-area').value;
             if(!pastedText.trim()) return;
 
-            let successCount = 0;
-            const regex = /\[(\d+)\]\s*([\s\S]*?)(?=\n\s*\[\d+\]|$)/g;
-            let match;
-            
-            while ((match = regex.exec(pastedText)) !== null) {
-                let id = parseInt(match[1]) - 1; 
-                let text = match[2].trim();
-                let card = document.querySelector(`.subtitle-card[data-index="${id}"]`);
+            closeAIModal();
+
+            setTimeout(() => {
+                let successCount = 0;
+                const regex = /\[(\d+)\]\s*([\s\S]*?)(?=\n\s*\[\d+\]|$)/g;
+                let match;
                 
-                if (card && text) {
-                    let textarea = card.querySelector('textarea');
-                    if (textarea) {
-                        textarea.value = text;
-                        textarea.style.height = 'auto';
-                        textarea.style.height = textarea.scrollHeight + 'px';
-                        successCount++;
+                while ((match = regex.exec(pastedText)) !== null) {
+                    let id = parseInt(match[1]) - 1; 
+                    let text = match[2].trim();
+                    let card = document.querySelector(`.subtitle-card[data-index="${id}"]`);
+                    
+                    if (card && text) {
+                        let textarea = card.querySelector('textarea');
+                        if (textarea) {
+                            textarea.value = text;
+                            textarea.style.height = 'auto';
+                            textarea.style.height = textarea.scrollHeight + 'px';
+                            successCount++;
+                        }
                     }
                 }
-            }
 
-            if (successCount > 0) {
-                showToast(dictionary[currentLang].msgDone, 'success');
-                closeAIModal();
-                document.getElementById('ai-paste-area').value = '';
-            } else {
-                showToast(dictionary[currentLang].msgFail, 'error');
-            }
+                if (successCount > 0) {
+                    showToast(dictionary[currentLang].msgDone, 'success');
+                    document.getElementById('ai-paste-area').value = '';
+                } else {
+                    showToast(dictionary[currentLang].msgFail, 'error');
+                    openAIModal(); 
+                }
+            }, 50);
         }
 
         function getFinalFileContent() {
