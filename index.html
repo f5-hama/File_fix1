@@ -304,6 +304,19 @@
     </div>
 
     <!-- مۆداڵی دابەزاندنی ئەپ (دەقی گۆڕدراو بۆ ئەوەی بڵێت بێ ئینتەرنێت کاردەکات) -->
+    <div id="install-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content install-sheet">
+            <div class="install-sheet-icon">
+                <svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </div>
+            <h3 class="custom-modal-title" data-i18n="installModalTitle">دابەزاندنی ئەپ</h3>
+            <p data-i18n="installModalDesc">ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟</p>
+            <div class="custom-modal-actions">
+                <button class="btn" onclick="confirmInstall()" data-i18n="installConfirmBtn">دابەزاندن</button>
+                <button class="btn btn-outline" onclick="document.getElementById('install-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
+            </div>
+        </div>
+    </div>
 
     <!-- مۆداڵی ئاگادارکردنەوەی داگرتنی بەکۆمەڵ -->
     <div id="batch-download-modal" class="custom-modal-overlay">
@@ -514,6 +527,13 @@
         });
 
         function installApp() {
+            if (deferredPrompt) {
+                document.getElementById('install-modal').style.display = 'flex';
+            }
+        }
+
+        function confirmInstall() {
+            document.getElementById('install-modal').style.display = 'none';
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
