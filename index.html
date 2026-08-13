@@ -64,6 +64,17 @@
         body.dark-theme .top-btn, body.dark-theme .back-btn { background: #1e2621; color: #cbd5e1; border-color: #314237; }
         body.dark-theme .top-btn:hover { background: #26332a; color: var(--primary); }
         
+        /* باشترکردنی ڕەنگی دوگمە سەرەکییەکان لە دۆخی تاریکدا بۆ خوێندنەوەی باشتر */
+        body.dark-theme .btn:not(.btn-outline) {
+            background: linear-gradient(135deg, #2f855a 0%, #1c4532 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 15px rgba(28, 69, 50, 0.4);
+        }
+        body.dark-theme .btn:not(.btn-outline):hover {
+            background: linear-gradient(135deg, #38a169 0%, #22543d 100%);
+            box-shadow: 0 8px 20px rgba(34, 84, 61, 0.5);
+        }
+
         body.dark-theme .btn-outline { background: rgba(104, 211, 145, 0.05); color: var(--primary); border: 1.5px solid var(--primary); }
         body.dark-theme .btn-outline:hover { background: rgba(104, 211, 145, 0.15); }
 
@@ -550,7 +561,7 @@
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
             },
             ar: {
-                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "دفعة/صيغة", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد？", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
+                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "دفعة/صيغة", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
                 msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!",
                 installModalTitle: "تثبيت التطبيق", 
                 installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", 
