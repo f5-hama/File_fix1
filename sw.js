@@ -1,4 +1,4 @@
-const CACHE_NAME = 'subedit-cache-v1';
+const CACHE_NAME = 'subedit-cache-v2';
 
 // لیستی ئەو فایلانەی کە دەبێت خەزن ببن بۆ کاتی بێ ئینتەرنێتی
 const urlsToCache = [
