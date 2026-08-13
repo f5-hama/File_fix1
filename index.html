@@ -41,7 +41,6 @@
         
         body.editor-bg { background-color: var(--bg-color); margin: 0; color: var(--text-main); padding: 0; overflow-x: hidden; }
 
-        /* --- دیزاینی نوێی دۆخی تاریکی --- */
         body.dark-theme {
             --bg-color: #121614; 
             --card-bg: #1a201c; 
@@ -290,11 +289,11 @@
         </div>
     </div>
 
-    <!-- مۆداڵی دابەزاندنی ئەپ -->
+    <!-- مۆداڵی دابەزاندنی ئەپ (دەقی گۆڕدراو بۆ ئەوەی بڵێت بێ ئینتەرنێت کاردەکات) -->
     <div id="install-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="installModalTitle">دابەزاندنی ئەپ</h3>
-            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="installModalDesc">ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟</p>
+            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="installModalDesc">ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟</p>
             <div class="custom-modal-actions">
                 <button class="btn" onclick="confirmInstall()" style="width: 50%;" data-i18n="installConfirmBtn">دابەزاندن</button>
                 <button class="btn btn-outline" onclick="document.getElementById('install-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
@@ -313,7 +312,7 @@
         </div>
     </div>
 
-    <!-- مۆداڵی پێشووتر (Auto-Save Resume Modal) -->
+    <!-- مۆداڵی پێشووتر -->
     <div id="resume-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="resumeTitle">دەتەوێت بەردەوام بیت؟</h3>
@@ -325,7 +324,7 @@
         </div>
     </div>
 
-    <!-- مۆداڵی گەڕانەوە (Custom Back Confirm) -->
+    <!-- مۆداڵی گەڕانەوە -->
     <div id="back-confirm-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="backTitle">ئایا دڵنیایت؟</h3>
@@ -493,12 +492,17 @@
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
         
+        // جێبەجێکردنی خزمەتگوزاری بێ ئینتەرنێت (Service Worker) بۆ ئەوەی لە مۆبایل وەک ئەپ کاربکات
         if ('serviceWorker' in navigator) {
-            const swBlob = new Blob([`self.addEventListener('fetch', function(e) {});`], {type: 'application/javascript'});
-            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(reg => {
+                    console.log('پەیوەندی بەبێ ئینتەرنێت چالاک کرا!');
+                }).catch(err => {
+                    console.log('هەڵە لە چالاککردنی بێ ئینتەرنێت: ', err);
+                });
+            });
         }
 
-        // --- گۆڕانکاری بۆ دابەزاندنی ئەپ بە مۆداڵ ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); deferredPrompt = e;
@@ -528,19 +532,25 @@
             ckb: {
                 pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی/عەرەبی)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "بە کۆمەڵ/فۆرمات", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت یان لە سەرەتاوە دەست پێ دەکەیتەوە؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
                 msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!",
-                installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
+                installModalTitle: "دابەزاندنی ئەپ", 
+                installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", 
+                installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
             },
             ar: {
                 pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "دفعة/صيغة", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
                 msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!",
-                installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", installConfirmBtn: "تثبيت",
+                installModalTitle: "تثبيت التطبيق", 
+                installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", 
+                installConfirmBtn: "تثبيت",
                 batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل"
             },
             en: {
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (English)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Batch/Format", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "It looks like you have an unfinished session. Do you want to continue where you left off or start over?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
                 msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!",
-                installModalTitle: "Install App", installModalDesc: "Do you want to install this website as an app on your device for faster access and offline use?", installConfirmBtn: "Install",
+                installModalTitle: "Install App", 
+                installModalDesc: "Do you want to install this website as an app on your device for faster access and offline use?", 
+                installConfirmBtn: "Install",
                 batchDownloadTitle: "Download Files", batchDownloadDesc: "Your browser will ask for permission to download multiple files. Please click 'Allow' when prompted so all files can be downloaded.", batchDownloadBtn: "Start Download"
             }
         };
@@ -553,7 +563,7 @@
         let historyStack = [], redoStack = []; 
         let isEditing = false;
         let lastSubtitleIndex = -1, currentSearchIndex = 0;
-        let pendingBatchDownloads = []; // بۆ هەڵگرتنی فایلەکانی بەکۆمەڵ پێش داگرتن
+        let pendingBatchDownloads = []; 
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -748,7 +758,6 @@
             } else { display.innerText = i18n[currentLang]['batchNoFile']; display.style.color = "var(--text-muted)"; }
         }
 
-        // --- گۆڕانکاری بۆ داگرتنی بەکۆمەڵ بەشێوەی ئاگادارکردنەوەی مۆداڵ ---
         async function prepareBatchProcess() {
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
@@ -756,7 +765,7 @@
 
             if (files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
             
-            pendingBatchDownloads = []; // ڕیفرێشکردنی لیستی داگرتنەکان
+            pendingBatchDownloads = []; 
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -788,12 +797,10 @@
                 });
             }
             
-            // داخستنی مۆداڵی پێشوو و کردنەوەی مۆداڵی ئاگادارکردنەوە
             document.getElementById('converter-modal').style.display = 'none';
             document.getElementById('batch-download-modal').style.display = 'flex';
         }
 
-        // جێبەجێکردنی داگرتنەکە پاش ئەوەی بەکارهێنەر کلیک دەکات
         async function executeBatchDownload() {
             document.getElementById('batch-download-modal').style.display = 'none';
             
@@ -804,12 +811,11 @@
                 a.download = item.filename;
                 a.click(); 
                 URL.revokeObjectURL(item.url);
-                // ماوەیەکی زیاتر دەدەین بۆ ئەوەی وێبگەڕەکە بە ئاسانی داوای مۆڵەت بکات و تێک نەچێت
                 await new Promise(r => setTimeout(r, 800)); 
             }
             
             showToast(i18n[currentLang]['msgDone'], "success");
-            pendingBatchDownloads = []; // خاوێنکردنەوە
+            pendingBatchDownloads = []; 
         }
 
         function timeToSeconds(str) {
