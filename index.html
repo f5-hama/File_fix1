@@ -166,37 +166,51 @@
         html[dir="ltr"] .custom-select-item { text-align: left; }
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
 
+        /* ===== دابەزاندنی ئەپ: بۆکسی نوێ کە لەگەڵ ڕەنگی ماڵپەڕ دەگونجێت ===== */
         #install-app-btn {
             display: none;
-            padding: 6px 12px;
-            border-radius: 10px;
-            border: 1px solid var(--primary);
-            background: rgba(142, 182, 155, 0.15);
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            flex-shrink: 0;
+            white-space: nowrap;
+            width: auto;
+            max-width: none;
+            padding: 9px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(142, 182, 155, 0.55);
+            background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%);
+            color: #fff;
+            font-family: inherit;
             font-size: 13px;
             font-weight: bold;
-            color: var(--primary);
+            line-height: 1;
             cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s ease;
-            align-items: center;
-            gap: 6px;
+            box-shadow: 0 6px 16px rgba(124, 161, 136, 0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
         }
-        #install-app-btn:hover {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 10px rgba(142, 182, 155, 0.3);
-            transform: translateY(-1px);
-        }
+        #install-app-btn svg { flex-shrink: 0; }
+        #install-app-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(124, 161, 136, 0.45); filter: brightness(1.04); }
+        #install-app-btn:active { transform: scale(0.96); }
         body.dark-theme #install-app-btn {
-            border-color: var(--primary);
-            background: rgba(104, 211, 145, 0.1);
-            color: var(--primary);
+            border-color: rgba(104, 211, 145, 0.45);
+            background: linear-gradient(135deg, #68d391 0%, #3f9e6c 100%);
+            color: #10231a;
+            box-shadow: 0 6px 16px rgba(104, 211, 145, 0.22);
         }
-        body.dark-theme #install-app-btn:hover {
-            background: var(--primary);
-            color: #121614;
-            box-shadow: 0 4px 10px rgba(104, 211, 145, 0.2);
+
+        /* بۆکسی (مۆداڵی) دابەزاندن */
+        .install-sheet { max-width: 380px; padding: 26px 22px 22px; border-radius: 22px; box-shadow: 0 25px 60px rgba(15, 23, 20, 0.35); animation: slideUpFade 0.3s ease; }
+        .install-sheet-icon {
+            width: 62px; height: 62px; margin: 0 auto 14px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%);
+            color: #fff; box-shadow: 0 10px 24px rgba(124, 161, 136, 0.35);
         }
+        .install-sheet .custom-modal-title { font-size: 19px; color: var(--text-main); margin-bottom: 8px; }
+        .install-sheet p { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin: 0 0 20px; }
+        .install-sheet .custom-modal-actions { flex-direction: column; gap: 10px; margin-top: 0; }
+        .install-sheet .custom-modal-actions .btn { width: 100% !important; padding: 13px; border-radius: 14px; white-space: nowrap; }
 
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
@@ -236,7 +250,7 @@
     </div>
 
     <div id="setup-screen" class="glass-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
             <button style="padding: 6px 10px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-family: inherit; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
             
             <button id="install-app-btn" onclick="installApp()">
@@ -291,12 +305,15 @@
 
     <!-- مۆداڵی دابەزاندنی ئەپ (دەقی گۆڕدراو بۆ ئەوەی بڵێت بێ ئینتەرنێت کاردەکات) -->
     <div id="install-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content">
+        <div class="custom-modal-content install-sheet">
+            <div class="install-sheet-icon">
+                <svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </div>
             <h3 class="custom-modal-title" data-i18n="installModalTitle">دابەزاندنی ئەپ</h3>
-            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="installModalDesc">ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟</p>
+            <p data-i18n="installModalDesc">ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟</p>
             <div class="custom-modal-actions">
-                <button class="btn" onclick="confirmInstall()" style="width: 50%;" data-i18n="installConfirmBtn">دابەزاندن</button>
-                <button class="btn btn-outline" onclick="document.getElementById('install-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
+                <button class="btn" onclick="confirmInstall()" data-i18n="installConfirmBtn">دابەزاندن</button>
+                <button class="btn btn-outline" onclick="document.getElementById('install-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
     </div>
