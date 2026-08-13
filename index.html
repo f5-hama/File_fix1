@@ -168,10 +168,38 @@
         html[dir="ltr"] .custom-select-item { text-align: left; }
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
 
-        /* ستایلی نوێی دابەزاندنی ئەپ (دەستکاری کرا) */
-        #install-app-btn { display: none; padding: 8px 16px; border-radius: 10px; background: var(--primary); border: none; font-size: 13px; font-weight: bold; color: white; cursor: pointer; font-family: inherit; transition: 0.2s; box-shadow: 0 4px 10px rgba(142, 182, 155, 0.3); }
-        #install-app-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        body.dark-theme #install-app-btn { background: var(--primary); color: #121614; box-shadow: 0 4px 10px rgba(104, 211, 145, 0.2); }
+        /* ستایلی نوێی دابەزاندنی ئەپ (گونجێندراو لەگەڵ ماڵپەڕەکە) */
+        #install-app-btn {
+            display: none;
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--primary);
+            background: rgba(142, 182, 155, 0.15);
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--primary);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            align-items: center;
+            gap: 6px;
+        }
+        #install-app-btn:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(142, 182, 155, 0.3);
+            transform: translateY(-1px);
+        }
+        body.dark-theme #install-app-btn {
+            border-color: var(--primary);
+            background: rgba(104, 211, 145, 0.1);
+            color: var(--primary);
+        }
+        body.dark-theme #install-app-btn:hover {
+            background: var(--primary);
+            color: #121614;
+            box-shadow: 0 4px 10px rgba(104, 211, 145, 0.2);
+        }
 
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
@@ -213,7 +241,13 @@
     <div id="setup-screen" class="glass-card">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
             <button style="padding: 6px 10px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-family: inherit; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
-            <button id="install-app-btn" onclick="installApp()" data-i18n="installApp">دابەزاندنی ئەپ</button>
+            
+            <!-- ئایکۆن بۆ دوگمەکە زیادکرا -->
+            <button id="install-app-btn" onclick="installApp()">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span data-i18n="installApp">دابەزاندنی ئەپ</span>
+            </button>
+            
             <div class="custom-select-wrapper">
                 <button class="custom-select-btn" onclick="toggleLangMenu(this)">
                     <span class="current-lang-text">کوردی</span>
@@ -449,7 +483,8 @@
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); deferredPrompt = e;
-            document.getElementById('install-app-btn').style.display = 'block';
+            // گۆڕینی بۆ flex بۆ ئەوەی ئایکۆنەکەش ڕێک بێت لەگەڵی
+            document.getElementById('install-app-btn').style.display = 'flex';
         });
         function installApp() {
             if (deferredPrompt) {
