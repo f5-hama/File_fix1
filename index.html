@@ -56,7 +56,6 @@
         body.dark-theme .glass-card { background: rgba(26, 32, 28, 0.85); border: 1px solid rgba(104, 211, 145, 0.2); }
         body.dark-theme .input-field { background: rgba(18, 22, 20, 0.9); color: #f1f5f9; border-color: #26332a; }
         
-        /* چاککردنی شێوەی بۆکسەکان لە دۆخی تاریکی بۆ ئەوەی جوانتر ببن لەگەڵ باکگراوندەکە */
         body.dark-theme .file-box { background: rgba(30, 41, 59, 0.2); border-color: #2d3748; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
         body.dark-theme .file-box:hover, body.dark-theme .file-box.has-file { background: rgba(104, 211, 145, 0.1); border-color: var(--primary); }
         
@@ -168,7 +167,6 @@
         html[dir="ltr"] .custom-select-item { text-align: left; }
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
 
-        /* ستایلی نوێی دابەزاندنی ئەپ (گونجێندراو لەگەڵ ماڵپەڕەکە) */
         #install-app-btn {
             display: none;
             padding: 6px 12px;
@@ -242,7 +240,6 @@
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
             <button style="padding: 6px 10px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-family: inherit; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
             
-            <!-- ئایکۆن بۆ دوگمەکە زیادکرا -->
             <button id="install-app-btn" onclick="installApp()">
                 <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span data-i18n="installApp">دابەزاندنی ئەپ</span>
@@ -288,9 +285,31 @@
             <button class="btn btn-outline" style="flex: 1; padding: 12px;" onclick="openConverterModal()"><span data-i18n="batchBtn">بە کۆمەڵ/فۆرمات</span></button>
         </div>
 
-        <!-- ناوی دروستکەری ماڵپەڕەکە -->
         <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">
             گەشەپێدەر: <strong>محمد عبدالقادر</strong>
+        </div>
+    </div>
+
+    <!-- مۆداڵی دابەزاندنی ئەپ -->
+    <div id="install-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3 class="custom-modal-title" data-i18n="installModalTitle">دابەزاندنی ئەپ</h3>
+            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="installModalDesc">ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟</p>
+            <div class="custom-modal-actions">
+                <button class="btn" onclick="confirmInstall()" style="width: 50%;" data-i18n="installConfirmBtn">دابەزاندن</button>
+                <button class="btn btn-outline" onclick="document.getElementById('install-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مۆداڵی ئاگادارکردنەوەی داگرتنی بەکۆمەڵ -->
+    <div id="batch-download-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3 class="custom-modal-title" data-i18n="batchDownloadTitle">داگرتنی فایلەکان</h3>
+            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="batchDownloadDesc">وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.</p>
+            <div class="custom-modal-actions">
+                <button class="btn" onclick="executeBatchDownload()" style="width: 100%;" data-i18n="batchDownloadBtn">دەستپێکردنی داگرتن</button>
+            </div>
         </div>
     </div>
 
@@ -347,7 +366,7 @@
             </div>
             
             <div class="custom-modal-actions">
-                <button class="btn" onclick="handleBatchProcess()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
+                <button class="btn" onclick="prepareBatchProcess()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
                 <button class="btn btn-outline" onclick="document.getElementById('converter-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
@@ -465,7 +484,6 @@
     <div id="toast-container"></div>
 
     <script>
-        // لۆگۆی نوێی ئەپەکە لەکاتی دابەزاندن
         const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#8EB69B"><path d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3V6h18v12zM5 14h14v2H5zm0-4h8v2H5zm10 0h4v2h-4z"/></svg>`;
         const manifest = {
             name: "Subtitle Editor", short_name: "SubEdit", start_url: ".", display: "standalone",
@@ -480,17 +498,27 @@
             navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
         }
 
+        // --- گۆڕانکاری بۆ دابەزاندنی ئەپ بە مۆداڵ ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); deferredPrompt = e;
-            // گۆڕینی بۆ flex بۆ ئەوەی ئایکۆنەکەش ڕێک بێت لەگەڵی
             document.getElementById('install-app-btn').style.display = 'flex';
         });
+
         function installApp() {
+            if (deferredPrompt) {
+                document.getElementById('install-modal').style.display = 'flex';
+            }
+        }
+
+        function confirmInstall() {
+            document.getElementById('install-modal').style.display = 'none';
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') document.getElementById('install-app-btn').style.display = 'none';
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('install-app-btn').style.display = 'none';
+                    }
                     deferredPrompt = null;
                 });
             }
@@ -499,15 +527,21 @@
         const i18n = {
             ckb: {
                 pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی/عەرەبی)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "بە کۆمەڵ/فۆرمات", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت یان لە سەرەتاوە دەست پێ دەکەیتەوە؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
-                msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!"
+                msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!",
+                installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
+                batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
             },
             ar: {
                 pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "دفعة/صيغة", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
-                msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!"
+                msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!",
+                installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", installConfirmBtn: "تثبيت",
+                batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل"
             },
             en: {
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (English)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Batch/Format", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "It looks like you have an unfinished session. Do you want to continue where you left off or start over?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
-                msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!"
+                msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!",
+                installModalTitle: "Install App", installModalDesc: "Do you want to install this website as an app on your device for faster access and offline use?", installConfirmBtn: "Install",
+                batchDownloadTitle: "Download Files", batchDownloadDesc: "Your browser will ask for permission to download multiple files. Please click 'Allow' when prompted so all files can be downloaded.", batchDownloadBtn: "Start Download"
             }
         };
 
@@ -519,6 +553,7 @@
         let historyStack = [], redoStack = []; 
         let isEditing = false;
         let lastSubtitleIndex = -1, currentSearchIndex = 0;
+        let pendingBatchDownloads = []; // بۆ هەڵگرتنی فایلەکانی بەکۆمەڵ پێش داگرتن
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -539,7 +574,6 @@
                 const key = el.getAttribute('data-i18n');
                 if (i18n[lang][key]) { if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { el.placeholder = i18n[lang][key]; } else { el.innerHTML = i18n[lang][key]; } }
             });
-            // Update welcome text if logged in
             if(localStorage.getItem('kf_user')) {
                 document.getElementById('welcome-msg').innerText = i18n[lang]['welcomeText'];
             }
@@ -591,11 +625,10 @@
             box.querySelector('.file-name-display').innerText = i18n[currentLang]['clickSelect'];
         }
 
-        // --- ڕێگریکردن لە گەڕانەوەی هەڵە بە مۆدال ---
         window.addEventListener('popstate', (e) => {
             if (isEditing) {
                 document.getElementById('back-confirm-modal').style.display = 'flex';
-                history.pushState({page: 'editor'}, '', '#editor'); // گەڕاندنەوەی مێژوو بۆ ئەوەی دەرنەچێت
+                history.pushState({page: 'editor'}, '', '#editor'); 
             }
         });
 
@@ -608,7 +641,7 @@
             document.getElementById('setup-screen').style.display = 'flex';
             document.body.className = document.body.classList.contains('dark-theme') ? 'startup-bg dark-theme' : 'startup-bg';
             closeHeaderVideo();
-            clearSession(); // سڕینەوەی سەیڤ چونکە خۆی دەرچوو
+            clearSession(); 
             history.replaceState(null, '', window.location.pathname);
         }
 
@@ -715,12 +748,15 @@
             } else { display.innerText = i18n[currentLang]['batchNoFile']; display.style.color = "var(--text-muted)"; }
         }
 
-        async function handleBatchProcess() {
+        // --- گۆڕانکاری بۆ داگرتنی بەکۆمەڵ بەشێوەی ئاگادارکردنەوەی مۆداڵ ---
+        async function prepareBatchProcess() {
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
             const timeShift = parseFloat(document.getElementById('batchTimeShift').value) || 0;
 
             if (files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
+            
+            pendingBatchDownloads = []; // ڕیفرێشکردنی لیستی داگرتنەکان
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -745,13 +781,35 @@
 
                 const blob = new Blob([finalContent], { type: 'application/octet-stream' });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url;
-                a.download = file.name.replace(/\.[^/.]+$/, "") + "_edited." + targetFormat;
-                a.click(); URL.revokeObjectURL(url);
-                await new Promise(r => setTimeout(r, 600)); 
+                
+                pendingBatchDownloads.push({
+                    url: url,
+                    filename: file.name.replace(/\.[^/.]+$/, "") + "_edited." + targetFormat
+                });
             }
-            showToast(i18n[currentLang]['msgDone'], "success");
+            
+            // داخستنی مۆداڵی پێشوو و کردنەوەی مۆداڵی ئاگادارکردنەوە
             document.getElementById('converter-modal').style.display = 'none';
+            document.getElementById('batch-download-modal').style.display = 'flex';
+        }
+
+        // جێبەجێکردنی داگرتنەکە پاش ئەوەی بەکارهێنەر کلیک دەکات
+        async function executeBatchDownload() {
+            document.getElementById('batch-download-modal').style.display = 'none';
+            
+            for (let i = 0; i < pendingBatchDownloads.length; i++) {
+                const item = pendingBatchDownloads[i];
+                const a = document.createElement('a'); 
+                a.href = item.url;
+                a.download = item.filename;
+                a.click(); 
+                URL.revokeObjectURL(item.url);
+                // ماوەیەکی زیاتر دەدەین بۆ ئەوەی وێبگەڕەکە بە ئاسانی داوای مۆڵەت بکات و تێک نەچێت
+                await new Promise(r => setTimeout(r, 800)); 
+            }
+            
+            showToast(i18n[currentLang]['msgDone'], "success");
+            pendingBatchDownloads = []; // خاوێنکردنەوە
         }
 
         function timeToSeconds(str) {
@@ -806,7 +864,6 @@
             }); return items;
         }
 
-        // --- سیستەمی سەیڤکردن و گەڕاندنەوەی ئۆتۆماتیکی ---
         function saveSession() {
             if(!isEditing) return;
             const session = { originalData, currentFileName, isAssFormat, isVttFormat, assHeaderLines, savedState: getCurrentState() };
@@ -840,7 +897,6 @@
             let kurdData = fKurd ? (fKurd.name.toLowerCase().endsWith('.ass') ? parseASSContent(await fKurd.text(), false) : (fKurd.name.toLowerCase().endsWith('.vtt') ? parseVTTContent(await fKurd.text()) : parseSRTContent(await fKurd.text()))) : [];
 
             let state = originalData.map((orig, i) => {
-                // تەنها ئەگەر فایلەکە دەقی هەبێت دایدەنێتەوە، خۆ ئەگەر نەبێت بەتاڵ جێیدەهێڵێت. دەقی ئینگلیزییەکە تێکەڵ ناکات!
                 return kurdData[i] ? kurdData[i].text : '';
             });
             
@@ -886,12 +942,12 @@
                             historyStack.push(state);
                             if(historyStack.length > 30) historyStack.shift();
                             redoStack = [];
-                            saveSession(); // سەیڤکردنی ڕاستەوخۆ
+                            saveSession(); 
                         }
                     }, 1000);
                 }
             });
-            saveSession(); // یەکەم سەیڤ لە کاتی دروستبوون
+            saveSession(); 
         }
 
         function getCurrentState() { return Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value); }
@@ -938,7 +994,6 @@
             document.getElementById('ai-modal').style.display = 'none'; updateProgress(); saveSession();
         }
 
-        // چارەسەرکردنی کێشەی تێکەڵبوونی دەقی ئەسڵی لەگەڵ وەرگێڕدراو لەکاتی دابەزاندن
         function downloadEditedFile() {
             let final = isAssFormat ? (assHeaderLines.join('\n')+'\n') : "";
             document.querySelectorAll('.subtitle-card').forEach(card => {
@@ -949,7 +1004,6 @@
                     let kl = kt.split('\n'); let ol = orig.parsedLines || [];
                     let fp = []; 
                     for(let j=0; j<Math.max(kl.length, ol.length); j++) {
-                        // تەنها دەقە کوردییەکە دادەنێت، ئەگەر دەقەکە نەبوو، بەتاڵی دەکات و زمانی ئەسڵییەکە تێکەڵ ناکات
                         fp.push((ol[j]?ol[j].tags:'') + (kl[j]!==undefined ? kl[j] : '')); 
                     }
                     
@@ -964,7 +1018,6 @@
             a.href = URL.createObjectURL(blob); const extension = isAssFormat ? '.ass' : (isVttFormat ? '.vtt' : '.srt');
             a.download = 'Edited_' + currentFileName.replace(/\.[^/.]+$/, "") + extension; a.click();
             
-            // دوای سەیڤکردن سەیڤی ئۆتۆماتیکی دەسڕینەوە بۆ ئەوەی فایلێکی نوێ دەست پێ بکات
             clearSession();
         }
     </script>
