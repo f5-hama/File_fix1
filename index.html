@@ -224,6 +224,91 @@
             .action-bar .btn, .action-bar .btn-outline { width: auto; min-width: 180px; padding: 12px 15px; }
             #preview-video { max-height: 400px; }
         }
+
+        /* ================= LIQUID GLASS + تایبەتمەندییە نوێیەکان ================= */
+        :root{
+            --glass-bg: rgba(255,255,255,0.55);
+            --glass-bg-strong: rgba(255,255,255,0.72);
+            --glass-brd: rgba(255,255,255,0.7);
+            --glass-hi: rgba(255,255,255,0.85);
+            --glass-shadow: 0 12px 34px rgba(94,130,110,0.18);
+            --editor-font: 16px;
+        }
+        body.dark-theme{
+            --glass-bg: rgba(26,32,28,0.55);
+            --glass-bg-strong: rgba(20,26,22,0.78);
+            --glass-brd: rgba(104,211,145,0.22);
+            --glass-hi: rgba(255,255,255,0.07);
+            --glass-shadow: 0 12px 34px rgba(0,0,0,0.45);
+        }
+        /* شووشەی ڕەسەن تەنها لەسەر ڕووەکانی جێگیر (بۆ ئەوەی لاگ نەکات) */
+        .lg{
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(18px) saturate(150%);
+            border: 1px solid var(--glass-brd);
+            box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi);
+        }
+        body.editor-bg{
+            background-image: radial-gradient(1000px 420px at 100% -8%, rgba(142,182,155,0.22), transparent 60%),
+                              radial-gradient(800px 380px at 0% 8%, rgba(142,182,155,0.14), transparent 60%);
+            background-attachment: fixed;
+        }
+        body.dark-theme.editor-bg{
+            background-image: radial-gradient(1000px 420px at 100% -8%, rgba(104,211,145,0.14), transparent 60%),
+                              radial-gradient(800px 380px at 0% 8%, rgba(104,211,145,0.08), transparent 60%);
+        }
+        /* قاڵبەکان: شێوەی شووشەیی سووک بێ backdrop-filter بۆ خێرایی */
+        .subtitle-card{
+            background: linear-gradient(160deg, var(--glass-bg-strong), var(--card-bg) 70%);
+            border: 1px solid var(--glass-brd);
+            border-radius: 18px;
+            box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi);
+            transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+        }
+        .subtitle-card:hover{ transform: translateY(-2px); }
+        .subtitle-card.done-sub{ border-color: rgba(16,185,129,0.45); }
+        .subtitle-header{ background: linear-gradient(180deg, rgba(142,182,155,0.14), rgba(142,182,155,0.05)); border-radius: 12px; }
+        .subtitle-orig{ background: linear-gradient(180deg, rgba(142,182,155,0.10), rgba(142,182,155,0.03)); border-radius: 12px; }
+        .subtitle-kurd textarea{ font-size: var(--editor-font); border-radius: 12px; background: var(--card-bg); }
+        .sticky-header-container, .action-bar, .floating-search-bar, .custom-modal-content, .toast{
+            background: var(--glass-bg-strong) !important;
+            backdrop-filter: blur(20px) saturate(160%);
+            border-color: var(--glass-brd) !important;
+            box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi) !important;
+        }
+        .toast{ color: var(--text-main) !important; }
+        .top-btn{ border-radius: 10px; background: var(--glass-bg); border-color: var(--glass-brd); }
+        .top-btn.active-tool{ color: #fff; background: linear-gradient(135deg,#a8d5b8,#7ca188); border-color: transparent; }
+        .glass-card{ background: var(--glass-bg-strong); border: 1px solid var(--glass-brd); box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi); }
+
+        /* شریتی ئامار */
+        #stats-bar{ display:none; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+        .stat-chip{
+            display:flex; align-items:center; gap:6px; padding:7px 12px; border-radius:999px;
+            font-size:12.5px; font-weight:bold; color:var(--text-main);
+            background: var(--glass-bg); border:1px solid var(--glass-brd); box-shadow: inset 0 1px 0 var(--glass-hi);
+        }
+        .stat-chip b{ color: var(--primary); direction:ltr; }
+
+        /* پێمەری دەق لەژێر هەر قاڵبێک */
+        .sub-meta{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:8px; font-size:11.5px; color:var(--text-muted); font-weight:bold; }
+        .sub-meta .warn{ color:#ef4444; }
+        .sub-meta .ok{ color: var(--success); }
+        .mini-btn{
+            background: var(--glass-bg); border:1px solid var(--glass-brd); color:var(--text-muted);
+            border-radius:8px; padding:4px 8px; font-size:11.5px; font-weight:bold; cursor:pointer; font-family:inherit;
+        }
+        .mini-btn:hover{ color: var(--primary); border-color: var(--primary); }
+
+        /* پانێلی ئامرازەکان */
+        .tools-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px; }
+        .tools-grid .btn{ padding:12px; font-size:13px; border-radius:14px; }
+        .tool-label{ font-weight:bold; font-size:13px; color:var(--primary); display:block; margin:14px 0 8px; text-align:start; }
+        .range-row{ display:flex; align-items:center; gap:10px; }
+        .range-row input[type=range]{ flex:1; accent-color: var(--primary); }
+        #autosave-dot{ display:none; align-items:center; gap:5px; font-size:11.5px; font-weight:bold; color:var(--success); }
+        #autosave-dot span.dot{ width:7px; height:7px; border-radius:50%; background:var(--success); display:inline-block; }
+
     </style>
 </head>
 <body class="startup-bg">
@@ -253,6 +338,10 @@
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
             <button style="padding: 6px 10px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-family: inherit; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
             
+            <button class="top-btn" onclick="toggleTheme()" title="Theme" style="padding:8px 10px;">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+
             <button id="install-app-btn" onclick="installApp()">
                 <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span data-i18n="installApp">دابەزاندنی ئەپ</span>
@@ -435,6 +524,28 @@
                 <button class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="toggleSearchBar()">
                     <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </button>
+
+                <button id="next-empty-btn" class="top-btn" onclick="goToNextEmpty()" title="Next untranslated">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </button>
+
+                <button id="filter-btn" class="top-btn" onclick="toggleEmptyFilter()" title="Filter">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18l-7 8v6l-4 2v-8L3 4z"></path></svg>
+                </button>
+
+                <button id="stats-btn" class="top-btn" onclick="toggleStatsBar()" title="Stats">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6m4 6V5m4 14v-9"></path></svg>
+                </button>
+
+                <button id="tools-btn" class="top-btn" onclick="openToolsModal()" title="Tools">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </button>
+
+                <button id="theme-btn" class="top-btn" onclick="toggleTheme()" title="Theme">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+
+                <div id="autosave-dot"><span class="dot"></span><span data-i18n="savedLbl">سەیڤکرا</span></div>
             </div>
         </div>
 
@@ -472,6 +583,8 @@
             <div id="video-subtitle-overlay"></div>
         </div>
 
+        <div id="stats-bar"></div>
+
         <div id="subtitles-container"></div>
         
         <div class="action-bar">
@@ -493,6 +606,55 @@
             <div class="custom-modal-actions">
                 <button class="btn" onclick="processAIPaste()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
                 <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- پانێلی ئامرازەکانی نوێ -->
+    <div id="tools-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width:420px; border-radius:22px;">
+            <h3 class="custom-modal-title" data-i18n="toolsTitle">ئامرازەکان</h3>
+
+            <label class="tool-label" data-i18n="fontSizeLbl">قەبارەی دەق</label>
+            <div class="range-row">
+                <button class="mini-btn" onclick="changeFontSize(-1)">A-</button>
+                <input type="range" id="fontSizeRange" min="13" max="26" step="1" value="16" oninput="setFontSize(this.value)">
+                <button class="mini-btn" onclick="changeFontSize(1)">A+</button>
+            </div>
+
+            <label class="tool-label" data-i18n="shiftLbl">پێشخستن/دواخستنی کات (چرکە)</label>
+            <div class="range-row">
+                <input type="number" id="editorTimeShift" step="0.1" class="input-field" placeholder="0.0" dir="ltr" style="padding:12px; text-align:center;">
+                <button class="btn" style="width:auto; padding:12px 16px; white-space:nowrap;" onclick="applyEditorTimeShift()" data-i18n="applyBtn">جێبەجێکردن</button>
+            </div>
+
+            <label class="tool-label" data-i18n="quickToolsLbl">ئامرازی خێرا</label>
+            <div class="tools-grid">
+                <button class="btn btn-outline" onclick="fillEmptyWithOriginal()" data-i18n="fillEmptyBtn">پڕکردنی بەتاڵەکان بە ئەسڵی</button>
+                <button class="btn btn-outline" onclick="copyAllTranslation()" data-i18n="copyAllBtn">کۆپی هەموو وەرگێڕان</button>
+                <button class="btn btn-outline" onclick="downloadAsTxt()" data-i18n="txtBtn">هەناردە بۆ TXT</button>
+                <button class="btn btn-outline" onclick="cleanupSpaces()" data-i18n="cleanBtn">ڕێکخستنی بۆشاییەکان</button>
+            </div>
+
+            <div class="custom-modal-actions" style="margin-top:18px;">
+                <button class="btn btn-outline" style="width:100%;" onclick="document.getElementById('tools-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شۆرتکاتەکان -->
+    <div id="shortcuts-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width:400px; border-radius:22px;">
+            <h3 class="custom-modal-title" data-i18n="shortcutsTitle">شۆرتکاتی کیبۆرد</h3>
+            <div style="text-align:start; font-size:13.5px; line-height:2; color:var(--text-main);" dir="auto">
+                <div><b dir="ltr">Ctrl + S</b> — <span data-i18n="scSave">سەیڤ و داگرتن</span></div>
+                <div><b dir="ltr">Ctrl + F</b> — <span data-i18n="scFind">گەڕان و گۆڕین</span></div>
+                <div><b dir="ltr">Ctrl + Z / Ctrl + Y</b> — <span data-i18n="scUndo">پاشگەز/دووبارە</span></div>
+                <div><b dir="ltr">Alt + Enter</b> — <span data-i18n="scNext">دێری وەرگێڕنەکراوی داهاتوو</span></div>
+                <div><b dir="ltr">Alt + D</b> — <span data-i18n="scTheme">گۆڕینی تیم</span></div>
+            </div>
+            <div class="custom-modal-actions">
+                <button class="btn btn-outline" style="width:100%;" onclick="document.getElementById('shortcuts-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
     </div>
@@ -552,7 +714,13 @@
                 installModalTitle: "دابەزاندنی ئەپ", 
                 installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", 
                 installConfirmBtn: "دابەزاندن",
-                batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
+                batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
+                toolsTitle: "ئامرازەکان", fontSizeLbl: "قەبارەی دەق", shiftLbl: "پێشخستن/دواخستنی کات (چرکە)", quickToolsLbl: "ئامرازی خێرا",
+                fillEmptyBtn: "پڕکردنی بەتاڵەکان بە ئەسڵی", copyAllBtn: "کۆپی هەموو وەرگێڕان", txtBtn: "هەناردە بۆ TXT", cleanBtn: "ڕێکخستنی بۆشاییەکان",
+                copyOrigBtn: "کۆپی ئەسڵی بۆ ئێرە", savedLbl: "سەیڤکرا", shortcutsTitle: "شۆرتکاتی کیبۆرد",
+                scSave: "سەیڤ و داگرتن", scFind: "گەڕان و گۆڕین", scUndo: "پاشگەز/دووبارە", scNext: "دێری وەرگێڕنەکراوی داهاتوو", scTheme: "گۆڕینی تیم",
+                statAll: "کۆی دێرەکان", statDone: "وەرگێڕدراو", statLeft: "ماوە", statChars: "پیت", statLong: "زۆر درێژ",
+                msgNoEmpty: "هەموو دێرەکان وەرگێڕدراون!", msgFiltered: "تەنها بەتاڵەکان دەرکەوتن", msgAllShown: "هەموو دێرەکان دەرکەوتن", msgShifted: "کاتەکان گۆڕدران", msgCleaned: "بۆشاییەکان ڕێک خران"
             },
             ar: {
                 pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "دفعة/صيغة", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
@@ -560,7 +728,13 @@
                 installModalTitle: "تثبيت التطبيق", 
                 installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", 
                 installConfirmBtn: "تثبيت",
-                batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل"
+                batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل",
+                toolsTitle: "الأدوات", fontSizeLbl: "حجم الخط", shiftLbl: "تقديم/تأخير الوقت (ثانية)", quickToolsLbl: "أدوات سريعة",
+                fillEmptyBtn: "تعبئة الفراغات بالأصل", copyAllBtn: "نسخ كل الترجمة", txtBtn: "تصدير إلى TXT", cleanBtn: "تنظيف المسافات",
+                copyOrigBtn: "نسخ الأصل هنا", savedLbl: "تم الحفظ", shortcutsTitle: "اختصارات لوحة المفاتيح",
+                scSave: "حفظ وتنزيل", scFind: "بحث واستبدال", scUndo: "تراجع/إعادة", scNext: "السطر غير المترجم التالي", scTheme: "تبديل الوضع",
+                statAll: "إجمالي الأسطر", statDone: "مترجم", statLeft: "متبقٍ", statChars: "حرف", statLong: "طويل جداً",
+                msgNoEmpty: "تمت ترجمة كل الأسطر!", msgFiltered: "إظهار غير المترجم فقط", msgAllShown: "إظهار كل الأسطر", msgShifted: "تم تعديل الأوقات", msgCleaned: "تم تنظيف المسافات"
             },
             en: {
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (English)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Batch/Format", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "It looks like you have an unfinished session. Do you want to continue where you left off or start over?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
@@ -568,7 +742,13 @@
                 installModalTitle: "Install App", 
                 installModalDesc: "Do you want to install this website as an app on your device for faster access and offline use?", 
                 installConfirmBtn: "Install",
-                batchDownloadTitle: "Download Files", batchDownloadDesc: "Your browser will ask for permission to download multiple files. Please click 'Allow' when prompted so all files can be downloaded.", batchDownloadBtn: "Start Download"
+                batchDownloadTitle: "Download Files", batchDownloadDesc: "Your browser will ask for permission to download multiple files. Please click 'Allow' when prompted so all files can be downloaded.", batchDownloadBtn: "Start Download",
+                toolsTitle: "Tools", fontSizeLbl: "Font size", shiftLbl: "Time shift (seconds)", quickToolsLbl: "Quick tools",
+                fillEmptyBtn: "Fill empty with original", copyAllBtn: "Copy all translation", txtBtn: "Export to TXT", cleanBtn: "Clean up spaces",
+                copyOrigBtn: "Copy original here", savedLbl: "Saved", shortcutsTitle: "Keyboard shortcuts",
+                scSave: "Save & download", scFind: "Search & replace", scUndo: "Undo / Redo", scNext: "Next untranslated line", scTheme: "Toggle theme",
+                statAll: "Total lines", statDone: "Translated", statLeft: "Remaining", statChars: "chars", statLong: "Too long",
+                msgNoEmpty: "All lines are translated!", msgFiltered: "Showing untranslated only", msgAllShown: "Showing all lines", msgShifted: "Times shifted", msgCleaned: "Spaces cleaned"
             }
         };
 
@@ -604,6 +784,7 @@
             if(localStorage.getItem('kf_user')) {
                 document.getElementById('welcome-msg').innerText = i18n[lang]['welcomeText'];
             }
+            if (isEditing) { updateStats(); updateLineMeta(); }
         }
 
         function checkLogin() {
@@ -621,9 +802,7 @@
                 document.getElementById('setup-screen').style.display = 'none';
             }
             
-            const hour = new Date().getHours();
-            if(hour >= 19 || hour < 6) document.body.classList.add('dark-theme');
-            else document.body.classList.remove('dark-theme');
+            applyStoredTheme();
         }
         
         function performLogin() {
@@ -939,7 +1118,13 @@
                         <div class="subtitle-time">${orig.time}</div>
                     </div>
                     <div class="subtitle-orig">${orig.text.replace(/\n/g, '<br>')}</div>
-                    <div class="subtitle-kurd"><textarea>${kText}</textarea></div>
+                    <div class="subtitle-kurd">
+                        <textarea>${kText}</textarea>
+                        <div class="sub-meta">
+                            <button class="mini-btn" onclick="copyOrigToInput(${i})" data-i18n="copyOrigBtn">کۆپی ئەسڵی بۆ ئێرە</button>
+                            <span class="len-info" data-for="${i}"></span>
+                        </div>
+                    </div>
                 </div>`;
             }
             document.getElementById('subtitles-container').innerHTML = html;
@@ -949,6 +1134,12 @@
             document.body.className = document.body.classList.contains('dark-theme') ? 'editor-bg dark-theme' : 'editor-bg';
             
             isEditing = true; historyStack = [getCurrentState()]; updateProgress();
+            statsVisible = true;
+            document.getElementById('stats-bar').style.display = 'flex';
+            document.getElementById('stats-btn').classList.add('active-tool');
+            emptyFilterOn = false; nextEmptyPos = 0;
+            document.getElementById('filter-btn').classList.remove('active-tool');
+            setTimeout(() => { document.querySelectorAll('.subtitle-kurd textarea').forEach(t => { t.style.height='auto'; t.style.height=t.scrollHeight+'px'; }); updateStats(); updateLineMeta(); }, 0);
             history.pushState({page: 'editor'}, '', '#editor');
             
             document.getElementById('add-video-btn').style.display = 'flex';
@@ -957,7 +1148,7 @@
             document.getElementById('subtitles-container').addEventListener('input', e => {
                 if(e.target.tagName === 'TEXTAREA') {
                     e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px';
-                    updateProgress();
+                    updateProgress(); updateStats(); updateLineMeta();
                     clearTimeout(window.typingTimer);
                     window.typingTimer = setTimeout(() => {
                         let state = getCurrentState();
@@ -965,7 +1156,7 @@
                             historyStack.push(state);
                             if(historyStack.length > 30) historyStack.shift();
                             redoStack = [];
-                            saveSession(); 
+                            saveSession(); flashSaved(); 
                         }
                     }, 1000);
                 }
@@ -1014,8 +1205,219 @@
                 let card = document.querySelector(`.subtitle-card[data-index="${parseInt(m[1])-1}"]`);
                 if(card) card.querySelector('textarea').value = m[2].trim();
             }
-            document.getElementById('ai-modal').style.display = 'none'; updateProgress(); saveSession();
+            document.getElementById('ai-modal').style.display = 'none'; saveSession();
+            document.querySelectorAll('.subtitle-kurd textarea').forEach(t => { t.style.height='auto'; t.style.height=t.scrollHeight+'px'; });
+            refreshAll();
         }
+
+
+        /* ================= تایبەتمەندییەکانی نوێ ================= */
+
+        // 1) گۆڕینی تیم (ڕوون/تاریک) بە پاشەکەوتکردن
+        function applyStoredTheme() {
+            let pref = localStorage.getItem('kf_theme');
+            if (!pref) { const h = new Date().getHours(); pref = (h >= 19 || h < 6) ? 'dark' : 'light'; }
+            document.body.classList.toggle('dark-theme', pref === 'dark');
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', pref === 'dark' ? '#121614' : '#8EB69B');
+        }
+        function toggleTheme() {
+            const dark = !document.body.classList.contains('dark-theme');
+            localStorage.setItem('kf_theme', dark ? 'dark' : 'light');
+            applyStoredTheme();
+        }
+
+        // 2) قەبارەی دەقی دەستکاریکردن
+        function setFontSize(v) {
+            document.documentElement.style.setProperty('--editor-font', v + 'px');
+            localStorage.setItem('kf_font', v);
+            const r = document.getElementById('fontSizeRange'); if (r) r.value = v;
+            document.querySelectorAll('.subtitle-kurd textarea').forEach(t => { t.style.height='auto'; t.style.height=t.scrollHeight+'px'; });
+        }
+        function changeFontSize(d) {
+            let v = parseInt(localStorage.getItem('kf_font') || '16') + d;
+            v = Math.min(26, Math.max(13, v)); setFontSize(v);
+        }
+        setFontSize(parseInt(localStorage.getItem('kf_font') || '16'));
+
+        // 3) پانێلی ئامرازەکان
+        function openToolsModal() { document.getElementById('tools-modal').style.display = 'flex'; }
+
+        // 4) شریتی ئاماری کار
+        let statsVisible = true;
+        function toggleStatsBar() {
+            statsVisible = !statsVisible;
+            document.getElementById('stats-bar').style.display = statsVisible ? 'flex' : 'none';
+            document.getElementById('stats-btn').classList.toggle('active-tool', statsVisible);
+        }
+        function updateStats() {
+            const tas = Array.from(document.querySelectorAll('.subtitle-kurd textarea'));
+            const done = tas.filter(t => t.value.trim() !== '').length;
+            const chars = tas.reduce((a, t) => a + t.value.trim().length, 0);
+            const long = tas.filter(t => t.value.split('\n').some(l => l.length > 42)).length;
+            const L = i18n[currentLang];
+            const pct = tas.length ? Math.round(done / tas.length * 100) : 0;
+            document.getElementById('stats-bar').innerHTML =
+                `<div class="stat-chip">${L.statAll}: <b>${tas.length}</b></div>
+                 <div class="stat-chip">${L.statDone}: <b>${done}</b> (<b>${pct}%</b>)</div>
+                 <div class="stat-chip">${L.statLeft}: <b>${tas.length - done}</b></div>
+                 <div class="stat-chip">${L.statChars}: <b>${chars}</b></div>
+                 <div class="stat-chip">${L.statLong}: <b>${long}</b></div>`;
+        }
+
+        // 5) پێمەری پیت بۆ هەر دێرێک + نیشانەی تەواوکراو
+        function updateLineMeta() {
+            const L = i18n[currentLang];
+            document.querySelectorAll('.subtitle-card').forEach(card => {
+                const ta = card.querySelector('textarea');
+                const info = card.querySelector('.len-info');
+                if (!ta || !info) return;
+                const val = ta.value;
+                const maxLine = Math.max(0, ...val.split('\n').map(l => l.length));
+                const dur = Math.max(0.001, (originalData[card.dataset.index]?.endSec || 0) - (originalData[card.dataset.index]?.startSec || 0));
+                const cps = Math.round(val.replace(/\n/g, '').length / dur);
+                const bad = maxLine > 42 || cps > 21;
+                info.className = 'len-info ' + (val.trim() === '' ? '' : (bad ? 'warn' : 'ok'));
+                info.textContent = `${val.length} ${L.statChars} · ${cps} CPS`;
+                card.classList.toggle('done-sub', val.trim() !== '');
+            });
+        }
+
+        // 6) کۆپی دەقی ئەسڵی بۆ خانەی وەرگێڕان
+        function copyOrigToInput(i) {
+            const card = document.querySelector(`.subtitle-card[data-index="${i}"]`);
+            if (!card || !originalData[i]) return;
+            const ta = card.querySelector('textarea');
+            ta.value = originalData[i].text;
+            ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
+            refreshAll(); pushHistory();
+        }
+
+        // 7) چوون بۆ دێری وەرگێڕنەکراوی داهاتوو
+        let nextEmptyPos = 0;
+        function goToNextEmpty() {
+            const tas = Array.from(document.querySelectorAll('.subtitle-kurd textarea'));
+            for (let k = 0; k < tas.length; k++) {
+                const idx = (nextEmptyPos + k) % tas.length;
+                if (tas[idx].value.trim() === '') {
+                    nextEmptyPos = idx + 1;
+                    const card = tas[idx].closest('.subtitle-card');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => tas[idx].focus(), 350);
+                    return;
+                }
+            }
+            showToast(i18n[currentLang].msgNoEmpty, 'success');
+        }
+
+        // 8) فلتەری دەرخستنی تەنها بەتاڵەکان
+        let emptyFilterOn = false;
+        function toggleEmptyFilter() {
+            emptyFilterOn = !emptyFilterOn;
+            document.getElementById('filter-btn').classList.toggle('active-tool', emptyFilterOn);
+            document.querySelectorAll('.subtitle-card').forEach(card => {
+                const empty = card.querySelector('textarea').value.trim() === '';
+                card.style.display = (emptyFilterOn && !empty) ? 'none' : '';
+            });
+            showToast(i18n[currentLang][emptyFilterOn ? 'msgFiltered' : 'msgAllShown'], 'success');
+        }
+
+        // 9) پێشخستن/دواخستنی کات لەناو ئیدیتەر
+        function applyEditorTimeShift() {
+            const v = parseFloat(document.getElementById('editorTimeShift').value);
+            if (!v) return;
+            originalData.forEach(it => {
+                it.startSec = Math.max(0, it.startSec + v);
+                it.endSec = Math.max(0, it.endSec + v);
+                it.time = `${formatTimeSRT(it.startSec)} --> ${formatTimeSRT(it.endSec)}`;
+            });
+            document.querySelectorAll('.subtitle-card').forEach(card => {
+                card.querySelector('.subtitle-time').textContent = originalData[card.dataset.index].time;
+            });
+            document.getElementById('editorTimeShift').value = '';
+            document.getElementById('tools-modal').style.display = 'none';
+            saveSession(); refreshAll();
+            showToast(i18n[currentLang].msgShifted, 'success');
+        }
+
+        // 10) پڕکردنی بەتاڵەکان بە دەقی ئەسڵی
+        function fillEmptyWithOriginal() {
+            document.querySelectorAll('.subtitle-card').forEach(card => {
+                const ta = card.querySelector('textarea');
+                if (ta.value.trim() === '') {
+                    ta.value = originalData[card.dataset.index].text;
+                    ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
+                }
+            });
+            refreshAll(); pushHistory();
+            showToast(i18n[currentLang].msgDone, 'success');
+        }
+
+        // 11) کۆپی هەموو وەرگێڕان
+        function copyAllTranslation() {
+            const txt = getCurrentState().map((v, i) => `[${i + 1}] ${v}`).join('\n');
+            const ta = document.createElement('textarea'); ta.value = txt;
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+            showToast(i18n[currentLang].msgCopied, 'success');
+        }
+
+        // 12) هەناردەکردن بۆ TXT
+        function downloadAsTxt() {
+            const txt = getCurrentState().filter(v => v.trim() !== '').join('\n');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' }));
+            a.download = (currentFileName || 'subtitle').replace(/\.[^/.]+$/, '') + '.txt';
+            a.click();
+        }
+
+        // 13) ڕێکخستنی بۆشایی و دووبارەبوونەوەکان
+        function cleanupSpaces() {
+            document.querySelectorAll('.subtitle-kurd textarea').forEach(ta => {
+                ta.value = ta.value.replace(/[ \t]+/g, ' ').replace(/ ?\n ?/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+                ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
+            });
+            refreshAll(); pushHistory();
+            showToast(i18n[currentLang].msgCleaned, 'success');
+        }
+
+        // 14) شۆرتکاتی کیبۆرد
+        document.addEventListener('keydown', e => {
+            if (!isEditing) return;
+            const k = e.key.toLowerCase();
+            if ((e.ctrlKey || e.metaKey) && k === 's') { e.preventDefault(); downloadEditedFile(); }
+            else if ((e.ctrlKey || e.metaKey) && k === 'f') { e.preventDefault(); toggleSearchBar(); }
+            else if ((e.ctrlKey || e.metaKey) && k === 'z') { e.preventDefault(); undo(); refreshAll(); }
+            else if ((e.ctrlKey || e.metaKey) && k === 'y') { e.preventDefault(); redo(); refreshAll(); }
+            else if (e.altKey && e.key === 'Enter') { e.preventDefault(); goToNextEmpty(); }
+            else if (e.altKey && k === 'd') { e.preventDefault(); toggleTheme(); }
+            else if (e.key === 'F1') { e.preventDefault(); document.getElementById('shortcuts-modal').style.display = 'flex'; }
+        });
+
+        // 15) نیشانەی پاشەکەوتی خۆکار
+        function flashSaved() {
+            const el = document.getElementById('autosave-dot');
+            if (!el) return;
+            el.style.display = 'flex';
+            clearTimeout(window._savedTimer);
+            window._savedTimer = setTimeout(() => { el.style.display = 'none'; }, 1600);
+        }
+
+        function pushHistory() {
+            const state = getCurrentState();
+            if (JSON.stringify(historyStack[historyStack.length - 1]) !== JSON.stringify(state)) {
+                historyStack.push(state);
+                if (historyStack.length > 30) historyStack.shift();
+                redoStack = [];
+            }
+            saveSession();
+        }
+
+        function refreshAll() { updateProgress(); updateStats(); updateLineMeta(); }
+
+        // داخستنی مۆداڵ بە کرتەکردن لە دەرەوە
+        document.querySelectorAll('.custom-modal-overlay').forEach(ov => {
+            ov.addEventListener('click', e => { if (e.target === ov) ov.style.display = 'none'; });
+        });
 
         function downloadEditedFile() {
             let final = isAssFormat ? (assHeaderLines.join('\n')+'\n') : "";
