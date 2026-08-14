@@ -1,23 +1,20 @@
-const CACHE_NAME = 'subedit-cache-v4'; // گۆڕینی ڤێرژنەکە بۆ v3 بۆ چالاککردنی گۆڕانکارییە نوێیەکان
+const CACHE_NAME = 'subedit-cache-v4'; // گۆڕین بۆ ڤێرژنی v4 بۆ چالاککردنی نوێکارییەکان
 
-// لیستی ئەو فایلانەی کە دەبێت خەزن ببن بۆ کاتی بێ ئینتەرنێتی
 const urlsToCache = [
     './',
     './index.html',
-    './fonts.css' // فایلی فۆنتەکە لێرەدا زیادکرا بۆ ئەوەی پاشەکەوت ببێت
+    './fonts.css'
 ];
 
-// کاتی دامەزراندنی سێرڤس وۆرکەر
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(urlsToCache);
         })
     );
-    self.skipWaiting(); // ناچارکردنی سێرڤس وۆرکەرە نوێیەکە بۆ کارکردنی ڕاستەوخۆ
+    self.skipWaiting(); 
 });
 
-// سڕینەوەی خۆکارانەی هەموو کاشە کۆنەکان (وەک v1 یان v2) بۆ بارکردنی کۆپییە نوێیەکە
 self.addEventListener('activate', (event) => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -25,7 +22,7 @@ self.addEventListener('activate', (event) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        return caches.delete(cacheName); // سڕینەوەی کاشە کۆنەکان
+                        return caches.delete(cacheName); 
                     }
                 })
             );
@@ -33,7 +30,6 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// کاتی داواکردنی فایلەکان (Fetch)
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
