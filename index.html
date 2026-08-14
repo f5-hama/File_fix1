@@ -6,12 +6,14 @@
     <meta name="theme-color" content="#8EB69B">
     <title data-i18n="pageTitle">دەستکاریکەری ژێرنووس</title>
     
+    <!-- کۆدی گرنگ بۆ چاککردنی کێشەی ڕێڕەوی گیت‌هەب و Service Worker -->
     <script>
         if (window.location.pathname.slice(-1) !== '/' && !window.location.pathname.endsWith('.html')) {
             window.location.replace(window.location.href + '/');
         }
     </script>
 
+    <!-- هێنانی فۆنتەکە بە ڕێڕەوی دروست لە تەنیشت فایلی index.html -->
     <link rel="stylesheet" href="./fonts.css">
     
     <style>
@@ -35,7 +37,7 @@
         }
         body.dark-theme.startup-bg { background: linear-gradient(-45deg, #0d120f, #151f18, #0f1712, #1a261d); }
         body.dark-theme .glass-card { background: rgba(26, 32, 28, 0.85); border: 1px solid rgba(104, 211, 145, 0.2); }
-        body.dark-theme .input-field { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--border-color); background: rgba(255, 255, 255, 0.9); font-size: 13px; color: var(--text-main); outline: none; transition: 0.2s; }
+        .input-field { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--border-color); background: rgba(255, 255, 255, 0.9); font-size: 13px; color: var(--text-main); outline: none; transition: 0.2s; }
         body.dark-theme .input-field { background: rgba(18, 22, 20, 0.9); color: #f1f5f9; border-color: #26332a; }
         .input-field:focus { border-color: var(--primary); }
         .file-box { position: relative; padding: 25px 15px; border: 2px dashed #b5d1c0; border-radius: 14px; background: rgba(242, 247, 244, 0.7); transition: all 0.3s ease; text-align: center; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -185,11 +187,11 @@
         <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی Hardsub بە ئایکۆنی مۆنتاژی نوێ و بەشەکانی ئەنیمێ بە جیا -->
+    <!-- مۆداڵی Hardsub بە ئایکۆنی مۆنتاژی نوێ و ٤ بەشەکەی مافەکانی ئەنیمێ بە جیا -->
     <div id="hardsub-modal" class="custom-modal-overlay">
         <div class="custom-modal-content" style="max-width: 500px; text-align: right; max-height: 90vh; overflow-y: auto;" dir="rtl">
             <h3 class="custom-modal-title" style="text-align: center; margin-bottom: 4px;">چەسپاندنی ژێرنووس (Hardsub)</h3>
-            <p style="font-size: 12px; color:var(--text-muted); line-height: 1.5; text-align: center; margin-top:0;">ڕێندەرکردنی ئەڵقە و فیلمی ئەنیمێ بە فۆنتی KurdForest و کارتی شاشەی بەهێز.</p>
+            <p style="font-size: 12px; color:var(--text-muted); line-height: 1.5; text-align: center; margin-top:0;">ڕێندەرکردنی ئەڵقە و فیلمی ئەنیمێ بە فۆنتی KurdForest بە خێرایی باڵا.</p>
 
             <div style="margin-bottom: 10px;">
                 <label style="font-weight: bold; font-size: 12.5px; color: var(--primary); display: block; margin-bottom: 4px;">لینکی سێرڤەر لە Colab:</label>
@@ -965,7 +967,7 @@
                 let timeLineIdx = lines.findIndex(x => x.includes('-->'));
                 if (timeLineIdx !== -1) {
                     let t = lines[timeLineIdx].split('-->');
-                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim() : '0';
+                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim().split(' ')[0] : '0';
                     let textLines = lines.slice(timeLineIdx + 1);
                     let rawText = textLines.join('\n');
                     let pl = extLines(rawText.replace(/\n/g, '\\N'));
