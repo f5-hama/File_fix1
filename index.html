@@ -53,7 +53,7 @@
         #progress-container { width: 100%; height: 6px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
         #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
-        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
         .toast.show { opacity: 1; transform: translateY(0); }
         .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
         #login-screen { display: flex; } #setup-screen { display: none; }
@@ -192,15 +192,15 @@
         <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی Hardsub بە سیستەمی ئۆتۆماتیکی پاشەکەوتکردنی کلیل -->
+    <!-- مۆداڵی Hardsub بە دەقەژمێر و ژمێریاری مێگابایت -->
     <div id="hardsub-modal" class="custom-modal-overlay">
         <div class="custom-modal-content" style="max-width: 460px; text-align: right;" dir="rtl">
             <h3 class="custom-modal-title" style="text-align: center;">چەسپاندنی ژێرنووس (Hardsub)</h3>
-            <p style="font-size: 13px; color:var(--text-muted); line-height: 1.6; text-align: center; margin-top:0;">ڕێندەرکردنی ئەنیمێ بە خێرایی باڵا و فۆنتی KurdForest بە کارتی شاشەی بەهێز.</p>
+            <p style="font-size: 13px; color:var(--text-muted); line-height: 1.6; text-align: center; margin-top:0;">ڕێندەرکردنی ئەڵقە و فیلمی ئەنیمێ بە خێرایی باڵا و فۆنتی KurdForest.</p>
 
             <div style="margin-bottom: 12px;">
-                <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 5px;">لینکی سێرڤەری تایبەتی خۆت لە Colab:</label>
-                <input type="text" id="hardsubServerUrl" class="input-field" placeholder="https://xxxx.trycloudflare.com" style="padding: 10px; font-size: 13px; text-align: left;" dir="ltr">
+                <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 5px;">لینکی سێرڤەر لە Colab (بە Pinggy دیارە):</label>
+                <input type="text" id="hardsubServerUrl" class="input-field" placeholder="https://xxxx.free.pinggy.link" style="padding: 10px; font-size: 13px; text-align: left;" dir="ltr">
             </div>
 
             <div class="file-box" style="padding: 14px; margin-bottom: 10px;">
@@ -221,7 +221,17 @@
                 <input type="file" id="hardsubLogoFile" accept="image/png" onchange="updateHardsubFileName(this, 'hardsubLogoName')">
             </div>
 
-            <div id="hardsub-status" style="font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 12px;"></div>
+            <!-- بەشی دەقەژمێر و مێگابایت لە کاتی کارکردندا -->
+            <div id="hardsub-progress-box" style="display: none; background: var(--bg-color); border-radius: 12px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); text-align: center;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; color: var(--primary);">
+                    <span id="hardsub-mb-status">0 MB / 0 MB</span>
+                    <span id="hardsub-timer">⏱️ 00:00</span>
+                </div>
+                <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 999px; overflow: hidden; margin-bottom: 6px;">
+                    <div id="hardsub-upload-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34e89e, #10b981); transition: width 0.2s;"></div>
+                </div>
+                <div id="hardsub-status-text" style="font-size: 12.5px; font-weight: bold; color: var(--text-muted);">ئامادەکاری دەکرێت...</div>
+            </div>
 
             <div class="custom-modal-actions">
                 <button class="btn" id="startHardsubBtn" onclick="executeHardsubProcess()" style="width: 50%;">دەستپێکردنی ڕێندەر</button>
@@ -1028,8 +1038,11 @@
         }
 
         // ==========================================
-        // بەشی Hardsub بە بەستنەوەی جێگیر و پاشەکەوتکردنی کلیل
+        // بەشی Hardsub بە دەقەژمێر و ژمێریاری مێگابایت (XHR Streaming)
         // ==========================================
+        let timerInterval = null;
+        let startTimestamp = 0;
+
         function openHardsubModal() {
             document.getElementById('hardsub-modal').style.display = 'flex';
             const saved = localStorage.getItem('kf_hardsub_url');
@@ -1040,6 +1053,7 @@
 
         function closeHardsubModal() {
             document.getElementById('hardsub-modal').style.display = 'none';
+            if (timerInterval) clearInterval(timerInterval);
         }
 
         function updateHardsubFileName(input, displayId) {
@@ -1053,16 +1067,21 @@
             }
         }
 
-        async function executeHardsubProcess() {
+        function executeHardsubProcess() {
             let serverUrl = document.getElementById('hardsubServerUrl').value.trim();
             const vFile = document.getElementById('hardsubVideoFile').files[0];
             const sFile = document.getElementById('hardsubSubFile').files[0];
             const lFile = document.getElementById('hardsubLogoFile').files[0];
-            const statusDiv = document.getElementById('hardsub-status');
+            
+            const pBox = document.getElementById('hardsub-progress-box');
+            const mbStatus = document.getElementById('hardsub-mb-status');
+            const timerEl = document.getElementById('hardsub-timer');
+            const uBar = document.getElementById('hardsub-upload-bar');
+            const sText = document.getElementById('hardsub-status-text');
             const btn = document.getElementById('startHardsubBtn');
 
             if (!serverUrl) {
-                showToast("تکایە سەرەتا لینکی کۆلاب لە خانەکە دابنێ!", "error");
+                showToast("تکایە سەرەتا لینکی سێرڤەری Pinggy بنووسە!", "error");
                 return;
             }
             if (!vFile || !sFile) {
@@ -1073,39 +1092,75 @@
             if (serverUrl.endsWith('/')) serverUrl = serverUrl.slice(0, -1);
             localStorage.setItem('kf_hardsub_url', serverUrl);
 
+            // ئامادەکاری دەقەژمێر و مێگابایت
             btn.disabled = true;
-            statusDiv.innerText = "فایلەکان دەنێردرێن و پڕۆسەی ڕێندەر دەستی پێکرد (تکایە چاوەڕێبە)...";
-            statusDiv.style.color = "var(--primary)";
+            pBox.style.display = 'block';
+            uBar.style.width = '0%';
+            sText.innerText = "پەیوەستبوون بە سێرڤەر و دەستپێکردنی ناردنی فایلەکان...";
+            sText.style.color = "var(--primary)";
+            
+            startTimestamp = Date.now();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const elapsedSec = Math.floor((Date.now() - startTimestamp) / 1000);
+                const m = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+                const s = String(elapsedSec % 60).padStart(2, '0');
+                timerEl.innerText = `⏱️ ${m}:${s}`;
+            }, 1000);
 
-            try {
-                const formData = new FormData();
-                formData.append('video', vFile);
-                formData.append('subtitle', sFile);
-                if (lFile) formData.append('logo', lFile);
+            const formData = new FormData();
+            formData.append('video', vFile);
+            formData.append('subtitle', sFile);
+            if (lFile) formData.append('logo', lFile);
 
-                const response = await fetch(`${serverUrl}/hardsub`, {
-                    method: 'POST',
-                    body: formData
-                });
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `${serverUrl}/hardsub`, true);
+            xhr.responseType = 'blob';
 
-                if (!response.ok) throw new Error("هەڵەیەک لە سێرڤەر ڕوویدا");
+            // ژمێریاری ڕاستەوخۆی مێگابایت و ڕێژەی بارکردن
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    const loadedMB = (event.loaded / (1024 * 1024)).toFixed(1);
+                    const totalMB = (event.total / (1024 * 1024)).toFixed(1);
+                    const percent = Math.round((event.loaded / event.total) * 100);
 
-                statusDiv.innerText = "ڕێندەر بە سەرکەوتوویی تەواو بوو! فایلی ڤیدیۆکە دادەبەزێت...";
-                statusDiv.style.color = "var(--success)";
+                    uBar.style.width = percent + '%';
+                    mbStatus.innerText = `${loadedMB} MB / ${totalMB} MB (${percent}%)`;
+                    sText.innerText = `ناردنی ڤیدیۆ بۆ سێرڤەر... ${percent}%`;
+                }
+            };
 
-                const blob = await response.blob();
-                const outName = "Hardsub_" + vFile.name.replace(/\.[^/.]+$/, "") + ".mp4";
-                triggerDownload(blob, outName, 'video/mp4');
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    clearInterval(timerInterval);
+                    uBar.style.width = '100%';
+                    sText.innerText = "ڕێندەر بە سەرکەوتوویی تەواو بوو! فایلی ڤیدیۆکە دادەبەزێت...";
+                    sText.style.color = "var(--success)";
 
-                showToast("ڤیدیۆ چەسپێنراوەکە بە سەرکەوتوویی ئامادە کرا!", "success");
-            } catch (err) {
-                console.error(err);
-                statusDiv.innerText = "پەیوەندی دروست نەبوو! دڵنیابە لە دروستی لینکەکە و کارکردنی Colab.";
-                statusDiv.style.color = "#ef4444";
-                showToast("هەڵەیەک ڕوویدا لە کاتی ڕێندەرکردندا", "error");
-            } finally {
+                    const blob = xhr.response;
+                    const outName = "Hardsub_" + vFile.name.replace(/\.[^/.]+$/, "") + ".mp4";
+                    triggerDownload(blob, outName, 'video/mp4');
+
+                    showToast("ڤیدیۆ چەسپێنراوەکە بە سەرکەوتوویی ئامادە کرا!", "success");
+                } else {
+                    handleError();
+                }
                 btn.disabled = false;
+            };
+
+            xhr.onerror = () => {
+                handleError();
+                btn.disabled = false;
+            };
+
+            function handleError() {
+                if (timerInterval) clearInterval(timerInterval);
+                sText.innerText = "پەیوەندی دروست نەبوو! دڵنیابە لە دروستی لینکەکە و کارکردنی Colab.";
+                sText.style.color = "#ef4444";
+                showToast("هەڵەیەک ڕوویدا لە کاتی ڕێندەرکردندا", "error");
             }
+
+            xhr.send(formData);
         }
 
         function downloadEditedFile() {
