@@ -4,6 +4,7 @@ const urlsToCache = [
     './',
     './index.html',
     './fonts.css'
+    './KurdForest.ttf'
 ];
 
 self.addEventListener('install', (event) => {
