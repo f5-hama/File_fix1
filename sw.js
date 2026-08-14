@@ -1,10 +1,10 @@
-const CACHE_NAME = 'subedit-cache-v4'; // گۆڕین بۆ ڤێرژنی v4 بۆ چالاککردنی نوێکارییەکان
+const CACHE_NAME = 'subedit-cache-v4';
 
 const urlsToCache = [
     './',
     './index.html',
-    './fonts.css'
-    './KurdForest.ttf'
+    './fonts.css',
+    './KurdForest.ttf',
     './app.js'
 ];
 
