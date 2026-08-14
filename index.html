@@ -486,6 +486,7 @@
         </div>
     </div>
 
+    <!-- مۆداڵی AI بە جێگیرکردنی مۆدێلی Gemini 3.1 Pro -->
     <div id="ai-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="aiTitle">دانانی وەرگێڕانی AI</h3>
@@ -493,10 +494,21 @@
                 <button class="btn btn-outline" style="padding: 10px; font-size: 13px;" onclick="copyForAI()"><span data-i18n="aiCopy">کۆپی ئەسڵی</span></button>
                 <button class="btn btn-outline" style="padding: 10px; font-size: 13px;" onclick="pasteFromClipboard()"><span data-i18n="aiPaste">پەیست بکە</span></button>
             </div>
-            <textarea id="ai-paste-area" style="width:100%; height:180px; padding:12px; border-radius:10px; border:2px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:15px; outline:none; resize:none; margin-bottom:5px; font-family: inherit;" dir="rtl"></textarea>
-            <div class="custom-modal-actions">
-                <button class="btn" onclick="processAIPaste()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
-                <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
+            <textarea id="ai-paste-area" style="width:100%; height:110px; padding:12px; border-radius:10px; border:2px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:15px; outline:none; resize:none; margin-bottom:5px; font-family: inherit;" dir="rtl"></textarea>
+            
+            <div style="margin-top: 15px; border-top: 1px dashed var(--border-color); padding-top: 15px; text-align: right;" dir="rtl">
+                <label style="font-weight: bold; font-size: 14px; color: var(--primary); display: block; margin-bottom: 8px;">وەرگێڕانی خودکار بە Gemini 3.1 Pro:</label>
+                <input type="password" id="ai-api-key" class="input-field" placeholder="کلیلەکەت بنووسە Google API Key (AI Studio)" style="margin-bottom: 10px; padding: 12px; font-size: 14px; text-align: left;" dir="ltr">
+                
+                <button class="btn" id="start-ai-btn" onclick="startAutoTranslation()">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    دەستپێکردنی وەرگێڕانی خودکار
+                </button>
+                <div id="ai-status" style="margin-top: 10px; font-size: 13px; color: var(--text-muted); font-weight: bold; text-align: center;"></div>
+            </div>
+
+            <div class="custom-modal-actions" style="margin-top: 15px;">
+                <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" style="width: 100%;" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
     </div>
@@ -513,7 +525,6 @@
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
         
-        // جێبەجێکردنی خزمەتگوزاری بێ ئینتەرنێت (Service Worker) بە سکۆپی دروست بۆ GitHub Pages
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js', { scope: './' }).then(reg => {
@@ -921,7 +932,7 @@
             currentFileName = fOrig.name; isAssFormat = fOrig.name.toLowerCase().endsWith('.ass'); isVttFormat = fOrig.name.toLowerCase().endsWith('.vtt'); 
             
             originalData = isAssFormat ? parseASSContent(await fOrig.text(), true) : (isVttFormat ? parseVTTContent(await fOrig.text()) : parseSRTContent(await fOrig.text()));
-            let kurdData = fKurd ? (fKurd.name.toLowerCase().endsWith('.ass') ? parseASSContent(await fKurd.text(), false) : (fKurd.name.toLowerCase().endsWith('.vtt') ? parseVTTContent(await fKurd.text()) : parseSRTContent(await fKurd.text()))) : [];
+            let kurdData = fKurd ? (fKurd.name.toLowerCase().endsWith('.ass') ? parseASSContent(await fKurd.text(), false) : (fKurd.name.toLowerCase().endsWith('.vtt') ? parseVTTContent(await fKurd.text()))) : [];
 
             let state = originalData.map((orig, i) => {
                 return kurdData[i] ? kurdData[i].text : '';
@@ -1019,6 +1030,123 @@
                 if(card) card.querySelector('textarea').value = m[2].trim();
             }
             document.getElementById('ai-modal').style.display = 'none'; updateProgress(); saveSession();
+        }
+
+        // فەنکشنی دەستپێکردنی پرۆسەی وەرگێڕانی خودکار بە بەکارهێنانی API لەسەر مۆدێلی Gemini 3.1 Pro
+        async function startAutoTranslation() {
+            const apiKey = document.getElementById('ai-api-key').value.trim();
+            if (!apiKey) {
+                showToast("تکایە سەرەتا Google API Key بنووسە!", "error");
+                return;
+            }
+
+            const statusDiv = document.getElementById('ai-status');
+            const startBtn = document.getElementById('start-ai-btn');
+            
+            startBtn.disabled = true;
+            statusDiv.innerText = "ئامادەکاری دەکرێت...";
+
+            const batchSize = 25; // کەمکردنەوە بۆ ٢٥ دێڕ بۆ ئەوەی ڕێسا ئاڵۆزەکان بە تەواوی و وردی جێبەجێ ببن
+            const total = originalData.length;
+            
+            try {
+                for (let i = 0; i < total; i += batchSize) {
+                    const batch = originalData.slice(i, i + batchSize);
+                    statusDiv.innerText = `وەرگێڕانی دێڕەکانی ${i + 1} تا ${Math.min(i + batchSize, total)} لە کۆی ${total}...`;
+
+                    let textToTranslate = batch.map((x, idx) => `[${i + idx + 1}] ${x.text.replace(/\n/g, ' ')}`).join('\n');
+
+                    // ناردنی بۆ سێرڤەری گۆگڵ بە مۆدێلی بەهێزی Gemini 3.1 Pro
+                    const responseText = await callGeminiAPI(textToTranslate, apiKey);
+                    
+                    parseAndFillAIResult(responseText);
+                    
+                    updateProgress();
+                    saveSession();
+                    
+                    await new Promise(r => setTimeout(r, 600)); // وەستانێکی کورت بۆ ئاسانکاری پرۆسەکە
+                }
+                
+                statusDiv.innerText = "وەرگێڕان بە سەرکەوتوویی تەواو بوو!";
+                statusDiv.style.color = "var(--success)";
+                showToast("وەرگێڕانی خودکار تەواو بوو!", "success");
+            } catch (error) {
+                console.error(error);
+                statusDiv.innerText = "هەڵەیەک لە کاتی پەیوەندیکردن بە سێرڤەر ڕوویدا.";
+                statusDiv.style.color = "#ef4444";
+                showToast("هەڵەیەک ڕوویدا!", "error");
+            } finally {
+                startBtn.disabled = false;
+            }
+        }
+
+        // پەیوەندی ڕاستەوخۆ بە API بەبێ هیچ جۆرە پێوەکراوەیەکی دەرەکی تێکچوو
+        async function callGeminiAPI(text, apiKey) {
+            // بەکارهێنانی مۆدێلی Gemini 3.1 Pro بۆ جێبەجێکردنی وردترین ڕێسا بە سەرکەوتوویی
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro:generateContent?key=${apiKey}`;
+            
+            // داڕشتنی سیستەمی ڕێنماییەکان بە زمانی ئینگلیزییەکی تەواو ورد بۆ مۆدێلەکە
+            const systemInstruction = `You are a professional subtitle translator translating to Kurdish Sorani. Ensure natural, meaning-based translation rather than word-for-word translation. Think deeply and twice to ensure absolute Kurdish translation quality.
+
+Strict Formatting Rules:
+1. Character names must be enclosed in parentheses, e.g., (Luffy).
+2. Country, city, and village names must be enclosed in double quotes, e.g., "Tokyo".
+3. Honorific Suffixes (like -san, -chan, -kun) must be attached outside the parentheses, e.g., (Luffy)-san.
+4. If Kurdish vowel suffixes follow a name or place, attach them using a filler 'ـ' directly after the closed punctuation, e.g., ئەوە (لوفی)ـیە or ئەمە "تۆکیۆ" ـیە.
+5. Translate idioms, expressions or proverbs to their closest natural Kurdish equivalent meaning.
+6. Remove emotional/interjection filler words (like "Ah", "Oh", "Ugh", "Ahhh", "ئاخ", "ئۆف", "ئۆهـ") unless they are crucial to the actual sentence meaning.
+7. If a sentence requires an explanatory note, add it on a new line below the translation, enclosed in parentheses and colored yellow using HTML font tags: <font color="#ffff00">(تێبینی: [note])</font>.
+8. Convert LTR text style to RTL.
+9. If "you two" or "you three" is mentioned, translate as "ئەو دووانەتان" or "ئەو سیانەتان".
+10. Remove single trailing periods (.) from the end of subtitles. However, preserve ellipses (...), commas (، or ,), exclamation marks (!), and question marks (؟ or ?) exactly as they appear in the source.
+11. Output format MUST strictly be: [Number] Translated Text. Do not output anything else.`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            parts: [
+                                { text: text }
+                            ]
+                        }
+                    ],
+                    systemInstruction: {
+                        parts: [
+                            { text: systemInstruction }
+                        ]
+                    },
+                    generationConfig: {
+                        temperature: 0.2 // کەمکردنەوەی بەها بۆ ئەوەی ڕێسا زمانەوانییەکان تێک نەچن
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error?.message || "Failed to fetch from Gemini API");
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        function parseAndFillAIResult(translatedText) {
+            let m;
+            let regex = /\[(\d+)\]\s*([\s\S]*?)(?=\n\s*\[\d+\]|$)/g;
+            while((m = regex.exec(translatedText)) !== null) {
+                const index = parseInt(m[1]) - 1;
+                const card = document.querySelector(`.subtitle-card[data-index="${index}"]`);
+                if(card) {
+                    const textarea = card.querySelector('textarea');
+                    textarea.value = m[2].trim();
+                    textarea.style.height = 'auto';
+                    textarea.style.height = textarea.scrollHeight + 'px';
+                }
+            }
         }
 
         function downloadEditedFile() {
