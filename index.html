@@ -35,47 +35,32 @@
         }
         body.dark-theme.startup-bg { background: linear-gradient(-45deg, #0d120f, #151f18, #0f1712, #1a261d); }
         body.dark-theme .glass-card { background: rgba(26, 32, 28, 0.85); border: 1px solid rgba(104, 211, 145, 0.2); }
+        body.dark-theme .input-field { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--border-color); background: rgba(255, 255, 255, 0.9); font-size: 13px; color: var(--text-main); outline: none; transition: 0.2s; }
         body.dark-theme .input-field { background: rgba(18, 22, 20, 0.9); color: #f1f5f9; border-color: #26332a; }
-        body.dark-theme .file-box { background: rgba(30, 41, 59, 0.2); border-color: #2d3748; }
-        body.dark-theme .file-box:hover, body.dark-theme .file-box.has-file { background: rgba(104, 211, 145, 0.1); border-color: var(--primary); }
-        body.dark-theme .subtitle-orig { background: #202823; color: #cbd5e1; border-color: var(--primary); }
-        body.dark-theme .subtitle-header { background: #151a17; border-color: #26332a; }
-        body.dark-theme .subtitle-kurd textarea { background: #121614; color: #f8fafc; border-color: #26332a; }
-        body.dark-theme .action-bar, body.dark-theme .sticky-header-container { background: rgba(20, 26, 22, 0.98); border-color: #26332a; }
-        body.dark-theme .custom-modal-content { background: #1a201c; border-color: #26332a; }
-        body.dark-theme .top-btn, body.dark-theme .back-btn { background: #1e2621; color: #cbd5e1; border-color: #314237; }
-        body.dark-theme .top-btn:hover { background: #26332a; color: var(--primary); }
-        body.dark-theme .btn:not(.btn-outline) { background: linear-gradient(135deg, #2f855a 0%, #1c4532 100%); color: #fff; }
-        body.dark-theme .btn-outline { background: rgba(104, 211, 145, 0.05); color: var(--primary); border: 1.5px solid var(--primary); }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        #progress-container { width: 100%; height: 6px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
-        #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
-        #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
-        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
-        #login-screen { display: flex; } #setup-screen { display: none; }
-        .input-field { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid rgba(142, 182, 155, 0.4); background: rgba(255, 255, 255, 0.9); font-size: 16px; color: var(--text-main); outline: none; transition: 0.3s; text-align: center; }
+        .input-field:focus { border-color: var(--primary); }
         .file-box { position: relative; padding: 25px 15px; border: 2px dashed #b5d1c0; border-radius: 14px; background: rgba(242, 247, 244, 0.7); transition: all 0.3s ease; text-align: center; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        body.dark-theme .file-box { background: rgba(30, 41, 59, 0.2); border-color: #2d3748; }
         .file-box:hover, .file-box.has-file { border-color: var(--primary); background: rgba(142, 182, 155, 0.1); }
         .file-box input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
         .file-box .upload-icon { color: var(--primary); margin-bottom: 8px; }
-        .file-box label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 5px !important; font-size: 14.5px; pointer-events: none; }
-        .file-name-display { font-size: 13px; color: var(--text-muted); font-weight: bold; pointer-events: none; word-break: break-all; }
+        .file-box label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 5px !important; font-size: 14px; pointer-events: none; }
+        .file-name-display { font-size: 12.5px; color: var(--text-muted); font-weight: bold; pointer-events: none; word-break: break-all; }
         .clear-file-btn { position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
         html[dir="ltr"] .clear-file-btn { right: auto; left: 10px; }
-        .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.3s; gap: 8px; box-shadow: 0 6px 15px rgba(124, 161, 136, 0.4); }
+        .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: white; border: none; border-radius: 12px; font-size: 14.5px; font-weight: bold; cursor: pointer; transition: all 0.3s; gap: 8px; box-shadow: 0 6px 15px rgba(124, 161, 136, 0.4); }
+        body.dark-theme .btn:not(.btn-outline) { background: linear-gradient(135deg, #2f855a 0%, #1c4532 100%); color: #fff; }
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); box-shadow: none; }
+        body.dark-theme .btn-outline { background: rgba(104, 211, 145, 0.05); color: var(--primary); border: 1.5px solid var(--primary); }
         .fmt-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); padding: 10px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .fmt-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .icon { width: 20px; height: 20px; flex-shrink: 0; }
         #editor-screen { display: none; max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 150px; animation: fadeIn 0.5s ease; }
         .sticky-header-container { position: sticky; top: 0; z-index: 50; background: var(--card-bg); backdrop-filter: blur(10px); margin: -15px -15px 15px -15px; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
+        body.dark-theme .action-bar, body.dark-theme .sticky-header-container { background: rgba(20, 26, 22, 0.98); border-color: #26332a; }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; gap: 10px; border-bottom: 1px dashed var(--border-color); }
         .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 10px 15px; flex-wrap: wrap; }
         .top-btn, .back-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 8px 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; gap: 4px; }
+        body.dark-theme .top-btn, body.dark-theme .back-btn { background: #1e2621; color: #cbd5e1; border-color: #314237; }
         html[dir="ltr"] .back-btn svg { transform: rotate(180deg); }
         .floating-search-bar { display: none; position: fixed; bottom: 135px; left: 15px; right: 15px; background: var(--card-bg); backdrop-filter: blur(15px); padding: 12px; border-radius: 14px; box-shadow: 0 -4px 25px rgba(0,0,0,0.15); border: 1px solid var(--primary); z-index: 150; }
         .search-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
@@ -88,20 +73,25 @@
         #preview-video { width: 100%; max-height: 250px; display: block; }
         #video-subtitle-overlay { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 16px; font-weight: bold; pointer-events: none; padding: 0 10%; line-height: 1.5; direction: rtl; }
         .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); }
+        body.dark-theme .subtitle-card { background: var(--card-bg); border-color: #26332a; }
         .subtitle-card.active-sub { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
         .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; border-bottom: 1px dashed var(--border-color); }
+        body.dark-theme .subtitle-header { background: #151a17; border-color: #26332a; }
         .subtitle-line-num { font-size: 15px; font-weight: bold; color: var(--primary); direction: ltr; }
         .subtitle-time { font-size: 13px; color: var(--text-muted); direction: ltr; }
         .subtitle-orig { background: var(--bg-color); padding: 14px; border-radius: 10px; margin-bottom: 14px; font-size: 15px; color: var(--text-main); border-right: 4px solid var(--primary); line-height: 1.6; direction: auto; unicode-bidi: plaintext; text-align: start; }
+        body.dark-theme .subtitle-orig { background: #202823; color: #cbd5e1; border-color: var(--primary); }
         html[dir="ltr"] .subtitle-orig { border-right: none; border-left: 4px solid var(--primary); }
         .subtitle-kurd textarea { width: 100%; min-height: 85px; padding: 14px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 16px; line-height: 1.6; resize: vertical; outline: none; direction: auto; unicode-bidi: plaintext; text-align: start; }
+        body.dark-theme .subtitle-kurd textarea { background: #121614; color: #f8fafc; border-color: #26332a; }
         .subtitle-kurd textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(142, 182, 155, 0.15); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 16px 16px 0 0; }
         .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.8); backdrop-filter: blur(5px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .custom-modal-content { background: var(--card-bg); padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
-        .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 18px; }
-        .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        .custom-modal-content { background: var(--card-bg); padding: 22px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
+        body.dark-theme .custom-modal-content { background: #1a201c; border-color: #26332a; }
+        .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 17px; }
+        .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
         .custom-select-wrapper { position: relative; display: inline-block; }
         .custom-select-btn { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 13px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .custom-select-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 5px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow-md); z-index: 1000; min-width: 100px; overflow: hidden; }
@@ -113,6 +103,9 @@
         #install-app-btn { display: none; align-items: center; justify-content: center; gap: 7px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(142, 182, 155, 0.55); background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; font-size: 13px; font-weight: bold; cursor: pointer; }
         .install-sheet { max-width: 380px; padding: 26px 22px 22px; border-radius: 22px; }
         .install-sheet-icon { width: 62px; height: 62px; margin: 0 auto 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
+        #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
+        .toast.show { opacity: 1; transform: translateY(0); }
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
             .floating-search-bar { left: 50%; transform: translateX(-50%); max-width: 600px; bottom: 85px; }
@@ -192,81 +185,136 @@
         <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی Hardsub بە بەشی زانیاری و مافی ئەنیمێ و هەڵبژاردنی ڕەنگ -->
+    <!-- مۆداڵی Hardsub بە ئایکۆنی مۆنتاژی نوێ و بەشەکانی ئەنیمێ بە جیا -->
     <div id="hardsub-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 480px; text-align: right; max-height: 90vh; overflow-y: auto;" dir="rtl">
-            <h3 class="custom-modal-title" style="text-align: center; margin-bottom: 6px;">چەسپاندنی ژێرنووس (Hardsub)</h3>
-            <p style="font-size: 12.5px; color:var(--text-muted); line-height: 1.6; text-align: center; margin-top:0;">ڕێندەرکردنی ئەڵقە و فیلمی ئەنیمێ بە خێرایی باڵا و فۆنتی KurdForest.</p>
+        <div class="custom-modal-content" style="max-width: 500px; text-align: right; max-height: 90vh; overflow-y: auto;" dir="rtl">
+            <h3 class="custom-modal-title" style="text-align: center; margin-bottom: 4px;">چەسپاندنی ژێرنووس (Hardsub)</h3>
+            <p style="font-size: 12px; color:var(--text-muted); line-height: 1.5; text-align: center; margin-top:0;">ڕێندەرکردنی ئەڵقە و فیلمی ئەنیمێ بە فۆنتی KurdForest و کارتی شاشەی بەهێز.</p>
 
             <div style="margin-bottom: 10px;">
-                <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 4px;">لینکی سێرڤەر لە Colab:</label>
-                <input type="text" id="hardsubServerUrl" class="input-field" placeholder="https://xxxx.trycloudflare.com" style="padding: 10px; font-size: 13px; text-align: left;" dir="ltr">
+                <label style="font-weight: bold; font-size: 12.5px; color: var(--primary); display: block; margin-bottom: 4px;">لینکی سێرڤەر لە Colab:</label>
+                <input type="text" id="hardsubServerUrl" class="input-field" placeholder="https://xxxx.trycloudflare.com" style="padding: 9px; font-size: 13px; text-align: left;" dir="ltr">
             </div>
 
-            <!-- بەشی نوێی زانیاری و مافی ئەنیمێ لە سەرەتای ڤیدیۆ (8 خانە) -->
-            <div style="border: 1px dashed var(--primary); border-radius: 12px; padding: 10px; margin-bottom: 12px; background: rgba(142, 182, 155, 0.05);">
+            <!-- بەشی زانیاری و مافی ئەنیمێ (٤ قۆناغ بە ٦ چرکە) -->
+            <div style="border: 1.5px dashed var(--primary); border-radius: 12px; padding: 10px; margin-bottom: 10px; background: rgba(142, 182, 155, 0.06);">
                 <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-size: 12.5px; font-weight: bold; color: var(--primary);">🎬 ماف و زانیاری ئەنیمێ (سەرەتای ڤیدیۆ)</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <!-- ئایکۆنی پڕۆفێشناڵی مۆنتاژ و فیلم (SVG) -->
+                        <svg style="width:20px;height:20px;color:var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg>
+                        <span style="font-size: 12.5px; font-weight: bold; color: var(--primary);">مافەکانی سەرەتای ئەنیمێ (٤ قۆناغ - بە ٦ چرکە)</span>
+                    </div>
                     <input type="checkbox" id="enableCreditsCheckbox" checked onchange="toggleCreditsInputs()" style="width:16px; height:16px; accent-color: var(--primary); cursor: pointer;">
                 </div>
                 
                 <div id="creditsInputsContainer">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-                        <input type="text" id="cr_anime_kurd" class="input-field" placeholder="ناوی ئەنیمێ (کوردی)" style="padding: 8px; font-size: 12px;">
-                        <input type="text" id="cr_anime_eng" class="input-field" placeholder="ناوی ئەنیمێ (ئینگلیزی)" style="padding: 8px; font-size: 12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:6px; border-bottom:1px dashed var(--border-color);">
+                        <label style="font-size: 12px; font-weight: bold; color: var(--text-main);">قەبارەی فۆنتی مافەکان:</label>
+                        <input type="number" id="cr_font_size" class="input-field" value="24" style="width: 70px; padding: 4px 8px; text-align: center;">
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-                        <input type="text" id="cr_season" class="input-field" placeholder="وەرز (بۆ نموونە: ١)" style="padding: 8px; font-size: 12px;">
-                        <input type="text" id="cr_episode" class="input-field" placeholder="ئەڵقە (بۆ نموونە: ٠٢)" style="padding: 8px; font-size: 12px;">
+
+                    <!-- قۆناغی ١ -->
+                    <div style="margin-bottom: 8px; background: rgba(0,0,0,0.03); padding: 6px; border-radius: 8px;">
+                        <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 4px;">• قۆناغی ١ (٠ تا ٦ چرکە): ناوی ئەنیمێ</span>
+                        <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                            <input type="text" id="cr_p1_l1" class="input-field" placeholder="دێڕی ١ (بۆ نموونە: زنجیرەی ژێرنووسکراوی کوردی)" style="font-size: 11.5px; padding: 6px;">
+                            <input type="color" id="cr_p1_l1_clr" value="#FFFF00" style="border:none; width:30px; height:30px; cursor:pointer; background:none;">
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <input type="text" id="cr_p1_l2" class="input-field" placeholder="دێڕی ٢ (بۆ نموونە: Tomb Raider King)" style="font-size: 11.5px; padding: 6px;">
+                            <input type="color" id="cr_p1_l2_clr" value="#FFFFFF" style="border:none; width:30px; height:30px; cursor:pointer; background:none;">
+                        </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-                        <input type="text" id="cr_translator" class="input-field" placeholder="وەرگێڕان (ناوی خۆت)" style="padding: 8px; font-size: 12px;">
-                        <input type="text" id="cr_proofreader" class="input-field" placeholder="پێداچوونەوە" style="padding: 8px; font-size: 12px;">
+
+                    <!-- قۆناغی ٢ -->
+                    <div style="margin-bottom: 8px; background: rgba(0,0,0,0.03); padding: 6px; border-radius: 8px;">
+                        <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 4px;">• قۆناغی ٢ (٦ تا ١٢ چرکە): ماڵپەڕ و ئەڵقە</span>
+                        <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                            <input type="text" id="cr_p2_l1" class="input-field" placeholder="دێڕی ١ (بۆ نموونە: بەرهەمی ماڵپەڕی کورد فۆڕێست)" style="font-size: 11.5px; padding: 6px;">
+                            <input type="color" id="cr_p2_l1_clr" value="#10B981" style="border:none; width:30px; height:30px; cursor:pointer; background:none;">
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <input type="text" id="cr_p2_l2" class="input-field" placeholder="دێڕی ٢ (بۆ نموونە: وەرزی یەکەم - ئەڵقەی ٠٢)" style="font-size: 11.5px; padding: 6px;">
+                            <input type="color" id="cr_p2_l2_clr" value="#FFFF00" style="border:none; width:30px; height:30px; cursor:pointer; background:none;">
+                        </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-                        <input type="text" id="cr_encoder" class="input-field" placeholder="تەکنیک و مۆنتاژ" style="padding: 8px; font-size: 12px;">
-                        <input type="text" id="cr_channel" class="input-field" placeholder="ماڵپەڕ / کەناڵ (KurdForest)" style="padding: 8px; font-size: 12px;">
+
+                    <!-- قۆناغی ٣ -->
+                    <div style="margin-bottom: 8px; background: rgba(0,0,0,0.03); padding: 6px; border-radius: 8px;">
+                        <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 4px;">• قۆناغی ٣ (١٢ تا ١٨ چرکە): وەرگێڕان</span>
+                        <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                            <input type="text" id="cr_p3_l1" class="input-field" placeholder="دێڕی ١ (بۆ نموونە: وەرگێڕان)" style="font-size: 11.5px; padding: 6px;">
+                            <input type="color" id="cr_p3_l1_clr" value="#FFFF00" style="border:none; width:30px; height:30px; cursor:pointer; background:none;">
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <input type="text" id="cr_p3_l2" class="input-field" placeholder="دێڕی ٢ (بۆ نموونە: محمد عبدالقادر)" style="font-size: 11.5px; padding: 6px;">
+                            <input type="color" id="cr_p3_l2_clr" value="#FFFFFF" style="border:none; width:30px; height:30px; cursor:pointer; background:none;">
+                        </div>
                     </div>
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top: 4px;">
-                        <label style="font-size: 12px; font-weight: bold; color: var(--text-main);">ڕەنگی دەقی مافەکان:</label>
-                        <input type="color" id="creditsColorPicker" value="#FFFF00" style="border:none; width:35px; height:28px; cursor:pointer; background:none;">
+
+                    <!-- قۆناغی ٤ -->
+                    <div style="background: rgba(0,0,0,0.03); padding: 6px; border-radius: 8px;">
+                        <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 4px;">• قۆناغی ٤ (١٨ تا ٢٤ چرکە): تەکنیک و مۆنتاژ</span>
+                        <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                            <input type="text" id="cr_p4_l1" class="input-field" placeholder="دێڕی ١ (بۆ نموونە: تەکنیک و مۆنتاژ)" style="font-size: 11.5px; padding: 6px;">
+                            <input type="color" id="cr_p4_l1_clr" value="#FFFF00" style="border:none; width:30px; height:30px; cursor:pointer; background:none;">
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <input type="text" id="cr_p4_l2" class="input-field" placeholder="دێڕی ٢ (بۆ نموونە: KurdForest)" style="font-size: 11.5px; padding: 6px;">
+                            <input type="color" id="cr_p4_l2_clr" value="#FFFFFF" style="border:none; width:30px; height:30px; cursor:pointer; background:none;">
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="file-box" style="padding: 12px; margin-bottom: 8px;">
+            <!-- بەشی دەستکاریکردنی قەبارە و بەرزی ژێرنووسی SRT و VTT -->
+            <div style="border: 1px dashed var(--border-color); border-radius: 12px; padding: 8px 10px; margin-bottom: 10px; background: var(--bg-color);">
+                <span style="font-size: 12px; font-weight: bold; color: var(--primary); display: block; margin-bottom: 6px;">⚙️ ڕێکخستنی ژێرنووسی (SRT و VTT):</span>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <div>
+                        <label style="font-size: 11px; color: var(--text-muted); display: block;">قەبارەی فۆنت:</label>
+                        <input type="number" id="sub_font_size" class="input-field" value="24" style="padding: 5px; font-size: 12px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; color: var(--text-muted); display: block;">بەرزی لە خوارەوە (Margin V):</label>
+                        <input type="number" id="sub_margin_v" class="input-field" value="20" style="padding: 5px; font-size: 12px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="file-box" style="padding: 10px; margin-bottom: 6px;">
                 <label>١. هەڵبژاردنی ڤیدیۆ (MP4 / MKV)</label>
                 <div class="file-name-display" id="hardsubVideoName">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="hardsubVideoFile" accept="video/*" onchange="updateHardsubFileName(this, 'hardsubVideoName')">
             </div>
 
-            <div class="file-box" style="padding: 12px; margin-bottom: 8px;">
+            <div class="file-box" style="padding: 10px; margin-bottom: 6px;">
                 <label>٢. فایلی ژێرنووس (ASS / SRT / VTT)</label>
                 <div class="file-name-display" id="hardsubSubName">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="hardsubSubFile" accept=".ass,.srt,.vtt" onchange="updateHardsubFileName(this, 'hardsubSubName')">
             </div>
 
-            <div class="file-box" style="padding: 12px; margin-bottom: 12px;">
+            <div class="file-box" style="padding: 10px; margin-bottom: 10px;">
                 <label>٣. وێنەی لۆگۆ (PNG - ئارەزوومەندانە)</label>
                 <div class="file-name-display" id="hardsubLogoName">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="hardsubLogoFile" accept="image/png" onchange="updateHardsubFileName(this, 'hardsubLogoName')">
             </div>
 
             <!-- بەشی دەقەژمێر و ژمێریاری مێگابایت -->
-            <div id="hardsub-progress-box" style="display: none; background: var(--bg-color); border-radius: 12px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); text-align: center;">
-                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; color: var(--primary);">
+            <div id="hardsub-progress-box" style="display: none; background: var(--bg-color); border-radius: 12px; padding: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); text-align: center;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: var(--primary);">
                     <span id="hardsub-mb-status">0 MB / 0 MB</span>
                     <span id="hardsub-timer">⏱️ 00:00</span>
                 </div>
-                <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 999px; overflow: hidden; margin-bottom: 6px;">
+                <div style="width: 100%; height: 7px; background: var(--border-color); border-radius: 999px; overflow: hidden; margin-bottom: 4px;">
                     <div id="hardsub-upload-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34e89e, #10b981); transition: width 0.2s;"></div>
                 </div>
-                <div id="hardsub-status-text" style="font-size: 12.5px; font-weight: bold; color: var(--text-muted);">ئامادەکاری دەکرێت...</div>
+                <div id="hardsub-status-text" style="font-size: 11.5px; font-weight: bold; color: var(--text-muted);">ئامادەکاری دەکرێت...</div>
             </div>
 
             <div class="custom-modal-actions">
-                <button class="btn" id="startHardsubBtn" onclick="executeHardsubProcess()" style="width: 50%;">دەستپێکردنی ڕێندەر</button>
-                <button class="btn btn-outline" onclick="closeHardsubModal()" style="width: 50%;">داخستن</button>
+                <button class="btn" id="startHardsubBtn" onclick="executeHardsubProcess()" style="width: 50%; padding: 10px;">دەستپێکردنی ڕێندەر</button>
+                <button class="btn btn-outline" onclick="closeHardsubModal()" style="width: 50%; padding: 10px;">داخستن</button>
             </div>
         </div>
     </div>
@@ -917,7 +965,7 @@
                 let timeLineIdx = lines.findIndex(x => x.includes('-->'));
                 if (timeLineIdx !== -1) {
                     let t = lines[timeLineIdx].split('-->');
-                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim().split(' ')[0] : '0';
+                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim() : '0';
                     let textLines = lines.slice(timeLineIdx + 1);
                     let rawText = textLines.join('\n');
                     let pl = extLines(rawText.replace(/\n/g, '\\N'));
@@ -1069,7 +1117,7 @@
         }
 
         // ==========================================
-        // بەشی Hardsub بە ژمێریاری مێگابایت، دەقەژمێر و مافەکانی ئەنیمێ
+        // بەشی Hardsub بە ژمێریاری مێگابایت، دەقەژمێر و مافە نوێیەکان
         // ==========================================
         let timerInterval = null;
         let startTimestamp = 0;
@@ -1128,21 +1176,38 @@
             if (serverUrl.endsWith('/')) serverUrl = serverUrl.slice(0, -1);
             localStorage.setItem('kf_hardsub_url', serverUrl);
 
-            // کۆکردنەوەی ٨ زانیارییەکەی سەرەتای ئەنیمێ
+            // کۆکردنەوەی ٤ بەشەکەی سەرەتای ئەنیمێ (٨ دێڕ) بە ڕەنگی جیاواز
             let creditsJson = null;
             if (document.getElementById('enableCreditsCheckbox').checked) {
                 creditsJson = JSON.stringify({
-                    anime_kurd: document.getElementById('cr_anime_kurd').value.trim(),
-                    anime_eng: document.getElementById('cr_anime_eng').value.trim(),
-                    season: document.getElementById('cr_season').value.trim(),
-                    episode: document.getElementById('cr_episode').value.trim(),
-                    translator: document.getElementById('cr_translator').value.trim(),
-                    proofreader: document.getElementById('cr_proofreader').value.trim(),
-                    encoder: document.getElementById('cr_encoder').value.trim(),
-                    channel: document.getElementById('cr_channel').value.trim(),
-                    color: document.getElementById('creditsColorPicker').value
+                    fontSize: document.getElementById('cr_font_size').value || 24,
+                    p1_line1: document.getElementById('cr_p1_l1').value.trim(),
+                    p1_line1_color: document.getElementById('cr_p1_l1_clr').value,
+                    p1_line2: document.getElementById('cr_p1_l2').value.trim(),
+                    p1_line2_color: document.getElementById('cr_p1_l2_clr').value,
+                    
+                    p2_line1: document.getElementById('cr_p2_l1').value.trim(),
+                    p2_line1_color: document.getElementById('cr_p2_l1_clr').value,
+                    p2_line2: document.getElementById('cr_p2_l2').value.trim(),
+                    p2_line2_color: document.getElementById('cr_p2_l2_clr').value,
+                    
+                    p3_line1: document.getElementById('cr_p3_l1').value.trim(),
+                    p3_line1_color: document.getElementById('cr_p3_l1_clr').value,
+                    p3_line2: document.getElementById('cr_p3_l2').value.trim(),
+                    p3_line2_color: document.getElementById('cr_p3_l2_clr').value,
+                    
+                    p4_line1: document.getElementById('cr_p4_l1').value.trim(),
+                    p4_line1_color: document.getElementById('cr_p4_l1_clr').value,
+                    p4_line2: document.getElementById('cr_p4_l2').value.trim(),
+                    p4_line2_color: document.getElementById('cr_p4_l2_clr').value
                 });
             }
+
+            // ڕێکخستنی قەبارە و بەرزی بۆ SRT و VTT
+            let subSettingsJson = JSON.stringify({
+                fontSize: document.getElementById('sub_font_size').value || 24,
+                marginV: document.getElementById('sub_margin_v').value || 20
+            });
 
             btn.disabled = true;
             pBox.style.display = 'block';
@@ -1164,6 +1229,7 @@
             formData.append('subtitle', sFile);
             if (lFile) formData.append('logo', lFile);
             if (creditsJson) formData.append('credits_data', creditsJson);
+            formData.append('sub_settings', subSettingsJson);
 
             const xhr = new XMLHttpRequest();
             xhr.open('POST', `${serverUrl}/hardsub`, true);
@@ -1179,7 +1245,7 @@
                     mbStatus.innerText = `${loadedMB} MB / ${totalMB} MB (${percent}%)`;
                     
                     if (percent >= 100) {
-                        sText.innerText = "فایلەکان گەیشتنە سێرڤەر! خەریکی ڕێندەرکردنە لەسەر کارتی شاشە...";
+                        sText.innerText = "فایلەکان گەیشتنە سێرڤەر! خەریکی ڕێندەرکردنە بە کارتی شاشە...";
                     } else {
                         sText.innerText = `ناردنی فایلەکان... ${percent}%`;
                     }
