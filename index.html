@@ -6,19 +6,16 @@
     <meta name="theme-color" content="#8EB69B">
     <title data-i18n="pageTitle">دەستکاریکەری ژێرنووس</title>
     
-    <!-- کۆدی گرنگ بۆ چاککردنی کێشەی ڕێڕەوی گیت‌هەب و Service Worker -->
     <script>
         if (window.location.pathname.slice(-1) !== '/' && !window.location.pathname.endsWith('.html')) {
             window.location.replace(window.location.href + '/');
         }
     </script>
 
-    <!-- هێنانی فۆنتەکە بە ڕێڕەوی دروست لە تەنیشت فایلی index.html -->
     <link rel="stylesheet" href="./fonts.css">
     
     <style>
         body { font-family: 'KurdForest', Tahoma, Arial, sans-serif; }
-
         :root {
             --primary: #8EB69B; 
             --primary-hover: #7ca188; 
@@ -32,18 +29,14 @@
             --shadow-md: 0 4px 15px rgba(0,0,0,0.05);
             --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
         }
-
         * { box-sizing: border-box; font-family: inherit; -webkit-tap-highlight-color: transparent; }
-
         body.startup-bg {
             background: linear-gradient(-45deg, #eaf2ed, #cce0d4, #8eb69b, #d9e8de);
             background-size: 400% 400%;
             animation: gradientBG 12s ease infinite;
             margin: 0; color: var(--text-main); padding: 15px; overflow-x: hidden; min-height: 100vh;
         }
-        
         body.editor-bg { background-color: var(--bg-color); margin: 0; color: var(--text-main); padding: 0; overflow-x: hidden; }
-
         body.dark-theme {
             --bg-color: #121614; 
             --card-bg: #1a201c; 
@@ -53,14 +46,11 @@
             --primary: #68d391;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.5); --shadow-md: 0 4px 15px rgba(0,0,0,0.4); --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
         }
-
         body.dark-theme.startup-bg { background: linear-gradient(-45deg, #0d120f, #151f18, #0f1712, #1a261d); }
         body.dark-theme .glass-card { background: rgba(26, 32, 28, 0.85); border: 1px solid rgba(104, 211, 145, 0.2); }
         body.dark-theme .input-field { background: rgba(18, 22, 20, 0.9); color: #f1f5f9; border-color: #26332a; }
-        
         body.dark-theme .file-box { background: rgba(30, 41, 59, 0.2); border-color: #2d3748; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
         body.dark-theme .file-box:hover, body.dark-theme .file-box.has-file { background: rgba(104, 211, 145, 0.1); border-color: var(--primary); }
-        
         body.dark-theme .subtitle-orig { background: #202823; color: #cbd5e1; border-color: var(--primary); }
         body.dark-theme .subtitle-header { background: #151a17; border-color: #26332a; }
         body.dark-theme .subtitle-kurd textarea { background: #121614; color: #f8fafc; border-color: #26332a; }
@@ -69,7 +59,6 @@
         body.dark-theme .custom-modal-content { background: #1a201c; border-color: #26332a; }
         body.dark-theme .top-btn, body.dark-theme .back-btn { background: #1e2621; color: #cbd5e1; border-color: #314237; }
         body.dark-theme .top-btn:hover { background: #26332a; color: var(--primary); }
-        
         body.dark-theme .btn:not(.btn-outline) {
             background: linear-gradient(135deg, #2f855a 0%, #1c4532 100%);
             color: #ffffff;
@@ -79,27 +68,20 @@
             background: linear-gradient(135deg, #38a169 0%, #22543d 100%);
             box-shadow: 0 8px 20px rgba(34, 84, 61, 0.5);
         }
-
         body.dark-theme .btn-outline { background: rgba(104, 211, 145, 0.05); color: var(--primary); border: 1.5px solid var(--primary); }
         body.dark-theme .btn-outline:hover { background: rgba(104, 211, 145, 0.15); }
-
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         #progress-container { width: 100%; height: 6px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
-        
         #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
         .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
         .toast.show { opacity: 1; transform: translateY(0); }
-
         .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
         #login-screen { display: flex; } #setup-screen { display: none; }
-
         .input-field { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid rgba(142, 182, 155, 0.4); background: rgba(255, 255, 255, 0.9); font-size: 16px; color: var(--text-main); outline: none; transition: 0.3s; text-align: center; }
         .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(142, 182, 155, 0.15); }
-
         .file-box { position: relative; padding: 25px 15px; border: 2px dashed #b5d1c0; border-radius: 14px; background: rgba(242, 247, 244, 0.7); transition: all 0.3s ease; text-align: center; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .file-box:hover, .file-box.has-file { border-color: var(--primary); background: rgba(142, 182, 155, 0.1); }
         .file-box input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
@@ -107,33 +89,24 @@
         .file-box:hover .upload-icon { transform: translateY(-3px); opacity: 1; }
         .file-box label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 5px !important; font-size: 14.5px; pointer-events: none; }
         .file-name-display { font-size: 13px; color: var(--text-muted); font-weight: bold; pointer-events: none; word-break: break-all; }
-        
         .clear-file-btn { position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; padding: 0; z-index: 10; }
         html[dir="ltr"] .clear-file-btn { right: auto; left: 10px; }
         .clear-file-btn:hover { background: rgba(239, 68, 68, 0.2); }
-
         .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.3s; gap: 8px; box-shadow: 0 6px 15px rgba(124, 161, 136, 0.4); font-family: inherit; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124, 161, 136, 0.5); }
         .btn:active { transform: scale(0.96); }
-
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); box-shadow: none; }
         .btn-outline:hover { background: rgba(142, 182, 155, 0.1); transform: translateY(-2px); box-shadow: none; }
-
         .fmt-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); padding: 10px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
         .fmt-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(142, 182, 155, 0.4); }
-
         .icon { width: 20px; height: 20px; flex-shrink: 0; position: relative; z-index: 2; }
-        
         #editor-screen { display: none; max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 150px; animation: fadeIn 0.5s ease; }
-        
         .sticky-header-container { position: sticky; top: 0; z-index: 50; background: var(--card-bg); backdrop-filter: blur(10px); margin: -15px -15px 15px -15px; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; gap: 10px; border-bottom: 1px dashed var(--border-color); }
         .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 10px 15px; flex-wrap: wrap; }
-        
         .top-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; font-family: inherit; font-size: 13px; font-weight: bold; gap: 4px; }
         .back-btn { display: flex; align-items: center; gap: 5px; background: var(--bg-color); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; color: var(--text-main); font-family: inherit; font-weight: bold; font-size: 13px; cursor: pointer; white-space: nowrap; }
         html[dir="ltr"] .back-btn svg { transform: rotate(180deg); }
-
         .floating-search-bar { display: none; position: fixed; bottom: 135px; left: 15px; right: 15px; background: var(--card-bg); backdrop-filter: blur(15px); padding: 12px; border-radius: 14px; box-shadow: 0 -4px 25px rgba(0,0,0,0.15); border: 1px solid var(--primary); z-index: 150; animation: slideUpFade 0.3s ease; }
         .search-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
         .search-input-group { flex: 1; position: relative; }
@@ -143,7 +116,6 @@
         .search-btn:hover { border-color: var(--primary); color: var(--primary); }
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px; border-radius: 50%; }
-
         #video-container { 
             display: none; width: 100%; background: #000; border-radius: 14px; overflow: hidden; 
             margin-bottom: 20px; box-shadow: var(--shadow-md); border: 2px solid var(--primary); 
@@ -151,7 +123,6 @@
         }
         #preview-video { width: 100%; max-height: 250px; display: block; }
         #video-subtitle-overlay { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 16px; font-weight: bold; pointer-events: none; padding: 0 10%; line-height: 1.5; direction: rtl; }
-
         .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); scroll-margin-top: 380px; }
         .subtitle-card.active-sub { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
         .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; border-bottom: 1px dashed var(--border-color); }
@@ -162,14 +133,11 @@
         .subtitle-kurd textarea { width: 100%; min-height: 85px; padding: 14px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 16px; line-height: 1.6; resize: vertical; outline: none; font-family: inherit; }
         .subtitle-kurd textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(142, 182, 155, 0.15); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-
         .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 16px 16px 0 0; }
-        
         .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.8); backdrop-filter: blur(5px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease; }
         .custom-modal-content { background: var(--card-bg); padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
         .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 18px; }
         .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
-
         .custom-select-wrapper { position: relative; display: inline-block; }
         .custom-select-btn { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 13px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .custom-select-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 5px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow-md); z-index: 1000; min-width: 100px; overflow: hidden; }
@@ -178,51 +146,22 @@
         .custom-select-item { padding: 8px 12px; font-size: 13px; cursor: pointer; color: var(--text-main); text-align: right; font-weight: bold; }
         html[dir="ltr"] .custom-select-item { text-align: left; }
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
-
         #install-app-btn {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            flex-shrink: 0;
-            white-space: nowrap;
-            width: auto;
-            max-width: none;
-            padding: 9px 16px;
-            border-radius: 999px;
-            border: 1px solid rgba(142, 182, 155, 0.55);
-            background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%);
-            color: #fff;
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: bold;
-            line-height: 1;
-            cursor: pointer;
-            box-shadow: 0 6px 16px rgba(124, 161, 136, 0.35);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            display: none; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0; white-space: nowrap; width: auto; max-width: none; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(142, 182, 155, 0.55);
+            background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; font-family: inherit; font-size: 13px; font-weight: bold; line-height: 1; cursor: pointer; box-shadow: 0 6px 16px rgba(124, 161, 136, 0.35); transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
         }
         #install-app-btn svg { flex-shrink: 0; }
         #install-app-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(124, 161, 136, 0.45); filter: brightness(1.04); }
         #install-app-btn:active { transform: scale(0.96); }
-        body.dark-theme #install-app-btn {
-            border-color: rgba(104, 211, 145, 0.45);
-            background: linear-gradient(135deg, #68d391 0%, #3f9e6c 100%);
-            color: #10231a;
-            box-shadow: 0 6px 16px rgba(104, 211, 145, 0.22);
-        }
-
+        body.dark-theme #install-app-btn { border-color: rgba(104, 211, 145, 0.45); background: linear-gradient(135deg, #68d391 0%, #3f9e6c 100%); color: #10231a; box-shadow: 0 6px 16px rgba(104, 211, 145, 0.22); }
         .install-sheet { max-width: 380px; padding: 26px 22px 22px; border-radius: 22px; box-shadow: 0 25px 60px rgba(15, 23, 20, 0.35); animation: slideUpFade 0.3s ease; }
         .install-sheet-icon {
-            width: 62px; height: 62px; margin: 0 auto 14px; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%);
-            color: #fff; box-shadow: 0 10px 24px rgba(124, 161, 136, 0.35);
+            width: 62px; height: 62px; margin: 0 auto 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; box-shadow: 0 10px 24px rgba(124, 161, 136, 0.35);
         }
         .install-sheet .custom-modal-title { font-size: 19px; color: var(--text-main); margin-bottom: 8px; }
         .install-sheet p { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin: 0 0 20px; }
         .install-sheet .custom-modal-actions { flex-direction: column; gap: 10px; margin-top: 0; }
         .install-sheet .custom-modal-actions .btn { width: 100% !important; padding: 13px; border-radius: 14px; white-space: nowrap; }
-
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
             .floating-search-bar { left: 50%; transform: translateX(-50%); max-width: 600px; bottom: 85px; }
@@ -253,27 +192,17 @@
                 </div>
             </div>
         </div>
-
         <h2><svg class="icon" style="width:26px; height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg><span data-i18n="loginTitle">چوونەژوورەوەی وەرگێڕ</span></h2>
         <p style="text-align:center; font-size:13.5px; color:var(--text-muted);" data-i18n="appDesc">ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.</p>
-        
         <button class="btn" style="margin-top: 20px;" onclick="performLogin()"><span data-i18n="loginBtn">چوونەژوورەوە</span></button>
     </div>
 
     <div id="setup-screen" class="glass-card">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
             <button style="padding: 6px 10px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-family: inherit; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
-            
-            <button id="install-app-btn" onclick="installApp()">
-                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                <span data-i18n="installApp">دابەزاندنی ئەپ</span>
-            </button>
-            
+            <button id="install-app-btn" onclick="installApp()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
             <div class="custom-select-wrapper">
-                <button class="custom-select-btn" onclick="toggleLangMenu(this)">
-                    <span class="current-lang-text">کوردی</span>
-                    <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
+                <button class="custom-select-btn" onclick="toggleLangMenu(this)"><span class="current-lang-text">کوردی</span><svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
                 <div class="custom-select-menu">
                     <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
                     <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
@@ -281,44 +210,31 @@
                 </div>
             </div>
         </div>
-
         <div id="welcome-msg" style="text-align: center; font-size: 18px; color: var(--primary); font-weight: bold; margin-bottom: 5px;"></div>
-        
         <div class="file-box" id="boxOriginal">
-            <button type="button" class="clear-file-btn" onclick="clearFile('fileOriginal', 'boxOriginal')" style="display: none;">
-                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+            <button type="button" class="clear-file-btn" onclick="clearFile('fileOriginal', 'boxOriginal')" style="display: none;"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             <div class="upload-icon"><svg style="width:32px;height:32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
             <label data-i18n="origFileLbl">فایلی ئەسڵی (ئینگلیزی/عەرەبی)</label>
             <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
             <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxOriginal')">
         </div>
-        
         <div class="file-box" id="boxKurdish">
-            <button type="button" class="clear-file-btn" onclick="clearFile('fileKurdish', 'boxKurdish')" style="display: none;">
-                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+            <button type="button" class="clear-file-btn" onclick="clearFile('fileKurdish', 'boxKurdish')" style="display: none;"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             <div class="upload-icon"><svg style="width:32px;height:32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
             <label data-i18n="transFileLbl">فایلی وەرگێڕدراو (ئارەزوومەندانە)</label>
             <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
-
         <div style="display:flex; gap:10px;">
             <button class="btn" style="flex: 2;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
             <button class="btn btn-outline" style="flex: 1; padding: 12px;" onclick="openConverterModal()"><span data-i18n="batchBtn">بە کۆمەڵ/فۆرمات</span></button>
         </div>
-
-        <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">
-            گەشەپێدەر: <strong>محمد عبدالقادر</strong>
-        </div>
+        <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
     <div id="install-modal" class="custom-modal-overlay">
         <div class="custom-modal-content install-sheet">
-            <div class="install-sheet-icon">
-                <svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            </div>
+            <div class="install-sheet-icon"><svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>
             <h3 class="custom-modal-title" data-i18n="installModalTitle">دابەزاندنی ئەپ</h3>
             <p data-i18n="installModalDesc">ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟</p>
             <div class="custom-modal-actions">
@@ -332,9 +248,7 @@
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="batchDownloadTitle">داگرتنی فایلەکان</h3>
             <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="batchDownloadDesc">وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.</p>
-            <div class="custom-modal-actions">
-                <button class="btn" onclick="executeBatchDownload()" style="width: 100%;" data-i18n="batchDownloadBtn">دەستپێکردنی داگرتن</button>
-            </div>
+            <div class="custom-modal-actions"><button class="btn" onclick="executeBatchDownload()" style="width: 100%;" data-i18n="batchDownloadBtn">دەستپێکردنی داگرتن</button></div>
         </div>
     </div>
 
@@ -364,19 +278,16 @@
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="batchTitle">کارکردن بە کۆمەڵ لەسەر چەند فایلێک</h3>
             <p style="font-size: 13.5px; color:var(--text-muted); margin-bottom:15px; line-height: 1.6;" data-i18n="batchDesc">دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.</p>
-            
             <div class="file-box" id="boxBatch" style="margin-bottom: 20px; padding: 15px;">
                 <div class="upload-icon"><svg style="width:28px;height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>
                 <label data-i18n="batchSelectLbl">فایلەکان هەڵبژێرە:</label>
                 <div class="file-name-display" id="batchCountDisplay" data-i18n="batchNoFile">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="convertFileInput" accept=".srt,.ass,.vtt" multiple onchange="updateBatchCount(this)">
             </div>
-
             <div style="margin-bottom: 20px; text-align: right;" dir="auto">
                 <label style="font-weight: bold; font-size: 14px; color: var(--primary); display: block; margin-bottom: 8px;" data-i18n="batchTimeLbl">پێشخستن/دواخستنی کات (بۆ هەموویان):</label>
                 <input type="number" id="batchTimeShift" step="0.1" class="input-field" placeholder="0.0" dir="ltr" style="padding: 12px; text-align: center;">
             </div>
-
             <div style="margin-bottom: 10px; text-align: right;" dir="auto">
                 <label style="font-weight: bold; font-size: 14px; color: var(--primary); display: block; margin-bottom: 8px;" data-i18n="batchFmtLbl">فۆرماتی دەرچوون:</label>
                 <div style="display: flex; gap: 10px;">
@@ -386,7 +297,6 @@
                 </div>
                 <input type="hidden" id="convertFormatValue" value="srt">
             </div>
-            
             <div class="custom-modal-actions">
                 <button class="btn" onclick="prepareBatchProcess()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
                 <button class="btn btn-outline" onclick="document.getElementById('converter-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
@@ -397,20 +307,11 @@
     <div id="editor-screen">
         <div class="sticky-header-container">
             <div id="progress-container"><div id="progress-bar"></div></div>
-
             <div class="top-nav">
-                <button class="back-btn" onclick="confirmGoBack()">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    <span data-i18n="backBtn">گەڕانەوە</span>
-                </button>
-                
+                <button class="back-btn" onclick="confirmGoBack()"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="backBtn">گەڕانەوە</span></button>
                 <h3 style="margin:0; font-size:14px; color:var(--primary); text-align:center; flex-grow:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" data-i18n="editorTitle">دەستکاریکردنی ژێرنووس</h3>
-                
                 <div class="custom-select-wrapper">
-                    <button class="custom-select-btn" onclick="toggleLangMenu(this)">
-                        <span class="current-lang-text">کوردی</span>
-                        <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
+                    <button class="custom-select-btn" onclick="toggleLangMenu(this)"><span class="current-lang-text">کوردی</span><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
                     <div class="custom-select-menu">
                         <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
                         <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
@@ -418,53 +319,30 @@
                     </div>
                 </div>
             </div>
-            
             <div class="top-tools">
                 <button class="top-btn" onclick="undo()" title="Undo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg></button>
                 <button class="top-btn" onclick="redo()" title="Redo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg></button>
-                
                 <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;"></div>
-                
                 <input type="file" id="headerVideoInput" accept="video/*" style="display: none;" onchange="loadHeaderVideo(this)">
-                
-                <button id="add-video-btn" class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="document.getElementById('headerVideoInput').click()">
-                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                </button>
-                
-                <button id="remove-video-btn" class="top-btn" style="color: #ef4444; border-color: #ef4444; display: none;" onclick="closeHeaderVideo()">
-                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-
+                <button id="add-video-btn" class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="document.getElementById('headerVideoInput').click()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
+                <button id="remove-video-btn" class="top-btn" style="color: #ef4444; border-color: #ef4444; display: none;" onclick="closeHeaderVideo()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                 <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;"></div>
-                
-                <button class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="toggleSearchBar()">
-                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </button>
+                <button class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="toggleSearchBar()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
             </div>
         </div>
 
         <div class="floating-search-bar" id="searchBarPanel">
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 14px; font-weight: bold; color: var(--primary);" data-i18n="searchLbl">گەڕان و گۆڕین</span>
-                <button class="close-search-btn" onclick="toggleSearchBar()">
-                    <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+                <button class="close-search-btn" onclick="toggleSearchBar()"><svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <div class="search-row">
-                <div class="search-input-group" style="flex: 2;">
-                    <input type="text" id="searchInput" data-i18n="searchPlh" placeholder="گەڕان بەدوای..." onkeydown="if(event.key === 'Enter') findNext(1)">
-                </div>
-                <button class="search-btn" style="flex: 0; padding: 10px;" onclick="findNext(-1)">
-                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                </button>
-                <button class="search-btn" style="flex: 0; padding: 10px;" onclick="findNext(1)">
-                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" transform="rotate(180 12 12)"></path></svg>
-                </button>
+                <div class="search-input-group" style="flex: 2;"><input type="text" id="searchInput" data-i18n="searchPlh" placeholder="گەڕان بەدوای..." onkeydown="if(event.key === 'Enter') findNext(1)"></div>
+                <button class="search-btn" style="flex: 0; padding: 10px;" onclick="findNext(-1)"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
+                <button class="search-btn" style="flex: 0; padding: 10px;" onclick="findNext(1)"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" transform="rotate(180 12 12)"></path></svg></button>
             </div>
             <div class="search-row">
-                <div class="search-input-group">
-                    <input type="text" id="replaceInput" data-i18n="replacePlh" placeholder="گۆڕین بە...">
-                </div>
+                <div class="search-input-group"><input type="text" id="replaceInput" data-i18n="replacePlh" placeholder="گۆڕین بە..."></div>
             </div>
             <div class="search-btns">
                 <button class="search-btn" onclick="replaceText()"><span data-i18n="replaceBtn">گۆڕین</span></button>
@@ -472,13 +350,8 @@
             </div>
         </div>
 
-        <div id="video-container">
-            <video id="preview-video" controls playsinline></video>
-            <div id="video-subtitle-overlay"></div>
-        </div>
-
+        <div id="video-container"><video id="preview-video" controls playsinline></video><div id="video-subtitle-overlay"></div></div>
         <div id="subtitles-container"></div>
-        
         <div class="action-bar">
             <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='flex'"><span data-i18n="aiBtn">دانانی وەرگێڕان</span></button>
             <button class="btn btn-outline" onclick="toggleDirection()"><span data-i18n="dirBtn">ئاڕاستەی نووسین</span></button>
@@ -486,7 +359,6 @@
         </div>
     </div>
 
-    <!-- مۆداڵی AI بە جێگیرکردنی مۆدێلی Gemini 3.1 Pro -->
     <div id="ai-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="aiTitle">دانانی وەرگێڕانی AI</h3>
@@ -499,17 +371,10 @@
             <div style="margin-top: 15px; border-top: 1px dashed var(--border-color); padding-top: 15px; text-align: right;" dir="rtl">
                 <label style="font-weight: bold; font-size: 14px; color: var(--primary); display: block; margin-bottom: 8px;">وەرگێڕانی خودکار بە Gemini 3.1 Pro:</label>
                 <input type="password" id="ai-api-key" class="input-field" placeholder="کلیلەکەت بنووسە Google API Key (AI Studio)" style="margin-bottom: 10px; padding: 12px; font-size: 14px; text-align: left;" dir="ltr">
-                
-                <button class="btn" id="start-ai-btn" onclick="startAutoTranslation()">
-                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    دەستپێکردنی وەرگێڕانی خودکار
-                </button>
+                <button class="btn" id="start-ai-btn" onclick="startAutoTranslation()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>دەستپێکردنی وەرگێڕانی خودکار</button>
                 <div id="ai-status" style="margin-top: 10px; font-size: 13px; color: var(--text-muted); font-weight: bold; text-align: center;"></div>
             </div>
-
-            <div class="custom-modal-actions" style="margin-top: 15px;">
-                <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" style="width: 100%;" data-i18n="closeBtn">داخستن</button>
-            </div>
+            <div class="custom-modal-actions" style="margin-top: 15px;"><button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" style="width: 100%;" data-i18n="closeBtn">داخستن</button></div>
         </div>
     </div>
 
@@ -528,9 +393,9 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js', { scope: './' }).then(reg => {
-                    console.log('پەیوەندی بەبێ ئینتەرنێت چالاک کرا بە سکۆپی: ', reg.scope);
+                    console.log('SW scope: ', reg.scope);
                 }).catch(err => {
-                    console.log('هەڵە لە چالاککردنی بێ ئینتەرنێت: ', err);
+                    console.log('SW err: ', err);
                 });
             });
         }
@@ -540,21 +405,13 @@
             e.preventDefault(); deferredPrompt = e;
             document.getElementById('install-app-btn').style.display = 'flex';
         });
-
-        function installApp() {
-            if (deferredPrompt) {
-                document.getElementById('install-modal').style.display = 'flex';
-            }
-        }
-
+        function installApp() { if (deferredPrompt) { document.getElementById('install-modal').style.display = 'flex'; } }
         function confirmInstall() {
             document.getElementById('install-modal').style.display = 'none';
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        document.getElementById('install-app-btn').style.display = 'none';
-                    }
+                    if (choiceResult.outcome === 'accepted') { document.getElementById('install-app-btn').style.display = 'none'; }
                     deferredPrompt = null;
                 });
             }
@@ -563,27 +420,15 @@
         const i18n = {
             ckb: {
                 pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی/عەرەبی)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "بە کۆمەڵ/فۆرمات", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت یان لە سەرەتاوە دەست پێ دەکەیتەوە؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
-                msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!",
-                installModalTitle: "دابەزاندنی ئەپ", 
-                installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", 
-                installConfirmBtn: "دابەزاندن",
-                batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
+                msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن", batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
             },
             ar: {
                 pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "دفعة/صيغة", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
-                msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!",
-                installModalTitle: "تثبيت التطبيق", 
-                installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", 
-                installConfirmBtn: "تثبيت",
-                batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل"
+                msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل"
             },
             en: {
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (English)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Batch/Format", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "It looks like you have an unfinished session. Do you want to continue where you left off or start over?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
-                msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!",
-                installModalTitle: "Install App", 
-                installModalDesc: "Do you want to install this website as an app on your device for faster access and offline use?", 
-                installConfirmBtn: "Install",
-                batchDownloadTitle: "Download Files", batchDownloadDesc: "Your browser will ask for permission to download multiple files. Please click 'Allow' when prompted so all files can be downloaded.", batchDownloadBtn: "Start Download"
+                msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!", installModalTitle: "Install App", installModalDesc: "Do you want to install this website as an app on your device for faster access and offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Files", batchDownloadDesc: "Your browser will ask for permission to download multiple files. Please click 'Allow' when prompted so all files can be downloaded.", batchDownloadBtn: "Start Download"
             }
         };
 
@@ -616,9 +461,7 @@
                 const key = el.getAttribute('data-i18n');
                 if (i18n[lang][key]) { if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { el.placeholder = i18n[lang][key]; } else { el.innerHTML = i18n[lang][key]; } }
             });
-            if(localStorage.getItem('kf_user')) {
-                document.getElementById('welcome-msg').innerText = i18n[lang]['welcomeText'];
-            }
+            if(localStorage.getItem('kf_user')) { document.getElementById('welcome-msg').innerText = i18n[currentLang]['welcomeText']; }
         }
 
         function checkLogin() {
@@ -627,24 +470,17 @@
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('setup-screen').style.display = 'flex';
                 document.getElementById('welcome-msg').innerText = i18n[currentLang]['welcomeText'] || "بەخێربێیت!";
-                
-                if(localStorage.getItem('kf_autosave_session')) {
-                    document.getElementById('resume-modal').style.display = 'flex';
-                }
+                if(localStorage.getItem('kf_autosave_session')) { document.getElementById('resume-modal').style.display = 'flex'; }
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('setup-screen').style.display = 'none';
             }
-            
             const hour = new Date().getHours();
             if(hour >= 19 || hour < 6) document.body.classList.add('dark-theme');
             else document.body.classList.remove('dark-theme');
         }
         
-        function performLogin() {
-            localStorage.setItem('kf_user', 'true'); 
-            checkLogin();
-        }
+        function performLogin() { localStorage.setItem('kf_user', 'true'); checkLogin(); }
         function logout() { localStorage.removeItem('kf_user'); checkLogin(); }
         window.onload = () => { checkLogin(); changeLanguage('ckb'); };
 
@@ -673,9 +509,7 @@
                 history.pushState({page: 'editor'}, '', '#editor'); 
             }
         });
-
         function confirmGoBack() { document.getElementById('back-confirm-modal').style.display = 'flex'; }
-        
         function executeGoBack() {
             isEditing = false;
             document.getElementById('back-confirm-modal').style.display = 'none';
@@ -720,9 +554,7 @@
             if (!searchTerm) return;
             const textareas = document.querySelectorAll('.subtitle-kurd textarea');
             let found = false; let startIdx = currentSearchIndex;
-            
             if (direction === -1) { startIdx = currentSearchIndex - 2; if (startIdx < 0) startIdx = textareas.length - 1; }
-
             for (let i = 0; i < textareas.length; i++) {
                 let idx = direction === 1 ? (startIdx + i) % textareas.length : (startIdx - i + textareas.length) % textareas.length;
                 let text = textareas[idx].value.toLowerCase();
@@ -794,21 +626,14 @@
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
             const timeShift = parseFloat(document.getElementById('batchTimeShift').value) || 0;
-
             if (files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
-            
             pendingBatchDownloads = []; 
-
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const text = await file.text();
                 const isOrigAss = file.name.toLowerCase().endsWith('.ass');
                 let parsed = isOrigAss ? parseASSContent(text, true) : (file.name.toLowerCase().endsWith('.vtt') ? parseVTTContent(text) : parseSRTContent(text));
-
-                if (timeShift !== 0) {
-                    parsed.forEach(item => { item.startSec = Math.max(0, item.startSec + timeShift); item.endSec = Math.max(0, item.endSec + timeShift); });
-                }
-
+                if (timeShift !== 0) { parsed.forEach(item => { item.startSec = Math.max(0, item.startSec + timeShift); item.endSec = Math.max(0, item.endSec + timeShift); }); }
                 let finalContent = "";
                 if (targetFormat === 'srt') {
                     parsed.forEach((item, idx) => { finalContent += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${item.text}\n\n`; });
@@ -819,33 +644,22 @@
                     finalContent = `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
                     parsed.forEach(item => { finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${item.text.replace(/\n/g, '\\N')}\n`; });
                 }
-
                 const blob = new Blob([finalContent], { type: 'application/octet-stream' });
                 const url = URL.createObjectURL(blob);
-                
-                pendingBatchDownloads.push({
-                    url: url,
-                    filename: file.name.replace(/\.[^/.]+$/, "") + "_edited." + targetFormat
-                });
+                pendingBatchDownloads.push({ url: url, filename: file.name.replace(/\.[^/.]+$/, "") + "_edited." + targetFormat });
             }
-            
             document.getElementById('converter-modal').style.display = 'none';
             document.getElementById('batch-download-modal').style.display = 'flex';
         }
 
         async function executeBatchDownload() {
             document.getElementById('batch-download-modal').style.display = 'none';
-            
             for (let i = 0; i < pendingBatchDownloads.length; i++) {
                 const item = pendingBatchDownloads[i];
-                const a = document.createElement('a'); 
-                a.href = item.url;
-                a.download = item.filename;
-                a.click(); 
+                const a = document.createElement('a'); a.href = item.url; a.download = item.filename; a.click(); 
                 URL.revokeObjectURL(item.url);
                 await new Promise(r => setTimeout(r, 800)); 
             }
-            
             showToast(i18n[currentLang]['msgDone'], "success");
             pendingBatchDownloads = []; 
         }
@@ -907,18 +721,12 @@
             const session = { originalData, currentFileName, isAssFormat, isVttFormat, assHeaderLines, savedState: getCurrentState() };
             localStorage.setItem('kf_autosave_session', JSON.stringify(session));
         }
-
-        function clearSession() {
-            localStorage.removeItem('kf_autosave_session');
-            document.getElementById('resume-modal').style.display = 'none';
-        }
-
+        function clearSession() { localStorage.removeItem('kf_autosave_session'); document.getElementById('resume-modal').style.display = 'none'; }
         function resumeSession() {
             try {
                 const session = JSON.parse(localStorage.getItem('kf_autosave_session'));
                 originalData = session.originalData; currentFileName = session.currentFileName;
                 isAssFormat = session.isAssFormat; isVttFormat = session.isVttFormat; assHeaderLines = session.assHeaderLines;
-                
                 buildEditorUI(session.savedState);
                 document.getElementById('resume-modal').style.display = 'none';
             } catch(e) { clearSession(); showToast("هەڵە لە هێنانەوەی فایلەکان ڕوویدا", "error"); }
@@ -928,16 +736,10 @@
             const fOrig = document.getElementById('fileOriginal').files[0];
             const fKurd = document.getElementById('fileKurdish').files[0];
             if(!fOrig) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
-            
             currentFileName = fOrig.name; isAssFormat = fOrig.name.toLowerCase().endsWith('.ass'); isVttFormat = fOrig.name.toLowerCase().endsWith('.vtt'); 
-            
             originalData = isAssFormat ? parseASSContent(await fOrig.text(), true) : (isVttFormat ? parseVTTContent(await fOrig.text()) : parseSRTContent(await fOrig.text()));
             let kurdData = fKurd ? (fKurd.name.toLowerCase().endsWith('.ass') ? parseASSContent(await fKurd.text(), false) : (fKurd.name.toLowerCase().endsWith('.vtt') ? parseVTTContent(await fKurd.text()))) : [];
-
-            let state = originalData.map((orig, i) => {
-                return kurdData[i] ? kurdData[i].text : '';
-            });
-            
+            let state = originalData.map((orig, i) => kurdData[i] ? kurdData[i].text : '');
             buildEditorUI(state);
         }
 
@@ -958,17 +760,13 @@
                 </div>`;
             }
             document.getElementById('subtitles-container').innerHTML = html;
-            
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('editor-screen').style.display = 'block';
             document.body.className = document.body.classList.contains('dark-theme') ? 'editor-bg dark-theme' : 'editor-bg';
-            
             isEditing = true; historyStack = [getCurrentState()]; updateProgress();
             history.pushState({page: 'editor'}, '', '#editor');
-            
             document.getElementById('add-video-btn').style.display = 'flex';
             document.getElementById('remove-video-btn').style.display = 'none';
-            
             document.getElementById('subtitles-container').addEventListener('input', e => {
                 if(e.target.tagName === 'TEXTAREA') {
                     e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px';
@@ -979,8 +777,7 @@
                         if(JSON.stringify(historyStack[historyStack.length-1]) !== JSON.stringify(state)) {
                             historyStack.push(state);
                             if(historyStack.length > 30) historyStack.shift();
-                            redoStack = [];
-                            saveSession(); 
+                            redoStack = []; saveSession(); 
                         }
                     }, 1000);
                 }
@@ -997,7 +794,6 @@
             let filled = Array.from(tas).filter(t => t.value.trim() !== '').length;
             document.getElementById('progress-bar').style.width = tas.length ? (filled/tas.length*100)+'%' : '0%';
         }
-
         function toggleDirection() { document.querySelectorAll('.subtitle-kurd textarea').forEach(ta => ta.setAttribute('dir', ta.getAttribute('dir')==='ltr'?'rtl':'ltr')); }
 
         function setupVideoSync() {
@@ -1032,41 +828,27 @@
             document.getElementById('ai-modal').style.display = 'none'; updateProgress(); saveSession();
         }
 
-        // فەنکشنی دەستپێکردنی پرۆسەی وەرگێڕانی خودکار بە بەکارهێنانی API لەسەر مۆدێلی Gemini 3.1 Pro
+        // فەنکشنی دەستپێکردنی پرۆسەی وەرگێڕانی خودکار لەسەر مۆدێلی نوێی Gemini 3.1 Pro
         async function startAutoTranslation() {
             const apiKey = document.getElementById('ai-api-key').value.trim();
             if (!apiKey) {
                 showToast("تکایە سەرەتا Google API Key بنووسە!", "error");
                 return;
             }
-
             const statusDiv = document.getElementById('ai-status');
             const startBtn = document.getElementById('start-ai-btn');
-            
-            startBtn.disabled = true;
-            statusDiv.innerText = "ئامادەکاری دەکرێت...";
-
-            const batchSize = 25; // کەمکردنەوە بۆ ٢٥ دێڕ بۆ ئەوەی ڕێسا ئاڵۆزەکان بە تەواوی و وردی جێبەجێ ببن
-            const total = originalData.length;
-            
+            startBtn.disabled = true; statusDiv.innerText = "ئامادەکاری دەکرێت...";
+            const batchSize = 25; const total = originalData.length;
             try {
                 for (let i = 0; i < total; i += batchSize) {
                     const batch = originalData.slice(i, i + batchSize);
                     statusDiv.innerText = `وەرگێڕانی دێڕەکانی ${i + 1} تا ${Math.min(i + batchSize, total)} لە کۆی ${total}...`;
-
                     let textToTranslate = batch.map((x, idx) => `[${i + idx + 1}] ${x.text.replace(/\n/g, ' ')}`).join('\n');
-
-                    // ناردنی بۆ سێرڤەری گۆگڵ بە مۆدێلی بەهێزی Gemini 3.1 Pro
                     const responseText = await callGeminiAPI(textToTranslate, apiKey);
-                    
                     parseAndFillAIResult(responseText);
-                    
-                    updateProgress();
-                    saveSession();
-                    
-                    await new Promise(r => setTimeout(r, 600)); // وەستانێکی کورت بۆ ئاسانکاری پرۆسەکە
+                    updateProgress(); saveSession();
+                    await new Promise(r => setTimeout(r, 600)); 
                 }
-                
                 statusDiv.innerText = "وەرگێڕان بە سەرکەوتوویی تەواو بوو!";
                 statusDiv.style.color = "var(--success)";
                 showToast("وەرگێڕانی خودکار تەواو بوو!", "success");
@@ -1075,17 +857,11 @@
                 statusDiv.innerText = "هەڵەیەک لە کاتی پەیوەندیکردن بە سێرڤەر ڕوویدا.";
                 statusDiv.style.color = "#ef4444";
                 showToast("هەڵەیەک ڕوویدا!", "error");
-            } finally {
-                startBtn.disabled = false;
-            }
+            } finally { startBtn.disabled = false; }
         }
 
-        // پەیوەندی ڕاستەوخۆ بە API بەبێ هیچ جۆرە پێوەکراوەیەکی دەرەکی تێکچوو
         async function callGeminiAPI(text, apiKey) {
-            // بەکارهێنانی مۆدێلی Gemini 3.1 Pro بۆ جێبەجێکردنی وردترین ڕێسا بە سەرکەوتوویی
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro:generateContent?key=${apiKey}`;
-            
-            // داڕشتنی سیستەمی ڕێنماییەکان بە زمانی ئینگلیزییەکی تەواو ورد بۆ مۆدێلەکە
             const systemInstruction = `You are a professional subtitle translator translating to Kurdish Sorani. Ensure natural, meaning-based translation rather than word-for-word translation. Think deeply and twice to ensure absolute Kurdish translation quality.
 
 Strict Formatting Rules:
@@ -1103,33 +879,17 @@ Strict Formatting Rules:
 
             const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [
-                        {
-                            parts: [
-                                { text: text }
-                            ]
-                        }
-                    ],
-                    systemInstruction: {
-                        parts: [
-                            { text: systemInstruction }
-                        ]
-                    },
-                    generationConfig: {
-                        temperature: 0.2 // کەمکردنەوەی بەها بۆ ئەوەی ڕێسا زمانەوانییەکان تێک نەچن
-                    }
+                    contents: [ { parts: [ { text: text } ] } ],
+                    systemInstruction: { parts: [ { text: systemInstruction } ] },
+                    generationConfig: { temperature: 0.2 }
                 })
             });
-
             if (!response.ok) {
                 const errData = await response.json();
                 throw new Error(errData.error?.message || "Failed to fetch from Gemini API");
             }
-
             const data = await response.json();
             return data.candidates[0].content.parts[0].text;
         }
@@ -1154,25 +914,19 @@ Strict Formatting Rules:
             document.querySelectorAll('.subtitle-card').forEach(card => {
                 let idx = card.getAttribute('data-index'); let orig = originalData[idx];
                 let kt = card.querySelector('textarea').value.trim();
-                
                 if(kt !== "") {
                     let kl = kt.split('\n'); let ol = orig.parsedLines || [];
                     let fp = []; 
-                    for(let j=0; j<Math.max(kl.length, ol.length); j++) {
-                        fp.push((ol[j]?ol[j].tags:'') + (kl[j]!==undefined ? kl[j] : '')); 
-                    }
-                    
+                    for(let j=0; j<Math.max(kl.length, ol.length); j++) { fp.push((ol[j]?ol[j].tags:'') + (kl[j]!==undefined ? kl[j] : '')); }
                     if(isAssFormat) { final += (orig.assPrefix || '') + fp.join('\\N') + '\n'; } 
                     else if (isVttFormat) { final += formatTimeVTT(orig.startSec) + " --> " + formatTimeVTT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; } 
                     else { final += (parseInt(idx)+1) + '\n' + formatTimeSRT(orig.startSec) + " --> " + formatTimeSRT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; }
                 }
             });
-
             if(isVttFormat) final = "WEBVTT\n\n" + final;
             let blob = new Blob([final.trim()], {type: 'application/octet-stream'}); let a = document.createElement('a');
             a.href = URL.createObjectURL(blob); const extension = isAssFormat ? '.ass' : (isVttFormat ? '.vtt' : '.srt');
             a.download = 'Edited_' + currentFileName.replace(/\.[^/.]+$/, "") + extension; a.click();
-            
             clearSession();
         }
     </script>
