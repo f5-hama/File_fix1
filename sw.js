@@ -5,6 +5,7 @@ const urlsToCache = [
     './index.html',
     './fonts.css'
     './KurdForest.ttf'
+    './app.js'
 ];
 
 self.addEventListener('install', (event) => {
