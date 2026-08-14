@@ -91,7 +91,7 @@
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
         
         #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
-        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(0); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
         .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
@@ -551,7 +551,7 @@
 
         const i18n = {
             ckb: {
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی/عەرەبی)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت یان لە سەرەتاوە دەست پێ دەکەیتەوە؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی/عەرەبی)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت, کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت یان لە سەرەتاوە دەست پێ دەکەیتەوە؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
                 msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!",
                 installModalTitle: "دابەزاندنی ئەپ", 
                 installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", 
@@ -797,6 +797,22 @@
             }
         }
 
+        // فەنکشنی ستاندارد بۆ داونلۆدکردنی فایل بە گونجاوی لەگەڵ سیستەمی iOS و وێبگەڕەکانی تر
+        function triggerDownload(content, filename, mimeType = 'text/plain;charset=utf-8') {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a); // زۆر گرنگە بۆ کارکردنی بێ کێشە لەسەر ئایفۆن و سافاری
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+
         async function prepareBatchProcess() {
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
@@ -835,11 +851,8 @@
                     parsed.forEach(item => { finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${item.text.replace(/\n/g, '\\N')}\n`; });
                 }
 
-                const blob = new Blob([finalContent], { type: 'application/octet-stream' });
-                const url = URL.createObjectURL(blob);
-                
                 pendingBatchDownloads.push({
-                    url: url,
+                    content: finalContent,
                     filename: file.name.replace(/\.[^/.]+$/, "") + "_edited." + targetFormat
                 });
             }
@@ -853,12 +866,8 @@
             
             for (let i = 0; i < pendingBatchDownloads.length; i++) {
                 const item = pendingBatchDownloads[i];
-                const a = document.createElement('a'); 
-                a.href = item.url;
-                a.download = item.filename;
-                a.click(); 
-                URL.revokeObjectURL(item.url);
-                await new Promise(r => setTimeout(r, 800)); 
+                triggerDownload(item.content, item.filename);
+                await new Promise(r => setTimeout(r, 1000)); 
             }
             
             showToast(i18n[currentLang]['msgDone'], "success");
@@ -1067,10 +1076,10 @@
             });
 
             if(isVttFormat) final = "WEBVTT\n\n" + final;
-            let blob = new Blob([final.trim()], {type: 'application/octet-stream'}); let a = document.createElement('a');
-            a.href = URL.createObjectURL(blob); const extension = isAssFormat ? '.ass' : (isVttFormat ? '.vtt' : '.srt');
-            a.download = 'Edited_' + currentFileName.replace(/\.[^/.]+$/, "") + extension; a.click();
+            const extension = isAssFormat ? '.ass' : (isVttFormat ? '.vtt' : '.srt');
+            const filename = 'Edited_' + currentFileName.replace(/\.[^/.]+$/, "") + extension;
             
+            triggerDownload(final.trim(), filename);
             clearSession();
         }
     </script>
