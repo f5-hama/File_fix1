@@ -6,10 +6,16 @@
     <meta name="theme-color" content="#8EB69B">
     <title data-i18n="pageTitle">دەستکاریکەری ژێرنووس</title>
     
-    <!-- هێنانی فۆنتەکە بە جیا لە فایلی دەرەکییەوە -->
+    <!-- کۆدی گرنگ بۆ چاککردنی کێشەی ڕێڕەوی گیت‌هەب و Service Worker -->
+    <script>
+        if (window.location.pathname.slice(-1) !== '/' && !window.location.pathname.endsWith('.html')) {
+            window.location.replace(window.location.href + '/');
+        }
+    </script>
+
+    <!-- هێنانی فۆنتەکە بە ڕێڕەوی دروست لە تەنیشت فایلی index.html -->
     <link rel="stylesheet" href="./fonts.css">
     
-    <!-- هەموو ستایلەکانی ماڵپەڕەکە لەم بەشەدایە بۆ دەستکاریکردنی ئاسان -->
     <style>
         body { font-family: 'KurdForest', Tahoma, Arial, sans-serif; }
 
@@ -64,7 +70,6 @@
         body.dark-theme .top-btn, body.dark-theme .back-btn { background: #1e2621; color: #cbd5e1; border-color: #314237; }
         body.dark-theme .top-btn:hover { background: #26332a; color: var(--primary); }
         
-        /* باشترکردنی ڕەنگی دوگمە سەرەکییەکان لە دۆخی تاریکدا بۆ خوێندنەوەی باشتر */
         body.dark-theme .btn:not(.btn-outline) {
             background: linear-gradient(135deg, #2f855a 0%, #1c4532 100%);
             color: #ffffff;
@@ -309,7 +314,6 @@
         </div>
     </div>
 
-    <!-- مۆداڵی دابەزاندنی ئەپ (دەقی گۆڕدراو بۆ ئەوەی بڵێت بێ ئینتەرنێت کاردەکات) -->
     <div id="install-modal" class="custom-modal-overlay">
         <div class="custom-modal-content install-sheet">
             <div class="install-sheet-icon">
@@ -324,7 +328,6 @@
         </div>
     </div>
 
-    <!-- مۆداڵی ئاگادارکردنەوەی داگرتنی بەکۆمەڵ -->
     <div id="batch-download-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="batchDownloadTitle">داگرتنی فایلەکان</h3>
@@ -335,7 +338,6 @@
         </div>
     </div>
 
-    <!-- مۆداڵی پێشووتر -->
     <div id="resume-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="resumeTitle">دەتەوێت بەردەوام بیت؟</h3>
@@ -347,7 +349,6 @@
         </div>
     </div>
 
-    <!-- مۆداڵی گەڕانەوە -->
     <div id="back-confirm-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="backTitle">ئایا دڵنیایت؟</h3>
@@ -359,7 +360,6 @@
         </div>
     </div>
 
-    <!-- مۆداڵی گۆڕینی بەکۆمەڵ -->
     <div id="converter-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="batchTitle">کارکردن بە کۆمەڵ لەسەر چەند فایلێک</h3>
@@ -394,7 +394,6 @@
         </div>
     </div>
 
-    <!-- شاشەی ئیدیتەر -->
     <div id="editor-screen">
         <div class="sticky-header-container">
             <div id="progress-container"><div id="progress-bar"></div></div>
@@ -487,7 +486,6 @@
         </div>
     </div>
 
-    <!-- مۆداڵی وەرگێڕانی دەستی AI -->
     <div id="ai-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="aiTitle">دانانی وەرگێڕانی AI</h3>
@@ -515,11 +513,11 @@
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
         
-        // جێبەجێکردنی خزمەتگوزاری بێ ئینتەرنێت (Service Worker) بۆ ئەوەی لە مۆبایل وەک ئەپ کاربکات
+        // جێبەجێکردنی خزمەتگوزاری بێ ئینتەرنێت (Service Worker) بە سکۆپی دروست بۆ GitHub Pages
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(reg => {
-                    console.log('پەیوەندی بەبێ ئینتەرنێت چالاک کرا!');
+                navigator.serviceWorker.register('./sw.js', { scope: './' }).then(reg => {
+                    console.log('پەیوەندی بەبێ ئینتەرنێت چالاک کرا بە سکۆپی: ', reg.scope);
                 }).catch(err => {
                     console.log('هەڵە لە چالاککردنی بێ ئینتەرنێت: ', err);
                 });
