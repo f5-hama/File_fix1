@@ -1,4 +1,4 @@
-const CACHE_NAME = 'subedit-pwa-v6';
+const CACHE_NAME = 'subedit-pwa-v7';
 
 const urlsToCache = [
     './',
@@ -7,7 +7,7 @@ const urlsToCache = [
     './KurdForest.ttf'
 ];
 
-// پاشەکەوتکردنی فایلەکان بە شێوازێکی پارێزراو تا ئەگەر فایلێکیش نەبوو هەڵە نەدات
+// پاشەکەوتکردنی فایلەکان لە کاتی دامەزراندندا
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
@@ -19,6 +19,7 @@ self.addEventListener('install', (event) => {
     self.skipWaiting(); 
 });
 
+// سڕینەوەی کاشە کۆنەکان بۆ ئەوەی کۆدە نوێیەکان دەستبەجێ کاربکەن
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -33,17 +34,19 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// کارکردنی تەواو بەبێ هێڵی ئینتەرنێت
+// وەڵامدانەوەی داواکارییەکان بەبێ ئینتەرنێت و بە ئۆنلاین
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') return;
+    // تەنها داواکارییە ئاساییەکانی HTTP/HTTPS وەردەگرێت و لە دروستبوونی کێشە لەگەڵ ڤیدیۆ دەپارێزێت
+    if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
-                // ئەگەر لە کاشدا هەبوو ڕاستەوخۆ دەیکاتەوە
+                // نوێکردنەوەی کاش لە پاشبنەما بە سەلامەتی
                 fetch(event.request).then((networkResponse) => {
                     if (networkResponse && networkResponse.status === 200) {
-                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
+                        const responseClone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
                     }
                 }).catch(() => {});
                 return cachedResponse;
