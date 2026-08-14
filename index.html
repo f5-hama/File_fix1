@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#8EB69B">
     <title data-i18n="pageTitle">دەستکاریکەری ژێرنووس</title>
     
+    <!-- کۆدی گرنگ بۆ چاککردنی کێشەی ڕێڕەوی گیت‌هەب و Service Worker -->
     <script>
         if (window.location.pathname.slice(-1) !== '/' && !window.location.pathname.endsWith('.html')) {
             window.location.replace(window.location.href + '/');
@@ -192,7 +193,7 @@
         <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی Hardsub بە بەستنەوەی ١٠٠٪ ئۆتۆماتیکی بێ نووسینی هیچ لینکێک -->
+    <!-- مۆداڵی Hardsub بە پشکنینی خێرای ڕاستەوخۆ -->
     <div id="hardsub-modal" class="custom-modal-overlay">
         <div class="custom-modal-content" style="max-width: 460px; text-align: right;" dir="rtl">
             <h3 class="custom-modal-title" style="text-align: center;">چەسپاندنی ژێرنووس (Hardsub)</h3>
@@ -875,7 +876,7 @@
                 let timeLineIdx = lines.findIndex(x => x.includes('-->'));
                 if (timeLineIdx !== -1) {
                     let t = lines[timeLineIdx].split('-->');
-                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim() : '0';
+                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim().split(' ')[0] : '0';
                     let textLines = lines.slice(timeLineIdx + 1);
                     let rawText = textLines.join('\n');
                     let pl = extLines(rawText.replace(/\n/g, '\\N'));
@@ -1027,7 +1028,7 @@
         }
 
         // ==========================================
-        // بەشی پشکنین و پەیوەستکردنی ١٠٠٪ ئۆتۆماتیکی سێرڤەر
+        // بەشی پشکنین و پەیوەستکردنی ١٠٠٪ خێرا
         // ==========================================
         let currentServerUrl = "";
 
@@ -1037,15 +1038,34 @@
             badge.style.color = "#eab308";
             
             try {
-                // هێنانی ڕاستەوخۆی لینکی نوێ لە تۆڕی پەیوەندی
-                const res = await fetch("https://ntfy.sh/kurdforest_hardsub_bridge_v1/raw?t=" + Date.now());
+                // بەکارهێنانی poll=1 بۆ ئەوەی دەستبەجێ بەبێ وەستان وەڵام بداتەوە
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const res = await fetch("https://ntfy.sh/kurdforest_hardsub_bridge_v1/raw?poll=1&t=" + Date.now(), {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
                 if (res.ok) {
-                    let url = (await res.text()).trim();
-                    if (url.startsWith("https://") && url.includes(".trycloudflare.com")) {
-                        currentServerUrl = url;
-                        badge.innerText = "سێرڤەری هەوری ئامادەیە و بەستراوە ✅";
-                        badge.style.color = "var(--success)";
-                        return true;
+                    let text = (await res.text()).trim();
+                    let lines = text.split('\n').map(l => l.trim()).filter(l => l.startsWith("https://") && l.includes(".trycloudflare.com"));
+                    
+                    if (lines.length > 0) {
+                        let latestUrl = lines[lines.length - 1];
+                        
+                        // پشکنینی پینگی سێرڤەر بە خێرایی
+                        const pingCtrl = new AbortController();
+                        const pingTimeout = setTimeout(() => pingCtrl.abort(), 4000);
+                        const ping = await fetch(latestUrl + "/ping", { signal: pingCtrl.signal }).catch(() => null);
+                        clearTimeout(pingTimeout);
+                        
+                        if (ping && ping.ok) {
+                            currentServerUrl = latestUrl;
+                            badge.innerText = "سێرڤەری هەوری ئامادەیە و بەستراوە ✅";
+                            badge.style.color = "var(--success)";
+                            return true;
+                        }
                     }
                 }
             } catch(e) {}
