@@ -91,7 +91,7 @@
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
         
         #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
-        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(0); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
         .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
@@ -572,7 +572,7 @@
                 pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق (مثل <i> أو {...}):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
                 msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!",
                 installModalTitle: "تثبيت التطبيق", 
-                installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", 
+                installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت？", 
                 installConfirmBtn: "تثبيت",
                 batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل"
             },
@@ -815,8 +815,8 @@
             }
         }
 
-        // فەنکشنی ستاندارد بۆ داونلۆدکردنی فایل بە گونجاوی لەگەڵ سیستەمی iOS و وێبگەڕەکانی تر
-        function triggerDownload(content, filename, mimeType = 'text/plain;charset=utf-8') {
+        // فەنکشنی ستاندارد بۆ داونلۆدکردنی فایل بە گونجاوی لەگەڵ سیستەمی iOS و وێبگەڕەکانی تر (بێ زیادکردنی پاشگری زیانبەخش)
+        function triggerDownload(content, filename, mimeType = 'application/octet-stream') {
             const blob = new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -881,8 +881,16 @@
                     finalContent = "WEBVTT\n\n";
                     parsed.forEach(item => { finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${item.text}\n\n`; });
                 } else if (targetFormat === 'ass') {
-                    finalContent = `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
-                    parsed.forEach(item => { finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${item.text.replace(/\n/g, '\\N')}\n`; });
+                    // بەستنی سەرپەڕ و مێتاداتا لەگەڵ ستایلی Adobe Arabic ڕیکخراو
+                    finalContent = `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nPlayResX: 640\nPlayResY: 360\nLayoutResX: 640\nLayoutResY: 360\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                    parsed.forEach(item => { 
+                        let dialogueText = item.text.replace(/\n/g, '\\N');
+                        // ناردنی نیشانەی تایبەت (\u200F) بۆ ڕیزبەندی دروستی ڕاست بۆ چەپ (RTL) لە ASS
+                        if (!dialogueText.startsWith('\u200F')) {
+                            dialogueText = '\u200F' + dialogueText;
+                        }
+                        finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${dialogueText}\n`; 
+                    });
                 }
 
                 pendingBatchDownloads.push({
@@ -1138,7 +1146,14 @@
                         fp.push((ol[j]?ol[j].tags:'') + (kl[j]!==undefined ? kl[j] : '')); 
                     }
                     
-                    if(isAssFormat) { final += (orig.assPrefix || '') + fp.join('\\N') + '\n'; } 
+                    if(isAssFormat) { 
+                        let dialogueText = fp.join('\\N');
+                        // ناردنی نیشانەی تایبەت (\u200F) بۆ ڕیزبەندی دروستی ڕاست بۆ چەپ (RTL) لە ASS ی دەستکاریکراو
+                        if (!dialogueText.startsWith('\u200F')) {
+                            dialogueText = '\u200F' + dialogueText;
+                        }
+                        final += (orig.assPrefix || '') + dialogueText + '\n'; 
+                    } 
                     else if (isVttFormat) { final += formatTimeVTT(orig.startSec) + " --> " + formatTimeVTT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; } 
                     else { final += (parseInt(idx)+1) + '\n' + formatTimeSRT(orig.startSec) + " --> " + formatTimeSRT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; }
                 }
