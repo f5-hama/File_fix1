@@ -53,7 +53,7 @@
         #progress-container { width: 100%; height: 6px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
         #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
-        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
         .toast.show { opacity: 1; transform: translateY(0); }
         .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
         #login-screen { display: flex; } #setup-screen { display: none; }
@@ -192,14 +192,15 @@
         <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی Hardsub بە پەیوەستبوونی ١٠٠٪ خێرا -->
+    <!-- مۆداڵی Hardsub بە سیستەمی ئۆتۆماتیکی پاشەکەوتکردنی کلیل -->
     <div id="hardsub-modal" class="custom-modal-overlay">
         <div class="custom-modal-content" style="max-width: 460px; text-align: right;" dir="rtl">
             <h3 class="custom-modal-title" style="text-align: center;">چەسپاندنی ژێرنووس (Hardsub)</h3>
             <p style="font-size: 13px; color:var(--text-muted); line-height: 1.6; text-align: center; margin-top:0;">ڕێندەرکردنی ئەنیمێ بە خێرایی باڵا و فۆنتی KurdForest بە کارتی شاشەی بەهێز.</p>
 
-            <div id="server-status-badge" style="text-align: center; font-size: 13.5px; font-weight: bold; margin-bottom: 12px; color: #eab308;">
-                پشکنینی سێرڤەر...
+            <div style="margin-bottom: 12px;">
+                <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 5px;">لینکی سێرڤەری تایبەتی خۆت لە Colab:</label>
+                <input type="text" id="hardsubServerUrl" class="input-field" placeholder="https://xxxx.trycloudflare.com" style="padding: 10px; font-size: 13px; text-align: left;" dir="ltr">
             </div>
 
             <div class="file-box" style="padding: 14px; margin-bottom: 10px;">
@@ -875,7 +876,7 @@
                 let timeLineIdx = lines.findIndex(x => x.includes('-->'));
                 if (timeLineIdx !== -1) {
                     let t = lines[timeLineIdx].split('-->');
-                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim() : '0';
+                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim().split(' ')[0] : '0';
                     let textLines = lines.slice(timeLineIdx + 1);
                     let rawText = textLines.join('\n');
                     let pl = extLines(rawText.replace(/\n/g, '\\N'));
@@ -1027,43 +1028,20 @@
         }
 
         // ==========================================
-        // بەشی پشکنین و پەیوەستکردنی ١٠٠٪ خێرا بە گووگڵ فایەربەیس
+        // بەشی Hardsub بە بەستنەوەی جێگیر و پاشەکەوتکردنی کلیل
         // ==========================================
-        let currentServerUrl = "";
-
-        async function checkServerStatus() {
-            const badge = document.getElementById('server-status-badge');
-            badge.innerText = "پشکنینی سێرڤەری هەوری...";
-            badge.style.color = "#eab308";
-            
-            try {
-                // هێنانی ڕاستەوخۆ لە داتابەیسی خێرای Firebase
-                const res = await fetch("https://kurdforest-auto-default-rtdb.firebaseio.com/server_url.json?t=" + Date.now());
-                if (res.ok) {
-                    let url = await res.json();
-                    if (typeof url === 'string' && url.startsWith("https://") && url.includes(".trycloudflare.com")) {
-                        currentServerUrl = url;
-                        badge.innerText = "سێرڤەری هەوری ئامادەیە و بەستراوە ✅";
-                        badge.style.color = "var(--success)";
-                        return true;
-                    }
-                }
-            } catch(e) {
-                console.error(e);
-            }
-            
-            badge.innerText = "سێرڤەر لەسەر هێڵ نییە! دوگمەی Play لە Colab دابگرە ❌";
-            badge.style.color = "#ef4444";
-            return false;
-        }
-
         function openHardsubModal() {
             document.getElementById('hardsub-modal').style.display = 'flex';
-            checkServerStatus();
+            const saved = localStorage.getItem('kf_hardsub_url');
+            if (saved) {
+                document.getElementById('hardsubServerUrl').value = saved;
+            }
         }
+
         function closeHardsubModal() {
             document.getElementById('hardsub-modal').style.display = 'none';
         }
+
         function updateHardsubFileName(input, displayId) {
             const display = document.getElementById(displayId);
             if (input.files && input.files[0]) {
@@ -1074,23 +1052,26 @@
                 display.style.color = 'var(--text-muted)';
             }
         }
+
         async function executeHardsubProcess() {
+            let serverUrl = document.getElementById('hardsubServerUrl').value.trim();
             const vFile = document.getElementById('hardsubVideoFile').files[0];
             const sFile = document.getElementById('hardsubSubFile').files[0];
             const lFile = document.getElementById('hardsubLogoFile').files[0];
             const statusDiv = document.getElementById('hardsub-status');
             const btn = document.getElementById('startHardsubBtn');
 
+            if (!serverUrl) {
+                showToast("تکایە سەرەتا لینکی کۆلاب لە خانەکە دابنێ!", "error");
+                return;
+            }
             if (!vFile || !sFile) {
                 showToast("تکایە هەردوو فایلی ڤیدیۆ و ژێرنووس دیاری بکە!", "error");
                 return;
             }
 
-            const isOnline = await checkServerStatus();
-            if (!isOnline || !currentServerUrl) {
-                showToast("سێرڤەری Colab کارا نییە! دوگمەی Play دابگرە.", "error");
-                return;
-            }
+            if (serverUrl.endsWith('/')) serverUrl = serverUrl.slice(0, -1);
+            localStorage.setItem('kf_hardsub_url', serverUrl);
 
             btn.disabled = true;
             statusDiv.innerText = "فایلەکان دەنێردرێن و پڕۆسەی ڕێندەر دەستی پێکرد (تکایە چاوەڕێبە)...";
@@ -1102,7 +1083,7 @@
                 formData.append('subtitle', sFile);
                 if (lFile) formData.append('logo', lFile);
 
-                const response = await fetch(`${currentServerUrl}/hardsub`, {
+                const response = await fetch(`${serverUrl}/hardsub`, {
                     method: 'POST',
                     body: formData
                 });
@@ -1119,7 +1100,7 @@
                 showToast("ڤیدیۆ چەسپێنراوەکە بە سەرکەوتوویی ئامادە کرا!", "success");
             } catch (err) {
                 console.error(err);
-                statusDiv.innerText = "پەیوەندی بە سێرڤەر پچڕا. دڵنیابە کۆدی Colab بە کراوەیی ماوەتەوە.";
+                statusDiv.innerText = "پەیوەندی دروست نەبوو! دڵنیابە لە دروستی لینکەکە و کارکردنی Colab.";
                 statusDiv.style.color = "#ef4444";
                 showToast("هەڵەیەک ڕوویدا لە کاتی ڕێندەرکردندا", "error");
             } finally {
