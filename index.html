@@ -6,7 +6,6 @@
     <meta name="theme-color" content="#8EB69B">
     <title data-i18n="pageTitle">دەستکاریکەری ژێرنووس</title>
     
-    <!-- کۆدی چاککردنی ڕێڕەوی گیت‌هەب و Service Worker -->
     <script>
         if (window.location.pathname.slice(-1) !== '/' && !window.location.pathname.endsWith('.html')) {
             window.location.replace(window.location.href + '/');
@@ -43,16 +42,15 @@
             color: var(--text-main); 
             min-height: 100vh; 
             overflow-x: hidden; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
         }
 
         body.startup-bg {
             background: linear-gradient(-45deg, #eaf2ed, #cce0d4, #8eb69b, #d9e8de);
             background-size: 400% 400%;
             animation: gradientBG 12s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         body.editor-bg { 
@@ -99,27 +97,23 @@
         .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
-        /* کارتی سەرەکی */
         .glass-card { 
             width: 100%; 
-            max-width: 480px; 
-            margin: 20px auto; 
+            max-width: 460px; 
+            margin: auto; 
             background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(16px); 
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.6); 
-            padding: 25px 20px; 
+            padding: 24px 20px; 
             border-radius: 24px; 
             box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); 
             display: flex; 
             flex-direction: column; 
             gap: 14px; 
-            animation: slideUpFade 0.5s ease-out; 
+            animation: slideUpFade 0.4s ease-out; 
             position: relative; 
         }
-
-        #login-screen { display: flex; flex-direction: column; }
-        #setup-screen { display: none; flex-direction: column; }
 
         .input-field { width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid rgba(142, 182, 155, 0.4); background: rgba(255, 255, 255, 0.9); font-size: 14px; color: var(--text-main); outline: none; transition: 0.3s; text-align: center; }
         .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(142, 182, 155, 0.15); }
@@ -192,7 +186,7 @@
         html[dir="ltr"] .custom-select-item { text-align: left; }
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
 
-        #install-app-btn { display: none; align-items: center; justify-content: center; gap: 7px; padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(142, 182, 155, 0.55); background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; font-size: 12.5px; font-weight: bold; cursor: pointer; }
+        #install-app-btn { display: none; align-items: center; justify-content: center; gap: 7px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(142, 182, 155, 0.55); background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; font-size: 12.5px; font-weight: bold; cursor: pointer; }
         .install-sheet { max-width: 380px; padding: 26px 22px 22px; border-radius: 22px; }
         .install-sheet-icon { width: 62px; height: 62px; margin: 0 auto 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
 
@@ -212,8 +206,7 @@
 </head>
 <body class="startup-bg">
 
-    <!-- شاشەی چوونەژوورەوە -->
-    <div id="login-screen" class="glass-card">
+    <div id="login-screen" class="glass-card" style="display: none;">
         <div style="display: flex; justify-content: flex-end; width: 100%;">
             <div class="custom-select-wrapper">
                 <button class="custom-select-btn" onclick="toggleLangMenu(this)">
@@ -235,20 +228,21 @@
         <button class="btn" style="margin-top: 10px;" onclick="performLogin()"><span data-i18n="loginBtn">چوونەژوورەوە</span></button>
     </div>
 
-    <!-- شاشەی سەرەکی دوای چوونەژوورەوە -->
-    <div id="setup-screen" class="glass-card">
+    <div id="setup-screen" class="glass-card" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <button style="padding: 6px 10px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
-            <button id="install-app-btn" onclick="installApp()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
-            <div class="custom-select-wrapper">
-                <button class="custom-select-btn" onclick="toggleLangMenu(this)">
-                    <span class="current-lang-text">کوردی</span>
-                    <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="custom-select-menu">
-                    <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
-                    <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
-                    <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="install-app-btn" onclick="installApp()"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
+                <div class="custom-select-wrapper">
+                    <button class="custom-select-btn" onclick="toggleLangMenu(this)">
+                        <span class="current-lang-text">کوردی</span>
+                        <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="custom-select-menu">
+                        <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
+                        <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
+                        <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -271,16 +265,15 @@
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; width: 100%; gap: 8px; margin-top: 5px;">
-            <button class="btn" style="flex: 1 1 100%;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
-            <button class="btn btn-outline" style="flex: 1; padding: 10px;" onclick="openConverterModal()"><span data-i18n="batchBtn">گۆڕینی فایل</span></button>
-            <button class="btn btn-outline" style="flex: 1; padding: 10px; border-color: var(--primary);" onclick="openHardsubModal()"><span>Hardsub</span></button>
+        <div style="display: flex; width: 100%; gap: 8px; margin-top: 5px;">
+            <button class="btn" style="flex: 1.4; padding: 12px;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
+            <button class="btn btn-outline" style="flex: 1; padding: 12px;" onclick="openConverterModal()"><span data-i18n="batchBtn">گۆڕینی فایل</span></button>
+            <button class="btn btn-outline" style="flex: 1; padding: 12px; border-color: var(--primary);" onclick="openHardsubModal()"><span>Hardsub</span></button>
         </div>
 
         <div style="text-align: center; margin-top: 5px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی Hardsub -->
     <div id="hardsub-modal" class="custom-modal-overlay">
         <div class="custom-modal-content" style="max-width: 480px; text-align: right; max-height: 90vh; overflow-y: auto;" dir="rtl">
             <h3 class="custom-modal-title" style="text-align: center; margin-bottom: 4px;">چەسپاندنی ژێرنووس (Hardsub)</h3>
@@ -406,7 +399,6 @@
         </div>
     </div>
 
-    <!-- مۆداڵەکانی تر -->
     <div id="install-modal" class="custom-modal-overlay">
         <div class="custom-modal-content install-sheet">
             <div class="install-sheet-icon"><svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>
@@ -492,7 +484,6 @@
         </div>
     </div>
 
-    <!-- شاشەی دەستکاریکەر (Editor) -->
     <div id="editor-screen">
         <div class="sticky-header-container">
             <div id="progress-container"><div id="progress-bar"></div></div>
