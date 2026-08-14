@@ -183,12 +183,46 @@
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
-        <div style="display:flex; gap:10px;">
-            <button class="btn" style="flex: 2;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
+        <div style="display:flex; gap:8px;">
+            <button class="btn" style="flex: 1.5;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
             <button class="btn btn-outline" style="flex: 1; padding: 12px;" onclick="openConverterModal()"><span data-i18n="batchBtn">گۆڕینی فایل</span></button>
+            <button class="btn btn-outline" style="flex: 1; padding: 12px; border-color: var(--primary);" onclick="openHardsubModal()"><span>Hardsub</span></button>
         </div>
 
         <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
+    </div>
+
+    <!-- مۆداڵی Hardsub بە بەستنەوەی ئۆتۆماتیکی -->
+    <div id="hardsub-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width: 460px; text-align: right;" dir="rtl">
+            <h3 class="custom-modal-title" style="text-align: center;">چەسپاندنی ژێرنووس (Hardsub)</h3>
+            <p style="font-size: 13px; color:var(--text-muted); line-height: 1.6; text-align: center; margin-top:0;">ڕێندەرکردنی ئەنیمێ بە خێرایی باڵا و فۆنتی KurdForest بە کارتی شاشەی بەهێز.</p>
+
+            <div class="file-box" style="padding: 14px; margin-bottom: 10px;">
+                <label>١. هەڵبژاردنی ڤیدیۆ (MP4 / MKV)</label>
+                <div class="file-name-display" id="hardsubVideoName">هیچ فایلێک دیاری نەکراوە</div>
+                <input type="file" id="hardsubVideoFile" accept="video/*" onchange="updateHardsubFileName(this, 'hardsubVideoName')">
+            </div>
+
+            <div class="file-box" style="padding: 14px; margin-bottom: 10px;">
+                <label>٢. فایلی ژێرنووس (ASS / SRT / VTT)</label>
+                <div class="file-name-display" id="hardsubSubName">هیچ فایلێک دیاری نەکراوە</div>
+                <input type="file" id="hardsubSubFile" accept=".ass,.srt,.vtt" onchange="updateHardsubFileName(this, 'hardsubSubName')">
+            </div>
+
+            <div class="file-box" style="padding: 14px; margin-bottom: 14px;">
+                <label>٣. وێنەی لۆگۆ (PNG - ئارەزوومەندانە)</label>
+                <div class="file-name-display" id="hardsubLogoName">هیچ فایلێک دیاری نەکراوە</div>
+                <input type="file" id="hardsubLogoFile" accept="image/png" onchange="updateHardsubFileName(this, 'hardsubLogoName')">
+            </div>
+
+            <div id="hardsub-status" style="font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 12px;"></div>
+
+            <div class="custom-modal-actions">
+                <button class="btn" id="startHardsubBtn" onclick="executeHardsubProcess()" style="width: 50%;">دەستپێکردنی ڕێندەر</button>
+                <button class="btn btn-outline" onclick="closeHardsubModal()" style="width: 50%;">داخستن</button>
+            </div>
+        </div>
     </div>
 
     <div id="install-modal" class="custom-modal-overlay">
@@ -206,7 +240,7 @@
     <div id="batch-download-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="batchDownloadTitle">داگرتنی فایلەکان</h3>
-            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="batchDownloadDesc">وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.</p>
+            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="batchDownloadDesc">وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە تا فایلەکان دابەزن.</p>
             <div class="custom-modal-actions"><button class="btn" onclick="executeBatchDownload()" style="width: 100%;" data-i18n="batchDownloadBtn">دەستپێکردنی داگرتن</button></div>
         </div>
     </div>
@@ -294,7 +328,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="top-tools">
                 <button class="top-btn" onclick="undo()" title="Undo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg></button>
                 <button class="top-btn" onclick="redo()" title="Redo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg></button>
@@ -636,7 +669,7 @@
         }
 
         function triggerDownload(content, filename, mimeType = 'application/octet-stream') {
-            const blob = new Blob([content], { type: mimeType });
+            const blob = (content instanceof Blob) ? content : new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -838,7 +871,7 @@
                 let timeLineIdx = lines.findIndex(x => x.includes('-->'));
                 if (timeLineIdx !== -1) {
                     let t = lines[timeLineIdx].split('-->');
-                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim().split(' ')[0] : '0';
+                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim() : '0';
                     let textLines = lines.slice(timeLineIdx + 1);
                     let rawText = textLines.join('\n');
                     let pl = extLines(rawText.replace(/\n/g, '\\N'));
@@ -945,16 +978,6 @@
             saveSession(); 
         }
 
-        function getCurrentState() { return Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value); }
-        function undo() { if(historyStack.length > 1) { redoStack.push(historyStack.pop()); restoreState(historyStack[historyStack.length-1]); saveSession(); } }
-        function redo() { if(redoStack.length > 0) { let s = redoStack.pop(); historyStack.push(s); restoreState(s); saveSession(); } }
-        function restoreState(s) { document.querySelectorAll('.subtitle-kurd textarea').forEach((t, i) => { if(s[i]!==undefined) t.value = s[i]; }); }
-        function updateProgress() {
-            let tas = document.querySelectorAll('.subtitle-kurd textarea');
-            let filled = Array.from(tas).filter(t => t.value.trim() !== '').length;
-            document.getElementById('progress-bar').style.width = tas.length ? (filled/tas.length*100)+'%' : '0%';
-        }
-
         function toggleDirection() { 
             const tas = document.querySelectorAll('.subtitle-kurd textarea, .subtitle-orig');
             if (!tas.length) return;
@@ -999,7 +1022,83 @@
             document.getElementById('ai-modal').style.display = 'none'; updateProgress(); saveSession();
         }
 
-        // داونلۆدکردنی فایلی وەرگێڕدراو بە پاراستنی ستایلە ئەسڵییەکان و چاککردنی ڕاست بۆ چەپ (RTL)
+        // ==========================================
+        // بەشی نوێی چەسپاندنی ژێرنووس (Hardsub Auto-Sync)
+        // ==========================================
+        function openHardsubModal() {
+            document.getElementById('hardsub-modal').style.display = 'flex';
+        }
+        function closeHardsubModal() {
+            document.getElementById('hardsub-modal').style.display = 'none';
+        }
+        function updateHardsubFileName(input, displayId) {
+            const display = document.getElementById(displayId);
+            if (input.files && input.files[0]) {
+                display.innerText = input.files[0].name;
+                display.style.color = 'var(--success)';
+            } else {
+                display.innerText = 'هیچ فایلێک دیاری نەکراوە';
+                display.style.color = 'var(--text-muted)';
+            }
+        }
+        async function executeHardsubProcess() {
+            const vFile = document.getElementById('hardsubVideoFile').files[0];
+            const sFile = document.getElementById('hardsubSubFile').files[0];
+            const lFile = document.getElementById('hardsubLogoFile').files[0];
+            const statusDiv = document.getElementById('hardsub-status');
+            const btn = document.getElementById('startHardsubBtn');
+
+            if (!vFile || !sFile) {
+                showToast("تکایە هەردوو فایلی ڤیدیۆ و ژێرنووس دیاری بکە!", "error");
+                return;
+            }
+
+            btn.disabled = true;
+            statusDiv.innerText = "سێرڤەر دەدۆزرێتەوە...";
+            statusDiv.style.color = "var(--primary)";
+
+            try {
+                // هێنانی ئۆتۆماتیکی لینکی چالاکی Colab لە داتابەیسی گشتی
+                const keyRes = await fetch("https://kvdb.io/S4Yx9C4yS8mUqQzN8fK8kY/kurdforest_server?t=" + Date.now());
+                if (!keyRes.ok) throw new Error("سێرڤەری Colab کارپێکراو نییە");
+                
+                let serverUrl = (await keyRes.text()).trim();
+                if (!serverUrl || !serverUrl.startsWith("http")) {
+                    throw new Error("سێرڤەری Colab کارپێکراو نییە");
+                }
+
+                statusDiv.innerText = "فایلەکان دەنێردرێن و پڕۆسەی ڕێندەر دەستی پێکرد (تکایە چاوەڕێبە)...";
+
+                const formData = new FormData();
+                formData.append('video', vFile);
+                formData.append('subtitle', sFile);
+                if (lFile) formData.append('logo', lFile);
+
+                const response = await fetch(`${serverUrl}/hardsub`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("هەڵەیەک لە سێرڤەر ڕوویدا");
+
+                statusDiv.innerText = "ڕێندەر بە سەرکەوتوویی تەواو بوو! فایلی ڤیدیۆکە دادەبەزێت...";
+                statusDiv.style.color = "var(--success)";
+
+                const blob = await response.blob();
+                const outName = "Hardsub_" + vFile.name.replace(/\.[^/.]+$/, "") + ".mp4";
+                triggerDownload(blob, outName, 'video/mp4');
+
+                showToast("ڤیدیۆ چەسپێنراوەکە بە سەرکەوتوویی ئامادە کرا!", "success");
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerText = "سێرڤەری ڕێندەر لەسەر هێڵ نییە! تکایە دوگمەی Play لە Colab دابگرە.";
+                statusDiv.style.color = "#ef4444";
+                showToast("هەڵە: سێرڤەری Colab کارا نییە", "error");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
         function downloadEditedFile() {
             let final = isAssFormat ? (assHeaderLines.join('\n') + '\n') : (isVttFormat ? "WEBVTT\n\n" : "");
             
@@ -1020,7 +1119,6 @@
                     let tag = (ol[j] && ol[j].tags) ? ol[j].tags : '';
                     let lineStr = lines[j];
                     
-                    // زیادکردنی هێمای فەرمی \u202B لە دوای تاگ و دەستپێکی دێڕ بۆ ڕێکخستنی بێ هەڵەی RTL
                     if (/[\u0600-\u06FF]/.test(lineStr) && !lineStr.startsWith('\u202B')) {
                         lineStr = '\u202B' + lineStr;
                     }
