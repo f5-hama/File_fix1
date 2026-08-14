@@ -157,9 +157,19 @@
         .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; border-bottom: 1px dashed var(--border-color); }
         .subtitle-line-num { font-size: 15px; font-weight: bold; color: var(--primary); direction: ltr; }
         .subtitle-time { font-size: 13px; color: var(--text-muted); direction: ltr; }
-        .subtitle-orig { background: var(--bg-color); padding: 14px; border-radius: 10px; margin-bottom: 14px; font-size: 15px; color: var(--text-main); border-right: 4px solid var(--primary); line-height: 1.6; direction: auto; }
+        
+        .subtitle-orig { 
+            background: var(--bg-color); padding: 14px; border-radius: 10px; margin-bottom: 14px; 
+            font-size: 15px; color: var(--text-main); border-right: 4px solid var(--primary); 
+            line-height: 1.6; direction: auto; unicode-bidi: plaintext; text-align: start; 
+        }
         html[dir="ltr"] .subtitle-orig { border-right: none; border-left: 4px solid var(--primary); }
-        .subtitle-kurd textarea { width: 100%; min-height: 85px; padding: 14px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 16px; line-height: 1.6; resize: vertical; outline: none; font-family: inherit; }
+        
+        .subtitle-kurd textarea { 
+            width: 100%; min-height: 85px; padding: 14px; border-radius: 10px; border: 2px solid var(--border-color); 
+            background: var(--card-bg); color: var(--text-main); font-size: 16px; line-height: 1.6; 
+            resize: vertical; outline: none; font-family: inherit; direction: auto; unicode-bidi: plaintext; text-align: start; 
+        }
         .subtitle-kurd textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(142, 182, 155, 0.15); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
@@ -572,7 +582,7 @@
                 pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق (مثل <i> أو {...}):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
                 msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!",
                 installModalTitle: "تثبيت التطبيق", 
-                installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت？", 
+                installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", 
                 installConfirmBtn: "تثبيت",
                 batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل"
             },
@@ -815,7 +825,7 @@
             }
         }
 
-        // فەنکشنی ستاندارد بۆ داونلۆدکردنی فایل بە گونجاوی لەگەڵ سیستەمی iOS و وێبگەڕەکانی تر (بێ زیادکردنی پاشگری زیانبەخش)
+        // فەنکشنی ستاندارد بۆ داونلۆدکردنی فایل بە بێ کێشە و بێ زیادکردنی پاشگری .txt لە هەموو سیستەمەکان
         function triggerDownload(content, filename, mimeType = 'application/octet-stream') {
             const blob = new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
@@ -823,7 +833,7 @@
             a.href = url;
             a.download = filename;
             a.style.display = 'none';
-            document.body.appendChild(a); // زۆر گرنگە بۆ کارکردنی بێ کێشە لەسەر ئایفۆن و سافاری
+            document.body.appendChild(a); 
             a.click();
             setTimeout(() => {
                 document.body.removeChild(a);
@@ -834,8 +844,8 @@
         // فەنکشنی ڕاماڵینی تاگەکانی ستایل و فۆرماتی ژێرنووس (HTML و ASS)
         function cleanSubtitleTags(text) {
             if (!text) return "";
-            let cleaned = text.replace(/\{[^}]+\}/g, ''); // لادانی تاگەکانی ASS وەک {\an8} یان {\pos}
-            cleaned = cleaned.replace(/<[^>]+>/g, ''); // لادانی تاگەکانی HTML وەک <i>, <b>, <font>
+            let cleaned = text.replace(/\{[^}]+\}/g, ''); // لادانی تاگەکانی ASS
+            cleaned = cleaned.replace(/<[^>]+>/g, ''); // لادانی تاگەکانی HTML
             return cleaned.trim();
         }
 
@@ -857,7 +867,6 @@
                 const isOrigVtt = file.name.toLowerCase().endsWith('.vtt');
                 let parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
 
-                // ئەگەر فایلی vtt بوو و بەکارهێنەرەکە هیچ نرخێکی دەستی نەنووسیبوو، بەهای +0.1 دەکەینە خودکار
                 let fileTimeShift = timeShift;
                 if (isOrigVtt && inputVal === "") {
                     fileTimeShift = 0.1;
@@ -867,7 +876,6 @@
                     parsed.forEach(item => { item.startSec = Math.max(0, item.startSec + fileTimeShift); item.endSec = Math.max(0, item.endSec + fileTimeShift); });
                 }
 
-                // ئەگەر بژاردەی پاککردنەوەی تاگەکان چالاک کرابوو
                 if (tagOption === 'clean') {
                     parsed.forEach(item => {
                         item.text = cleanSubtitleTags(item.text);
@@ -881,14 +889,9 @@
                     finalContent = "WEBVTT\n\n";
                     parsed.forEach(item => { finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${item.text}\n\n`; });
                 } else if (targetFormat === 'ass') {
-                    // بەستنی سەرپەڕ و مێتاداتا لەگەڵ ستایلی Adobe Arabic ڕیکخراو
                     finalContent = `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nPlayResX: 640\nPlayResY: 360\nLayoutResX: 640\nLayoutResY: 360\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
                     parsed.forEach(item => { 
                         let dialogueText = item.text.replace(/\n/g, '\\N');
-                        // ناردنی نیشانەی تایبەت (\u200F) بۆ ڕیزبەندی دروستی ڕاست بۆ چەپ (RTL) لە ASS
-                        if (!dialogueText.startsWith('\u200F')) {
-                            dialogueText = '\u200F' + dialogueText;
-                        }
                         finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${dialogueText}\n`; 
                     });
                 }
@@ -916,7 +919,7 @@
             pendingBatchDownloads = []; 
         }
 
-        // فەنکشنی نوێ و دەوڵەمەند بۆ وەرگێڕانی دروستی کاتەکان بەبێ جیاوازی درێژی کۆڵۆنەکان (خولەک و چرکە، یان کاژێر)
+        // فەنکشنی ستاندارد بۆ وەرگێڕانی کات بەبێ تێکچوون لە هەموو جۆرەکانی کۆڵۆن
         function timeToSeconds(str) {
             if(!str) return 0;
             let cleaned = str.replace(',', '.').trim();
@@ -930,7 +933,6 @@
             }
         }
 
-        // فەنکشنەکانی داڕشتنی نوێی ڕیکخستنی میلی‌چرکەکان بۆ ڕێگری لە کێشەی خڕکردنەوە و تێکچوونی کاتەکان
         function formatTimeSRT(sec) {
             if (sec < 0) sec = 0;
             let totalMs = Math.round(sec * 1000);
@@ -974,33 +976,47 @@
             data.split(/\r?\n/).forEach(line => {
                 if(line.startsWith('Dialogue:')) {
                     let p = line.split(','); if(p.length >= 10) {
+                        let st = p[1].trim(), en = p[2].trim();
                         let t = extLines(p.slice(9).join(','));
-                        items.push({ id: id++, time: `${p[1]} --> ${p[2]}`, startSec: timeToSeconds(p[1]), endSec: timeToSeconds(p[2]), assPrefix: p.slice(0,9).join(',')+',', parsedLines: t, text: t.map(l=>l.text).join('\n') });
+                        items.push({ id: id++, time: `${st} --> ${en}`, startSec: timeToSeconds(st), endSec: timeToSeconds(en), assPrefix: p.slice(0,9).join(',')+',', parsedLines: t, text: t.map(l=>l.text).join('\n') });
                     }
                 } else if (isOrig) assHeaderLines.push(line);
             }); return items;
         }
+
         function parseSRTContent(data) {
-            return data.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim().split('\n\n').map(b => {
-                let l = b.split('\n'); let timeLineIdx = l.findIndex(x => x.includes('-->'));
-                if(timeLineIdx !== -1) {
-                    let t = l[timeLineIdx].split('-->'); let st = t[0]?t[0].trim():'0', en=t[1]?t[1].trim():'0';
-                    let pl = extLines(l.slice(timeLineIdx + 1).join('\n').replace(/\n/g, '\\N'));
-                    return { id: l[0], time: l[timeLineIdx], startSec: timeToSeconds(st), endSec: timeToSeconds(en), assPrefix: '', parsedLines: pl, text: pl.map(x=>x.text).join('\n') };
-                } return null;
-            }).filter(i => i!==null);
-        }
-        function parseVTTContent(data) {
-            let items=[], id=1;
-            data.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim().split('\n\n').forEach(b => {
-                if(b.startsWith('WEBVTT')) return;
-                let l = b.split('\n'); let ti = l.findIndex(x=>x.includes('-->'));
-                if(ti !== -1) {
-                    let t = l[ti].split('-->'); let st = t[0]?t[0].trim():'0', en=t[1]?t[1].trim().split(' ')[0]:'0';
-                    let pl = extLines(l.slice(ti+1).join('\n').replace(/\n/g, '\\N'));
-                    items.push({ id: id++, time: `${st} --> ${en}`, startSec: timeToSeconds(st), endSec: timeToSeconds(en), assPrefix: '', parsedLines: pl, text: pl.map(x=>x.text).join('\n') });
+            let normalized = data.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+            let blocks = normalized.split(/\n\s*\n/);
+            let items = []; let idCounter = 1;
+            blocks.forEach(b => {
+                let lines = b.trim().split('\n');
+                let timeLineIdx = lines.findIndex(x => x.includes('-->'));
+                if (timeLineIdx !== -1) {
+                    let t = lines[timeLineIdx].split('-->');
+                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim() : '0';
+                    let pl = extLines(lines.slice(timeLineIdx + 1).join('\n').replace(/\n/g, '\\N'));
+                    items.push({ id: idCounter++, time: `${st} --> ${en}`, startSec: timeToSeconds(st), endSec: timeToSeconds(en), assPrefix: '', parsedLines: pl, text: pl.map(x=>x.text).join('\n') });
                 }
-            }); return items;
+            });
+            return items;
+        }
+
+        function parseVTTContent(data) {
+            let normalized = data.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+            let blocks = normalized.split(/\n\s*\n/);
+            let items = []; let idCounter = 1;
+            blocks.forEach(b => {
+                if (b.startsWith('WEBVTT') || b.startsWith('NOTE')) return;
+                let lines = b.trim().split('\n');
+                let timeLineIdx = lines.findIndex(x => x.includes('-->'));
+                if (timeLineIdx !== -1) {
+                    let t = lines[timeLineIdx].split('-->');
+                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim().split(' ')[0] : '0';
+                    let pl = extLines(lines.slice(timeLineIdx + 1).join('\n').replace(/\n/g, '\\N'));
+                    items.push({ id: idCounter++, time: `${st} --> ${en}`, startSec: timeToSeconds(st), endSec: timeToSeconds(en), assPrefix: '', parsedLines: pl, text: pl.map(x=>x.text).join('\n') });
+                }
+            });
+            return items;
         }
 
         function saveSession() {
@@ -1033,9 +1049,22 @@
             currentFileName = fOrig.name; isAssFormat = fOrig.name.toLowerCase().endsWith('.ass'); isVttFormat = fOrig.name.toLowerCase().endsWith('.vtt'); 
             
             originalData = isAssFormat ? parseASSContent(await fOrig.text(), true) : (isVttFormat ? parseVTTContent(await fOrig.text()) : parseSRTContent(await fOrig.text()));
-            let kurdData = fKurd ? (fKurd.name.toLowerCase().endsWith('.ass') ? parseASSContent(await fKurd.text(), false) : (fKurd.name.toLowerCase().endsWith('.vtt') ? parseVTTContent(await fKurd.text()) : parseSRTContent(await fKurd.text()))) : [];
+            
+            let kurdData = [];
+            if (fKurd) {
+                const kText = await fKurd.text();
+                const isKAss = fKurd.name.toLowerCase().endsWith('.ass');
+                const isKVtt = fKurd.name.toLowerCase().endsWith('.vtt');
+                kurdData = isKAss ? parseASSContent(kText, false) : (isKVtt ? parseVTTContent(kText) : parseSRTContent(kText));
+            }
 
+            // بەستنی زیرەکانەی کاتی فایلی ئەسڵی لەسەر دەقە وەرگێڕدراوەکە بەبێ تێکچوون
             let state = originalData.map((orig, i) => {
+                if (kurdData[i] && (Math.abs(orig.startSec - kurdData[i].startSec) < 3.0 || kurdData.length === originalData.length)) {
+                    return kurdData[i].text;
+                }
+                let matched = kurdData.find(k => Math.abs(k.startSec - orig.startSec) < 1.5);
+                if (matched) return matched.text;
                 return kurdData[i] ? kurdData[i].text : '';
             });
             
@@ -1054,8 +1083,8 @@
                         </div>
                         <div class="subtitle-time">${orig.time}</div>
                     </div>
-                    <div class="subtitle-orig">${orig.text.replace(/\n/g, '<br>')}</div>
-                    <div class="subtitle-kurd"><textarea>${kText}</textarea></div>
+                    <div class="subtitle-orig" dir="auto">${orig.text.replace(/\n/g, '<br>')}</div>
+                    <div class="subtitle-kurd"><textarea dir="auto">${kText}</textarea></div>
                 </div>`;
             }
             document.getElementById('subtitles-container').innerHTML = html;
@@ -1099,7 +1128,18 @@
             document.getElementById('progress-bar').style.width = tas.length ? (filled/tas.length*100)+'%' : '0%';
         }
 
-        function toggleDirection() { document.querySelectorAll('.subtitle-kurd textarea').forEach(ta => ta.setAttribute('dir', ta.getAttribute('dir')==='ltr'?'rtl':'ltr')); }
+        // فەنکشنی دەستاودەستکردنی ڕێکی ئاڕاستەی نووسین (خۆکار -> ڕاست -> چەپ)
+        function toggleDirection() { 
+            const tas = document.querySelectorAll('.subtitle-kurd textarea, .subtitle-orig');
+            if (!tas.length) return;
+            const currentDir = tas[0].getAttribute('dir') || 'auto';
+            const newDir = currentDir === 'rtl' ? 'ltr' : (currentDir === 'ltr' ? 'auto' : 'rtl');
+            tas.forEach(ta => {
+                ta.setAttribute('dir', newDir);
+                ta.style.textAlign = newDir === 'rtl' ? 'right' : (newDir === 'ltr' ? 'left' : 'start');
+            });
+            showToast(newDir === 'rtl' ? 'ئاڕاستە: ڕاست بۆ چەپ (RTL)' : (newDir === 'ltr' ? 'ئاڕاستە: چەپ بۆ ڕاست (LTR)' : 'ئاڕاستە: خۆکار (Auto)'), 'success');
+        }
 
         function setupVideoSync() {
             const video = document.getElementById('preview-video');
@@ -1136,26 +1176,27 @@
         function downloadEditedFile() {
             let final = isAssFormat ? (assHeaderLines.join('\n')+'\n') : "";
             document.querySelectorAll('.subtitle-card').forEach(card => {
-                let idx = card.getAttribute('data-index'); let orig = originalData[idx];
-                let kt = card.querySelector('textarea').value.trim();
+                let idx = parseInt(card.getAttribute('data-index')); 
+                let orig = originalData[idx];
+                let kt = card.querySelector('textarea').value;
                 
-                if(kt !== "") {
-                    let kl = kt.split('\n'); let ol = orig.parsedLines || [];
-                    let fp = []; 
-                    for(let j=0; j<Math.max(kl.length, ol.length); j++) {
-                        fp.push((ol[j]?ol[j].tags:'') + (kl[j]!==undefined ? kl[j] : '')); 
-                    }
-                    
-                    if(isAssFormat) { 
-                        let dialogueText = fp.join('\\N');
-                        // ناردنی نیشانەی تایبەت (\u200F) بۆ ڕیزبەندی دروستی ڕاست بۆ چەپ (RTL) لە ASS ی دەستکاریکراو
-                        if (!dialogueText.startsWith('\u200F')) {
-                            dialogueText = '\u200F' + dialogueText;
-                        }
-                        final += (orig.assPrefix || '') + dialogueText + '\n'; 
-                    } 
-                    else if (isVttFormat) { final += formatTimeVTT(orig.startSec) + " --> " + formatTimeVTT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; } 
-                    else { final += (parseInt(idx)+1) + '\n' + formatTimeSRT(orig.startSec) + " --> " + formatTimeSRT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; }
+                // بەکارهێنانی دەقەکە بەبێ سڕینەوەی کاتەکان تەنانەت ئەگەر دێڕەکە بەتاڵیش بێت
+                let textToUse = kt.trim() !== "" ? kt : orig.text;
+                let kl = textToUse.split('\n'); 
+                let ol = orig.parsedLines || [];
+                let fp = []; 
+                for(let j=0; j<Math.max(kl.length, ol.length); j++) {
+                    fp.push((ol[j]?ol[j].tags:'') + (kl[j]!==undefined ? kl[j] : '')); 
+                }
+                
+                if(isAssFormat) { 
+                    final += (orig.assPrefix || 'Dialogue: 0,' + formatTimeASS(orig.startSec) + ',' + formatTimeASS(orig.endSec) + ',Default,,0,0,0,,') + fp.join('\\N') + '\n'; 
+                } 
+                else if (isVttFormat) { 
+                    final += formatTimeVTT(orig.startSec) + " --> " + formatTimeVTT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; 
+                } 
+                else { 
+                    final += (idx + 1) + '\n' + formatTimeSRT(orig.startSec) + " --> " + formatTimeSRT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; 
                 }
             });
 
