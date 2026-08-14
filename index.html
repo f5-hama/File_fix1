@@ -13,6 +13,8 @@
     </script>
 
     <link rel="stylesheet" href="./fonts.css">
+    <!-- کتێبخانەی فەرمی Tesseract بۆ ناسینەوەی دەق لە PGS بە خێرایی باڵا -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
     <style>
         :root {
@@ -167,6 +169,10 @@
         .install-sheet { max-width: 380px; padding: 24px 20px 20px; border-radius: 22px; }
         .install-sheet-icon { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
 
+        /* مۆداڵی پێشکەوتنی ناسینەوەی تێکست لە PGS */
+        #ocr-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(8px); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .ocr-box { background: var(--card-bg); padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid var(--border-color); box-shadow: var(--shadow-lg); }
+
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
             .floating-search-bar { left: 50%; transform: translateX(-50%); max-width: 600px; bottom: 85px; }
@@ -229,9 +235,9 @@
         <div class="file-box" id="boxOriginal">
             <button type="button" class="clear-file-btn" onclick="clearFile('fileOriginal', 'boxOriginal')" style="display: none;"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             <div class="upload-icon"><svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
-            <label data-i18n="origFileLbl">فایلی ئەسڵی (ئینگلیزی/عەرەبی)</label>
+            <label data-i18n="origFileLbl">فایلی ئەسڵی (SRT / ASS / VTT / PGS .sup)</label>
             <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
-            <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxOriginal')">
+            <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt,.sup" onchange="toggleClearBtn(this, 'boxOriginal')">
         </div>
         
         <div class="file-box" id="boxKurdish">
@@ -248,6 +254,18 @@
         </div>
 
         <div style="text-align: center; margin-top: 5px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
+    </div>
+
+    <!-- مۆداڵی پڕۆگرێسی ناسینەوەی تێکست لە PGS -->
+    <div id="ocr-modal">
+        <div class="ocr-box">
+            <h3 style="margin-top:0; color: var(--primary); font-size: 16px;">ناسینەوەی تێکست لە فایلی PGS</h3>
+            <p id="ocr-status-text" style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">خەریکی پشکنینی وێنەکانە...</p>
+            <div style="width: 100%; height: 10px; background: var(--border-color); border-radius: 999px; overflow: hidden; margin-bottom: 8px;">
+                <div id="ocr-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34e89e, #10b981); transition: width 0.2s;"></div>
+            </div>
+            <span id="ocr-percent-text" style="font-size: 12px; font-weight: bold; color: var(--primary);">0%</span>
+        </div>
     </div>
 
     <div id="install-modal" class="custom-modal-overlay">
@@ -295,13 +313,13 @@
     <div id="converter-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="batchTitle">کارکردن بە کۆمەڵ لەسەر چەند فایلێک</h3>
-            <p style="font-size: 13.5px; color:var(--text-muted); margin-bottom:15px; line-height: 1.6;" data-i18n="batchDesc">دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.</p>
+            <p style="font-size: 13.5px; color:var(--text-muted); margin-bottom:15px; line-height: 1.6;" data-i18n="batchDesc">دەتوانیت چەندین فایل پێکەوە هەڵبژێریت (SRT, ASS, VTT, PGS .sup)، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.</p>
             
             <div class="file-box" id="boxBatch" style="margin-bottom: 20px; padding: 15px;">
                 <div class="upload-icon"><svg style="width:28px;height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>
                 <label data-i18n="batchSelectLbl">فایلەکان هەڵبژێرە:</label>
                 <div class="file-name-display" id="batchCountDisplay" data-i18n="batchNoFile">هیچ فایلێک دیاری نەکراوە</div>
-                <input type="file" id="convertFileInput" accept=".srt,.ass,.vtt" multiple onchange="updateBatchCount(this)">
+                <input type="file" id="convertFileInput" accept=".srt,.ass,.vtt,.sup" multiple onchange="updateBatchCount(this)">
             </div>
 
             <div style="margin-bottom: 20px; text-align: right;" dir="auto">
@@ -359,7 +377,6 @@
                 <button class="top-btn" onclick="redo()" title="Redo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg></button>
                 <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;"></div>
                 
-                <!-- فایل ئینپوت بە شێوازی تایبەت بە iOS و Android تا بێ هەڵە کاربکات -->
                 <input type="file" id="headerVideoInput" accept="video/*" style="position: absolute; top: -9999px; left: -9999px; opacity: 0; width: 1px; height: 1px; pointer-events: none;" onchange="loadHeaderVideo(this)">
                 <button id="add-video-btn" class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="triggerVideoUpload()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
                 <button id="remove-video-btn" class="top-btn" style="color: #ef4444; border-color: #ef4444; display: none;" onclick="closeHeaderVideo()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -467,17 +484,17 @@
 
         const i18n = {
             ckb: {
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی/عەرەبی)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT / PGS .sup)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت (SRT, ASS, VTT, PGS .sup)، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
                 msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
             },
             ar: {
-                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق:", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
+                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT / PGS .sup)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق:", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
                 msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "يرجى النقر على سماح لتنزيل الملفات.", batchDownloadBtn: "بدء التنزيل"
             },
             en: {
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (English)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", tagOptionLbl: "Clean formatting tags:", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "Unfinished session detected. Continue?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
+                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (SRT / ASS / VTT / PGS .sup)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", tagOptionLbl: "Clean formatting tags:", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "Unfinished session detected. Continue?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
                 msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!", installModalTitle: "Install App", installModalDesc: "Install as app for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Files", batchDownloadDesc: "Click allow to download files.", batchDownloadBtn: "Start Download"
             }
         };
@@ -577,7 +594,6 @@
             history.replaceState(null, '', window.location.pathname);
         }
 
-        // چارەسەری ئایفۆن و ئەندرۆید بۆ هەڵبژاردنی ڤیدیۆ
         function triggerVideoUpload() {
             const fileInput = document.getElementById('headerVideoInput');
             if (fileInput) {
@@ -592,7 +608,7 @@
                 const url = URL.createObjectURL(file);
                 const videoEl = document.getElementById('preview-video');
                 videoEl.src = url;
-                videoEl.load(); // بۆ ئایفۆن و سەفاری زۆر پێویستە
+                videoEl.load();
                 document.getElementById('video-container').style.display = 'block';
                 setupVideoSync();
                 document.getElementById('add-video-btn').style.display = 'none';
@@ -716,7 +732,6 @@
             }
         }
 
-        // فەنکشنی مۆدێرن بۆ داونلۆدکردن لەسەر ئایفۆن و ئەندرۆید و کۆمپیوتەر بێ کێشە
         function triggerDownload(content, filename, mimeType = 'text/plain;charset=utf-8') {
             const blob = (content instanceof Blob) ? content : new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
@@ -747,6 +762,139 @@
             return cleaned.trim();
         }
 
+        // ==========================================
+        // سیستەمی ناسینەوە و گۆڕینی فایلی PGS (.sup)
+        // ==========================================
+        async function parseSUPFile(file, progressCallback) {
+            const buffer = await file.arrayBuffer();
+            const data = new Uint8Array(buffer);
+            let offset = 0;
+            
+            let segments = [];
+            while (offset < data.length - 13) {
+                if (data[offset] === 0x50 && data[offset + 1] === 0x47) { // "PG" header
+                    let pts = ((data[offset + 2] << 24) | (data[offset + 3] << 16) | (data[offset + 4] << 8) | data[offset + 5]) >>> 0;
+                    let type = data[offset + 10];
+                    let len = (data[offset + 11] << 8) | data[offset + 12];
+                    let payload = data.slice(offset + 13, offset + 13 + len);
+                    segments.push({ pts, type, payload });
+                    offset += 13 + len;
+                } else {
+                    offset++;
+                }
+            }
+
+            // کۆکردنەوەی دێڕەکان بە تایمینگی 90kHz تەواو ورد
+            let displaySets = [];
+            let currentSet = { startSec: 0, endSec: 0, ods: [], pds: [] };
+
+            for (let seg of segments) {
+                let sec = seg.pts / 90000.0;
+                if (seg.type === 0x16) { // PCS
+                    if (seg.payload.length >= 4) {
+                        let numObjects = seg.payload[3];
+                        if (numObjects > 0) {
+                            if (currentSet.ods.length > 0) {
+                                if (currentSet.endSec <= currentSet.startSec) currentSet.endSec = sec;
+                                displaySets.push(currentSet);
+                            }
+                            currentSet = { startSec: sec, endSec: 0, ods: [], pds: [] };
+                        } else {
+                            currentSet.endSec = sec;
+                            if (currentSet.ods.length > 0) {
+                                displaySets.push(currentSet);
+                                currentSet = { startSec: 0, endSec: 0, ods: [], pds: [] };
+                            }
+                        }
+                    }
+                } else if (seg.type === 0x15) { // ODS (Image)
+                    currentSet.ods.push(seg.payload);
+                } else if (seg.type === 0x14) { // PDS (Palette)
+                    currentSet.pds.push(seg.payload);
+                }
+            }
+            if (currentSet.ods.length > 0) {
+                if (currentSet.endSec <= currentSet.startSec) currentSet.endSec = currentSet.startSec + 3.0;
+                displaySets.push(currentSet);
+            }
+
+            if (displaySets.length === 0) {
+                throw new Error("هیچ ژێرنووسێک لە ناو فایلی PGS نەدۆزرایەوە!");
+            }
+
+            // دروستکردنی workerی Tesseract
+            const worker = await Tesseract.createWorker('eng');
+
+            let parsedItems = [];
+            let total = displaySets.length;
+
+            for (let i = 0; i < total; i++) {
+                let ds = displaySets[i];
+                if (progressCallback) progressCallback(i + 1, total);
+
+                // دروستکردنی وێنەی Canvas بۆ ناسینەوە
+                let canvas = document.createElement('canvas');
+                canvas.width = 400; canvas.height = 100;
+                let ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // دیکۆدکردنی ODS
+                if (ds.ods.length > 0 && ds.ods[0].length >= 7) {
+                    let w = (ds.ods[0][4] << 8) | ds.ods[0][5];
+                    let h = (ds.ods[0][6] << 8) | ds.ods[0][7];
+                    if (w > 0 && h > 0) {
+                        canvas.width = w; canvas.height = h;
+                        let imgData = ctx.createImageData(w, h);
+                        let rle = ds.ods[0].slice(11);
+                        let pIdx = 0;
+                        for (let b = 0; b < rle.length && pIdx < w * h; b++) {
+                            let val = rle[b];
+                            if (val !== 0) {
+                                imgData.data[pIdx * 4] = 0;
+                                imgData.data[pIdx * 4 + 1] = 0;
+                                imgData.data[pIdx * 4 + 2] = 0;
+                                imgData.data[pIdx * 4 + 3] = 255;
+                                pIdx++;
+                            } else if (b + 1 < rle.length) {
+                                let flag = rle[++b];
+                                let run = flag & 0x3f;
+                                if ((flag & 0x40) !== 0 && b + 1 < rle.length) run = (run << 8) | rle[++b];
+                                for (let r = 0; r < run && pIdx < w * h; r++) {
+                                    imgData.data[pIdx * 4] = 255;
+                                    imgData.data[pIdx * 4 + 1] = 255;
+                                    imgData.data[pIdx * 4 + 2] = 255;
+                                    imgData.data[pIdx * 4 + 3] = 255;
+                                    pIdx++;
+                                }
+                            }
+                        }
+                        ctx.putImageData(imgData, 0, 0);
+                    }
+                }
+
+                const ret = await worker.recognize(canvas);
+                let recognizedText = ret.data.text.trim().replace(/\n+/g, '\n');
+                if (!recognizedText) recognizedText = "...";
+
+                let st = ds.startSec;
+                let en = ds.endSec > st ? ds.endSec : st + 2.5;
+
+                parsedItems.push({
+                    id: i + 1,
+                    time: `${formatTimeSRT(st)} --> ${formatTimeSRT(en)}`,
+                    startSec: st,
+                    endSec: en,
+                    assPrefix: '',
+                    parsedLines: extLines(recognizedText.replace(/\n/g, '\\N')),
+                    text: recognizedText
+                });
+            }
+
+            await worker.terminate();
+            return parsedItems;
+        }
+
         async function prepareBatchProcess() {
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
@@ -757,13 +905,31 @@
             if (!files || files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
             
             pendingBatchDownloads = []; 
+            const ocrModal = document.getElementById('ocr-modal');
+            const ocrStatus = document.getElementById('ocr-status-text');
+            const ocrBar = document.getElementById('ocr-progress-bar');
+            const ocrPercent = document.getElementById('ocr-percent-text');
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                const text = await file.text();
                 const isOrigAss = file.name.toLowerCase().endsWith('.ass');
                 const isOrigVtt = file.name.toLowerCase().endsWith('.vtt');
-                let parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
+                const isOrigSup = file.name.toLowerCase().endsWith('.sup');
+                
+                let parsed = [];
+                if (isOrigSup) {
+                    ocrModal.style.display = 'flex';
+                    parsed = await parseSUPFile(file, (current, total) => {
+                        let p = Math.round((current / total) * 100);
+                        ocrStatus.innerText = `ناسینەوەی دێڕی ${current} لە ${total}...`;
+                        ocrBar.style.width = p + '%';
+                        ocrPercent.innerText = p + '%';
+                    });
+                    ocrModal.style.display = 'none';
+                } else {
+                    const text = await file.text();
+                    parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
+                }
 
                 let fileTimeShift = timeShift;
                 if (isOrigVtt && inputVal === "") {
@@ -866,7 +1032,7 @@
             let cs = totalCs % 100;
             let totalS = Math.floor(totalCs / 100);
             let s = totalS % 60;
-            let totalM = Math.floor(totalCs / 100);
+            let totalM = Math.floor(totalS / 60);
             let m = totalM % 60;
             let h = Math.floor(totalM / 60);
             return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
@@ -964,9 +1130,34 @@
             const fKurd = document.getElementById('fileKurdish').files[0];
             if(!fOrig) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
             
-            currentFileName = fOrig.name; isAssFormat = fOrig.name.toLowerCase().endsWith('.ass'); isVttFormat = fOrig.name.toLowerCase().endsWith('.vtt'); 
+            currentFileName = fOrig.name; 
+            isAssFormat = fOrig.name.toLowerCase().endsWith('.ass'); 
+            isVttFormat = fOrig.name.toLowerCase().endsWith('.vtt'); 
+            const isSupFormat = fOrig.name.toLowerCase().endsWith('.sup');
             
-            originalData = isAssFormat ? parseASSContent(await fOrig.text(), true) : (isVttFormat ? parseVTTContent(await fOrig.text()) : parseSRTContent(await fOrig.text()));
+            if (isSupFormat) {
+                const ocrModal = document.getElementById('ocr-modal');
+                const ocrStatus = document.getElementById('ocr-status-text');
+                const ocrBar = document.getElementById('ocr-progress-bar');
+                const ocrPercent = document.getElementById('ocr-percent-text');
+
+                ocrModal.style.display = 'flex';
+                try {
+                    originalData = await parseSUPFile(fOrig, (current, total) => {
+                        let p = Math.round((current / total) * 100);
+                        ocrStatus.innerText = `ناسینەوەی دێڕی ${current} لە ${total}...`;
+                        ocrBar.style.width = p + '%';
+                        ocrPercent.innerText = p + '%';
+                    });
+                } catch(err) {
+                    ocrModal.style.display = 'none';
+                    showToast("هەڵەیەک ڕوویدا لە خوێندنەوەی فایلی PGS", "error");
+                    return;
+                }
+                ocrModal.style.display = 'none';
+            } else {
+                originalData = isAssFormat ? parseASSContent(await fOrig.text(), true) : (isVttFormat ? parseVTTContent(await fOrig.text()) : parseSRTContent(await fOrig.text()));
+            }
             
             let kurdData = [];
             if (fKurd) {
