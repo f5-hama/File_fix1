@@ -1,4 +1,4 @@
-const CACHE_NAME = 'subedit-cache-v4'; // گۆڕین بۆ ڤێرژنی v4 بۆ چالاککردنی نوێکارییەکان
+const CACHE_NAME = 'subedit-cache-v5'; // گۆڕین بۆ ڤێرژنی v4 بۆ چالاککردنی نوێکارییەکان
 
 const urlsToCache = [
     './',
