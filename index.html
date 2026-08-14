@@ -15,62 +15,24 @@
     <link rel="stylesheet" href="./fonts.css">
     
     <style>
+        body { font-family: 'KurdForest', Tahoma, Arial, sans-serif; margin: 0; padding: 15px; color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
         :root {
-            --primary: #8EB69B; 
-            --primary-hover: #7ca188; 
-            --success: #10b981;
-            --bg-color: #f2f7f4; 
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 15px rgba(0,0,0,0.05);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --primary: #8EB69B; --primary-hover: #7ca188; --success: #10b981;
+            --bg-color: #f2f7f4; --card-bg: #ffffff; --text-main: #1e293b; --text-muted: #64748b;
+            --border-color: #e2e8f0; --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.05); --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
         }
-
-        * { 
-            box-sizing: border-box; 
-            font-family: inherit; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-
-        body { 
-            font-family: 'KurdForest', Tahoma, Arial, sans-serif; 
-            margin: 0; 
-            padding: 15px; 
-            color: var(--text-main); 
-            min-height: 100vh; 
-            overflow-x: hidden; 
-        }
-
+        * { box-sizing: border-box; font-family: inherit; -webkit-tap-highlight-color: transparent; }
         body.startup-bg {
             background: linear-gradient(-45deg, #eaf2ed, #cce0d4, #8eb69b, #d9e8de);
-            background-size: 400% 400%;
-            animation: gradientBG 12s ease infinite;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-size: 400% 400%; animation: gradientBG 12s ease infinite;
         }
-        
-        body.editor-bg { 
-            background-color: var(--bg-color); 
-            padding: 0; 
-            display: block;
-        }
-
+        body.editor-bg { background-color: var(--bg-color); padding: 0; }
         body.dark-theme {
-            --bg-color: #121614; 
-            --card-bg: #1a201c; 
-            --text-main: #e2e8f0; 
-            --text-muted: #94a3b8;
-            --border-color: #26332a; 
-            --primary: #68d391;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.5); 
-            --shadow-md: 0 4px 15px rgba(0,0,0,0.4); 
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+            --bg-color: #121614; --card-bg: #1a201c; --text-main: #e2e8f0; --text-muted: #94a3b8;
+            --border-color: #26332a; --primary: #68d391;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.5); --shadow-md: 0 4px 15px rgba(0,0,0,0.4); --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
         }
-
         body.dark-theme.startup-bg { background: linear-gradient(-45deg, #0d120f, #151f18, #0f1712, #1a261d); }
         body.dark-theme .glass-card { background: rgba(26, 32, 28, 0.85); border: 1px solid rgba(104, 211, 145, 0.2); }
         body.dark-theme .input-field { background: rgba(18, 22, 20, 0.9); color: #f1f5f9; border-color: #26332a; }
@@ -85,68 +47,36 @@
         body.dark-theme .top-btn:hover { background: #26332a; color: var(--primary); }
         body.dark-theme .btn:not(.btn-outline) { background: linear-gradient(135deg, #2f855a 0%, #1c4532 100%); color: #fff; }
         body.dark-theme .btn-outline { background: rgba(104, 211, 145, 0.05); color: var(--primary); border: 1.5px solid var(--primary); }
-
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         #progress-container { width: 100%; height: 6px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
-        
         #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
         .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
         .toast.show { opacity: 1; transform: translateY(0); }
-
-        .glass-card { 
-            width: 100%; 
-            max-width: 460px; 
-            margin: auto; 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.6); 
-            padding: 24px 20px; 
-            border-radius: 24px; 
-            box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); 
-            display: flex; 
-            flex-direction: column; 
-            gap: 14px; 
-            animation: slideUpFade 0.4s ease-out; 
-            position: relative; 
-        }
-
-        .input-field { width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid rgba(142, 182, 155, 0.4); background: rgba(255, 255, 255, 0.9); font-size: 14px; color: var(--text-main); outline: none; transition: 0.3s; text-align: center; }
-        .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(142, 182, 155, 0.15); }
-
-        .file-box { width: 100%; position: relative; padding: 20px 15px; border: 2px dashed #b5d1c0; border-radius: 14px; background: rgba(242, 247, 244, 0.7); transition: all 0.3s ease; text-align: center; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
+        #login-screen { display: flex; } #setup-screen { display: none; }
+        .input-field { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid rgba(142, 182, 155, 0.4); background: rgba(255, 255, 255, 0.9); font-size: 16px; color: var(--text-main); outline: none; transition: 0.3s; text-align: center; }
+        .file-box { position: relative; padding: 25px 15px; border: 2px dashed #b5d1c0; border-radius: 14px; background: rgba(242, 247, 244, 0.7); transition: all 0.3s ease; text-align: center; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .file-box:hover, .file-box.has-file { border-color: var(--primary); background: rgba(142, 182, 155, 0.1); }
         .file-box input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-        .file-box .upload-icon { color: var(--primary); margin-bottom: 6px; }
-        .file-box label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px; font-size: 14px; pointer-events: none; }
-        .file-name-display { font-size: 12.5px; color: var(--text-muted); font-weight: bold; pointer-events: none; word-break: break-all; }
-        
-        .clear-file-btn { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
-        html[dir="ltr"] .clear-file-btn { right: auto; left: 8px; }
-
-        .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 14px; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; gap: 8px; box-shadow: 0 6px 15px rgba(124, 161, 136, 0.4); }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124, 161, 136, 0.5); }
-        .btn:active { transform: scale(0.96); }
-
+        .file-box .upload-icon { color: var(--primary); margin-bottom: 8px; }
+        .file-box label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 5px !important; font-size: 14.5px; pointer-events: none; }
+        .file-name-display { font-size: 13px; color: var(--text-muted); font-weight: bold; pointer-events: none; word-break: break-all; }
+        .clear-file-btn { position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
+        html[dir="ltr"] .clear-file-btn { right: auto; left: 10px; }
+        .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.3s; gap: 8px; box-shadow: 0 6px 15px rgba(124, 161, 136, 0.4); }
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); box-shadow: none; }
-        .btn-outline:hover { background: rgba(142, 182, 155, 0.1); transform: translateY(-2px); }
-
         .fmt-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); padding: 10px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .fmt-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
         .icon { width: 20px; height: 20px; flex-shrink: 0; }
-        
-        #editor-screen { display: none; width: 100%; max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 150px; animation: fadeIn 0.5s ease; }
+        #editor-screen { display: none; max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 150px; animation: fadeIn 0.5s ease; }
         .sticky-header-container { position: sticky; top: 0; z-index: 50; background: var(--card-bg); backdrop-filter: blur(10px); margin: -15px -15px 15px -15px; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; gap: 10px; border-bottom: 1px dashed var(--border-color); }
         .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 10px 15px; flex-wrap: wrap; }
         .top-btn, .back-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 8px 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; gap: 4px; }
         html[dir="ltr"] .back-btn svg { transform: rotate(180deg); }
-
         .floating-search-bar { display: none; position: fixed; bottom: 135px; left: 15px; right: 15px; background: var(--card-bg); backdrop-filter: blur(15px); padding: 12px; border-radius: 14px; box-shadow: 0 -4px 25px rgba(0,0,0,0.15); border: 1px solid var(--primary); z-index: 150; }
         .search-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
         .floating-search-bar input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); outline: none; font-size: 14px; color: var(--text-main); }
@@ -154,11 +84,9 @@
         .search-btn { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; }
-
         #video-container { display: none; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-md); border: 2px solid var(--primary); position: sticky; top: 115px; z-index: 45; }
         #preview-video { width: 100%; max-height: 250px; display: block; }
         #video-subtitle-overlay { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 16px; font-weight: bold; pointer-events: none; padding: 0 10%; line-height: 1.5; direction: rtl; }
-
         .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); }
         .subtitle-card.active-sub { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
         .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; border-bottom: 1px dashed var(--border-color); }
@@ -169,14 +97,11 @@
         .subtitle-kurd textarea { width: 100%; min-height: 85px; padding: 14px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 16px; line-height: 1.6; resize: vertical; outline: none; direction: auto; unicode-bidi: plaintext; text-align: start; }
         .subtitle-kurd textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(142, 182, 155, 0.15); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-
         .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 16px 16px 0 0; }
-        
-        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.8); backdrop-filter: blur(5px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
-        .custom-modal-content { background: var(--card-bg); padding: 20px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
-        .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 17px; }
-        .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
-
+        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.8); backdrop-filter: blur(5px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .custom-modal-content { background: var(--card-bg); padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
+        .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 18px; }
+        .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
         .custom-select-wrapper { position: relative; display: inline-block; }
         .custom-select-btn { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 13px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .custom-select-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 5px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow-md); z-index: 1000; min-width: 100px; overflow: hidden; }
@@ -185,11 +110,9 @@
         .custom-select-item { padding: 8px 12px; font-size: 13px; cursor: pointer; color: var(--text-main); text-align: right; font-weight: bold; }
         html[dir="ltr"] .custom-select-item { text-align: left; }
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
-
-        #install-app-btn { display: none; align-items: center; justify-content: center; gap: 7px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(142, 182, 155, 0.55); background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; font-size: 12.5px; font-weight: bold; cursor: pointer; }
+        #install-app-btn { display: none; align-items: center; justify-content: center; gap: 7px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(142, 182, 155, 0.55); background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; font-size: 13px; font-weight: bold; cursor: pointer; }
         .install-sheet { max-width: 380px; padding: 26px 22px 22px; border-radius: 22px; }
         .install-sheet-icon { width: 62px; height: 62px; margin: 0 auto 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
-
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
             .floating-search-bar { left: 50%; transform: translateX(-50%); max-width: 600px; bottom: 85px; }
@@ -206,7 +129,7 @@
 </head>
 <body class="startup-bg">
 
-    <div id="login-screen" class="glass-card" style="display: none;">
+    <div id="login-screen" class="glass-card">
         <div style="display: flex; justify-content: flex-end; width: 100%;">
             <div class="custom-select-wrapper">
                 <button class="custom-select-btn" onclick="toggleLangMenu(this)">
@@ -220,38 +143,33 @@
                 </div>
             </div>
         </div>
-        <h2 style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 5px 0;">
-            <svg class="icon" style="width:26px; height:26px; color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            <span data-i18n="loginTitle">چوونەژوورەوەی وەرگێڕ</span>
-        </h2>
-        <p style="text-align:center; font-size:13.5px; color:var(--text-muted); margin: 0;" data-i18n="appDesc">ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.</p>
-        <button class="btn" style="margin-top: 10px;" onclick="performLogin()"><span data-i18n="loginBtn">چوونەژوورەوە</span></button>
+        <h2><svg class="icon" style="width:26px; height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg><span data-i18n="loginTitle">چوونەژوورەوەی وەرگێڕ</span></h2>
+        <p style="text-align:center; font-size:13.5px; color:var(--text-muted);" data-i18n="appDesc">ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.</p>
+        <button class="btn" style="margin-top: 20px;" onclick="performLogin()"><span data-i18n="loginBtn">چوونەژوورەوە</span></button>
     </div>
 
-    <div id="setup-screen" class="glass-card" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+    <div id="setup-screen" class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
             <button style="padding: 6px 10px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="install-app-btn" onclick="installApp()"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
-                <div class="custom-select-wrapper">
-                    <button class="custom-select-btn" onclick="toggleLangMenu(this)">
-                        <span class="current-lang-text">کوردی</span>
-                        <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="custom-select-menu">
-                        <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
-                        <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
-                        <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
-                    </div>
+            <button id="install-app-btn" onclick="installApp()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
+            <div class="custom-select-wrapper">
+                <button class="custom-select-btn" onclick="toggleLangMenu(this)">
+                    <span class="current-lang-text">کوردی</span>
+                    <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="custom-select-menu">
+                    <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
+                    <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
+                    <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
                 </div>
             </div>
         </div>
 
-        <div id="welcome-msg" style="text-align: center; font-size: 18px; color: var(--primary); font-weight: bold;"></div>
+        <div id="welcome-msg" style="text-align: center; font-size: 18px; color: var(--primary); font-weight: bold; margin-bottom: 5px;"></div>
         
         <div class="file-box" id="boxOriginal">
             <button type="button" class="clear-file-btn" onclick="clearFile('fileOriginal', 'boxOriginal')" style="display: none;"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            <div class="upload-icon"><svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+            <div class="upload-icon"><svg style="width:32px;height:32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
             <label data-i18n="origFileLbl">فایلی ئەسڵی (ئینگلیزی/عەرەبی)</label>
             <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
             <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxOriginal')">
@@ -259,48 +177,18 @@
         
         <div class="file-box" id="boxKurdish">
             <button type="button" class="clear-file-btn" onclick="clearFile('fileKurdish', 'boxKurdish')" style="display: none;"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            <div class="upload-icon"><svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+            <div class="upload-icon"><svg style="width:32px;height:32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
             <label data-i18n="transFileLbl">فایلی وەرگێڕدراو (ئارەزوومەندانە)</label>
             <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
-        <div style="display: flex; width: 100%; gap: 8px; margin-top: 5px;">
-            <button class="btn" style="flex: 1.4; padding: 12px;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
+        <div style="display:flex; gap:10px;">
+            <button class="btn" style="flex: 2;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
             <button class="btn btn-outline" style="flex: 1; padding: 12px;" onclick="openConverterModal()"><span data-i18n="batchBtn">گۆڕینی فایل</span></button>
-            <button class="btn btn-outline" style="flex: 1; padding: 12px; border-color: var(--primary);" onclick="openHardsubModal()"><span>Hardsub</span></button>
         </div>
 
-        <div style="text-align: center; margin-top: 5px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
-    </div>
-
-    <!-- مۆداڵی فراوان و مۆدێرنی Hardsub بە ئایکۆنی SVG -->
-    <div id="hardsub-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 950px; width: 98%; height: 94vh; display: flex; flex-direction: column; padding: 10px; border-radius: 16px;" dir="rtl">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h3 class="custom-modal-title" style="margin: 0; font-size: 15px; display: flex; align-items: center; gap: 6px;">
-                    <svg style="width: 18px; height: 18px; color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
-                    </svg>
-                    <span>چەسپاندنی ژێرنووس (Hardsub)</span>
-                </h3>
-                <div style="display: flex; gap: 6px;">
-                    <button class="btn btn-outline" onclick="resetHardsubUrl()" style="width: auto; padding: 4px 8px; font-size: 11.5px;">گۆڕینی لینک</button>
-                    <button class="btn btn-outline" onclick="closeHardsubModal()" style="width: auto; padding: 4px 10px; font-size: 11.5px; color: #ef4444; border-color: #ef4444;">داخستن ✕</button>
-                </div>
-            </div>
-
-            <!-- بەشی دانانی لینکی Gradio -->
-            <div id="hardsub-url-panel" style="display: flex; gap: 8px; margin-bottom: 8px;">
-                <input type="text" id="gradioServerUrl" class="input-field" placeholder="لینکی Gradio لە Colab دابنێ: https://xxxx.gradio.live" style="padding: 8px 12px; font-size: 12.5px; text-align: left;" dir="ltr">
-                <button class="btn" onclick="connectHardsubFrame()" style="width: auto; padding: 8px 16px; white-space: nowrap; font-size: 12.5px;">کردنەوە</button>
-            </div>
-
-            <!-- چوارچێوەی فراوانی ڕووکاری Hardsub -->
-            <div id="hardsub-frame-wrapper" style="flex: 1; width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); display: none; background: var(--bg-color);">
-                <iframe id="hardsubIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
-            </div>
-        </div>
+        <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
     <div id="install-modal" class="custom-modal-overlay">
@@ -318,7 +206,7 @@
     <div id="batch-download-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="batchDownloadTitle">داگرتنی فایلەکان</h3>
-            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="batchDownloadDesc">وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە تا فایلەکان دابەزن.</p>
+            <p style="font-size: 14px; color:var(--text-main); margin-bottom:20px; line-height: 1.6;" data-i18n="batchDownloadDesc">وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.</p>
             <div class="custom-modal-actions"><button class="btn" onclick="executeBatchDownload()" style="width: 100%;" data-i18n="batchDownloadBtn">دەستپێکردنی داگرتن</button></div>
         </div>
     </div>
@@ -406,6 +294,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="top-tools">
                 <button class="top-btn" onclick="undo()" title="Undo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg></button>
                 <button class="top-btn" onclick="redo()" title="Redo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg></button>
@@ -747,7 +636,7 @@
         }
 
         function triggerDownload(content, filename, mimeType = 'application/octet-stream') {
-            const blob = (content instanceof Blob) ? content : new Blob([content], { type: mimeType });
+            const blob = new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -820,7 +709,7 @@
                 } else if (targetFormat === 'ass') {
                     let header = (isOrigAss && assHeaderLines.length > 0) 
                         ? (assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n')
-                        : `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,KurdForest,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                        : `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
                     
                     finalContent = header;
                     parsed.forEach(item => { 
@@ -887,7 +776,7 @@
             let cs = totalCs % 100;
             let totalS = Math.floor(totalCs / 100);
             let s = totalS % 60;
-            let totalM = Math.floor(totalCs / 100);
+            let totalM = Math.floor(totalS / 60);
             let m = totalM % 60;
             let h = Math.floor(totalM / 60);
             return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
@@ -957,50 +846,6 @@
                 }
             });
             return items;
-        }
-
-        function getCurrentState() {
-            let state = [];
-            document.querySelectorAll('.subtitle-kurd textarea').forEach(ta => { state.push(ta.value); });
-            return state;
-        }
-
-        function updateProgress() {
-            const tas = document.querySelectorAll('.subtitle-kurd textarea');
-            if (tas.length === 0) return;
-            let filled = 0;
-            tas.forEach(t => { if (t.value.trim() !== '') filled++; });
-            const p = (filled / tas.length) * 100;
-            document.getElementById('progress-bar').style.width = p + '%';
-        }
-
-        function undo() {
-            if (historyStack.length > 1) {
-                redoStack.push(historyStack.pop());
-                let prevState = historyStack[historyStack.length - 1];
-                applyState(prevState);
-            }
-        }
-
-        function redo() {
-            if (redoStack.length > 0) {
-                let nextState = redoStack.pop();
-                historyStack.push(nextState);
-                applyState(nextState);
-            }
-        }
-
-        function applyState(state) {
-            const tas = document.querySelectorAll('.subtitle-kurd textarea');
-            state.forEach((text, i) => {
-                if (tas[i]) {
-                    tas[i].value = text;
-                    tas[i].style.height = 'auto';
-                    tas[i].style.height = tas[i].scrollHeight + 'px';
-                }
-            });
-            updateProgress();
-            saveSession();
         }
 
         function saveSession() {
@@ -1100,6 +945,16 @@
             saveSession(); 
         }
 
+        function getCurrentState() { return Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value); }
+        function undo() { if(historyStack.length > 1) { redoStack.push(historyStack.pop()); restoreState(historyStack[historyStack.length-1]); saveSession(); } }
+        function redo() { if(redoStack.length > 0) { let s = redoStack.pop(); historyStack.push(s); restoreState(s); saveSession(); } }
+        function restoreState(s) { document.querySelectorAll('.subtitle-kurd textarea').forEach((t, i) => { if(s[i]!==undefined) t.value = s[i]; }); }
+        function updateProgress() {
+            let tas = document.querySelectorAll('.subtitle-kurd textarea');
+            let filled = Array.from(tas).filter(t => t.value.trim() !== '').length;
+            document.getElementById('progress-bar').style.width = tas.length ? (filled/tas.length*100)+'%' : '0%';
+        }
+
         function toggleDirection() { 
             const tas = document.querySelectorAll('.subtitle-kurd textarea, .subtitle-orig');
             if (!tas.length) return;
@@ -1144,45 +999,7 @@
             document.getElementById('ai-modal').style.display = 'none'; updateProgress(); saveSession();
         }
 
-        // ==================== بەشی تایبەت بە HARDSUB ====================
-        function openHardsubModal() {
-            document.getElementById('hardsub-modal').style.display = 'flex';
-            const savedUrl = localStorage.getItem('kf_gradio_url');
-            if (savedUrl) {
-                document.getElementById('gradioServerUrl').value = savedUrl;
-                connectHardsubFrame();
-            }
-        }
-
-        function closeHardsubModal() {
-            document.getElementById('hardsub-modal').style.display = 'none';
-        }
-
-        function connectHardsubFrame() {
-            let url = document.getElementById('gradioServerUrl').value.trim();
-            if (!url) {
-                showToast("تکایە سەرەتا لینکی Gradio دابنێ!", "error");
-                return;
-            }
-            if (url.endsWith('/')) url = url.slice(0, -1);
-            localStorage.setItem('kf_gradio_url', url);
-
-            const wrapper = document.getElementById('hardsub-frame-wrapper');
-            const iframe = document.getElementById('hardsubIframe');
-            const urlPanel = document.getElementById('hardsub-url-panel');
-            
-            iframe.src = url;
-            wrapper.style.display = 'block';
-            urlPanel.style.display = 'none';
-            showToast("پەیوەندی بە سەرکەوتوویی دروست بوو!", "success");
-        }
-
-        function resetHardsubUrl() {
-            document.getElementById('hardsub-frame-wrapper').style.display = 'none';
-            document.getElementById('hardsub-url-panel').style.display = 'flex';
-            document.getElementById('gradioServerUrl').focus();
-        }
-
+        // داونلۆدکردنی فایلی وەرگێڕدراو بە پاراستنی ستایلە ئەسڵییەکان و چاککردنی ڕاست بۆ چەپ (RTL)
         function downloadEditedFile() {
             let final = isAssFormat ? (assHeaderLines.join('\n') + '\n') : (isVttFormat ? "WEBVTT\n\n" : "");
             
@@ -1203,6 +1020,7 @@
                     let tag = (ol[j] && ol[j].tags) ? ol[j].tags : '';
                     let lineStr = lines[j];
                     
+                    // زیادکردنی هێمای فەرمی \u202B لە دوای تاگ و دەستپێکی دێڕ بۆ ڕێکخستنی بێ هەڵەی RTL
                     if (/[\u0600-\u06FF]/.test(lineStr) && !lineStr.startsWith('\u202B')) {
                         lineStr = '\u202B' + lineStr;
                     }
