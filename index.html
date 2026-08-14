@@ -91,7 +91,7 @@
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
         
         #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
-        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(0); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
         .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
@@ -551,7 +551,7 @@
 
         const i18n = {
             ckb: {
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی/عەرەبی)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "بە کۆمەڵ/فۆرمات", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت یان لە سەرەتاوە دەست پێ دەکەیتەوە؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی/عەرەبی)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت یان لە سەرەتاوە دەست پێ دەکەیتەوە؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
                 msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!",
                 installModalTitle: "دابەزاندنی ئەپ", 
                 installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", 
@@ -559,7 +559,7 @@
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' یان 'Allow' بکە کاتێک داوات لێدەکرێت بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
             },
             ar: {
-                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "دفعة/صيغة", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
+                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (إنجليزي)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار أم البدء من جديد؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ سيتم فقدان التغييرات إذا لم تقم بحفظها.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
                 msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!",
                 installModalTitle: "تثبيت التطبيق", 
                 installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك ليعمل بشكل أسرع وبدون إنترنت؟", 
@@ -567,7 +567,7 @@
                 batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب متصفحك الإذن لتنزيل عدة ملفات معاً. يرجى النقر على 'Allow' أو 'سماح' عند المطالبة بذلك.", batchDownloadBtn: "بدء التنزيل"
             },
             en: {
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (English)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Batch/Format", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "It looks like you have an unfinished session. Do you want to continue where you left off or start over?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
+                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (English)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "It looks like you have an unfinished session. Do you want to continue where you left off or start over?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
                 msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!",
                 installModalTitle: "Install App", 
                 installModalDesc: "Do you want to install this website as an app on your device for faster access and offline use?", 
@@ -776,13 +776,32 @@
             const display = document.getElementById('batchCountDisplay');
             if(input.files.length > 0) {
                 display.innerText = `${input.files.length} فایل دیاریکراون`; display.style.color = "var(--success)";
-            } else { display.innerText = i18n[currentLang]['batchNoFile']; display.style.color = "var(--text-muted)"; }
+                
+                // ئەگەر فایلی vtt هەڵبژێردرا، ڕاستەوخۆ بەهای 0.1 دابنێ لە خانەی کاتەکەدا
+                let hasVtt = false;
+                for (let i = 0; i < input.files.length; i++) {
+                    if (input.files[i].name.toLowerCase().endsWith('.vtt')) {
+                        hasVtt = true;
+                        break;
+                    }
+                }
+                if (hasVtt) {
+                    document.getElementById('batchTimeShift').value = "0.1";
+                } else {
+                    document.getElementById('batchTimeShift').value = "";
+                }
+            } else { 
+                display.innerText = i18n[currentLang]['batchNoFile']; 
+                display.style.color = "var(--text-muted)"; 
+                document.getElementById('batchTimeShift').value = "";
+            }
         }
 
         async function prepareBatchProcess() {
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
-            const timeShift = parseFloat(document.getElementById('batchTimeShift').value) || 0;
+            const inputVal = document.getElementById('batchTimeShift').value;
+            const timeShift = parseFloat(inputVal) || 0;
 
             if (files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
             
@@ -792,10 +811,17 @@
                 const file = files[i];
                 const text = await file.text();
                 const isOrigAss = file.name.toLowerCase().endsWith('.ass');
-                let parsed = isOrigAss ? parseASSContent(text, true) : (file.name.toLowerCase().endsWith('.vtt') ? parseVTTContent(text) : parseSRTContent(text));
+                const isOrigVtt = file.name.toLowerCase().endsWith('.vtt');
+                let parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
 
-                if (timeShift !== 0) {
-                    parsed.forEach(item => { item.startSec = Math.max(0, item.startSec + timeShift); item.endSec = Math.max(0, item.endSec + timeShift); });
+                // ئەگەر فایلی vtt بوو و بەکارهێنەرەکە هیچ نرخێکی دەستی نەنووسیبوو، بەهای +0.1 دەکەینە خودکار
+                let fileTimeShift = timeShift;
+                if (isOrigVtt && inputVal === "") {
+                    fileTimeShift = 0.1;
+                }
+
+                if (fileTimeShift !== 0) {
+                    parsed.forEach(item => { item.startSec = Math.max(0, item.startSec + fileTimeShift); item.endSec = Math.max(0, item.endSec + fileTimeShift); });
                 }
 
                 let finalContent = "";
