@@ -61,9 +61,15 @@
         body.dark-theme .file-box { background: rgba(30, 41, 59, 0.2); border-color: #2d3748; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
         body.dark-theme .file-box:hover, body.dark-theme .file-box.has-file { background: rgba(104, 211, 145, 0.1); border-color: var(--primary); }
         
-        body.dark-theme .subtitle-orig { background: #202823; color: #cbd5e1; border-color: var(--primary); }
+        body.dark-theme .subtitle-orig { 
+            background: #202823; color: #cbd5e1; border-color: var(--primary); 
+            direction: auto; unicode-bidi: plaintext; text-align: start; 
+        }
         body.dark-theme .subtitle-header { background: #151a17; border-color: #26332a; }
-        body.dark-theme .subtitle-kurd textarea { background: #121614; color: #f8fafc; border-color: #26332a; }
+        body.dark-theme .subtitle-kurd textarea { 
+            background: #121614; color: #f8fafc; border-color: #26332a; 
+            direction: auto; unicode-bidi: plaintext; text-align: start; 
+        }
         body.dark-theme .action-bar { background: rgba(20, 26, 22, 0.98); border-color: #26332a; }
         body.dark-theme .sticky-header-container { background: rgba(20, 26, 22, 0.98); border-color: #26332a; }
         body.dark-theme .custom-modal-content { background: #1a201c; border-color: #26332a; }
@@ -626,7 +632,7 @@
                 if (i18n[lang][key]) { if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { el.placeholder = i18n[lang][key]; } else { el.innerHTML = i18n[lang][key]; } }
             });
             if(localStorage.getItem('kf_user')) {
-                document.getElementById('welcome-msg').innerText = i18n[lang]['welcomeText'];
+                document.getElementById('welcome-msg').innerText = i18n[currentLang]['welcomeText'];
             }
         }
 
@@ -805,7 +811,6 @@
             if(input.files.length > 0) {
                 display.innerText = `${input.files.length} فایل دیاریکراون`; display.style.color = "var(--success)";
                 
-                // ئەگەر فایلی vtt هەڵبژێردرا، ڕاستەوخۆ بەهای 0.1 دابنێ لە خانەی کاتەکەدا
                 let hasVtt = false;
                 for (let i = 0; i < input.files.length; i++) {
                     if (input.files[i].name.toLowerCase().endsWith('.vtt')) {
@@ -825,7 +830,6 @@
             }
         }
 
-        // فەنکشنی ستاندارد بۆ داونلۆدکردنی فایل بە بێ کێشە و بێ زیادکردنی پاشگری .txt لە هەموو سیستەمەکان
         function triggerDownload(content, filename, mimeType = 'application/octet-stream') {
             const blob = new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
@@ -841,11 +845,10 @@
             }, 100);
         }
 
-        // فەنکشنی ڕاماڵینی تاگەکانی ستایل و فۆرماتی ژێرنووس (HTML و ASS)
         function cleanSubtitleTags(text) {
             if (!text) return "";
-            let cleaned = text.replace(/\{[^}]+\}/g, ''); // لادانی تاگەکانی ASS
-            cleaned = cleaned.replace(/<[^>]+>/g, ''); // لادانی تاگەکانی HTML
+            let cleaned = text.replace(/\{[^}]+\}/g, ''); 
+            cleaned = cleaned.replace(/<[^>]+>/g, ''); 
             return cleaned.trim();
         }
 
@@ -884,20 +887,32 @@
 
                 let finalContent = "";
                 if (targetFormat === 'srt') {
-                    parsed.forEach((item, idx) => { finalContent += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${item.text}\n\n`; });
+                    parsed.forEach((item, idx) => { 
+                        let cleanText = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : item.text);
+                        let lines = cleanText.split('\n').map(l => l.trim()).filter(l => l !== "");
+                        if (lines.length === 0) lines = ['...'];
+                        finalContent += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${lines.join('\n')}\n\n`; 
+                    });
                 } else if (targetFormat === 'vtt') {
                     finalContent = "WEBVTT\n\n";
-                    parsed.forEach(item => { finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${item.text}\n\n`; });
+                    parsed.forEach(item => { 
+                        let cleanText = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : item.text);
+                        let lines = cleanText.split('\n').map(l => l.trim()).filter(l => l !== "");
+                        if (lines.length === 0) lines = ['...'];
+                        finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${lines.join('\n')}\n\n`; 
+                    });
                 } else if (targetFormat === 'ass') {
                     finalContent = `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nPlayResX: 640\nPlayResY: 360\nLayoutResX: 640\nLayoutResY: 360\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
                     parsed.forEach(item => { 
-                        let dialogueText = item.text.replace(/\n/g, '\\N');
-                        finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${dialogueText}\n`; 
+                        let cleanText = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : item.text);
+                        let lines = cleanText.split('\n').map(l => l.trim()).filter(l => l !== "");
+                        if (lines.length === 0) lines = ['...'];
+                        finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${lines.join('\\N')}\n`; 
                     });
                 }
 
                 pendingBatchDownloads.push({
-                    content: finalContent,
+                    content: finalContent.trim() + '\n\n',
                     filename: file.name.replace(/\.[^/.]+$/, "") + "_edited." + targetFormat
                 });
             }
@@ -919,7 +934,6 @@
             pendingBatchDownloads = []; 
         }
 
-        // فەنکشنی ستاندارد بۆ وەرگێڕانی کات بەبێ تێکچوون لە هەموو جۆرەکانی کۆڵۆن
         function timeToSeconds(str) {
             if(!str) return 0;
             let cleaned = str.replace(',', '.').trim();
@@ -994,7 +1008,9 @@
                 if (timeLineIdx !== -1) {
                     let t = lines[timeLineIdx].split('-->');
                     let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim() : '0';
-                    let pl = extLines(lines.slice(timeLineIdx + 1).join('\n').replace(/\n/g, '\\N'));
+                    let textLines = lines.slice(timeLineIdx + 1);
+                    let rawText = textLines.join('\n');
+                    let pl = extLines(rawText.replace(/\n/g, '\\N'));
                     items.push({ id: idCounter++, time: `${st} --> ${en}`, startSec: timeToSeconds(st), endSec: timeToSeconds(en), assPrefix: '', parsedLines: pl, text: pl.map(x=>x.text).join('\n') });
                 }
             });
@@ -1012,7 +1028,9 @@
                 if (timeLineIdx !== -1) {
                     let t = lines[timeLineIdx].split('-->');
                     let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim().split(' ')[0] : '0';
-                    let pl = extLines(lines.slice(timeLineIdx + 1).join('\n').replace(/\n/g, '\\N'));
+                    let textLines = lines.slice(timeLineIdx + 1);
+                    let rawText = textLines.join('\n');
+                    let pl = extLines(rawText.replace(/\n/g, '\\N'));
                     items.push({ id: idCounter++, time: `${st} --> ${en}`, startSec: timeToSeconds(st), endSec: timeToSeconds(en), assPrefix: '', parsedLines: pl, text: pl.map(x=>x.text).join('\n') });
                 }
             });
@@ -1058,7 +1076,7 @@
                 kurdData = isKAss ? parseASSContent(kText, false) : (isKVtt ? parseVTTContent(kText) : parseSRTContent(kText));
             }
 
-            // بەستنی زیرەکانەی کاتی فایلی ئەسڵی لەسەر دەقە وەرگێڕدراوەکە بەبێ تێکچوون
+            // بەستنی تەواو و دروستی کاتەکانی فایلی ئەسڵی لەسەر فایلی وەرگێڕدراو
             let state = originalData.map((orig, i) => {
                 if (kurdData[i] && (Math.abs(orig.startSec - kurdData[i].startSec) < 3.0 || kurdData.length === originalData.length)) {
                     return kurdData[i].text;
@@ -1128,7 +1146,7 @@
             document.getElementById('progress-bar').style.width = tas.length ? (filled/tas.length*100)+'%' : '0%';
         }
 
-        // فەنکشنی دەستاودەستکردنی ڕێکی ئاڕاستەی نووسین (خۆکار -> ڕاست -> چەپ)
+        // فەنکشنی گۆڕینی ئاڕاستەی دەق لە نێوان خۆکار -> ڕاست -> چەپ
         function toggleDirection() { 
             const tas = document.querySelectorAll('.subtitle-kurd textarea, .subtitle-orig');
             if (!tas.length) return;
@@ -1173,38 +1191,48 @@
             document.getElementById('ai-modal').style.display = 'none'; updateProgress(); saveSession();
         }
 
+        // داونلۆدکردنی فایلی دەستکاریکراو بە پاککردنەوەی دێڕی بەتاڵ بۆ ئەوەی لە پلەیەرەکان تێکنەچێت
         function downloadEditedFile() {
-            let final = isAssFormat ? (assHeaderLines.join('\n')+'\n') : "";
+            let final = isAssFormat ? (assHeaderLines.join('\n') + '\n') : (isVttFormat ? "WEBVTT\n\n" : "");
+            
             document.querySelectorAll('.subtitle-card').forEach(card => {
                 let idx = parseInt(card.getAttribute('data-index')); 
                 let orig = originalData[idx];
-                let kt = card.querySelector('textarea').value;
+                if (!orig) return;
                 
-                // بەکارهێنانی دەقەکە بەبێ سڕینەوەی کاتەکان تەنانەت ئەگەر دێڕەکە بەتاڵیش بێت
+                let kt = card.querySelector('textarea').value;
                 let textToUse = kt.trim() !== "" ? kt : orig.text;
-                let kl = textToUse.split('\n'); 
+                
+                // پاککردنەوەی هەموو دێڕە بەتاڵە زیانبەخشەکان
+                let lines = textToUse.split('\n').map(l => l.trim()).filter(l => l !== "");
+                if (lines.length === 0) lines = [orig.text.trim() || '...'];
+                
                 let ol = orig.parsedLines || [];
                 let fp = []; 
-                for(let j=0; j<Math.max(kl.length, ol.length); j++) {
-                    fp.push((ol[j]?ol[j].tags:'') + (kl[j]!==undefined ? kl[j] : '')); 
+                for(let j=0; j<lines.length; j++) {
+                    let tag = (ol[j] && ol[j].tags) ? ol[j].tags : '';
+                    fp.push(tag + lines[j]); 
                 }
                 
-                if(isAssFormat) { 
-                    final += (orig.assPrefix || 'Dialogue: 0,' + formatTimeASS(orig.startSec) + ',' + formatTimeASS(orig.endSec) + ',Default,,0,0,0,,') + fp.join('\\N') + '\n'; 
+                let cleanBlockText = fp.join('\n');
+                
+                if (isAssFormat) { 
+                    let dialogueText = fp.join('\\N');
+                    final += (orig.assPrefix || `Dialogue: 0,${formatTimeASS(orig.startSec)},${formatTimeASS(orig.endSec)},Default,,0,0,0,,`) + dialogueText + '\n'; 
                 } 
                 else if (isVttFormat) { 
-                    final += formatTimeVTT(orig.startSec) + " --> " + formatTimeVTT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; 
+                    final += `${formatTimeVTT(orig.startSec)} --> ${formatTimeVTT(orig.endSec)}\n${cleanBlockText}\n\n`; 
                 } 
                 else { 
-                    final += (idx + 1) + '\n' + formatTimeSRT(orig.startSec) + " --> " + formatTimeSRT(orig.endSec) + '\n' + fp.join('\n') + '\n\n'; 
+                    final += `${idx + 1}\n${formatTimeSRT(orig.startSec)} --> ${formatTimeSRT(orig.endSec)}\n${cleanBlockText}\n\n`; 
                 }
             });
 
-            if(isVttFormat) final = "WEBVTT\n\n" + final;
             const extension = isAssFormat ? '.ass' : (isVttFormat ? '.vtt' : '.srt');
             const filename = 'Edited_' + currentFileName.replace(/\.[^/.]+$/, "") + extension;
             
-            triggerDownload(final.trim(), filename);
+            // داونلۆد بە دێڕی بەتاڵی کۆتایی بۆ ئەوەی کۆتا دێڕ بێ کێشە بخوێندرێتەوە
+            triggerDownload(final.trim() + '\n\n', filename);
             clearSession();
         }
     </script>
