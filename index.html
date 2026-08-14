@@ -172,8 +172,8 @@
 
         .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 16px 16px 0 0; }
         
-        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.8); backdrop-filter: blur(5px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .custom-modal-content { background: var(--card-bg); padding: 22px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
+        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.8); backdrop-filter: blur(5px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
+        .custom-modal-content { background: var(--card-bg); padding: 20px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
         .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 17px; }
         .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
 
@@ -274,27 +274,30 @@
         <div style="text-align: center; margin-top: 5px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی Hardsub بەستراو بە سیستەمی Gradio ڕاستەوخۆ لە ناو خودی ماڵپەڕەکەدا -->
+    <!-- مۆداڵی فراوان و مۆدێرنی Hardsub بە ئایکۆنی SVG -->
     <div id="hardsub-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 850px; width: 95%; height: 90vh; display: flex; flex-direction: column; padding: 16px; border-radius: 20px;" dir="rtl">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 class="custom-modal-title" style="margin: 0; font-size: 16px; display: flex; align-items: center; gap: 6px;">
-                    <span>🎬 چەسپاندنی ژێرنووس (Hardsub)</span>
+        <div class="custom-modal-content" style="max-width: 950px; width: 98%; height: 94vh; display: flex; flex-direction: column; padding: 10px; border-radius: 16px;" dir="rtl">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 class="custom-modal-title" style="margin: 0; font-size: 15px; display: flex; align-items: center; gap: 6px;">
+                    <svg style="width: 18px; height: 18px; color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+                    </svg>
+                    <span>چەسپاندنی ژێرنووس (Hardsub)</span>
                 </h3>
                 <div style="display: flex; gap: 6px;">
-                    <button class="btn btn-outline" onclick="resetHardsubUrl()" style="width: auto; padding: 5px 10px; font-size: 12px;">گۆڕینی لینک</button>
-                    <button class="btn btn-outline" onclick="closeHardsubModal()" style="width: auto; padding: 5px 12px; font-size: 12px; color: #ef4444; border-color: #ef4444;">داخستن ✕</button>
+                    <button class="btn btn-outline" onclick="resetHardsubUrl()" style="width: auto; padding: 4px 8px; font-size: 11.5px;">گۆڕینی لینک</button>
+                    <button class="btn btn-outline" onclick="closeHardsubModal()" style="width: auto; padding: 4px 10px; font-size: 11.5px; color: #ef4444; border-color: #ef4444;">داخستن ✕</button>
                 </div>
             </div>
 
-            <!-- بەشی داخڵکردنی لینکی Gradio -->
-            <div id="hardsub-url-panel" style="display: flex; gap: 8px; margin-bottom: 10px;">
-                <input type="text" id="gradioServerUrl" class="input-field" placeholder="لینکی Gradio لە Colab دابنێ: https://xxxx.gradio.live" style="padding: 9px 12px; font-size: 13px; text-align: left;" dir="ltr">
-                <button class="btn" onclick="connectHardsubFrame()" style="width: auto; padding: 9px 18px; white-space: nowrap; font-size: 13px;">کردنەوە</button>
+            <!-- بەشی دانانی لینکی Gradio -->
+            <div id="hardsub-url-panel" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <input type="text" id="gradioServerUrl" class="input-field" placeholder="لینکی Gradio لە Colab دابنێ: https://xxxx.gradio.live" style="padding: 8px 12px; font-size: 12.5px; text-align: left;" dir="ltr">
+                <button class="btn" onclick="connectHardsubFrame()" style="width: auto; padding: 8px 16px; white-space: nowrap; font-size: 12.5px;">کردنەوە</button>
             </div>
 
-            <!-- چوارچێوەی پیشاندانی ڕووکاری Hardsub -->
-            <div id="hardsub-frame-wrapper" style="flex: 1; width: 100%; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--border-color); display: none; background: var(--bg-color);">
+            <!-- چوارچێوەی فراوانی ڕووکاری Hardsub -->
+            <div id="hardsub-frame-wrapper" style="flex: 1; width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); display: none; background: var(--bg-color);">
                 <iframe id="hardsubIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
         </div>
@@ -884,7 +887,7 @@
             let cs = totalCs % 100;
             let totalS = Math.floor(totalCs / 100);
             let s = totalS % 60;
-            let totalM = Math.floor(totalS / 60);
+            let totalM = Math.floor(totalCs / 100);
             let m = totalM % 60;
             let h = Math.floor(totalM / 60);
             return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
