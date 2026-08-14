@@ -53,7 +53,7 @@
         #progress-container { width: 100%; height: 6px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
         #toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
-        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
         .toast.show { opacity: 1; transform: translateY(0); }
         .glass-card { max-width: 500px; margin: 30px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 35px 25px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 20px; animation: slideUpFade 0.6s ease-out; position: relative; }
         #login-screen { display: flex; } #setup-screen { display: none; }
@@ -192,36 +192,67 @@
         <div style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی Hardsub بە دەقەژمێر و ژمێریاری مێگابایت -->
+    <!-- مۆداڵی Hardsub بە بەشی زانیاری و مافی ئەنیمێ و هەڵبژاردنی ڕەنگ -->
     <div id="hardsub-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 460px; text-align: right;" dir="rtl">
-            <h3 class="custom-modal-title" style="text-align: center;">چەسپاندنی ژێرنووس (Hardsub)</h3>
-            <p style="font-size: 13px; color:var(--text-muted); line-height: 1.6; text-align: center; margin-top:0;">ڕێندەرکردنی ئەڵقە و فیلمی ئەنیمێ بە خێرایی باڵا و فۆنتی KurdForest.</p>
+        <div class="custom-modal-content" style="max-width: 480px; text-align: right; max-height: 90vh; overflow-y: auto;" dir="rtl">
+            <h3 class="custom-modal-title" style="text-align: center; margin-bottom: 6px;">چەسپاندنی ژێرنووس (Hardsub)</h3>
+            <p style="font-size: 12.5px; color:var(--text-muted); line-height: 1.6; text-align: center; margin-top:0;">ڕێندەرکردنی ئەڵقە و فیلمی ئەنیمێ بە خێرایی باڵا و فۆنتی KurdForest.</p>
 
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 5px;">لینکی سێرڤەر لە Colab (بە Pinggy دیارە):</label>
-                <input type="text" id="hardsubServerUrl" class="input-field" placeholder="https://xxxx.free.pinggy.link" style="padding: 10px; font-size: 13px; text-align: left;" dir="ltr">
+            <div style="margin-bottom: 10px;">
+                <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 4px;">لینکی سێرڤەر لە Colab:</label>
+                <input type="text" id="hardsubServerUrl" class="input-field" placeholder="https://xxxx.trycloudflare.com" style="padding: 10px; font-size: 13px; text-align: left;" dir="ltr">
             </div>
 
-            <div class="file-box" style="padding: 14px; margin-bottom: 10px;">
+            <!-- بەشی نوێی زانیاری و مافی ئەنیمێ لە سەرەتای ڤیدیۆ (8 خانە) -->
+            <div style="border: 1px dashed var(--primary); border-radius: 12px; padding: 10px; margin-bottom: 12px; background: rgba(142, 182, 155, 0.05);">
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 12.5px; font-weight: bold; color: var(--primary);">🎬 ماف و زانیاری ئەنیمێ (سەرەتای ڤیدیۆ)</span>
+                    <input type="checkbox" id="enableCreditsCheckbox" checked onchange="toggleCreditsInputs()" style="width:16px; height:16px; accent-color: var(--primary); cursor: pointer;">
+                </div>
+                
+                <div id="creditsInputsContainer">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" id="cr_anime_kurd" class="input-field" placeholder="ناوی ئەنیمێ (کوردی)" style="padding: 8px; font-size: 12px;">
+                        <input type="text" id="cr_anime_eng" class="input-field" placeholder="ناوی ئەنیمێ (ئینگلیزی)" style="padding: 8px; font-size: 12px;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" id="cr_season" class="input-field" placeholder="وەرز (بۆ نموونە: ١)" style="padding: 8px; font-size: 12px;">
+                        <input type="text" id="cr_episode" class="input-field" placeholder="ئەڵقە (بۆ نموونە: ٠٢)" style="padding: 8px; font-size: 12px;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" id="cr_translator" class="input-field" placeholder="وەرگێڕان (ناوی خۆت)" style="padding: 8px; font-size: 12px;">
+                        <input type="text" id="cr_proofreader" class="input-field" placeholder="پێداچوونەوە" style="padding: 8px; font-size: 12px;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" id="cr_encoder" class="input-field" placeholder="تەکنیک و مۆنتاژ" style="padding: 8px; font-size: 12px;">
+                        <input type="text" id="cr_channel" class="input-field" placeholder="ماڵپەڕ / کەناڵ (KurdForest)" style="padding: 8px; font-size: 12px;">
+                    </div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top: 4px;">
+                        <label style="font-size: 12px; font-weight: bold; color: var(--text-main);">ڕەنگی دەقی مافەکان:</label>
+                        <input type="color" id="creditsColorPicker" value="#FFFF00" style="border:none; width:35px; height:28px; cursor:pointer; background:none;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="file-box" style="padding: 12px; margin-bottom: 8px;">
                 <label>١. هەڵبژاردنی ڤیدیۆ (MP4 / MKV)</label>
                 <div class="file-name-display" id="hardsubVideoName">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="hardsubVideoFile" accept="video/*" onchange="updateHardsubFileName(this, 'hardsubVideoName')">
             </div>
 
-            <div class="file-box" style="padding: 14px; margin-bottom: 10px;">
+            <div class="file-box" style="padding: 12px; margin-bottom: 8px;">
                 <label>٢. فایلی ژێرنووس (ASS / SRT / VTT)</label>
                 <div class="file-name-display" id="hardsubSubName">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="hardsubSubFile" accept=".ass,.srt,.vtt" onchange="updateHardsubFileName(this, 'hardsubSubName')">
             </div>
 
-            <div class="file-box" style="padding: 14px; margin-bottom: 14px;">
+            <div class="file-box" style="padding: 12px; margin-bottom: 12px;">
                 <label>٣. وێنەی لۆگۆ (PNG - ئارەزوومەندانە)</label>
                 <div class="file-name-display" id="hardsubLogoName">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="hardsubLogoFile" accept="image/png" onchange="updateHardsubFileName(this, 'hardsubLogoName')">
             </div>
 
-            <!-- بەشی دەقەژمێر و مێگابایت لە کاتی کارکردندا -->
+            <!-- بەشی دەقەژمێر و ژمێریاری مێگابایت -->
             <div id="hardsub-progress-box" style="display: none; background: var(--bg-color); border-radius: 12px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); text-align: center;">
                 <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; color: var(--primary);">
                     <span id="hardsub-mb-status">0 MB / 0 MB</span>
@@ -1038,10 +1069,15 @@
         }
 
         // ==========================================
-        // بەشی Hardsub بە دەقەژمێر و ژمێریاری مێگابایت (XHR Streaming)
+        // بەشی Hardsub بە ژمێریاری مێگابایت، دەقەژمێر و مافەکانی ئەنیمێ
         // ==========================================
         let timerInterval = null;
         let startTimestamp = 0;
+
+        function toggleCreditsInputs() {
+            const enabled = document.getElementById('enableCreditsCheckbox').checked;
+            document.getElementById('creditsInputsContainer').style.display = enabled ? 'block' : 'none';
+        }
 
         function openHardsubModal() {
             document.getElementById('hardsub-modal').style.display = 'flex';
@@ -1081,7 +1117,7 @@
             const btn = document.getElementById('startHardsubBtn');
 
             if (!serverUrl) {
-                showToast("تکایە سەرەتا لینکی سێرڤەری Pinggy بنووسە!", "error");
+                showToast("تکایە سەرەتا لینکی سێرڤەری Colab بنووسە!", "error");
                 return;
             }
             if (!vFile || !sFile) {
@@ -1092,11 +1128,26 @@
             if (serverUrl.endsWith('/')) serverUrl = serverUrl.slice(0, -1);
             localStorage.setItem('kf_hardsub_url', serverUrl);
 
-            // ئامادەکاری دەقەژمێر و مێگابایت
+            // کۆکردنەوەی ٨ زانیارییەکەی سەرەتای ئەنیمێ
+            let creditsJson = null;
+            if (document.getElementById('enableCreditsCheckbox').checked) {
+                creditsJson = JSON.stringify({
+                    anime_kurd: document.getElementById('cr_anime_kurd').value.trim(),
+                    anime_eng: document.getElementById('cr_anime_eng').value.trim(),
+                    season: document.getElementById('cr_season').value.trim(),
+                    episode: document.getElementById('cr_episode').value.trim(),
+                    translator: document.getElementById('cr_translator').value.trim(),
+                    proofreader: document.getElementById('cr_proofreader').value.trim(),
+                    encoder: document.getElementById('cr_encoder').value.trim(),
+                    channel: document.getElementById('cr_channel').value.trim(),
+                    color: document.getElementById('creditsColorPicker').value
+                });
+            }
+
             btn.disabled = true;
             pBox.style.display = 'block';
             uBar.style.width = '0%';
-            sText.innerText = "پەیوەستبوون بە سێرڤەر و دەستپێکردنی ناردنی فایلەکان...";
+            sText.innerText = "ناردنی فایلەکان دەستی پێکرد...";
             sText.style.color = "var(--primary)";
             
             startTimestamp = Date.now();
@@ -1112,12 +1163,12 @@
             formData.append('video', vFile);
             formData.append('subtitle', sFile);
             if (lFile) formData.append('logo', lFile);
+            if (creditsJson) formData.append('credits_data', creditsJson);
 
             const xhr = new XMLHttpRequest();
             xhr.open('POST', `${serverUrl}/hardsub`, true);
             xhr.responseType = 'blob';
 
-            // ژمێریاری ڕاستەوخۆی مێگابایت و ڕێژەی بارکردن
             xhr.upload.onprogress = (event) => {
                 if (event.lengthComputable) {
                     const loadedMB = (event.loaded / (1024 * 1024)).toFixed(1);
@@ -1126,7 +1177,12 @@
 
                     uBar.style.width = percent + '%';
                     mbStatus.innerText = `${loadedMB} MB / ${totalMB} MB (${percent}%)`;
-                    sText.innerText = `ناردنی ڤیدیۆ بۆ سێرڤەر... ${percent}%`;
+                    
+                    if (percent >= 100) {
+                        sText.innerText = "فایلەکان گەیشتنە سێرڤەر! خەریکی ڕێندەرکردنە لەسەر کارتی شاشە...";
+                    } else {
+                        sText.innerText = `ناردنی فایلەکان... ${percent}%`;
+                    }
                 }
             };
 
