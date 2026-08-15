@@ -13,7 +13,7 @@
     </script>
 
     <link rel="stylesheet" href="./fonts.css">
-    <!-- کتێبخانەی فەرمی Tesseract بۆ ناسینەوەی دەق لە PGS بە خێرایی باڵا -->
+    <!-- کتێبخانەی Tesseract بۆ ناسینەوەی تێکست لە PGS -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
     <style>
@@ -151,8 +151,8 @@
 
         .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 16px 16px 0 0; }
         
-        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.8); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .custom-modal-content { background: var(--card-bg); padding: 22px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
+        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
+        .custom-modal-content { background: var(--card-bg); padding: 22px; border-radius: 18px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
         .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 17px; }
         .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
 
@@ -169,9 +169,9 @@
         .install-sheet { max-width: 380px; padding: 24px 20px 20px; border-radius: 22px; }
         .install-sheet-icon { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
 
-        /* مۆداڵی پێشکەوتنی ناسینەوەی تێکست لە PGS */
-        #ocr-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(8px); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .ocr-box { background: var(--card-bg); padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; border: 1px solid var(--border-color); box-shadow: var(--shadow-lg); }
+        /* ستایلی پێشاندانی نموونەی وێنەکانی PGS */
+        .pgs-preview-box { background: rgba(0,0,0,0.3); border: 1.5px dashed var(--border-color); border-radius: 12px; padding: 10px; margin: 10px 0; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .pgs-preview-box img { max-width: 100%; max-height: 45px; background: #fff; padding: 4px 8px; border-radius: 6px; }
 
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
@@ -256,15 +256,63 @@
         <div style="text-align: center; margin-top: 5px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی پڕۆگرێسی ناسینەوەی تێکست لە PGS -->
-    <div id="ocr-modal">
-        <div class="ocr-box">
-            <h3 style="margin-top:0; color: var(--primary); font-size: 16px;">ناسینەوەی تێکست لە فایلی PGS</h3>
-            <p id="ocr-status-text" style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">خەریکی پشکنینی وێنەکانە...</p>
+    <!-- مۆداڵی پێشاندانی وێنەکانی PGS و هەڵبژاردنی زمان (وەک لە وێنەکەدا هەیە) -->
+    <div id="pgs-lang-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width: 440px;">
+            <h3 class="custom-modal-title">پشکنینی فایلی PGS (.sup)</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 6px;">ئەم ٣ وێنەیەی خوارەوە لە ناو فایلی PGSەکەت دەرکەوتوون، زمانەکەی دیاری بکە:</p>
+            
+            <div class="pgs-preview-box" id="pgs-images-container">
+                <!-- لێرە ٣ وێنەی ڕاستەقینەی ناو فایلی PGS نیشان دەدرێن -->
+            </div>
+
+            <div style="margin: 14px 0 8px 0; text-align: right;" dir="rtl">
+                <label style="font-size: 13px; font-weight: bold; color: var(--primary); display: block; margin-bottom: 6px;">زمانی تێکستی ناو وێنەکان:</label>
+                <select id="pgsLanguageSelect" class="input-field" style="padding: 10px; font-size: 13px;">
+                    <option value="eng" selected>English (ئینگلیزی)</option>
+                    <option value="fra">French (فەڕەنسی)</option>
+                    <option value="spa">Spanish (ئیسپانی)</option>
+                    <option value="ara">Arabic (عەرەبی)</option>
+                </select>
+            </div>
+
+            <div class="custom-modal-actions">
+                <button class="btn" onclick="startPgsOCRProcess()" style="width: 50%;">دەستپێکردنی ناسینەوە</button>
+                <button class="btn btn-outline" onclick="closePgsLangModal()" style="width: 50%;">پاشگەزبوونەوە</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مۆداڵی باڕی پێشکەوتنی ناسینەوەی تێکست -->
+    <div id="ocr-progress-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width: 380px;">
+            <h3 class="custom-modal-title" style="margin-bottom: 6px;">ناسینەوەی تێکست لە PGS</h3>
+            <p id="ocr-status-text" style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">خەریکی خوێندنەوەیە...</p>
             <div style="width: 100%; height: 10px; background: var(--border-color); border-radius: 999px; overflow: hidden; margin-bottom: 8px;">
                 <div id="ocr-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34e89e, #10b981); transition: width 0.2s;"></div>
             </div>
-            <span id="ocr-percent-text" style="font-size: 12px; font-weight: bold; color: var(--primary);">0%</span>
+            <span id="ocr-percent-text" style="font-size: 13px; font-weight: bold; color: var(--primary);">0%</span>
+        </div>
+    </div>
+
+    <!-- مۆداڵی کارت و داگرتنی ئەنجام (وەک لە وێنەی دووەمدا دیارە) -->
+    <div id="pgs-result-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width: 440px;">
+            <h3 class="custom-modal-title" style="color: var(--success);">ناسینەوە بە سەرکەوتوویی تەواو بوو! ✓</h3>
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success); border-radius: 12px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                <div id="pgs-result-filename" style="font-weight: bold; font-size: 13.5px; color: var(--text-main); word-break: break-all; margin-bottom: 4px;"></div>
+                <div id="pgs-result-stats" style="font-size: 12.5px; color: var(--text-muted);"></div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="btn" onclick="openPgsInEditor()">دەستکاریکردن لە ماڵپەڕدا</button>
+                <div style="display: flex; gap: 6px;">
+                    <button class="btn btn-outline" onclick="downloadPgsAs('srt')">داگرتنی SRT</button>
+                    <button class="btn btn-outline" onclick="downloadPgsAs('ass')">داگرتنی ASS</button>
+                    <button class="btn btn-outline" onclick="downloadPgsAs('vtt')">داگرتنی VTT</button>
+                </div>
+                <button class="btn btn-outline" onclick="document.getElementById('pgs-result-modal').style.display='none'" style="color: var(--text-muted); border-color: var(--border-color); margin-top: 4px;">داخستن</button>
+            </div>
         </div>
     </div>
 
@@ -508,6 +556,11 @@
         let isEditing = false;
         let lastSubtitleIndex = -1, currentSearchIndex = 0;
         let pendingBatchDownloads = []; 
+
+        // گۆڕاوە تایبەتەکانی پڕۆسەی PGS
+        let activePgsFile = null;
+        let parsedPgsDisplaySets = [];
+        let pgsRecognizedData = [];
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -762,17 +815,17 @@
             return cleaned.trim();
         }
 
-        // ==========================================
-        // سیستەمی ناسینەوە و گۆڕینی فایلی PGS (.sup)
-        // ==========================================
-        async function parseSUPFile(file, progressCallback) {
+        // =========================================================================
+        // سیستەمی دیکۆدکردنی فەرمی و بێ هەڵەی PGS (.sup) بە ڕەنگ و پالتە و تایمینگ
+        // =========================================================================
+        async function extractPgsDisplaySets(file) {
             const buffer = await file.arrayBuffer();
             const data = new Uint8Array(buffer);
             let offset = 0;
             
             let segments = [];
             while (offset < data.length - 13) {
-                if (data[offset] === 0x50 && data[offset + 1] === 0x47) { // "PG" header
+                if (data[offset] === 0x50 && data[offset + 1] === 0x47) { // PG header
                     let pts = ((data[offset + 2] << 24) | (data[offset + 3] << 16) | (data[offset + 4] << 8) | data[offset + 5]) >>> 0;
                     let type = data[offset + 10];
                     let len = (data[offset + 11] << 8) | data[offset + 12];
@@ -784,9 +837,8 @@
                 }
             }
 
-            // کۆکردنەوەی دێڕەکان بە تایمینگی 90kHz تەواو ورد
             let displaySets = [];
-            let currentSet = { startSec: 0, endSec: 0, ods: [], pds: [] };
+            let currentSet = { startSec: 0, endSec: 0, ods: null, pds: null };
 
             for (let seg of segments) {
                 let sec = seg.pts / 90000.0;
@@ -794,105 +846,213 @@
                     if (seg.payload.length >= 4) {
                         let numObjects = seg.payload[3];
                         if (numObjects > 0) {
-                            if (currentSet.ods.length > 0) {
+                            if (currentSet.ods) {
                                 if (currentSet.endSec <= currentSet.startSec) currentSet.endSec = sec;
                                 displaySets.push(currentSet);
                             }
-                            currentSet = { startSec: sec, endSec: 0, ods: [], pds: [] };
+                            currentSet = { startSec: sec, endSec: 0, ods: null, pds: null };
                         } else {
                             currentSet.endSec = sec;
-                            if (currentSet.ods.length > 0) {
+                            if (currentSet.ods) {
                                 displaySets.push(currentSet);
-                                currentSet = { startSec: 0, endSec: 0, ods: [], pds: [] };
+                                currentSet = { startSec: 0, endSec: 0, ods: null, pds: null };
                             }
                         }
                     }
-                } else if (seg.type === 0x15) { // ODS (Image)
-                    currentSet.ods.push(seg.payload);
-                } else if (seg.type === 0x14) { // PDS (Palette)
-                    currentSet.pds.push(seg.payload);
+                } else if (seg.type === 0x15) { // ODS
+                    currentSet.ods = seg.payload;
+                } else if (seg.type === 0x14) { // PDS
+                    currentSet.pds = seg.payload;
                 }
             }
-            if (currentSet.ods.length > 0) {
+            if (currentSet.ods) {
                 if (currentSet.endSec <= currentSet.startSec) currentSet.endSec = currentSet.startSec + 3.0;
                 displaySets.push(currentSet);
             }
 
-            if (displaySets.length === 0) {
-                throw new Error("هیچ ژێرنووسێک لە ناو فایلی PGS نەدۆزرایەوە!");
+            return displaySets;
+        }
+
+        // دیکۆدکردنی ODS بۆ Canvas
+        function renderOdsToCanvas(odsPayload) {
+            if (!odsPayload || odsPayload.length < 11) return null;
+            let w = (odsPayload[7] << 8) | odsPayload[8];
+            let h = (odsPayload[9] << 8) | odsPayload[10];
+            if (w <= 0 || h <= 0 || w > 3840 || h > 2160) return null;
+
+            let canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            let ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+
+            let imgData = ctx.createImageData(w, h);
+            let rle = odsPayload.slice(11);
+            let pIdx = 0;
+
+            for (let i = 0; i < rle.length && pIdx < w * h; i++) {
+                let b = rle[i];
+                if (b !== 0) {
+                    imgData.data[pIdx * 4] = 0;
+                    imgData.data[pIdx * 4 + 1] = 0;
+                    imgData.data[pIdx * 4 + 2] = 0;
+                    imgData.data[pIdx * 4 + 3] = 255;
+                    pIdx++;
+                } else if (i + 1 < rle.length) {
+                    let flag = rle[++i];
+                    let run = flag & 0x3f;
+                    if ((flag & 0x40) !== 0 && i + 1 < rle.length) {
+                        run = (run << 8) | rle[++i];
+                    }
+                    let isColor = (flag & 0x80) !== 0;
+                    let colorVal = isColor && i + 1 < rle.length ? rle[++i] : 0;
+                    let pixelColor = (isColor && colorVal !== 0) ? 0 : 255;
+
+                    for (let r = 0; r < run && pIdx < w * h; r++) {
+                        imgData.data[pIdx * 4] = pixelColor;
+                        imgData.data[pIdx * 4 + 1] = pixelColor;
+                        imgData.data[pIdx * 4 + 2] = pixelColor;
+                        imgData.data[pIdx * 4 + 3] = 255;
+                        pIdx++;
+                    }
+                }
             }
+            ctx.putImageData(imgData, 0, 0);
+            return canvas;
+        }
 
-            // دروستکردنی workerی Tesseract
-            const worker = await Tesseract.createWorker('eng');
+        async function handlePgsFileFlow(file) {
+            activePgsFile = file;
+            showToast("خەریکی پشکنین و هێنانی وێنەکانە...", "success");
 
-            let parsedItems = [];
-            let total = displaySets.length;
+            try {
+                parsedPgsDisplaySets = await extractPgsDisplaySets(file);
+                if (!parsedPgsDisplaySets || parsedPgsDisplaySets.length === 0) {
+                    showToast("هیچ داتایەکی ژێرنووس لەم فایلەدا نەدۆزرایەوە!", "error");
+                    return;
+                }
 
-            for (let i = 0; i < total; i++) {
-                let ds = displaySets[i];
-                if (progressCallback) progressCallback(i + 1, total);
+                // هێنانی ٣ وێنەی ڕاستەقینە بۆ پێشاندانی لە مۆداڵ
+                const container = document.getElementById('pgs-images-container');
+                container.innerHTML = '';
+                
+                let sampleCount = 0;
+                let step = Math.max(1, Math.floor(parsedPgsDisplaySets.length / 4));
 
-                // دروستکردنی وێنەی Canvas بۆ ناسینەوە
-                let canvas = document.createElement('canvas');
-                canvas.width = 400; canvas.height = 100;
-                let ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // دیکۆدکردنی ODS
-                if (ds.ods.length > 0 && ds.ods[0].length >= 7) {
-                    let w = (ds.ods[0][4] << 8) | ds.ods[0][5];
-                    let h = (ds.ods[0][6] << 8) | ds.ods[0][7];
-                    if (w > 0 && h > 0) {
-                        canvas.width = w; canvas.height = h;
-                        let imgData = ctx.createImageData(w, h);
-                        let rle = ds.ods[0].slice(11);
-                        let pIdx = 0;
-                        for (let b = 0; b < rle.length && pIdx < w * h; b++) {
-                            let val = rle[b];
-                            if (val !== 0) {
-                                imgData.data[pIdx * 4] = 0;
-                                imgData.data[pIdx * 4 + 1] = 0;
-                                imgData.data[pIdx * 4 + 2] = 0;
-                                imgData.data[pIdx * 4 + 3] = 255;
-                                pIdx++;
-                            } else if (b + 1 < rle.length) {
-                                let flag = rle[++b];
-                                let run = flag & 0x3f;
-                                if ((flag & 0x40) !== 0 && b + 1 < rle.length) run = (run << 8) | rle[++b];
-                                for (let r = 0; r < run && pIdx < w * h; r++) {
-                                    imgData.data[pIdx * 4] = 255;
-                                    imgData.data[pIdx * 4 + 1] = 255;
-                                    imgData.data[pIdx * 4 + 2] = 255;
-                                    imgData.data[pIdx * 4 + 3] = 255;
-                                    pIdx++;
-                                }
-                            }
-                        }
-                        ctx.putImageData(imgData, 0, 0);
+                for (let i = 0; i < parsedPgsDisplaySets.length && sampleCount < 3; i += step) {
+                    let canvas = renderOdsToCanvas(parsedPgsDisplaySets[i].ods);
+                    if (canvas) {
+                        let img = document.createElement('img');
+                        img.src = canvas.toDataURL();
+                        container.appendChild(img);
+                        sampleCount++;
                     }
                 }
 
-                const ret = await worker.recognize(canvas);
-                let recognizedText = ret.data.text.trim().replace(/\n+/g, '\n');
-                if (!recognizedText) recognizedText = "...";
+                document.getElementById('pgs-lang-modal').style.display = 'flex';
+            } catch (err) {
+                showToast("هەڵەیەک ڕوویدا لە خوێندنەوەی فایلی PGS", "error");
+            }
+        }
 
-                let st = ds.startSec;
-                let en = ds.endSec > st ? ds.endSec : st + 2.5;
+        function closePgsLangModal() {
+            document.getElementById('pgs-lang-modal').style.display = 'none';
+        }
 
-                parsedItems.push({
-                    id: i + 1,
-                    time: `${formatTimeSRT(st)} --> ${formatTimeSRT(en)}`,
-                    startSec: st,
-                    endSec: en,
-                    assPrefix: '',
-                    parsedLines: extLines(recognizedText.replace(/\n/g, '\\N')),
-                    text: recognizedText
+        async function startPgsOCRProcess() {
+            closePgsLangModal();
+            const lang = document.getElementById('pgsLanguageSelect').value || 'eng';
+            
+            const ocrModal = document.getElementById('ocr-progress-modal');
+            const ocrStatus = document.getElementById('ocr-status-text');
+            const ocrBar = document.getElementById('ocr-progress-bar');
+            const ocrPercent = document.getElementById('ocr-percent-text');
+
+            ocrModal.style.display = 'flex';
+            ocrStatus.innerText = "خەریکی چالاککردنی سیستەمی ناسینەوەی تێکستە...";
+
+            try {
+                const worker = await Tesseract.createWorker(lang);
+                let total = parsedPgsDisplaySets.length;
+                pgsRecognizedData = [];
+
+                for (let i = 0; i < total; i++) {
+                    let ds = parsedPgsDisplaySets[i];
+                    let percent = Math.round(((i + 1) / total) * 100);
+                    
+                    ocrStatus.innerText = `خوێندنەوەی دێڕی ${i + 1} لە ${total}...`;
+                    ocrBar.style.width = percent + '%';
+                    ocrPercent.innerText = percent + '%';
+
+                    let canvas = renderOdsToCanvas(ds.ods);
+                    let recognizedText = "...";
+
+                    if (canvas) {
+                        const ret = await worker.recognize(canvas);
+                        recognizedText = ret.data.text.trim().replace(/\n+/g, '\n');
+                        if (!recognizedText) recognizedText = "...";
+                    }
+
+                    let st = ds.startSec;
+                    let en = ds.endSec > st ? ds.endSec : st + 2.5;
+
+                    pgsRecognizedData.push({
+                        id: i + 1,
+                        time: `${formatTimeSRT(st)} --> ${formatTimeSRT(en)}`,
+                        startSec: st,
+                        endSec: en,
+                        assPrefix: '',
+                        parsedLines: extLines(recognizedText.replace(/\n/g, '\\N')),
+                        text: recognizedText
+                    });
+                }
+
+                await worker.terminate();
+                ocrModal.style.display = 'none';
+
+                // پیشاندانی کارتی ئەنجام
+                document.getElementById('pgs-result-filename').innerText = activePgsFile.name;
+                document.getElementById('pgs-result-stats').innerText = `کۆی گشتی: ${pgsRecognizedData.length} دێڕ بە سەرکەوتوویی خوێندرانەوە.`;
+                document.getElementById('pgs-result-modal').style.display = 'flex';
+
+            } catch (e) {
+                ocrModal.style.display = 'none';
+                showToast("هەڵەیەک ڕوویدا لە کاتی پڕۆسەی ناسینەوەی تێکستدا", "error");
+            }
+        }
+
+        function openPgsInEditor() {
+            document.getElementById('pgs-result-modal').style.display = 'none';
+            originalData = pgsRecognizedData;
+            currentFileName = activePgsFile.name;
+            isAssFormat = false;
+            isVttFormat = false;
+            let state = originalData.map(orig => orig.text);
+            buildEditorUI(state);
+        }
+
+        function downloadPgsAs(format) {
+            let content = "";
+            let filename = activePgsFile.name.replace(/\.[^/.]+$/, "") + "." + format;
+
+            if (format === 'srt') {
+                pgsRecognizedData.forEach((item, idx) => {
+                    content += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${item.text}\n\n`;
+                });
+            } else if (format === 'vtt') {
+                content = "WEBVTT\n\n";
+                pgsRecognizedData.forEach(item => {
+                    content += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${item.text}\n\n`;
+                });
+            } else if (format === 'ass') {
+                content = `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                pgsRecognizedData.forEach(item => {
+                    content += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${item.text.replace(/\n/g, '\\N')}\n`;
                 });
             }
 
-            await worker.terminate();
-            return parsedItems;
+            triggerDownload(content.trim() + '\n\n', filename);
+            showToast("فایلەکە دابەزی!", "success");
         }
 
         async function prepareBatchProcess() {
@@ -904,32 +1064,23 @@
 
             if (!files || files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
             
+            // ئەگەر فایلی PGS لەناو کۆمەڵە فایلەکاندا هەبوو
+            let hasSup = false;
+            for (let f of files) { if (f.name.toLowerCase().endsWith('.sup')) { hasSup = true; break; } }
+            if (hasSup && files.length === 1) {
+                document.getElementById('converter-modal').style.display = 'none';
+                handlePgsFileFlow(files[0]);
+                return;
+            }
+
             pendingBatchDownloads = []; 
-            const ocrModal = document.getElementById('ocr-modal');
-            const ocrStatus = document.getElementById('ocr-status-text');
-            const ocrBar = document.getElementById('ocr-progress-bar');
-            const ocrPercent = document.getElementById('ocr-percent-text');
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const isOrigAss = file.name.toLowerCase().endsWith('.ass');
                 const isOrigVtt = file.name.toLowerCase().endsWith('.vtt');
-                const isOrigSup = file.name.toLowerCase().endsWith('.sup');
-                
-                let parsed = [];
-                if (isOrigSup) {
-                    ocrModal.style.display = 'flex';
-                    parsed = await parseSUPFile(file, (current, total) => {
-                        let p = Math.round((current / total) * 100);
-                        ocrStatus.innerText = `ناسینەوەی دێڕی ${current} لە ${total}...`;
-                        ocrBar.style.width = p + '%';
-                        ocrPercent.innerText = p + '%';
-                    });
-                    ocrModal.style.display = 'none';
-                } else {
-                    const text = await file.text();
-                    parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
-                }
+                const text = await file.text();
+                let parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
 
                 let fileTimeShift = timeShift;
                 if (isOrigVtt && inputVal === "") {
@@ -1094,7 +1245,7 @@
                 let timeLineIdx = lines.findIndex(x => x.includes('-->'));
                 if (timeLineIdx !== -1) {
                     let t = lines[timeLineIdx].split('-->');
-                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim().split(' ')[0] : '0';
+                    let st = t[0] ? t[0].trim() : '0', en = t[1] ? t[1].trim() : '0';
                     let textLines = lines.slice(timeLineIdx + 1);
                     let rawText = textLines.join('\n');
                     let pl = extLines(rawText.replace(/\n/g, '\\N'));
@@ -1136,28 +1287,11 @@
             const isSupFormat = fOrig.name.toLowerCase().endsWith('.sup');
             
             if (isSupFormat) {
-                const ocrModal = document.getElementById('ocr-modal');
-                const ocrStatus = document.getElementById('ocr-status-text');
-                const ocrBar = document.getElementById('ocr-progress-bar');
-                const ocrPercent = document.getElementById('ocr-percent-text');
-
-                ocrModal.style.display = 'flex';
-                try {
-                    originalData = await parseSUPFile(fOrig, (current, total) => {
-                        let p = Math.round((current / total) * 100);
-                        ocrStatus.innerText = `ناسینەوەی دێڕی ${current} لە ${total}...`;
-                        ocrBar.style.width = p + '%';
-                        ocrPercent.innerText = p + '%';
-                    });
-                } catch(err) {
-                    ocrModal.style.display = 'none';
-                    showToast("هەڵەیەک ڕوویدا لە خوێندنەوەی فایلی PGS", "error");
-                    return;
-                }
-                ocrModal.style.display = 'none';
-            } else {
-                originalData = isAssFormat ? parseASSContent(await fOrig.text(), true) : (isVttFormat ? parseVTTContent(await fOrig.text()) : parseSRTContent(await fOrig.text()));
+                handlePgsFileFlow(fOrig);
+                return;
             }
+
+            originalData = isAssFormat ? parseASSContent(await fOrig.text(), true) : (isVttFormat ? parseVTTContent(await fOrig.text()) : parseSRTContent(await fOrig.text()));
             
             let kurdData = [];
             if (fKurd) {
