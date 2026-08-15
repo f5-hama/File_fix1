@@ -124,7 +124,7 @@
             color: #f8fafc; 
             border-color: #223327; 
         }
-        body.dark-theme .action-bar, body.dark-theme .sticky-header-container { 
+        body.dark-theme .action-bar, body.dark-theme .header-tools-container { 
             background: rgba(15, 22, 18, 0.98); 
             border-color: #223327; 
         }
@@ -152,10 +152,23 @@
             color: var(--primary); 
             border-color: rgba(52, 211, 153, 0.35); 
         }
+        body.dark-theme .btn-outline:hover {
+            background: rgba(52, 211, 153, 0.12);
+            border-color: var(--primary);
+        }
         body.dark-theme #install-app-btn { 
             background: rgba(52, 211, 153, 0.15); 
             color: var(--primary); 
             border: 1px solid rgba(52, 211, 153, 0.35); 
+        }
+
+        /* چاککردنی ئاڕاستەی ئایکۆنەکان لە زمانی ئینگلیزی بەبێ عەکس بوونی شاشە */
+        html[lang="en"] .btn,
+        html[lang="en"] h2,
+        html[lang="en"] .back-btn,
+        html[lang="en"] #install-app-btn,
+        html[lang="en"] .custom-select-btn {
+            flex-direction: row-reverse;
         }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
@@ -272,16 +285,14 @@
             animation: fadeIn 0.3s ease; 
         }
         
-        /* سەرەوەی جێگیر بە شێوەیەکی تەنک و بێ سەرئێشە */
-        .sticky-header-container { 
-            position: sticky; 
-            top: 0; 
-            z-index: 50; 
+        /* بەشی ئامرازەکان لە سەرەوە کە لەگەڵ شۆڕکردنەوەی شاشە بە سروشتی دەڕواتە سەرەوە */
+        .header-tools-container { 
+            position: relative;
             background: var(--card-bg); 
             backdrop-filter: blur(14px); 
             -webkit-backdrop-filter: blur(14px); 
-            margin: 0 -12px 14px -12px; 
-            box-shadow: var(--shadow-md); 
+            margin: 0 -12px 10px -12px; 
+            box-shadow: var(--shadow-sm); 
             border-bottom: 1px solid var(--border-color); 
         }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; gap: 8px; border-bottom: 1px dashed var(--border-color); }
@@ -313,7 +324,7 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
 
-        /* شاشەی ڤیدیۆ کە لەگەڵ پەڕەکە دەجووڵێت و شاشە داگیر ناکات */
+        /* شاشەی ڤیدیۆ کە هەمیشە لە سەرەوە جێگیر دەبێت (Sticky Video) بەبێ بەشی دوگمەکانی سەرەوە */
         #video-container { 
             display: none; 
             width: 100%; 
@@ -321,11 +332,13 @@
             background: #000; 
             border-radius: 14px; 
             overflow: hidden; 
-            box-shadow: var(--shadow-md); 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25); 
             border: 1.5px solid var(--primary); 
-            position: relative; 
+            position: sticky;
+            top: 6px;
+            z-index: 45;
         }
-        #preview-video { width: 100%; max-height: 220px; display: block; object-fit: contain; background: #000; }
+        #preview-video { width: 100%; max-height: 200px; display: block; object-fit: contain; background: #000; }
         #video-subtitle-overlay { position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 14px; font-weight: bold; pointer-events: none; padding: 0 5%; line-height: 1.4; }
 
         .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: all 0.2s ease; }
@@ -389,7 +402,7 @@
             .subtitle-kurd textarea { flex-grow: 1; height: 100%; min-height: 100px; }
             .action-bar { display: flex; justify-content: center; flex-direction: row; gap: 12px; padding: 12px 24px; }
             .action-bar .btn, .action-bar .btn-outline { width: auto; min-width: 170px; padding: 11px 16px; }
-            #preview-video { max-height: 360px; }
+            #preview-video { max-height: 320px; }
         }
     </style>
 </head>
@@ -551,7 +564,7 @@
     </div>
 
     <div id="editor-screen">
-        <div class="sticky-header-container">
+        <div class="header-tools-container">
             <div id="progress-container"><div id="progress-bar"></div></div>
             <div class="top-nav">
                 <button class="back-btn" onclick="confirmGoBack()"><svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg><span data-i18n="backBtn" style="margin: 0 4px;">گەڕانەوە</span></button>
@@ -615,6 +628,7 @@
             </div>
         </div>
 
+        <!-- شاشەی ڤیدیۆ کە بە جێگیری دەمێنێتەوە لە سەرەوە -->
         <div id="video-container">
             <video id="preview-video" controls playsinline webkit-playsinline preload="metadata"></video>
             <div id="video-subtitle-overlay"></div>
@@ -690,7 +704,6 @@
             }
         }
 
-        // بەڕێوەبردنی تەواوی کیبۆرد بۆ دڵنیابوونەوە لە گەڕانەوەی Action Bar
         function handleKeyboardVisibility() {
             if (window.visualViewport) {
                 const isKb = window.visualViewport.height < (window.innerHeight - 100);
@@ -768,7 +781,9 @@
             currentLang = lang; 
             const isEn = (lang === 'en');
             
+            document.getElementById('html-tag').setAttribute('lang', lang);
             document.title = i18n[lang]['pageTitle'];
+            
             document.querySelectorAll('.current-lang-text').forEach(e => { 
                 e.innerText = isEn ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی'); 
             });
@@ -1038,7 +1053,6 @@
             }
         }
 
-        // داگرتنی ڕاستەوخۆ بەبێ ئەگەری دروستبوونی پاشگری .txt
         function triggerDownload(content, filename) {
             let cleanFilename = filename.replace(/\.txt$/i, '').trim();
             let mimeType = 'application/octet-stream';
@@ -1109,7 +1123,6 @@
                         finalContent += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${lines.join('\n')}\n\n`; 
                     });
                 } else if (targetFormat === 'vtt') {
-                    // فۆرماتی دروستی VTT بەبێ ژمارەی دێڕ
                     finalContent = "WEBVTT\n\n";
                     parsed.forEach(item => { 
                         let textStr = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : item.text);
@@ -1558,7 +1571,6 @@
                     final += prefix + dialogueText + '\n'; 
                 } 
                 else if (isVttFormat) { 
-                    // فۆرماتی ستانداردی VTT بەبێ ژمارەی زیادە لە سەرەوە
                     final += `${formatTimeVTT(orig.startSec)} --> ${formatTimeVTT(orig.endSec)}\n${fp.join('\n')}\n\n`; 
                 } 
                 else { 
