@@ -161,11 +161,6 @@
             color: var(--primary); 
             border: 1px solid rgba(52, 211, 153, 0.35); 
         }
-        body.dark-theme .install-sheet-icon { 
-            background: rgba(52, 211, 153, 0.15); 
-            color: var(--primary); 
-            border: 1px solid rgba(52, 211, 153, 0.3); 
-        }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -174,8 +169,8 @@
         #progress-container { width: 100%; height: 5px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.25s ease; }
         
-        #toast-container { position: fixed; bottom: calc(100px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: max-content; max-width: 92%; }
-        .toast { background: rgba(22, 30, 26, 0.96); border: 1px solid var(--card-border); color: white; padding: 10px 18px; border-radius: 12px; font-size: 13.5px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px); opacity: 0; transform: translateY(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; }
+        #toast-container { position: fixed; bottom: calc(95px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: max-content; max-width: 92%; }
+        .toast { background: rgba(22, 30, 26, 0.96); border: 1px solid var(--card-border); color: white; padding: 10px 18px; border-radius: 12px; font-size: 13.5px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px); opacity: 0; transform: translateY(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; unicode-bidi: plaintext; }
         .toast.error { border-color: rgba(239, 68, 68, 0.6); background: rgba(35, 15, 15, 0.96); color: #fca5a5; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
@@ -292,9 +287,25 @@
             border-bottom: 1px solid var(--border-color); 
         }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; gap: 8px; border-bottom: 1px dashed var(--border-color); }
-        .top-tools { display: flex; gap: 6px; align-items: center; justify-content: center; padding: 7px 12px; flex-wrap: wrap; }
-        .top-btn, .back-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: bold; gap: 4px; transition: all 0.2s ease; }
-        .top-btn:active, .back-btn:active { transform: scale(0.95); }
+        .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 7px 12px; }
+        .tool-divider { width: 1px; height: 18px; background: var(--border-color); margin: 0 2px; }
+        
+        /* تەنها ئایکۆن لەگەڵ قەبارەی گونجاو لە بەشی سەرەوە */
+        .top-btn, .back-btn { 
+            background: var(--bg-color); 
+            border: 1.5px solid var(--border-color); 
+            color: var(--text-main); 
+            border-radius: 9px; 
+            padding: 7px 11px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.2s ease; 
+        }
+        .top-btn:active, .back-btn:active { transform: scale(0.92); }
+        .top-btn.primary-tool { color: var(--primary); border-color: var(--primary); }
+        .top-btn.danger-tool { color: var(--danger); border-color: var(--danger); }
 
         .floating-search-bar { display: none; position: fixed; bottom: calc(125px + env(safe-area-inset-bottom)); left: 12px; right: 12px; background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 12px; border-radius: 14px; box-shadow: var(--shadow-lg); border: 1.5px solid var(--primary); z-index: 150; animation: slideUpFade 0.25s ease; }
         .search-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
@@ -305,9 +316,20 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
 
-        #video-container { display: none; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 14px; box-shadow: var(--shadow-md); border: 1.5px solid var(--primary); position: relative; z-index: 10; }
-        #preview-video { width: 100%; max-height: 240px; display: block; }
-        #video-subtitle-overlay { position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 14.5px; font-weight: bold; pointer-events: none; padding: 0 6%; line-height: 1.4; }
+        /* بەشی ڤیدیۆ جێگیرکراو لەناو سەرەوە (Sticky Video) */
+        #video-container { 
+            display: none; 
+            width: calc(100% - 20px); 
+            margin: 8px auto 6px auto; 
+            background: #000; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: var(--shadow-md); 
+            border: 1.5px solid var(--primary); 
+            position: relative; 
+        }
+        #preview-video { width: 100%; max-height: 180px; display: block; object-fit: contain; background: #000; }
+        #video-subtitle-overlay { position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 14px; font-weight: bold; pointer-events: none; padding: 0 5%; line-height: 1.4; }
 
         .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: all 0.2s ease; }
         .subtitle-card.active-sub { border-color: var(--success); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3); }
@@ -320,14 +342,20 @@
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         .play-sub-btn:hover { transform: scale(1.1); }
 
-        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 12px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 14px 14px 0 0; }
+        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 12px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 14px 14px 0 0; transition: transform 0.25s ease, opacity 0.25s ease; }
         
+        /* شاردنەوەی دوگمەکانی خوارەوە لەکاتی کردنەوەی کیبۆرد */
+        body.keyboard-active .action-bar {
+            transform: translateY(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 12px; animation: fadeIn 0.2s ease; }
         .custom-modal-content { background: var(--card-bg); padding: 20px 16px; border-radius: 18px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.25s ease; }
         .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 16px; }
         .custom-modal-actions { display: flex; gap: 8px; justify-content: center; margin-top: 14px; }
 
-        /* چاککردنی تەواوەتی مێنۆی زمان بە قەبارەی ڕێک و بەبێ دەرچوون لە شاشە */
         .custom-select-wrapper { position: relative; display: inline-block; }
         .custom-select-btn { padding: 5px 9px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 11.5px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; white-space: nowrap; }
         .custom-select-btn:active { transform: scale(0.96); }
@@ -365,7 +393,7 @@
             .subtitle-kurd textarea { flex-grow: 1; height: 100%; min-height: 100px; }
             .action-bar { display: flex; justify-content: center; flex-direction: row; gap: 12px; padding: 12px 24px; }
             .action-bar .btn, .action-bar .btn-outline { width: auto; min-width: 170px; padding: 11px 16px; }
-            #preview-video { max-height: 380px; }
+            #preview-video { max-height: 260px; }
         }
     </style>
 </head>
@@ -530,7 +558,7 @@
         <div class="sticky-header-container">
             <div id="progress-container"><div id="progress-bar"></div></div>
             <div class="top-nav">
-                <button class="back-btn" onclick="confirmGoBack()"><svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg><span data-i18n="backBtn">گەڕانەوە</span></button>
+                <button class="back-btn" onclick="confirmGoBack()"><svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg><span data-i18n="backBtn" style="margin: 0 4px;">گەڕانەوە</span></button>
                 <h3 style="margin:0; font-size:13.5px; color:var(--primary); text-align:center; flex-grow:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" data-i18n="editorTitle">دەستکاریکردنی ژێرنووس</h3>
                 
                 <div class="custom-select-wrapper">
@@ -547,15 +575,34 @@
             </div>
             
             <div class="top-tools">
-                <button class="top-btn" onclick="undo()" id="btn-undo" title="Undo"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg><span data-i18n="undoBtn">پاشگەزبوونەوە</span></button>
-                <button class="top-btn" onclick="redo()" id="btn-redo" title="Redo"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg><span data-i18n="redoBtn">چوونەپێش</span></button>
-                <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 3px;"></div>
+                <button class="top-btn" onclick="undo()" id="btn-undo" title="پاشگەزبوونەوە" data-i18n-title="undoBtn">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                </button>
+                <button class="top-btn" onclick="redo()" id="btn-redo" title="چوونەپێش" data-i18n-title="redoBtn">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg>
+                </button>
+                
+                <div class="tool-divider"></div>
                 
                 <input type="file" id="headerVideoInput" accept="video/*" style="position: absolute; top: -9999px; left: -9999px; opacity: 0; width: 1px; height: 1px; pointer-events: none;" onchange="loadHeaderVideo(this)">
-                <button id="add-video-btn" class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="triggerVideoUpload()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg><span data-i18n="videoBtn">ڤیدیۆ</span></button>
-                <button id="remove-video-btn" class="top-btn" style="color: #ef4444; border-color: #ef4444; display: none;" onclick="closeHeaderVideo()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span data-i18n="removeVideoBtn">لابردنی ڤیدیۆ</span></button>
-                <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 3px;"></div>
-                <button class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="toggleSearchBar()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><span data-i18n="searchNavBtn">گەڕان</span></button>
+                <button id="add-video-btn" class="top-btn primary-tool" onclick="triggerVideoUpload()" title="ڤیدیۆ" data-i18n-title="videoBtn">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                </button>
+                <button id="remove-video-btn" class="top-btn danger-tool" style="display: none;" onclick="closeHeaderVideo()" title="لابردنی ڤیدیۆ" data-i18n-title="removeVideoBtn">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <div class="tool-divider"></div>
+                
+                <button class="top-btn primary-tool" onclick="toggleSearchBar()" title="گەڕان" data-i18n-title="searchNavBtn">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
+            </div>
+
+            <!-- شاشەی ڤیدیۆ کە هەمیشە لە سەرەوە جێگیر دەبێت -->
+            <div id="video-container">
+                <video id="preview-video" controls playsinline webkit-playsinline preload="metadata"></video>
+                <div id="video-subtitle-overlay"></div>
             </div>
         </div>
 
@@ -578,10 +625,6 @@
             </div>
         </div>
 
-        <div id="video-container">
-            <video id="preview-video" controls playsinline webkit-playsinline preload="metadata"></video>
-            <div id="video-subtitle-overlay"></div>
-        </div>
         <div id="subtitles-container"></div>
         
         <div class="action-bar">
@@ -652,6 +695,23 @@
             }
         }
 
+        // کۆنتڕۆڵی شاردنەوەی دوگمەکانی خوارەوە لەکاتی کردنەوەی کیبۆرد
+        document.addEventListener('focusin', (e) => {
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+                document.body.classList.add('keyboard-active');
+            }
+        });
+        document.addEventListener('focusout', (e) => {
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+                setTimeout(() => {
+                    const active = document.activeElement;
+                    if (!active || (active.tagName !== 'TEXTAREA' && active.tagName !== 'INPUT')) {
+                        document.body.classList.remove('keyboard-active');
+                    }
+                }, 100);
+            }
+        });
+
         const i18n = {
             ckb: {
                 pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
@@ -661,12 +721,12 @@
                 toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
             },
             ar: {
-                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!",
+                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!",
                 msgSelect: "الرجاء تحديد الملف الأصلي!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
             },
             en: {
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "A dedicated workspace for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
+                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
                 msgSelect: "Please select the original subtitle file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
                 toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto"
             }
@@ -689,15 +749,18 @@
             toast.innerText = message;
             container.appendChild(toast);
             requestAnimationFrame(() => toast.classList.add('show'));
-            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3200);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // ڕێکخستنی زمان بەبێ ئەوەی هەموو شاشەکە عەکس بێتەوە
         function changeLanguage(lang) {
             currentLang = lang; 
             const isEn = (lang === 'en');
             
+            // چاککردنی ئاڕاستەی گشتی بۆ ئینگلیزی تا هێماکان پێچەوانە نەبنەوە
+            document.getElementById('html-tag').setAttribute('dir', isEn ? 'ltr' : 'rtl');
+            document.getElementById('html-tag').setAttribute('lang', lang);
             document.title = i18n[lang]['pageTitle'];
+            
             document.querySelectorAll('.current-lang-text').forEach(e => { 
                 e.innerText = isEn ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی'); 
             });
@@ -713,11 +776,17 @@
                 }
             });
 
+            document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                const key = el.getAttribute('data-i18n-title');
+                if (i18n[lang] && i18n[lang][key]) {
+                    el.setAttribute('title', i18n[lang][key]);
+                }
+            });
+
             if(localStorage.getItem('kf_user')) {
                 document.getElementById('welcome-msg').innerText = i18n[currentLang]['welcomeText'];
             }
             
-            // نوێکردنەوەی ناوی فایلەکان ئەگەر هەڵنەبژێردرابن
             ['boxOriginal', 'boxKurdish'].forEach(id => {
                 const box = document.getElementById(id);
                 if (box && !box.classList.contains('has-file')) {
@@ -952,13 +1021,20 @@
             }
         }
 
+        // بەهیچ شێوەیەک .txt زیاد ناکات لەکاتی داگرتن
         function triggerDownload(content, filename) {
             const cleanFilename = filename.replace(/\.txt$/i, '');
-            const blob = (content instanceof Blob) ? content : new Blob([content], { type: 'text/plain;charset=utf-8' });
+            let mimeType = 'application/octet-stream';
+            if (cleanFilename.endsWith('.srt')) mimeType = 'application/x-subrip';
+            else if (cleanFilename.endsWith('.vtt')) mimeType = 'text/vtt';
+            else if (cleanFilename.endsWith('.ass')) mimeType = 'text/x-ssa';
+
+            const blob = (content instanceof Blob) ? content : new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = cleanFilename;
+            a.setAttribute('download', cleanFilename);
             a.rel = 'noopener';
             a.style.display = 'none';
             document.body.appendChild(a); 
@@ -974,7 +1050,6 @@
             return text.replace(/\{[^}]+\}/g, '').replace(/<[^>]+>/g, '').trim();
         }
 
-        // وردبینی تەواو لە گۆڕین و کاتەکانی فایلی بە کۆمەڵ (Batch Process)
         async function prepareBatchProcess() {
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
@@ -1054,7 +1129,6 @@
             pendingBatchDownloads = []; 
         }
 
-        // وردبینی دەرهێنانی کاتەکان بەبێ هەڵەی ژمارەیی
         function timeToSeconds(str) {
             if(!str) return 0;
             let cleaned = str.replace(',', '.').trim();
@@ -1224,7 +1298,6 @@
             }
         }
 
-        // هاوتاکردنی پێشکەوتووی فایلی ئەسڵی و فایلی وەرگێڕدراو
         async function startEditing() {
             const fOrig = document.getElementById('fileOriginal').files[0];
             const fKurd = document.getElementById('fileKurdish').files[0];
@@ -1436,7 +1509,6 @@
             saveSession();
         }
 
-        // پاشەکەوتکردنی ژێرنووس بە پاراستنی تەواوی تاگ و شێوازەکان
         function downloadEditedFile() {
             let final = isAssFormat ? (assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n') : (isVttFormat ? "WEBVTT\n\n" : "");
             
