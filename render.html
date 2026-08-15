@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#121214">
-    <title>VN Subtitle Video Renderer</title>
+    <meta name="theme-color" content="#0d1117">
+    <title>Aegisub Pro Mobile - Video & Subtitle Editor</title>
     
     <link rel="stylesheet" href="./fonts.css">
     
     <style>
         :root {
-            --primary: #8EB69B; 
+            --primary: #34d399; 
+            --primary-hover: #10b981;
             --accent-blue: #3b82f6;
-            --bg-dark: #121214;
-            --card-dark: #1e1e24;
-            --card-border: #2a2a32;
-            --text-main: #f1f5f9;
-            --text-muted: #8b8b98;
-            --danger: #ef4444;
+            --bg-dark: #0d1117;
+            --card-dark: #161b22;
+            --card-border: #30363d;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --danger: #f87171;
         }
 
         * { 
@@ -33,6 +34,7 @@
             padding: 0;
             min-height: 100vh;
             min-height: 100dvh;
+            width: 100%;
             font-family: 'KurdForest', Tahoma, -apple-system, sans-serif;
             overflow-x: hidden;
         }
@@ -41,59 +43,53 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
         }
 
-        .vn-container {
+        .app-container {
             width: 100%;
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             min-height: 100dvh;
+            padding: 10px;
         }
 
-        /* 1. VN Top Navigation Bar */
-        .vn-header {
+        /* 1. Header Navigation */
+        .app-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 10px 14px;
-            background: var(--bg-dark);
-            border-bottom: 1px solid var(--card-border);
+            background: var(--card-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            margin-bottom: 10px;
         }
 
-        .vn-header-btn {
-            background: transparent;
-            border: none;
+        .nav-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
             color: var(--text-main);
-            font-size: 16px;
+            border-radius: 8px;
+            padding: 6px 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            padding: 6px;
-        }
-
-        .aspect-select {
-            background: #1c1c22;
-            border: 1px solid var(--card-border);
-            color: var(--text-main);
-            padding: 5px 12px;
-            border-radius: 8px;
+            gap: 6px;
             font-size: 12.5px;
             font-weight: bold;
-            outline: none;
-            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
         }
+        .nav-btn:active { transform: scale(0.95); }
 
         .export-btn {
-            background: var(--accent-blue);
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
             color: white;
             border: none;
-            padding: 6px 14px;
+            padding: 7px 16px;
             border-radius: 8px;
             font-size: 13px;
             font-weight: bold;
@@ -101,40 +97,65 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: opacity 0.2s;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
-        .export-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .export-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 
-        /* 2. Video Viewport Area */
-        .preview-area {
+        /* 2. Upload Row */
+        .upload-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .file-btn {
+            position: relative;
+            background: #21262d;
+            border: 1.5px dashed var(--card-border);
+            border-radius: 10px;
+            padding: 10px 6px;
+            text-align: center;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--primary);
+            font-size: 11.5px;
+            font-weight: bold;
+        }
+        .file-btn input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+        .file-btn.loaded { border-color: var(--primary); background: rgba(52, 211, 153, 0.1); }
+
+        /* 3. Video Viewport & Preview */
+        .viewport-card {
+            background: var(--card-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-box {
             position: relative;
             width: 100%;
             background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-grow: 1;
-            min-height: 240px;
-            max-height: 420px;
-            overflow: hidden;
-        }
-
-        .canvas-wrapper {
-            position: relative;
-            max-width: 100%;
-            max-height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             aspect-ratio: 16 / 9;
-            transition: aspect-ratio 0.2s ease;
+            max-height: 380px;
         }
 
         #main-video {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            display: block;
         }
 
         #sub-canvas {
@@ -146,118 +167,215 @@
             pointer-events: none;
         }
 
-        /* Video Playback Controls */
-        .playback-bar {
+        /* Seek Controls */
+        .seek-controls {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 6px 14px;
-            background: #16161a;
+            padding: 8px 12px;
+            background: #11151c;
             border-top: 1px solid var(--card-border);
-            border-bottom: 1px solid var(--card-border);
-            font-size: 12px;
-            color: var(--text-muted);
+            gap: 6px;
         }
 
-        .play-btn {
-            background: var(--card-border);
-            border: none;
-            color: white;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .seek-btn {
+            background: #21262d;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 11.5px;
+            font-weight: bold;
             cursor: pointer;
+            transition: background 0.15s;
+        }
+        .seek-btn:active { background: var(--primary-hover); color: white; }
+
+        .time-display {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--primary);
+            direction: ltr;
         }
 
-        /* 3. VN Multi-track Timeline */
-        .timeline-container {
-            background: var(--bg-dark);
-            padding: 10px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .track-row {
+        /* 4. Subtitle Line Editor & Controls */
+        .editor-panel {
             background: var(--card-dark);
             border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tag-toolbox {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .tag-toolbox::-webkit-scrollbar { display: none; }
+
+        .tag-btn {
+            background: #21262d;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            border-radius: 6px;
+            padding: 4px 9px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .tag-btn:active { background: var(--primary); color: #000; }
+
+        .line-input-area {
+            width: 100%;
+            min-height: 55px;
+            padding: 10px;
+            background: #0d1117;
+            border: 1.5px solid var(--card-border);
             border-radius: 10px;
-            padding: 8px 12px;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.4;
+            outline: none;
+            resize: vertical;
+            direction: auto;
+            unicode-bidi: plaintext;
+        }
+        .line-input-area:focus { border-color: var(--primary); }
+
+        /* Panel Settings for Logo */
+        .logo-panel {
+            display: none;
+            background: #11151c;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .ctrl-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .ctrl-row label { font-weight: bold; color: var(--primary); }
+        .ctrl-row input[type="range"] { flex-grow: 1; accent-color: var(--primary); }
+        .ctrl-row select { background: #21262d; border: 1px solid var(--card-border); color: #fff; padding: 4px 8px; border-radius: 6px; outline: none; font-size: 11.5px; }
+
+        /* 5. Subtitle Grid / List */
+        .grid-card {
+            background: var(--card-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 12px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            max-height: 300px;
+        }
+
+        .grid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed var(--card-border);
+        }
+
+        .add-line-btn {
+            background: rgba(52, 211, 153, 0.15);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 11.5px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sub-grid-list {
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 2px;
+        }
+
+        .grid-row {
+            background: #0d1117;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 8px 10px;
             display: flex;
             align-items: center;
             gap: 10px;
-            position: relative;
             cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: start;
+        }
+        .grid-row:hover, .grid-row.active {
+            border-color: var(--primary);
+            background: rgba(52, 211, 153, 0.08);
+        }
+        .grid-row.active {
+            box-shadow: inset 3px 0 0 var(--primary);
         }
 
-        .track-icon {
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .track-label {
-            font-size: 12px;
+        .grid-num {
+            font-size: 11px;
             font-weight: bold;
+            color: var(--primary);
+            min-width: 28px;
+            direction: ltr;
+        }
+
+        .grid-time {
+            font-size: 11px;
             color: var(--text-muted);
-            flex-grow: 1;
+            direction: ltr;
+            min-width: 115px;
+        }
+
+        .grid-text {
+            font-size: 13px;
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-        .track-row.active .track-label { color: var(--text-main); }
-        .track-row input[type="file"] { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
-
-        /* 4. Bottom Editing Toolbar (VN Style) */
-        .vn-toolbar {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 10px 6px;
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
-            background: #18181c;
-            border-top: 1px solid var(--card-border);
+            flex-grow: 1;
+            direction: auto;
+            unicode-bidi: plaintext;
         }
 
-        .tool-item {
+        .del-line-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 6px;
+            width: 22px;
+            height: 22px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 10.5px;
-            font-weight: bold;
+            justify-content: center;
+            font-size: 11px;
             cursor: pointer;
-            padding: 4px;
-        }
-        .tool-item.active, .tool-item:hover { color: var(--primary); }
-
-        /* Style Settings Panel */
-        .style-panel {
-            display: none;
-            background: var(--card-dark);
-            border-top: 1px solid var(--card-border);
-            padding: 12px 16px;
-            flex-direction: column;
-            gap: 10px;
         }
 
-        .style-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .style-row label { font-size: 12px; font-weight: bold; color: var(--primary); }
-        .style-row input[type="range"] { flex-grow: 1; accent-color: var(--primary); }
-
-        /* Progress Modal (لەگەڵ دوگمەی هەڵوەشاندنەوە X) */
+        /* Progress Modal */
         .progress-overlay {
             display: none;
             position: fixed;
@@ -321,106 +439,120 @@
 </head>
 <body>
 
-    <div class="vn-container">
-        <!-- 1. VN Top Navigation -->
-        <div class="vn-header">
-            <a href="./index.html" class="vn-header-btn" title="Back">
-                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <a href="./index.html" class="nav-btn">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                <span>گەڕانەوە</span>
             </a>
 
-            <select class="aspect-select" id="aspectSelect" onchange="changeAspectRatio(this.value)">
-                <option value="16/9">16:9 (Original)</option>
-                <option value="9/16">9:16 (Reels/TikTok)</option>
-                <option value="1/1">1:1 (Square)</option>
-                <option value="4/3">4:3 (Standard)</option>
-            </select>
+            <span style="font-size: 13.5px; font-weight: bold; color: var(--primary);">Aegisub Pro Mobile</span>
 
             <button class="export-btn" id="exportBtn" onclick="startExport()" disabled>
-                <span>Export</span>
+                <span>ڕێندەر و داگرتن</span>
                 <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             </button>
         </div>
 
-        <!-- 2. Video Preview Viewport -->
-        <div class="preview-area">
-            <div class="canvas-wrapper" id="canvasWrapper">
-                <video id="main-video" playsinline preload="metadata"></video>
-                <canvas id="sub-canvas"></canvas>
+        <!-- 3 File Upload Row: Video, Subtitle, Logo -->
+        <div class="upload-row">
+            <div class="file-btn" id="vidFileBtn">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span id="vidBtnText">ڤیدیۆ (MP4/MKV)</span>
+                <input type="file" accept="video/mp4,video/webm,video/x-matroska,video/mkv,.mkv,.mp4,.webm" onchange="handleVideoUpload(this)">
             </div>
-        </div>
 
-        <!-- Playback Bar -->
-        <div class="playback-bar">
-            <span id="currentTimeText">0:00</span>
-            <button class="play-btn" onclick="togglePlayPause()" id="playPauseBtn">
-                <svg style="width:16px;height:16px;" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <span id="durationTimeText">0:00</span>
-        </div>
-
-        <!-- 3. VN Track Timeline -->
-        <div class="timeline-container">
-            <div class="track-row" id="subTrackRow">
-                <div class="track-icon">
-                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
-                </div>
-                <div class="track-label" id="subTrackLabel">Tap to add subtitle (SRT / ASS / VTT)</div>
+            <div class="file-btn" id="subFileBtn">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                <span id="subBtnText">ژێرنووس (ASS/SRT)</span>
                 <input type="file" accept=".srt,.ass,.vtt" onchange="handleSubUpload(this)">
             </div>
 
-            <div class="track-row" id="vidTrackRow">
-                <div class="track-icon">
-                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            <div class="file-btn" id="logoFileBtn">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <span id="logoBtnText">لۆگۆ (PNG)</span>
+                <input type="file" accept="image/*" onchange="handleLogoUpload(this)">
+            </div>
+        </div>
+
+        <!-- Video Viewport -->
+        <div class="viewport-card">
+            <div class="video-box">
+                <video id="main-video" playsinline preload="metadata"></video>
+                <canvas id="sub-canvas"></canvas>
+            </div>
+
+            <div class="seek-controls">
+                <button class="seek-btn" onclick="seekOffset(-1.0)">-1s</button>
+                <button class="seek-btn" onclick="seekOffset(-0.1)">-0.1s</button>
+                <button class="seek-btn" id="playBtn" onclick="togglePlayPause()" style="background:var(--primary); color:#000; padding:5px 14px;">▶</button>
+                <button class="seek-btn" onclick="seekOffset(0.1)">+0.1s</button>
+                <button class="seek-btn" onclick="seekOffset(1.0)">+1s</button>
+                <div class="time-display" id="timeDisplay">00:00.0 / 00:00.0</div>
+            </div>
+        </div>
+
+        <!-- Line Text Editor & Tag Toolbox -->
+        <div class="editor-panel">
+            <div class="tag-toolbox">
+                <button class="tag-btn" onclick="toggleLogoPanel()" style="background:rgba(59, 130, 246, 0.2); color:#60a5fa; border-color:#3b82f6;">🖼 ڕێکخستنی لۆگۆ</button>
+                <div style="width:1px; height:16px; background:var(--card-border); margin:0 2px;"></div>
+                <button class="tag-btn" onclick="insertTag('{\\b1}')"><b>B</b> Bold</button>
+                <button class="tag-btn" onclick="insertTag('{\\i1}')"><i>I</i> Italic</button>
+                <button class="tag-btn" onclick="insertTag('{\\an8}')">Top Align</button>
+                <button class="tag-btn" onclick="insertTag('{\\an2}')">Bottom Align</button>
+                <button class="tag-btn" onclick="insertTag('{\\pos(640,360)}')">Pos</button>
+                <button class="tag-btn" onclick="insertTag('{\\c&H00FFFF&}')">Yellow</button>
+                <button class="tag-btn" onclick="insertTag('{\\c&H0000FF&}')">Red</button>
+            </div>
+
+            <!-- Logo Control Sub-panel -->
+            <div class="logo-panel" id="logoPanel">
+                <div class="ctrl-row">
+                    <label>شوێنی لۆگۆ:</label>
+                    <select id="logoPosSelect" onchange="renderFrame()">
+                        <option value="TR">سەرەوە لای ڕاست (Top-Right)</option>
+                        <option value="TL">سەرەوە لای چەپ (Top-Left)</option>
+                        <option value="BR">خوارەوە لای ڕاست (Bottom-Right)</option>
+                        <option value="BL">خوارەوە لای چەپ (Bottom-Left)</option>
+                    </select>
                 </div>
-                <div class="track-label" id="vidTrackLabel">Tap to add video (MP4 / MKV / WEBM)</div>
-                <input type="file" accept="video/mp4,video/webm,video/x-matroska,video/mkv,.mkv,.mp4,.webm" onchange="handleVideoUpload(this)">
+                <div class="ctrl-row">
+                    <label>قەبارەی لۆگۆ:</label>
+                    <input type="range" id="logoSizeRange" min="5" max="35" value="15" oninput="renderFrame()">
+                </div>
+                <div class="ctrl-row">
+                    <label>ڕوونی (Opacity):</label>
+                    <input type="range" id="logoOpacityRange" min="10" max="100" value="90" oninput="renderFrame()">
+                </div>
             </div>
+
+            <textarea class="line-input-area" id="lineEditorInput" placeholder="دەقی ڕستەی دیاریکراو لێرە دەستکاری بکە..." oninput="updateActiveLineText(this.value)"></textarea>
         </div>
 
-        <!-- Style Settings Panel -->
-        <div class="style-panel" id="stylePanel">
-            <div class="style-row">
-                <label>Font Size:</label>
-                <input type="range" id="fontSizeRange" min="16" max="60" value="28" oninput="renderFrame()">
-                <span id="fontSizeVal" style="font-size:12px; font-weight:bold; width:28px;">28</span>
+        <!-- Aegisub Grid List -->
+        <div class="grid-card">
+            <div class="grid-header">
+                <span style="font-size: 12.5px; font-weight: bold; color: var(--primary);" id="subCountText">ژێرنووسەکان (0 دێڕ)</span>
+                <button class="add-line-btn" onclick="addNewSubtitleLine()">
+                    <svg style="width:13px;height:13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                    <span>+ ڕستەی نوێ</span>
+                </button>
             </div>
-            <div class="style-row">
-                <label>Position Offset:</label>
-                <input type="range" id="subPosRange" min="4" max="45" value="12" oninput="renderFrame()">
-                <span id="subPosVal" style="font-size:12px; font-weight:bold; width:28px;">12%</span>
-            </div>
-        </div>
-
-        <!-- 4. VN Bottom Editing Toolbar -->
-        <div class="vn-toolbar">
-            <button class="tool-item" onclick="toggleStylePanel()">
-                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-23"></path></svg>
-                <span>Style</span>
-            </button>
-            <button class="tool-item" onclick="document.querySelector('#vidTrackRow input').click()">
-                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                <span>Add Video</span>
-            </button>
-            <button class="tool-item" onclick="document.querySelector('#subTrackRow input').click()">
-                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h4m9-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span>Subtitle</span>
-            </button>
-            <button class="tool-item" onclick="resetProject()">
-                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                <span>Reset</span>
-            </button>
+            <div class="sub-grid-list" id="gridList"></div>
         </div>
     </div>
 
-    <!-- Progress Modal (دەستکاری کرا لەگەڵ دوگمەی هەڵوەشاندنەوە X) -->
+    <!-- Progress Modal -->
     <div class="progress-overlay" id="progOverlay">
         <div class="progress-box">
-            <button class="cancel-render-btn" onclick="cancelExport()" title="هەڵوەشاندنەوە">✕</button>
-            <h3 style="margin:0 0 6px 0; color:var(--primary);">خەریکی ڕێندەرکردنە...</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin:0;">تکایە چاوەڕێ بکە، ئەم کرداری پێکەوەپەستانە لەسەر مۆبایلەکەت ئەنجام دەدرێت.</p>
+            <button class="cancel-render-btn" onclick="cancelExport()" title="Cancel">✕</button>
+            <h3 style="margin:0 0 6px 0; color:var(--primary);">خەریکی ڕێندەرکردنی ڤیدیۆکەیە...</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">بە ئەوپەڕی خێرایی و بە کوالێتی ئەسڵی ڤیدیۆکە ڕێندەر دەکرێت.</p>
             <div class="progress-bar-outer"><div class="progress-bar-inner" id="progInner"></div></div>
             <div id="progPercent" style="font-size:14px; font-weight:bold; color:var(--primary);">0%</div>
-            <button class="btn btn-outline" style="margin-top:12px; padding:8px; font-size:12px; border-color:var(--danger); color:var(--danger);" onclick="cancelExport()">پاشگەزبوونەوە / هەڵوەشاندنەوە</button>
+            <button class="btn nav-btn" style="margin-top:12px; padding:8px; font-size:12px; border-color:var(--danger); color:var(--danger); justify-content:center;" onclick="cancelExport()">پاشگەزبوونەوە / هەڵوەشاندنەوە</button>
         </div>
     </div>
 
@@ -428,10 +560,13 @@
 
     <script>
         let parsedSubtitles = [];
+        let activeLineIndex = -1;
         let isVideoLoaded = false;
         let isSubLoaded = false;
-        let isRendering = false;
         let cancelRequested = false;
+        
+        let logoImg = null;
+        let isLogoLoaded = false;
 
         const videoEl = document.getElementById('main-video');
         const canvas = document.getElementById('sub-canvas');
@@ -446,15 +581,8 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        function changeAspectRatio(val) {
-            const wrapper = document.getElementById('canvasWrapper');
-            const parts = val.split('/');
-            wrapper.style.aspectRatio = `${parts[0]} / ${parts[1]}`;
-            renderFrame();
-        }
-
-        function toggleStylePanel() {
-            const panel = document.getElementById('stylePanel');
+        function toggleLogoPanel() {
+            const panel = document.getElementById('logoPanel');
             panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
         }
 
@@ -462,13 +590,12 @@
             if(input.files && input.files[0]) {
                 const file = input.files[0];
                 videoEl.src = URL.createObjectURL(file);
-                document.getElementById('vidTrackLabel').innerText = file.name;
-                document.getElementById('vidTrackRow').classList.add('active');
+                document.getElementById('vidBtnText').innerText = file.name;
+                document.getElementById('vidFileBtn').classList.add('loaded');
                 
                 videoEl.onloadedmetadata = () => {
                     canvas.width = videoEl.videoWidth || 1280;
                     canvas.height = videoEl.videoHeight || 720;
-                    document.getElementById('durationTimeText').innerText = formatTime(videoEl.duration);
                     isVideoLoaded = true;
                     checkReady();
                     renderFrame();
@@ -484,51 +611,69 @@
                 const isVtt = file.name.toLowerCase().endsWith('.vtt');
                 
                 parsedSubtitles = isAss ? parseASS(text) : (isVtt ? parseVTT(text) : parseSRT(text));
-                document.getElementById('subTrackLabel').innerText = file.name;
-                document.getElementById('subTrackRow').classList.add('active');
+                document.getElementById('subBtnText').innerText = file.name;
+                document.getElementById('subFileBtn').classList.add('loaded');
                 isSubLoaded = true;
                 checkReady();
+                renderGridList();
                 renderFrame();
             }
         }
 
+        function handleLogoUpload(input) {
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                logoImg = new Image();
+                logoImg.onload = () => {
+                    isLogoLoaded = true;
+                    document.getElementById('logoBtnText').innerText = file.name;
+                    document.getElementById('logoFileBtn').classList.add('loaded');
+                    document.getElementById('logoPanel').style.display = 'flex';
+                    renderFrame();
+                    showToast("لۆگۆ بە سەرکەوتوویی بارکرا!");
+                };
+                logoImg.src = URL.createObjectURL(file);
+            }
+        }
+
         function checkReady() {
-            if(isVideoLoaded && isSubLoaded) {
+            if(isVideoLoaded && (isSubLoaded || parsedSubtitles.length > 0)) {
                 document.getElementById('exportBtn').disabled = false;
             }
         }
 
-        function resetProject() {
-            videoEl.pause();
-            videoEl.removeAttribute('src');
-            videoEl.load();
-            parsedSubtitles = [];
-            isVideoLoaded = false;
-            isSubLoaded = false;
-            document.getElementById('vidTrackLabel').innerText = 'Tap to add video (MP4 / MKV / WEBM)';
-            document.getElementById('subTrackLabel').innerText = 'Tap to add subtitle (SRT / ASS / VTT)';
-            document.getElementById('vidTrackRow').classList.remove('active');
-            document.getElementById('subTrackRow').classList.remove('active');
-            document.getElementById('exportBtn').disabled = true;
-            ctx.clearRect(0,0,canvas.width,canvas.height);
+        function addNewSubtitleLine() {
+            const start = videoEl.currentTime || 0;
+            const end = start + 3.0;
+            const newSub = {
+                id: Date.now(),
+                start: parseFloat(start.toFixed(2)),
+                end: parseFloat(end.toFixed(2)),
+                rawText: "دەقی ژێرنووسی نوێ",
+                text: "دەقی ژێرنووسی نوێ"
+            };
+            parsedSubtitles.push(newSub);
+            parsedSubtitles.sort((a,b) => a.start - b.start);
+            activeLineIndex = parsedSubtitles.indexOf(newSub);
+            isSubLoaded = true;
+            checkReady();
+            renderGridList();
+            renderFrame();
+            showToast("ڕستەی نوێ زیادکرا!");
         }
 
-        function togglePlayPause() {
-            if(!isVideoLoaded) return;
-            if(videoEl.paused) {
-                videoEl.play();
-                document.getElementById('playPauseBtn').innerHTML = `<svg style="width:16px;height:16px;" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-            } else {
-                videoEl.pause();
-                document.getElementById('playPauseBtn').innerHTML = `<svg style="width:16px;height:16px;" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+        function deleteLine(idx, e) {
+            if(e) e.stopPropagation();
+            if(parsedSubtitles[idx]) {
+                parsedSubtitles.splice(idx, 1);
+                if(activeLineIndex === idx) {
+                    activeLineIndex = -1;
+                    document.getElementById('lineEditorInput').value = '';
+                }
+                renderGridList();
+                renderFrame();
+                showToast("ڕستەکە سڕایەوە");
             }
-        }
-
-        function formatTime(sec) {
-            if(!sec || isNaN(sec)) return '0:00';
-            let m = Math.floor(sec / 60);
-            let s = Math.floor(sec % 60);
-            return `${m}:${String(s).padStart(2,'0')}`;
         }
 
         function timeToSec(str) {
@@ -539,17 +684,27 @@
             return parseFloat(p[0]) || 0;
         }
 
+        function formatTimeDisplay(sec) {
+            if(!sec || isNaN(sec)) return '00:00.0';
+            let m = Math.floor(sec / 60);
+            let s = (sec % 60).toFixed(1);
+            return `${String(m).padStart(2,'0')}:${String(s).padStart(4,'0')}`;
+        }
+
         function parseSRT(data) {
             let items = [];
             let blocks = data.replace(/\r\n/g, '\n').trim().split(/\n\s*\n/);
+            let id = 1;
             blocks.forEach(b => {
                 let lines = b.trim().split('\n');
                 let tIdx = lines.findIndex(l => l.includes('-->'));
                 if(tIdx !== -1) {
                     let times = lines[tIdx].split('-->');
                     items.push({
+                        id: id++,
                         start: timeToSec(times[0]),
                         end: timeToSec(times[1]),
+                        rawText: lines.slice(tIdx + 1).join('\n'),
                         text: lines.slice(tIdx + 1).join('\n').replace(/<[^>]+>/g, '')
                     });
                 }
@@ -562,58 +717,191 @@
         function parseASS(data) {
             let items = [];
             let lines = data.split(/\r?\n/);
+            let id = 1;
             lines.forEach(l => {
                 if(l.startsWith('Dialogue:')) {
-                    let parts = l.split(',');
-                    if(parts.length >= 10) {
-                        let st = parts[1].trim(), en = parts[2].trim();
-                        let raw = parts.slice(9).join(',');
-                        let txt = raw.replace(/\{[^}]+\}/g, '').replace(/\\[Nn]/g, '\n').trim();
-                        items.push({ start: timeToSec(st), end: timeToSec(en), text: txt });
+                    let m = l.match(/^Dialogue:\s*([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),(.*)$/);
+                    if(m) {
+                        let st = m[2].trim(), en = m[3].trim(), raw = m[10];
+                        let cleanText = raw.replace(/\{[^}]+\}/g, '').replace(/\\[Nn]/g, '\n').trim();
+                        items.push({
+                            id: id++,
+                            start: timeToSec(st),
+                            end: timeToSec(en),
+                            rawText: raw,
+                            text: cleanText
+                        });
                     }
                 }
             });
             return items;
         }
 
+        function renderGridList() {
+            const listEl = document.getElementById('gridList');
+            document.getElementById('subCountText').innerText = `ژێرنووسەکان (${parsedSubtitles.length} دێڕ)`;
+            
+            listEl.innerHTML = parsedSubtitles.map((sub, idx) => `
+                <div class="grid-row ${idx === activeLineIndex ? 'active' : ''}" onclick="selectGridLine(${idx})">
+                    <div class="grid-num">#${idx+1}</div>
+                    <div class="grid-time">${formatTimeDisplay(sub.start)} -> ${formatTimeDisplay(sub.end)}</div>
+                    <div class="grid-text">${sub.text.replace(/\n/g, ' ')}</div>
+                    <button class="del-line-btn" onclick="deleteLine(${idx}, event)" title="Sڕینەوە">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function selectGridLine(idx) {
+            if(!parsedSubtitles[idx]) return;
+            activeLineIndex = idx;
+            const sub = parsedSubtitles[idx];
+            
+            videoEl.currentTime = sub.start + 0.05;
+            document.getElementById('lineEditorInput').value = sub.rawText || sub.text;
+            
+            renderGridList();
+            renderFrame();
+        }
+
+        function updateActiveLineText(val) {
+            if(activeLineIndex !== -1 && parsedSubtitles[activeLineIndex]) {
+                parsedSubtitles[activeLineIndex].rawText = val;
+                parsedSubtitles[activeLineIndex].text = val.replace(/\{[^}]+\}/g, '').replace(/\\[Nn]/g, '\n').trim();
+                renderGridList();
+                renderFrame();
+            }
+        }
+
+        function insertTag(tag) {
+            const ta = document.getElementById('lineEditorInput');
+            const start = ta.selectionStart;
+            const end = ta.selectionEnd;
+            const text = ta.value;
+            ta.value = text.substring(0, start) + tag + text.substring(end);
+            ta.focus();
+            ta.selectionStart = ta.selectionEnd = start + tag.length;
+            updateActiveLineText(ta.value);
+        }
+
+        function seekOffset(seconds) {
+            if(!isVideoLoaded) return;
+            videoEl.currentTime = Math.max(0, Math.min(videoEl.duration, videoEl.currentTime + seconds));
+        }
+
+        function togglePlayPause() {
+            if(!isVideoLoaded) return;
+            if(videoEl.paused) {
+                videoEl.play();
+                document.getElementById('playBtn').innerText = '⏸';
+            } else {
+                videoEl.pause();
+                document.getElementById('playBtn').innerText = '▶';
+            }
+        }
+
         videoEl.addEventListener('timeupdate', () => {
-            document.getElementById('currentTimeText').innerText = formatTime(videoEl.currentTime);
+            document.getElementById('timeDisplay').innerText = `${formatTimeDisplay(videoEl.currentTime)} / ${formatTimeDisplay(videoEl.duration)}`;
+            
+            const curTime = videoEl.currentTime;
+            const foundIdx = parsedSubtitles.findIndex(s => curTime >= s.start && curTime <= s.end);
+            if(foundIdx !== -1 && foundIdx !== activeLineIndex && !videoEl.paused) {
+                activeLineIndex = foundIdx;
+                document.getElementById('lineEditorInput').value = parsedSubtitles[foundIdx].rawText || parsedSubtitles[foundIdx].text;
+                renderGridList();
+            }
             renderFrame();
         });
 
+        function assColorToCSS(assHex) {
+            if (!assHex) return null;
+            let clean = assHex.replace(/&H|&/gi, '').padStart(6, '0');
+            if (clean.length > 6) clean = clean.slice(-6);
+            let b = clean.slice(0, 2);
+            let g = clean.slice(2, 4);
+            let r = clean.slice(4, 6);
+            return `#${r}${g}${b}`;
+        }
+
+        /* Render Frame (Subtitles + Logo) */
         function renderFrame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if(!isSubLoaded) return;
+
+            // 1. Draw Logo
+            if(isLogoLoaded && logoImg) {
+                ctx.save();
+                const opacity = parseInt(document.getElementById('logoOpacityRange').value) / 100;
+                const sizePct = parseInt(document.getElementById('logoSizeRange').value) / 100;
+                const pos = document.getElementById('logoPosSelect').value;
+
+                ctx.globalAlpha = opacity;
+                const logoW = canvas.width * sizePct;
+                const logoH = (logoImg.height / logoImg.width) * logoW;
+                const pad = 20;
+
+                let lx = pad, ly = pad;
+                if(pos === 'TR') { lx = canvas.width - logoW - pad; ly = pad; }
+                else if(pos === 'TL') { lx = pad; ly = pad; }
+                else if(pos === 'BR') { lx = canvas.width - logoW - pad; ly = canvas.height - logoH - pad; }
+                else if(pos === 'BL') { lx = pad; ly = canvas.height - logoH - pad; }
+
+                ctx.drawImage(logoImg, lx, ly, logoW, logoH);
+                ctx.restore();
+            }
+
+            // 2. Draw Subtitles
+            if(!isSubLoaded && parsedSubtitles.length === 0) return;
 
             const curTime = videoEl.currentTime;
             const currentSub = parsedSubtitles.find(s => curTime >= s.start && curTime <= s.end);
 
-            const fontSize = parseInt(document.getElementById('fontSizeRange').value);
-            const posPercent = parseInt(document.getElementById('subPosRange').value);
-            document.getElementById('fontSizeVal').innerText = fontSize;
-            document.getElementById('subPosVal').innerText = posPercent + '%';
-
-            if(currentSub && currentSub.text) {
-                const lines = currentSub.text.split('\n');
-                const scale = canvas.width / 640; 
-                const actualFontSize = fontSize * scale;
+            if(currentSub) {
+                const rawText = currentSub.rawText || currentSub.text;
                 
-                ctx.font = `bold ${actualFontSize}px 'KurdForest', Tahoma, sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'bottom';
-                ctx.direction = 'rtl'; 
+                let align = 2;
+                let alignMatch = rawText.match(/\\an([1-9])/);
+                if (alignMatch) align = parseInt(alignMatch[1]);
 
-                const bottomY = canvas.height - (canvas.height * (posPercent / 100));
-                const lineHeight = actualFontSize * 1.3;
+                let customX = null, customY = null;
+                let posMatch = rawText.match(/\\pos\(\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/);
+                if (posMatch) {
+                    customX = (parseFloat(posMatch[1]) / 1280) * canvas.width;
+                    customY = (parseFloat(posMatch[2]) / 720) * canvas.height;
+                }
 
-                lines.reverse().forEach((line, idx) => {
-                    const y = bottomY - (idx * lineHeight);
+                let primaryColor = '#FFFFFF';
+                let colMatch = rawText.match(/\\c&H([0-9a-fA-F]+)&/);
+                if (colMatch) {
+                    let cssCol = assColorToCSS(colMatch[1]);
+                    if (cssCol) primaryColor = cssCol;
+                }
+
+                let cleanLines = rawText.replace(/\{[^}]+\}/g, '').replace(/\\[Nn]/g, '\n').trim().split('\n');
+
+                const baseFontSize = (canvas.width / 640) * 26;
+                ctx.font = `bold ${baseFontSize}px 'KurdForest', Tahoma, sans-serif`;
+                ctx.direction = 'rtl';
+
+                let posX = customX !== null ? customX : canvas.width / 2;
+                let posY = customY !== null ? customY : canvas.height - (canvas.height * 0.12);
+
+                if(align >= 7) { ctx.textBaseline = 'top'; }
+                else if(align >= 4) { ctx.textBaseline = 'middle'; }
+                else { ctx.textBaseline = 'bottom'; }
+
+                if(align % 3 === 1) { ctx.textAlign = 'right'; }
+                else if(align % 3 === 0) { ctx.textAlign = 'left'; }
+                else { ctx.textAlign = 'center'; }
+
+                const lineHeight = baseFontSize * 1.35;
+
+                cleanLines.reverse().forEach((line, idx) => {
+                    const y = posY - (idx * lineHeight);
                     ctx.strokeStyle = '#000000';
-                    ctx.lineWidth = actualFontSize * 0.22;
-                    ctx.strokeText(line, canvas.width / 2, y);
+                    ctx.lineWidth = baseFontSize * 0.22;
+                    ctx.strokeText(line, posX, y);
 
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillText(line, canvas.width / 2, y);
+                    ctx.fillStyle = primaryColor;
+                    ctx.fillText(line, posX, y);
                 });
             }
         }
@@ -624,12 +912,11 @@
             showToast("ڕێندەرەکە هەڵوەشێنرایەوە");
         }
 
-        // ڕێندەرکردنی خێرا بە کوالێتی ئەسڵی ڤیدیۆکە
+        /* Render & Export Video */
         async function startExport() {
-            if(!isVideoLoaded || !isSubLoaded) return;
+            if(!isVideoLoaded) return;
 
             cancelRequested = false;
-            isRendering = true;
             const overlay = document.getElementById('progOverlay');
             const progInner = document.getElementById('progInner');
             const progPercent = document.getElementById('progPercent');
@@ -644,11 +931,9 @@
             const renderCtx = renderCanvas.getContext('2d');
 
             const stream = renderCanvas.captureStream(30);
-            
-            // پاراستنی کوالێتی بەرز (High Bitrate)
             const options = {
                 mimeType: 'video/webm;codecs=vp9',
-                videoBitsPerSecond: Math.max(6000000, renderCanvas.width * renderCanvas.height * 3)
+                videoBitsPerSecond: Math.max(8000000, renderCanvas.width * renderCanvas.height * 4)
             };
 
             let recorder;
@@ -671,52 +956,91 @@
                     showToast("ڕێندەرەکە بە کوالێتی ئەسڵی تەواو بوو!");
                 }
                 overlay.style.display = 'none';
-                isRendering = false;
             };
 
             recorder.start();
-            
             const duration = videoEl.duration;
             const fps = 30;
 
             function processStep() {
-                if(cancelRequested) {
-                    recorder.stop();
-                    return;
-                }
-
-                if(videoEl.currentTime >= duration || videoEl.ended) {
+                if(cancelRequested || videoEl.currentTime >= duration || videoEl.ended) {
                     recorder.stop();
                     return;
                 }
 
                 renderCtx.drawImage(videoEl, 0, 0, renderCanvas.width, renderCanvas.height);
                 
+                // Render Logo on Frame
+                if(isLogoLoaded && logoImg) {
+                    renderCtx.save();
+                    const opacity = parseInt(document.getElementById('logoOpacityRange').value) / 100;
+                    const sizePct = parseInt(document.getElementById('logoSizeRange').value) / 100;
+                    const pos = document.getElementById('logoPosSelect').value;
+
+                    renderCtx.globalAlpha = opacity;
+                    const logoW = renderCanvas.width * sizePct;
+                    const logoH = (logoImg.height / logoImg.width) * logoW;
+                    const pad = (renderCanvas.width / 640) * 20;
+
+                    let lx = pad, ly = pad;
+                    if(pos === 'TR') { lx = renderCanvas.width - logoW - pad; ly = pad; }
+                    else if(pos === 'TL') { lx = pad; ly = pad; }
+                    else if(pos === 'BR') { lx = renderCanvas.width - logoW - pad; ly = renderCanvas.height - logoH - pad; }
+                    else if(pos === 'BL') { lx = pad; ly = renderCanvas.height - logoH - pad; }
+
+                    renderCtx.drawImage(logoImg, lx, ly, logoW, logoH);
+                    renderCtx.restore();
+                }
+
+                // Render Subtitles on Frame
                 const curTime = videoEl.currentTime;
                 const currentSub = parsedSubtitles.find(s => curTime >= s.start && curTime <= s.end);
                 
-                if(currentSub && currentSub.text) {
-                    const fontSize = parseInt(document.getElementById('fontSizeRange').value);
-                    const posPercent = parseInt(document.getElementById('subPosRange').value);
-                    const scale = renderCanvas.width / 640;
-                    const actualFontSize = fontSize * scale;
+                if(currentSub) {
+                    const rawText = currentSub.rawText || currentSub.text;
+                    let align = 2;
+                    let alignMatch = rawText.match(/\\an([1-9])/);
+                    if (alignMatch) align = parseInt(alignMatch[1]);
 
-                    renderCtx.font = `bold ${actualFontSize}px 'KurdForest', Tahoma, sans-serif`;
-                    renderCtx.textAlign = 'center';
-                    renderCtx.textBaseline = 'bottom';
+                    let customX = null, customY = null;
+                    let posMatch = rawText.match(/\\pos\(\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/);
+                    if (posMatch) {
+                        customX = (parseFloat(posMatch[1]) / 1280) * renderCanvas.width;
+                        customY = (parseFloat(posMatch[2]) / 720) * renderCanvas.height;
+                    }
+
+                    let primaryColor = '#FFFFFF';
+                    let colMatch = rawText.match(/\\c&H([0-9a-fA-F]+)&/);
+                    if (colMatch) {
+                        let cssCol = assColorToCSS(colMatch[1]);
+                        if (cssCol) primaryColor = cssCol;
+                    }
+
+                    let cleanLines = rawText.replace(/\{[^}]+\}/g, '').replace(/\\[Nn]/g, '\n').trim().split('\n');
+                    const baseFontSize = (renderCanvas.width / 640) * 26;
+                    renderCtx.font = `bold ${baseFontSize}px 'KurdForest', Tahoma, sans-serif`;
                     renderCtx.direction = 'rtl';
 
-                    const bottomY = renderCanvas.height - (renderCanvas.height * (posPercent / 100));
-                    const lineHeight = actualFontSize * 1.3;
-                    const lines = currentSub.text.split('\n');
+                    let posX = customX !== null ? customX : renderCanvas.width / 2;
+                    let posY = customY !== null ? customY : renderCanvas.height - (renderCanvas.height * 0.12);
 
-                    lines.reverse().forEach((line, idx) => {
-                        const y = bottomY - (idx * lineHeight);
+                    if(align >= 7) { renderCtx.textBaseline = 'top'; }
+                    else if(align >= 4) { renderCtx.textBaseline = 'middle'; }
+                    else { renderCtx.textBaseline = 'bottom'; }
+
+                    if(align % 3 === 1) { renderCtx.textAlign = 'right'; }
+                    else if(align % 3 === 0) { renderCtx.textAlign = 'left'; }
+                    else { renderCtx.textAlign = 'center'; }
+
+                    const lineHeight = baseFontSize * 1.35;
+
+                    cleanLines.reverse().forEach((line, idx) => {
+                        const y = posY - (idx * lineHeight);
                         renderCtx.strokeStyle = '#000000';
-                        renderCtx.lineWidth = actualFontSize * 0.22;
-                        renderCtx.strokeText(line, renderCanvas.width / 2, y);
-                        renderCtx.fillStyle = '#FFFFFF';
-                        renderCtx.fillText(line, renderCanvas.width / 2, y);
+                        renderCtx.lineWidth = baseFontSize * 0.22;
+                        renderCtx.strokeText(line, posX, y);
+                        renderCtx.fillStyle = primaryColor;
+                        renderCtx.fillText(line, posX, y);
                     });
                 }
 
