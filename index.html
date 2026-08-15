@@ -161,6 +161,12 @@
             color: var(--primary); 
             border: 1px solid rgba(52, 211, 153, 0.35); 
         }
+        body.dark-theme #scroll-to-top-btn {
+            background: rgba(20, 28, 23, 0.92);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        }
 
         html[lang="en"] .btn,
         html[lang="en"] h2,
@@ -345,7 +351,6 @@
         .subtitle-line-num { font-size: 13px; font-weight: bold; color: var(--primary); direction: ltr; }
         .subtitle-time { font-size: 12px; color: var(--text-muted); direction: ltr; }
         
-        /* ئاڕاستەی خۆکاری دروست بەبێ تێکچوونی خاڵبەندی و کەوانەکان */
         .subtitle-orig { 
             background: var(--bg-color); 
             padding: 10px 12px; 
@@ -385,6 +390,48 @@
             transform: translateY(120%);
             opacity: 0;
             pointer-events: none;
+        }
+
+        /* دوگمەی گەڕانەوە بۆ سەرەوە (Scroll to Top Button) */
+        #scroll-to-top-btn {
+            position: fixed;
+            bottom: calc(85px + env(safe-area-inset-bottom));
+            left: 14px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            z-index: 95;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.6) translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #scroll-to-top-btn.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+        #scroll-to-top-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: scale(1.08) translateY(-2px);
+        }
+        #scroll-to-top-btn:active {
+            transform: scale(0.92);
+        }
+        body.keyboard-open #scroll-to-top-btn {
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
 
         .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 12px; animation: fadeIn 0.2s ease; }
@@ -430,6 +477,7 @@
             .action-bar { display: flex; justify-content: center; flex-direction: row; gap: 12px; padding: 12px 24px; }
             .action-bar .btn, .action-bar .btn-outline { width: auto; min-width: 170px; padding: 11px 16px; }
             #preview-video { max-height: 320px; }
+            #scroll-to-top-btn { bottom: 90px; left: calc(50% - 460px); }
         }
     </style>
 </head>
@@ -655,6 +703,7 @@
             </div>
         </div>
 
+        <!-- شاشەی ڤیدیۆ جێگیرکراو لە سەرەوە -->
         <div id="video-container">
             <video id="preview-video" controls playsinline webkit-playsinline preload="metadata"></video>
             <div id="video-subtitle-overlay"></div>
@@ -668,6 +717,13 @@
             <button class="btn" style="grid-column: span 2;" onclick="downloadEditedFile()"><span data-i18n="saveBtn">سەیڤکردن و داگرتن</span></button>
         </div>
     </div>
+
+    <!-- دوگمەی گەڕانەوە بۆ سەرەوە -->
+    <button id="scroll-to-top-btn" onclick="scrollToTop()" title="گەڕانەوە بۆ سەرەوە" data-i18n-title="scrollToTop">
+        <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
 
     <div id="ai-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
@@ -730,6 +786,23 @@
             }
         }
 
+        // کۆنتڕۆڵی دوگمەی گەڕانەوە بۆ سەرەوە لەکاتی سکڕۆڵکردن
+        window.addEventListener('scroll', () => {
+            const topBtn = document.getElementById('scroll-to-top-btn');
+            if (isEditing && window.scrollY > 200) {
+                topBtn.classList.add('show');
+            } else {
+                topBtn.classList.remove('show');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
         function handleKeyboardVisibility() {
             if (window.visualViewport) {
                 const isKb = window.visualViewport.height < (window.innerHeight - 100);
@@ -764,19 +837,19 @@
 
         const i18n = {
             ckb: {
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
                 msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
                 toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
             },
             ar: {
-                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!",
+                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
                 msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
             },
             en: {
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
+                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!", scrollToTop: "Scroll to Top",
                 msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
                 toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto"
             }
@@ -1260,7 +1333,6 @@
             })); 
         }
 
-        // ناساندنی پێشکەوتووی Dialogue و پاراستنی وردی هەموو ستایلەکانی فایلی ئەسڵی
         function parseASSContent(data, isOrig) {
             let items = []; 
             if(isOrig) assHeaderLines = []; 
@@ -1609,7 +1681,6 @@
             saveSession();
         }
 
-        // پاشەکەوتکردن بە گواستنەوەی تەواوی کات، ستایل و کۆدەکانی فایلی ئەسڵی بۆ فایلی وەرگێڕدراو
         function downloadEditedFile() {
             let final = "";
             if (isAssFormat) {
