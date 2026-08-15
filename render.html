@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#8EB69B">
-    <title data-i18n="renderTitle">ڕێندەری ڤیدیۆ و ژێرنووس</title>
+    <meta name="theme-color" content="#121214">
+    <title>VN Subtitle Video Renderer</title>
     
     <link rel="stylesheet" href="./fonts.css">
     
     <style>
         :root {
             --primary: #8EB69B; 
-            --primary-hover: #7ca188; 
-            --success: #10b981;
+            --accent-blue: #3b82f6;
+            --bg-dark: #121214;
+            --card-dark: #1e1e24;
+            --card-border: #2a2a32;
+            --text-main: #f1f5f9;
+            --text-muted: #8b8b98;
             --danger: #ef4444;
-            --bg-color: #0d120f; 
-            --card-bg: rgba(20, 28, 23, 0.96); 
-            --card-border: rgba(104, 211, 145, 0.2);
-            --text-main: #f1f5f9; 
-            --text-muted: #94a3b8;
-            --border-color: #223327; 
-            --shadow-md: 0 8px 30px rgba(0,0,0,0.6); 
         }
 
         * { 
@@ -30,7 +27,7 @@
         }
 
         html, body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             color: var(--text-main);
             margin: 0;
             padding: 0;
@@ -41,69 +38,96 @@
         }
 
         body {
-            padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: space-between;
         }
 
-        .container {
+        .vn-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            min-height: 100dvh;
         }
 
-        /* سەر دێڕی مۆدێرن */
-        .top-nav {
+        /* 1. VN Top Navigation Bar */
+        .vn-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 10px 14px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            margin-bottom: 14px;
-            box-shadow: var(--shadow-md);
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--card-border);
         }
 
-        .back-btn {
-            background: rgba(142, 182, 155, 0.15);
+        .vn-header-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 6px;
+        }
+
+        .aspect-select {
+            background: #1c1c22;
             border: 1px solid var(--card-border);
             color: var(--text-main);
-            border-radius: 10px;
-            padding: 6px 12px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: bold;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .export-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 13px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: all 0.2s;
+            transition: opacity 0.2s;
         }
-        .back-btn:active { transform: scale(0.95); }
+        .export-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* شاشەی ڕێندەر و پێشبینینی VN */
-        .player-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 14px;
-            box-shadow: var(--shadow-md);
-            margin-bottom: 14px;
-        }
-
-        .viewport-wrapper {
+        /* 2. Video Viewport Area */
+        .preview-area {
             position: relative;
             width: 100%;
             background: #000;
-            border-radius: 14px;
-            overflow: hidden;
-            aspect-ratio: 16 / 9;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1.5px solid var(--primary);
+            flex-grow: 1;
+            min-height: 240px;
+            max-height: 420px;
+            overflow: hidden;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            max-width: 100%;
+            max-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 16 / 9;
+            transition: aspect-ratio 0.2s ease;
         }
 
         #main-video {
@@ -122,95 +146,123 @@
             pointer-events: none;
         }
 
-        /* دوگمەکانی هەڵبژاردنی فایل */
-        .upload-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
-        .upload-box {
-            position: relative;
-            padding: 14px;
-            border: 2px dashed var(--border-color);
-            border-radius: 14px;
-            background: rgba(26, 36, 31, 0.5);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .upload-box:hover, .upload-box.has-file {
-            border-color: var(--primary);
-            background: rgba(52, 211, 153, 0.1);
-        }
-        .upload-box input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
-        .upload-box label { font-size: 12.5px; font-weight: bold; color: var(--primary); margin-top: 4px; pointer-events: none; }
-        .upload-box .file-info { font-size: 11px; color: var(--text-muted); margin-top: 2px; word-break: break-all; pointer-events: none; }
-
-        /* بەشی کۆنتڕۆڵ و ستایل کردنی VN */
-        .controls-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 14px;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 12px;
-            text-align: start;
-        }
-        .control-group label {
-            font-size: 12.5px;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .control-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .control-row input[type="range"] {
-            flex-grow: 1;
-            accent-color: var(--primary);
-        }
-
-        .btn {
+        /* Video Playback Controls */
+        .playback-bar {
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            color: white;
+            justify-content: space-between;
+            padding: 6px 14px;
+            background: #16161a;
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .play-btn {
+            background: var(--card-border);
             border: none;
-            border-radius: 12px;
-            font-size: 14px;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* 3. VN Multi-track Timeline */
+        .timeline-container {
+            background: var(--bg-dark);
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .track-row {
+            background: var(--card-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .track-icon {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .track-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-muted);
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .track-row.active .track-label { color: var(--text-main); }
+        .track-row input[type="file"] { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+
+        /* 4. Bottom Editing Toolbar (VN Style) */
+        .vn-toolbar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 6px;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            background: #18181c;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .tool-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 10.5px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            padding: 4px;
         }
-        .btn:active { transform: scale(0.97); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .tool-item.active, .tool-item:hover { color: var(--primary); }
 
-        /* مۆداڵی پێشکەوتنی ڕێندەر */
+        /* Style Settings Panel */
+        .style-panel {
+            display: none;
+            background: var(--card-dark);
+            border-top: 1px solid var(--card-border);
+            padding: 12px 16px;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .style-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .style-row label { font-size: 12px; font-weight: bold; color: var(--primary); }
+        .style-row input[type="range"] { flex-grow: 1; accent-color: var(--primary); }
+
+        /* Progress Modal (لەگەڵ دوگمەی هەڵوەشاندنەوە X) */
         .progress-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 15, 12, 0.9);
+            background: rgba(10, 15, 12, 0.92);
             backdrop-filter: blur(8px);
             z-index: 2000;
             flex-direction: column;
@@ -219,19 +271,39 @@
             padding: 20px;
         }
         .progress-box {
-            background: var(--card-bg);
+            background: var(--card-dark);
             border: 1px solid var(--card-border);
-            padding: 24px 20px;
+            padding: 22px 18px;
             border-radius: 20px;
             width: 100%;
             max-width: 380px;
             text-align: center;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            position: relative;
         }
+
+        .cancel-render-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         .progress-bar-outer {
             width: 100%;
             height: 10px;
-            background: var(--border-color);
+            background: #2a2a32;
             border-radius: 999px;
             overflow: hidden;
             margin: 14px 0;
@@ -249,71 +321,106 @@
 </head>
 <body>
 
-    <div class="container">
-        <div class="top-nav">
-            <a href="./index.html" class="back-btn">
-                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span data-i18n="backBtn">گەڕانەوە</span>
+    <div class="vn-container">
+        <!-- 1. VN Top Navigation -->
+        <div class="vn-header">
+            <a href="./index.html" class="vn-header-btn" title="Back">
+                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
             </a>
-            <h3 style="margin:0; font-size:14px; color:var(--primary);" data-i18n="renderTitle">ڕێندەری VN بۆ ڤیدیۆ</h3>
-            <div style="width:24px;"></div>
+
+            <select class="aspect-select" id="aspectSelect" onchange="changeAspectRatio(this.value)">
+                <option value="16/9">16:9 (Original)</option>
+                <option value="9/16">9:16 (Reels/TikTok)</option>
+                <option value="1/1">1:1 (Square)</option>
+                <option value="4/3">4:3 (Standard)</option>
+            </select>
+
+            <button class="export-btn" id="exportBtn" onclick="startExport()" disabled>
+                <span>Export</span>
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </button>
         </div>
 
-        <div class="player-card">
-            <div class="viewport-wrapper">
+        <!-- 2. Video Preview Viewport -->
+        <div class="preview-area">
+            <div class="canvas-wrapper" id="canvasWrapper">
                 <video id="main-video" playsinline preload="metadata"></video>
                 <canvas id="sub-canvas"></canvas>
             </div>
+        </div>
 
-            <div class="upload-grid">
-                <div class="upload-box" id="vBox">
-                    <svg style="width:24px;height:24px;color:var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    <label data-i18n="selectVid">هەڵبژاردنی ڤیدیۆ</label>
-                    <div class="file-info" id="vInfo">MP4 / WEBM</div>
-                    <input type="file" id="vidInput" accept="video/*" onchange="handleVideoUpload(this)">
-                </div>
+        <!-- Playback Bar -->
+        <div class="playback-bar">
+            <span id="currentTimeText">0:00</span>
+            <button class="play-btn" onclick="togglePlayPause()" id="playPauseBtn">
+                <svg style="width:16px;height:16px;" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <span id="durationTimeText">0:00</span>
+        </div>
 
-                <div class="upload-box" id="sBox">
-                    <svg style="width:24px;height:24px;color:var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
-                    <label data-i18n="selectSub">هەڵبژاردنی ژێرنووس</label>
-                    <div class="file-info" id="sInfo">SRT / ASS / VTT</div>
-                    <input type="file" id="subInput" accept=".srt,.ass,.vtt" onchange="handleSubUpload(this)">
+        <!-- 3. VN Track Timeline -->
+        <div class="timeline-container">
+            <div class="track-row" id="subTrackRow">
+                <div class="track-icon">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
                 </div>
+                <div class="track-label" id="subTrackLabel">Tap to add subtitle (SRT / ASS / VTT)</div>
+                <input type="file" accept=".srt,.ass,.vtt" onchange="handleSubUpload(this)">
+            </div>
+
+            <div class="track-row" id="vidTrackRow">
+                <div class="track-icon">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                </div>
+                <div class="track-label" id="vidTrackLabel">Tap to add video (MP4 / MKV / WEBM)</div>
+                <input type="file" accept="video/mp4,video/webm,video/x-matroska,video/mkv,.mkv,.mp4,.webm" onchange="handleVideoUpload(this)">
             </div>
         </div>
 
-        <!-- بەشی دەستکاریکردنی شێوازی VN -->
-        <div class="controls-card">
-            <div class="control-group">
-                <label data-i18n="fontSizeLbl">قەبارەی فۆنتی ژێرنووس:</label>
-                <div class="control-row">
-                    <input type="range" id="fontSizeRange" min="16" max="50" value="26" oninput="renderFrame()">
-                    <span id="fontSizeVal" style="font-size:12px; font-weight:bold; min-width:25px;">26</span>
-                </div>
+        <!-- Style Settings Panel -->
+        <div class="style-panel" id="stylePanel">
+            <div class="style-row">
+                <label>Font Size:</label>
+                <input type="range" id="fontSizeRange" min="16" max="60" value="28" oninput="renderFrame()">
+                <span id="fontSizeVal" style="font-size:12px; font-weight:bold; width:28px;">28</span>
             </div>
-
-            <div class="control-group">
-                <label data-i18n="posLbl">شوێنی بەرزوبنزمی ژێرنووس:</label>
-                <div class="control-row">
-                    <input type="range" id="subPosRange" min="5" max="40" value="12" oninput="renderFrame()">
-                    <span id="subPosVal" style="font-size:12px; font-weight:bold; min-width:25px;">12%</span>
-                </div>
+            <div class="style-row">
+                <label>Position Offset:</label>
+                <input type="range" id="subPosRange" min="4" max="45" value="12" oninput="renderFrame()">
+                <span id="subPosVal" style="font-size:12px; font-weight:bold; width:28px;">12%</span>
             </div>
+        </div>
 
-            <button class="btn" id="renderBtn" onclick="startExport()" disabled style="margin-top:10px;">
-                <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                <span data-i18n="startRenderBtn">دەستپێکردنی ڕێندەر و داگرتن</span>
+        <!-- 4. VN Bottom Editing Toolbar -->
+        <div class="vn-toolbar">
+            <button class="tool-item" onclick="toggleStylePanel()">
+                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-23"></path></svg>
+                <span>Style</span>
+            </button>
+            <button class="tool-item" onclick="document.querySelector('#vidTrackRow input').click()">
+                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <span>Add Video</span>
+            </button>
+            <button class="tool-item" onclick="document.querySelector('#subTrackRow input').click()">
+                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h4m9-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Subtitle</span>
+            </button>
+            <button class="tool-item" onclick="resetProject()">
+                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <span>Reset</span>
             </button>
         </div>
     </div>
 
-    <!-- مۆداڵی دیاریکردنی ڕێژەی پێشکەوتنی ڕێندەر -->
+    <!-- Progress Modal (دەستکاری کرا لەگەڵ دوگمەی هەڵوەشاندنەوە X) -->
     <div class="progress-overlay" id="progOverlay">
         <div class="progress-box">
-            <h3 style="margin:0 0 8px 0; color:var(--primary);" data-i18n="renderingTitle">خەریکی ڕێندەرکردنە...</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin:0;" data-i18n="renderingDesc">تکایە چاوەڕێ بکە، ئەم کرداری پێکەوەپەستانە لەسەر مۆبایلەکەت ئەنجام دەدرێت.</p>
+            <button class="cancel-render-btn" onclick="cancelExport()" title="هەڵوەشاندنەوە">✕</button>
+            <h3 style="margin:0 0 6px 0; color:var(--primary);">خەریکی ڕێندەرکردنە...</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin:0;">تکایە چاوەڕێ بکە، ئەم کرداری پێکەوەپەستانە لەسەر مۆبایلەکەت ئەنجام دەدرێت.</p>
             <div class="progress-bar-outer"><div class="progress-bar-inner" id="progInner"></div></div>
             <div id="progPercent" style="font-size:14px; font-weight:bold; color:var(--primary);">0%</div>
+            <button class="btn btn-outline" style="margin-top:12px; padding:8px; font-size:12px; border-color:var(--danger); color:var(--danger);" onclick="cancelExport()">پاشگەزبوونەوە / هەڵوەشاندنەوە</button>
         </div>
     </div>
 
@@ -323,6 +430,12 @@
         let parsedSubtitles = [];
         let isVideoLoaded = false;
         let isSubLoaded = false;
+        let isRendering = false;
+        let cancelRequested = false;
+
+        const videoEl = document.getElementById('main-video');
+        const canvas = document.getElementById('sub-canvas');
+        const ctx = canvas.getContext('2d');
 
         function showToast(msg) {
             const container = document.getElementById('toast-container');
@@ -333,18 +446,29 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
+        function changeAspectRatio(val) {
+            const wrapper = document.getElementById('canvasWrapper');
+            const parts = val.split('/');
+            wrapper.style.aspectRatio = `${parts[0]} / ${parts[1]}`;
+            renderFrame();
+        }
+
+        function toggleStylePanel() {
+            const panel = document.getElementById('stylePanel');
+            panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+        }
+
         function handleVideoUpload(input) {
             if(input.files && input.files[0]) {
                 const file = input.files[0];
-                const videoEl = document.getElementById('main-video');
                 videoEl.src = URL.createObjectURL(file);
-                document.getElementById('vInfo').innerText = file.name;
-                document.getElementById('vBox').classList.add('has-file');
+                document.getElementById('vidTrackLabel').innerText = file.name;
+                document.getElementById('vidTrackRow').classList.add('active');
                 
                 videoEl.onloadedmetadata = () => {
-                    const canvas = document.getElementById('sub-canvas');
                     canvas.width = videoEl.videoWidth || 1280;
                     canvas.height = videoEl.videoHeight || 720;
+                    document.getElementById('durationTimeText').innerText = formatTime(videoEl.duration);
                     isVideoLoaded = true;
                     checkReady();
                     renderFrame();
@@ -360,8 +484,8 @@
                 const isVtt = file.name.toLowerCase().endsWith('.vtt');
                 
                 parsedSubtitles = isAss ? parseASS(text) : (isVtt ? parseVTT(text) : parseSRT(text));
-                document.getElementById('sInfo').innerText = file.name;
-                document.getElementById('sBox').classList.add('has-file');
+                document.getElementById('subTrackLabel').innerText = file.name;
+                document.getElementById('subTrackRow').classList.add('active');
                 isSubLoaded = true;
                 checkReady();
                 renderFrame();
@@ -370,8 +494,41 @@
 
         function checkReady() {
             if(isVideoLoaded && isSubLoaded) {
-                document.getElementById('renderBtn').disabled = false;
+                document.getElementById('exportBtn').disabled = false;
             }
+        }
+
+        function resetProject() {
+            videoEl.pause();
+            videoEl.removeAttribute('src');
+            videoEl.load();
+            parsedSubtitles = [];
+            isVideoLoaded = false;
+            isSubLoaded = false;
+            document.getElementById('vidTrackLabel').innerText = 'Tap to add video (MP4 / MKV / WEBM)';
+            document.getElementById('subTrackLabel').innerText = 'Tap to add subtitle (SRT / ASS / VTT)';
+            document.getElementById('vidTrackRow').classList.remove('active');
+            document.getElementById('subTrackRow').classList.remove('active');
+            document.getElementById('exportBtn').disabled = true;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+        }
+
+        function togglePlayPause() {
+            if(!isVideoLoaded) return;
+            if(videoEl.paused) {
+                videoEl.play();
+                document.getElementById('playPauseBtn').innerHTML = `<svg style="width:16px;height:16px;" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+            } else {
+                videoEl.pause();
+                document.getElementById('playPauseBtn').innerHTML = `<svg style="width:16px;height:16px;" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+            }
+        }
+
+        function formatTime(sec) {
+            if(!sec || isNaN(sec)) return '0:00';
+            let m = Math.floor(sec / 60);
+            let s = Math.floor(sec % 60);
+            return `${m}:${String(s).padStart(2,'0')}`;
         }
 
         function timeToSec(str) {
@@ -400,9 +557,7 @@
             return items;
         }
 
-        function parseVTT(data) {
-            return parseSRT(data.replace(/^WEBVTT/i, ''));
-        }
+        function parseVTT(data) { return parseSRT(data.replace(/^WEBVTT/i, '')); }
 
         function parseASS(data) {
             let items = [];
@@ -421,14 +576,13 @@
             return items;
         }
 
-        const videoEl = document.getElementById('main-video');
-        videoEl.addEventListener('timeupdate', renderFrame);
+        videoEl.addEventListener('timeupdate', () => {
+            document.getElementById('currentTimeText').innerText = formatTime(videoEl.currentTime);
+            renderFrame();
+        });
 
         function renderFrame() {
-            const canvas = document.getElementById('sub-canvas');
-            const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             if(!isSubLoaded) return;
 
             const curTime = videoEl.currentTime;
@@ -447,29 +601,35 @@
                 ctx.font = `bold ${actualFontSize}px 'KurdForest', Tahoma, sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
+                ctx.direction = 'rtl'; 
 
                 const bottomY = canvas.height - (canvas.height * (posPercent / 100));
                 const lineHeight = actualFontSize * 1.3;
 
                 lines.reverse().forEach((line, idx) => {
                     const y = bottomY - (idx * lineHeight);
-                    
-                    // شێوازی تۆخکردنی دەور (Outline)
                     ctx.strokeStyle = '#000000';
-                    ctx.lineWidth = actualFontSize * 0.2;
+                    ctx.lineWidth = actualFontSize * 0.22;
                     ctx.strokeText(line, canvas.width / 2, y);
 
-                    // نووسینی سەراپایی دەقەکە
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillText(line, canvas.width / 2, y);
                 });
             }
         }
 
-        // ڕێندەرکردنی ڤیدیۆ و تێکەڵکردنی لەسەر مۆبایل بە خێرایی
+        function cancelExport() {
+            cancelRequested = true;
+            document.getElementById('progOverlay').style.display = 'none';
+            showToast("ڕێندەرەکە هەڵوەشێنرایەوە");
+        }
+
+        // ڕێندەرکردنی خێرا بە کوالێتی ئەسڵی ڤیدیۆکە
         async function startExport() {
             if(!isVideoLoaded || !isSubLoaded) return;
 
+            cancelRequested = false;
+            isRendering = true;
             const overlay = document.getElementById('progOverlay');
             const progInner = document.getElementById('progInner');
             const progPercent = document.getElementById('progPercent');
@@ -481,12 +641,19 @@
             const renderCanvas = document.createElement('canvas');
             renderCanvas.width = videoEl.videoWidth || 1280;
             renderCanvas.height = videoEl.videoHeight || 720;
-            const ctx = renderCanvas.getContext('2d');
+            const renderCtx = renderCanvas.getContext('2d');
 
             const stream = renderCanvas.captureStream(30);
+            
+            // پاراستنی کوالێتی بەرز (High Bitrate)
+            const options = {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: Math.max(6000000, renderCanvas.width * renderCanvas.height * 3)
+            };
+
             let recorder;
             try {
-                recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                recorder = new MediaRecorder(stream, options);
             } catch(e) {
                 recorder = new MediaRecorder(stream);
             }
@@ -494,31 +661,37 @@
             const chunks = [];
             recorder.ondataavailable = e => chunks.push(e.data);
             recorder.onstop = () => {
-                const blob = new Blob(chunks, { type: 'video/mp4' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'Rendered_Video.mp4';
-                a.click();
+                if(!cancelRequested) {
+                    const blob = new Blob(chunks, { type: 'video/mp4' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'Rendered_Video.mp4';
+                    a.click();
+                    showToast("ڕێندەرەکە بە کوالێتی ئەسڵی تەواو بوو!");
+                }
                 overlay.style.display = 'none';
-                showToast("ڕێندەرەکە بە سەرکەوتوویی تەواو بوو!");
+                isRendering = false;
             };
 
             recorder.start();
             
             const duration = videoEl.duration;
             const fps = 30;
-            const interval = 1000 / fps;
 
             function processStep() {
+                if(cancelRequested) {
+                    recorder.stop();
+                    return;
+                }
+
                 if(videoEl.currentTime >= duration || videoEl.ended) {
                     recorder.stop();
                     return;
                 }
 
-                ctx.drawImage(videoEl, 0, 0, renderCanvas.width, renderCanvas.height);
+                renderCtx.drawImage(videoEl, 0, 0, renderCanvas.width, renderCanvas.height);
                 
-                // کێشانی ژێرنووس لەسەر فریمەکە
                 const curTime = videoEl.currentTime;
                 const currentSub = parsedSubtitles.find(s => curTime >= s.start && curTime <= s.end);
                 
@@ -528,9 +701,10 @@
                     const scale = renderCanvas.width / 640;
                     const actualFontSize = fontSize * scale;
 
-                    ctx.font = `bold ${actualFontSize}px 'KurdForest', Tahoma, sans-serif`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'bottom';
+                    renderCtx.font = `bold ${actualFontSize}px 'KurdForest', Tahoma, sans-serif`;
+                    renderCtx.textAlign = 'center';
+                    renderCtx.textBaseline = 'bottom';
+                    renderCtx.direction = 'rtl';
 
                     const bottomY = renderCanvas.height - (renderCanvas.height * (posPercent / 100));
                     const lineHeight = actualFontSize * 1.3;
@@ -538,11 +712,11 @@
 
                     lines.reverse().forEach((line, idx) => {
                         const y = bottomY - (idx * lineHeight);
-                        ctx.strokeStyle = '#000000';
-                        ctx.lineWidth = actualFontSize * 0.2;
-                        ctx.strokeText(line, renderCanvas.width / 2, y);
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.fillText(line, renderCanvas.width / 2, y);
+                        renderCtx.strokeStyle = '#000000';
+                        renderCtx.lineWidth = actualFontSize * 0.22;
+                        renderCtx.strokeText(line, renderCanvas.width / 2, y);
+                        renderCtx.fillStyle = '#FFFFFF';
+                        renderCtx.fillText(line, renderCanvas.width / 2, y);
                     });
                 }
 
@@ -551,7 +725,7 @@
                 progPercent.innerText = pct + '%';
 
                 videoEl.currentTime += (1 / fps);
-                setTimeout(processStep, 10);
+                setTimeout(processStep, 5);
             }
 
             videoEl.addEventListener('seeked', function onSeek() {
