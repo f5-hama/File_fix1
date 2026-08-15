@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html :lang="currentLang" :dir="currentLang === 'en' ? 'ltr' : 'rtl'">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#8EB69B">
+    <title>{{ i18n[currentLang]?.pageTitle || 'دەستکاریکەری ژێرنووس' }}</title>
+
+    <!-- بەستنەوەی فایلی فۆنتەکە -->
+    <link rel="stylesheet" href="./fonts.css">
+    
+    <!-- کتێبخانەکانی Tesseract و Vue 3 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <style>
+        :root {
+            --primary: #8EB69B; 
+            --primary-hover: #7ca188; 
+            --primary-glow: rgba(142, 182, 155, 0.35);
+            --success: #10b981;
+            --bg-color: #f2f7f4; 
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.7);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 2px 6px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 25px rgba(142, 182, 155, 0.15);
+            --shadow-lg: 0 16px 40px rgba(0,0,0,0.12);
+        }
+
+        * { box-sizing: border-box; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: 'KurdForest', Tahoma, Arial, sans-serif; 
+            margin: 0; padding: 15px; 
+            color: var(--text-main); 
+            min-height: 100vh; overflow-x: hidden; 
+            touch-action: manipulation;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        body.startup-bg {
+            background: linear-gradient(-45deg, #eaf2ed, #cce0d4, #8eb69b, #d9e8de);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+        }
+        
+        body.editor-bg { background-color: var(--bg-color); padding: 0; }
+
+        body.dark-theme {
+            --bg-color: #0d120f; 
+            --card-bg: rgba(22, 30, 26, 0.85); 
+            --card-border: rgba(104, 211, 145, 0.22);
+            --text-main: #f1f5f9; 
+            --text-muted: #94a3b8;
+            --border-color: #243329; 
+            --primary: #34d399;
+            --primary-hover: #10b981;
+            --primary-glow: rgba(52, 211, 153, 0.3);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.5); 
+            --shadow-md: 0 8px 30px rgba(0,0,0,0.6); 
+            --shadow-lg: 0 16px 45px rgba(0,0,0,0.75);
+        }
+
+        body.dark-theme.startup-bg { background: linear-gradient(-45deg, #090e0b, #121c16, #0e1712, #18261e); background-size: 400% 400%; }
+        body.dark-theme .glass-card { background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: 0 12px 35px rgba(0,0,0,0.5), 0 0 20px rgba(52, 211, 153, 0.08); }
+        body.dark-theme .input-field { background: rgba(15, 21, 18, 0.95); color: #f1f5f9; border-color: #27382d; }
+        body.dark-theme .file-box { background: rgba(26, 36, 31, 0.5); border-color: #2d4234; }
+        body.dark-theme .file-box:hover, body.dark-theme .file-box.has-file { background: rgba(52, 211, 153, 0.1); border-color: var(--primary); }
+        body.dark-theme .subtitle-orig { background: #18221c; color: #cbd5e1; border-color: var(--primary); }
+        body.dark-theme .subtitle-header { background: #121a15; border-color: #243329; }
+        body.dark-theme .subtitle-kurd textarea { background: #0f1512; color: #f8fafc; border-color: #243329; }
+        body.dark-theme .action-bar, body.dark-theme .sticky-header-container { background: rgba(18, 24, 21, 0.98); border-color: #243329; }
+        body.dark-theme .custom-modal-content { background: #16201b; border-color: var(--card-border); box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 25px rgba(52, 211, 153, 0.1); }
+        body.dark-theme .top-btn, body.dark-theme .back-btn { background: #1a241e; color: #e2e8f0; border-color: #2c3e32; }
+        body.dark-theme .top-btn:hover { background: #243329; color: var(--primary); }
+        body.dark-theme .btn:not(.btn-outline) { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: #fff; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35); }
+        body.dark-theme .btn-outline { background: rgba(52, 211, 153, 0.06); color: var(--primary); border-color: rgba(52, 211, 153, 0.4); }
+
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #progress-container { width: 100%; height: 6px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
+        #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.25s ease; }
+        
+        #toast-container { position: fixed; bottom: calc(90px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 22px; border-radius: 14px; font-size: 13.5px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.25); backdrop-filter: blur(10px); opacity: 0; transform: translateY(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        .glass-card { 
+            max-width: 500px; margin: 25px auto; 
+            background: var(--card-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); 
+            border: 1px solid var(--card-border); padding: 28px 22px; border-radius: 24px; 
+            box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 16px; 
+            animation: slideUpFade 0.45s ease-out; position: relative; 
+        }
+        
+        .input-field { width: 100%; padding: 13px 15px; border-radius: 12px; border: 2px solid rgba(142, 182, 155, 0.4); background: rgba(255, 255, 255, 0.9); font-size: 14.5px; color: var(--text-main); outline: none; transition: all 0.25s ease; text-align: center; }
+        .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+
+        .file-box { position: relative; padding: 20px 15px; border: 2px dashed #b5d1c0; border-radius: 16px; background: rgba(242, 247, 244, 0.7); transition: all 0.25s ease; text-align: center; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .file-box:hover, .file-box.has-file { border-color: var(--primary); background: rgba(142, 182, 155, 0.12); transform: translateY(-1px); }
+        .file-box input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
+        .file-box .upload-icon { color: var(--primary); margin-bottom: 6px; transition: transform 0.25s ease; }
+        .file-box label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px !important; font-size: 14px; pointer-events: none; }
+        .file-name-display { font-size: 12.5px; color: var(--text-muted); font-weight: bold; pointer-events: none; word-break: break-all; }
+        
+        .clear-file-btn { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: transform 0.2s; }
+
+        .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 13px; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: white; border: none; border-radius: 14px; font-size: 14.5px; font-weight: bold; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); gap: 8px; box-shadow: 0 6px 16px rgba(124, 161, 136, 0.4); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(124, 161, 136, 0.55); }
+        .btn:active { transform: scale(0.97); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); box-shadow: none; }
+
+        .fmt-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); padding: 10px; flex: 1; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .fmt-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 8px var(--primary-glow); }
+        .icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+        #editor-screen { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: calc(150px + env(safe-area-inset-bottom)); animation: fadeIn 0.4s ease; }
+        .sticky-header-container { position: sticky; top: 0; z-index: 50; background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); margin: -15px -15px 15px -15px; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
+        .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; gap: 10px; border-bottom: 1px dashed var(--border-color); position: relative; }
+        .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 10px 15px; flex-wrap: wrap; }
+        .top-btn, .back-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 10px; padding: 8px 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; gap: 4px; transition: all 0.2s ease; }
+
+        .floating-search-bar { position: fixed; bottom: calc(135px + env(safe-area-inset-bottom)); left: 15px; right: 15px; background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 12px; border-radius: 16px; box-shadow: var(--shadow-lg); border: 1.5px solid var(--primary); z-index: 150; animation: slideUpFade 0.3s ease; }
+        .search-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+        .floating-search-bar input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); outline: none; font-size: 14px; color: var(--text-main); }
+        .search-btns { display: flex; gap: 8px; justify-content: space-between; }
+        .search-btn { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+        #video-container { width: 100%; background: #000; border-radius: 16px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-md); border: 2px solid var(--primary); position: sticky; top: 115px; z-index: 45; }
+        #preview-video { width: 100%; max-height: 250px; display: block; }
+        #video-subtitle-overlay { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 16px; font-weight: bold; pointer-events: none; padding: 0 10%; line-height: 1.5; direction: rtl; }
+
+        .subtitle-card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); transition: border-color 0.25s, box-shadow 0.25s; }
+        .subtitle-card.active-sub { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25); }
+        .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 10px 14px; border-radius: 12px; margin-bottom: 14px; border-bottom: 1px dashed var(--border-color); }
+        .subtitle-line-num { font-size: 15px; font-weight: bold; color: var(--primary); direction: ltr; }
+        .subtitle-time { font-size: 13px; color: var(--text-muted); direction: ltr; }
+        .subtitle-orig { background: var(--bg-color); padding: 14px; border-radius: 12px; margin-bottom: 14px; font-size: 15px; color: var(--text-main); border-right: 4px solid var(--primary); line-height: 1.6; direction: auto; unicode-bidi: plaintext; text-align: start; }
+        .subtitle-kurd textarea { width: 100%; min-height: 85px; padding: 14px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 16px; line-height: 1.6; resize: vertical; outline: none; direction: auto; unicode-bidi: plaintext; text-align: start; }
+
+        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 18px 18px 0 0; }
+        
+        .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; animation: fadeIn 0.3s ease; }
+        .custom-modal-content { background: var(--card-bg); padding: 24px 20px; border-radius: 20px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.35s ease; }
+        .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 17px; }
+        .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+
+        .custom-select-wrapper { position: relative; display: inline-block; }
+        .custom-select-btn { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 12.5px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .custom-select-menu { display: none; position: absolute; top: calc(100% + 6px); right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-md); z-index: 1000; min-width: 110px; overflow: hidden; }
+        .custom-select-menu.show { display: block; }
+        .custom-select-item { padding: 9px 14px; font-size: 13px; cursor: pointer; color: var(--text-main); text-align: right; font-weight: bold; }
+
+        .pgs-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+        .pgs-lang-btn { background: var(--bg-color); color: var(--text-main); border: 1.5px solid var(--border-color); padding: 10px 8px; border-radius: 12px; font-size: 12.5px; font-weight: bold; cursor: pointer; }
+        .pgs-lang-btn.active { background: rgba(16, 185, 129, 0.15); color: var(--primary); border-color: var(--primary); }
+
+        @media (min-width: 768px) {
+            #editor-screen { max-width: 1100px; padding-bottom: 90px; }
+            .subtitle-card { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; gap: 0 20px; padding: 20px; }
+            .subtitle-header { grid-column: 1 / -1; margin-bottom: 15px; }
+            .action-bar { display: flex; justify-content: center; flex-direction: row; gap: 15px; padding: 15px 30px; }
+        }
+    </style>
+</head>
+<body :class="{ 'startup-bg': !isEditing, 'editor-bg': isEditing, 'dark-theme': isDarkMode }">
+
+    <div id="app">
+
+        <!-- 1. چوونە ژوورەوە -->
+        <div v-if="!isLoggedIn" class="glass-card">
+            <div style="display: flex; justify-content: flex-end; width: 100%;">
+                <div class="custom-select-wrapper">
+                    <button class="custom-select-btn" @click="showLangMenu = !showLangMenu">
+                        <span>{{ currentLangName }}</span>
+                        <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="custom-select-menu" :class="{ 'show': showLangMenu }">
+                        <div class="custom-select-item" @click="changeLang('ckb')">کوردی</div>
+                        <div class="custom-select-item" @click="changeLang('ar')">العربية</div>
+                        <div class="custom-select-item" @click="changeLang('en')">English</div>
+                    </div>
+                </div>
+            </div>
+            <h2 style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 5px 0;">
+                <svg class="icon" style="width:26px; height:26px; color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span>{{ t('loginTitle') }}</span>
+            </h2>
+            <p style="text-align:center; font-size:13.5px; color:var(--text-muted); margin: 0;">{{ t('appDesc') }}</p>
+            <button class="btn" style="margin-top: 15px;" @click="performLogin">{{ t('loginBtn') }}</button>
+        </div>
+
+        <!-- 2. سەرەکی (پێش دەستکاریکردن) -->
+        <div v-if="isLoggedIn && !isEditing" class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <button style="padding: 6px 10px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-weight:bold; cursor: pointer;" @click="logout">{{ t('logoutBtn') }}</button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button v-if="canInstallApp" id="install-app-btn" @click="modals.install = true"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>{{ t('installApp') }}</span></button>
+                    <div class="custom-select-wrapper">
+                        <button class="custom-select-btn" @click="showLangMenu = !showLangMenu">
+                            <span>{{ currentLangName }}</span>
+                            <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="custom-select-menu" :class="{ 'show': showLangMenu }">
+                            <div class="custom-select-item" @click="changeLang('ckb')">کوردی</div>
+                            <div class="custom-select-item" @click="changeLang('ar')">العربية</div>
+                            <div class="custom-select-item" @click="changeLang('en')">English</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; font-size: 18px; color: var(--primary); font-weight: bold;">{{ t('welcomeText') }}</div>
+            
+            <div class="file-box" :class="{ 'has-file': fileOriginal }">
+                <button type="button" class="clear-file-btn" v-if="fileOriginal" @click="fileOriginal = null" style="display: flex;"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <div class="upload-icon"><svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+                <label>{{ t('origFileLbl') }}</label>
+                <div class="file-name-display">{{ fileOriginal ? fileOriginal.name : t('clickSelect') }}</div>
+                <input type="file" accept=".srt,.ass,.vtt" @change="onFileSelected($event, 'orig')">
+            </div>
+            
+            <div class="file-box" :class="{ 'has-file': fileKurdish }">
+                <button type="button" class="clear-file-btn" v-if="fileKurdish" @click="fileKurdish = null" style="display: flex;"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <div class="upload-icon"><svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+                <label>{{ t('transFileLbl') }}</label>
+                <div class="file-name-display">{{ fileKurdish ? fileKurdish.name : t('clickSelect') }}</div>
+                <input type="file" accept=".srt,.ass,.vtt" @change="onFileSelected($event, 'kurd')">
+            </div>
+
+            <div style="display: flex; flex-direction: column; width: 100%; gap: 10px; margin-top: 5px;">
+                <button class="btn" style="padding: 14px; font-size: 15px;" @click="startEditing">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{{ t('startBtn') }}</span>
+                </button>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="btn btn-outline" style="padding: 11px 8px; font-size: 13px;" @click="modals.converter = true">{{ t('batchBtn') }}</button>
+                    <button class="btn btn-outline" style="padding: 11px 8px; font-size: 13px; border-color: var(--primary);" @click="modals.pgsDirect = true">گۆڕینی PGS (.sup)</button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 5px; font-size: 13px; color: var(--text-muted);" v-html="t('developerInfo')"></div>
+        </div>
+
+        <!-- 3. بەشی دەستکاریکردن (Editor) -->
+        <div v-if="isEditing" id="editor-screen">
+            <div class="sticky-header-container">
+                <div id="progress-container"><div id="progress-bar" :style="{ width: progressPercent + '%' }"></div></div>
+                <div class="top-nav">
+                    <button class="back-btn" @click="modals.backConfirm = true"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span>{{ t('backBtn') }}</span></button>
+                    <h3 style="margin:0; font-size:14px; color:var(--primary);">{{ t('editorTitle') }}</h3>
+                </div>
+                
+                <div class="top-tools">
+                    <button class="top-btn" @click="undo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg></button>
+                    <button class="top-btn" @click="redo"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg></button>
+                    <button class="top-btn" style="color: var(--primary);" @click="showSearchBar = !showSearchBar"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                </div>
+            </div>
+
+            <!-- پانێڵی گەڕان و گۆڕین -->
+            <div v-if="showSearchBar" class="floating-search-bar">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 14px; font-weight: bold; color: var(--primary);">{{ t('searchLbl') }}</span>
+                    <button class="close-search-btn" @click="showSearchBar = false">✕</button>
+                </div>
+                <div class="search-row">
+                    <input type="text" v-model="searchTerm" :placeholder="t('searchPlh')">
+                </div>
+                <div class="search-row">
+                    <input type="text" v-model="replaceTerm" :placeholder="t('replacePlh')">
+                </div>
+                <div class="search-btns">
+                    <button class="search-btn" @click="replaceAllText">{{ t('replaceAllBtn') }}</button>
+                </div>
+            </div>
+
+            <!-- کۆنتێنەری دێڕەکان -->
+            <div id="subtitles-container">
+                <div class="subtitle-card" v-for="(sub, index) in subtitles" :key="index">
+                    <div class="subtitle-header">
+                        <div class="subtitle-line-num">#{{ index + 1 }}</div>
+                        <div class="subtitle-time">{{ sub.time }}</div>
+                    </div>
+                    <div class="subtitle-orig" :dir="textDirection" v-html="sub.origTextHtml"></div>
+                    <div class="subtitle-kurd">
+                        <textarea :dir="textDirection" v-model="sub.kurdText" @input="onSubInput"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-bar">
+                <button class="btn btn-outline" @click="modals.ai = true">{{ t('aiBtn') }}</button>
+                <button class="btn btn-outline" @click="toggleDirection">{{ t('dirBtn') }}</button>
+                <button class="btn" style="grid-column: span 2;" @click="downloadEditedFile">{{ t('saveBtn') }}</button>
+            </div>
+        </div>
+
+        <!-- مۆداڵەکان (پەنجەرەکان) -->
+        <div v-if="modals.backConfirm" class="custom-modal-overlay">
+            <div class="custom-modal-content">
+                <h3 class="custom-modal-title">{{ t('backTitle') }}</h3>
+                <p style="font-size: 14px;">{{ t('confirmBack') }}</p>
+                <div class="custom-modal-actions">
+                    <button class="btn" @click="modals.backConfirm = false">{{ t('cancelBtn') }}</button>
+                    <button class="btn btn-outline" @click="executeGoBack">{{ t('yesLeave') }}</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- تۆست (نامەی ئاگادارکردنەوە) -->
+    <div id="toast-container"></div>
+
+    <script>
+        // تۆست بە جاڤاسکڕێپت
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // تۆمارکردنی Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js', { scope: './' });
+            });
+        }
+
+        const { createApp, ref, reactive, computed, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                const currentLang = ref('ckb');
+                const isLoggedIn = ref(false);
+                const isEditing = ref(false);
+                const isDarkMode = ref(false);
+                const showLangMenu = ref(false);
+                const showSearchBar = ref(false);
+                const canInstallApp = ref(false);
+                const textDirection = ref('auto');
+
+                const fileOriginal = ref(null);
+                const fileKurdish = ref(null);
+                const subtitles = ref([]);
+                const historyStack = ref([]);
+                const redoStack = ref([]);
+
+                const searchTerm = ref('');
+                const replaceTerm = ref('');
+
+                const modals = reactive({
+                    install: false,
+                    converter: false,
+                    pgsDirect: false,
+                    backConfirm: false,
+                    ai: false
+                });
+
+                const i18n = {
+                    ckb: { pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!" },
+                    ar: { pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!" },
+                    en: { pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (SRT / ASS / VTT)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", backTitle: "Are you sure?", confirmBack: "Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!" }
+                };
+
+                const t = (key) => i18n[currentLang.value][key] || key;
+
+                const currentLangName = computed(() => {
+                    if (currentLang.value === 'en') return 'English';
+                    if (currentLang.value === 'ar') return 'العربية';
+                    return 'کوردی';
+                });
+
+                const progressPercent = computed(() => {
+                    if (!subtitles.value.length) return 0;
+                    const filled = subtitles.value.filter(s => s.kurdText.trim() !== '').length;
+                    return Math.round((filled / subtitles.value.length) * 100);
+                });
+
+                const changeLang = (lang) => {
+                    currentLang.value = lang;
+                    showLangMenu.value = false;
+                };
+
+                const performLogin = () => {
+                    localStorage.setItem('kf_user', 'true');
+                    isLoggedIn.value = true;
+                };
+
+                const logout = () => {
+                    localStorage.removeItem('kf_user');
+                    isLoggedIn.value = false;
+                };
+
+                const onFileSelected = (event, type) => {
+                    const file = event.target.files[0];
+                    if (type === 'orig') fileOriginal.value = file;
+                    if (type === 'kurd') fileKurdish.value = file;
+                };
+
+                const startEditing = async () => {
+                    if (!fileOriginal.value) { showToast("تکایە فایلی ئەسڵی هەڵبژێرە!", "error"); return; }
+                    
+                    const text = await fileOriginal.value.text();
+                    // پارسکردنی سادەکراوی SRT بۆ تاقیکردنەوە
+                    const blocks = text.replace(/\r\n/g, '\n').split(/\n\s*\n/);
+                    let items = [];
+                    blocks.forEach((b, idx) => {
+                        let lines = b.trim().split('\n');
+                        let timeIdx = lines.findIndex(x => x.includes('-->'));
+                        if (timeIdx !== -1) {
+                            items.push({
+                                id: idx + 1,
+                                time: lines[timeIdx],
+                                rawText: lines.slice(timeIdx + 1).join('\n'),
+                                origTextHtml: lines.slice(timeIdx + 1).join('<br>'),
+                                kurdText: ''
+                            });
+                        }
+                    });
+
+                    subtitles.value = items;
+                    isEditing.value = true;
+                    showToast("فایلەکە بە سەرکەوتوویی کرایەوە!", "success");
+                };
+
+                const replaceAllText = () => {
+                    if (!searchTerm.value) return;
+                    let count = 0;
+                    subtitles.value.forEach(s => {
+                        if (s.kurdText.includes(searchTerm.value)) {
+                            s.kurdText = s.kurdText.replaceAll(searchTerm.value, replaceTerm.value);
+                            count++;
+                        }
+                    });
+                    showToast(count > 0 ? `لە ${count} شوێن گۆڕدرا!` : "هیچ ئەنجامێک نەدۆزرایەوە", count > 0 ? "success" : "error");
+                };
+
+                const executeGoBack = () => {
+                    isEditing.value = false;
+                    modals.backConfirm = false;
+                };
+
+                const toggleDirection = () => {
+                    textDirection.value = textDirection.value === 'rtl' ? 'ltr' : 'rtl';
+                };
+
+                const downloadEditedFile = () => {
+                    let content = "";
+                    subtitles.value.forEach((s, i) => {
+                        content += `${i + 1}\n${s.time}\n${s.kurdText || s.rawText}\n\n`;
+                    });
+
+                    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "Edited_" + (fileOriginal.value ? fileOriginal.value.name : "sub.srt");
+                    a.click();
+                    showToast("داگرتن دەستی پێکرد!", "success");
+                };
+
+                onMounted(() => {
+                    isLoggedIn.value = !!localStorage.getItem('kf_user');
+                    const hour = new Date().getHours();
+                    isDarkMode.value = (hour >= 19 || hour < 6);
+                });
+
+                return {
+                    currentLang, isLoggedIn, isEditing, isDarkMode, showLangMenu, showSearchBar,
+                    canInstallApp, textDirection, fileOriginal, fileKurdish, subtitles,
+                    searchTerm, replaceTerm, modals, t, currentLangName, progressPercent,
+                    changeLang, performLogin, logout, onFileSelected, startEditing,
+                    replaceAllText, executeGoBack, toggleDirection, downloadEditedFile
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
