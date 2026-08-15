@@ -72,7 +72,6 @@
             display: block;
         }
 
-        /* دۆخی تاریک */
         body.dark-theme, html.dark-theme {
             --bg-color: #0d120f; 
             --card-bg: rgba(20, 28, 23, 0.96); 
@@ -152,20 +151,9 @@
             color: var(--primary); 
             border-color: rgba(52, 211, 153, 0.35); 
         }
-        body.dark-theme .btn-outline:hover {
-            background: rgba(52, 211, 153, 0.12);
-            border-color: var(--primary);
-        }
-        body.dark-theme #install-app-btn { 
-            background: rgba(52, 211, 153, 0.15); 
-            color: var(--primary); 
-            border: 1px solid rgba(52, 211, 153, 0.35); 
-        }
-        body.dark-theme #scroll-to-top-btn {
-            background: rgba(20, 28, 23, 0.92);
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        body.dark-theme .history-item {
+            background: rgba(22, 34, 26, 0.8);
+            border-color: #223327;
         }
 
         html[lang="en"] .btn,
@@ -183,9 +171,10 @@
         #progress-container { width: 100%; height: 5px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.25s ease; }
         
-        #toast-container { position: fixed; bottom: calc(95px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: max-content; max-width: 92%; }
+        #toast-container { position: fixed; bottom: calc(95px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: max-content; max-width: 92%; }
         .toast { background: rgba(22, 30, 26, 0.96); border: 1px solid var(--card-border); color: white; padding: 10px 18px; border-radius: 12px; font-size: 13.5px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px); opacity: 0; transform: translateY(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; }
         .toast.error { border-color: rgba(239, 68, 68, 0.6); background: rgba(35, 15, 15, 0.96); color: #fca5a5; }
+        .toast.warning { border-color: rgba(245, 158, 11, 0.6); background: rgba(45, 30, 10, 0.96); color: #fde68a; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
         .glass-card { 
@@ -264,12 +253,13 @@
             color: white; 
             border: none; 
             border-radius: 12px; 
-            font-size: 14px; 
+            font-size: 13.5px; 
             font-weight: bold; 
             cursor: pointer; 
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
-            gap: 8px; 
+            gap: 7px; 
             box-shadow: 0 4px 12px rgba(124, 161, 136, 0.35); 
+            text-decoration: none;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(124, 161, 136, 0.45); }
         .btn:active { transform: scale(0.97); }
@@ -328,7 +318,6 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
 
-        /* شاشەی ڤیدیۆ جێگیرکراو لە سەرەوە */
         #video-container { 
             display: none; 
             width: 100%; 
@@ -392,46 +381,76 @@
             pointer-events: none;
         }
 
-        /* دوگمەی گەڕانەوە بۆ سەرەوە (Scroll to Top Button) */
+        /* دوگمەی دڵنیای سەهم بۆ سەرکەوتن */
         #scroll-to-top-btn {
             position: fixed;
-            bottom: calc(85px + env(safe-area-inset-bottom));
-            left: 14px;
-            width: 42px;
-            height: 42px;
+            bottom: calc(80px + env(safe-area-inset-bottom));
+            left: 16px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: var(--card-bg);
-            border: 1.5px solid var(--primary);
+            border: 2px solid var(--primary);
             color: var(--primary);
-            box-shadow: var(--shadow-md);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
             cursor: pointer;
-            z-index: 95;
+            z-index: 999;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transform: scale(0.6) translateY(20px);
+            transform: translateY(25px) scale(0.8);
             pointer-events: none;
-            transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        #scroll-to-top-btn.show {
+        #scroll-to-top-btn.visible {
             opacity: 1;
-            transform: scale(1) translateY(0);
+            transform: translateY(0) scale(1);
             pointer-events: auto;
         }
-        #scroll-to-top-btn:hover {
-            background: var(--primary);
-            color: #fff;
-            transform: scale(1.08) translateY(-2px);
-        }
         #scroll-to-top-btn:active {
-            transform: scale(0.92);
+            transform: scale(0.9);
         }
         body.keyboard-open #scroll-to-top-btn {
-            opacity: 0 !important;
-            pointer-events: none !important;
+            display: none !important;
+        }
+
+        /* شێوازی کارتی مێژوو */
+        .history-list {
+            max-height: 280px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 12px 0;
+            padding: 4px;
+        }
+        .history-item {
+            background: rgba(242, 247, 244, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: start;
+        }
+        .history-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .history-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 3px;
         }
 
         .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 12px; animation: fadeIn 0.2s ease; }
@@ -550,7 +569,33 @@
             </button>
         </div>
 
+        <div style="display: flex; gap: 8px; width: 100%;">
+            <button class="btn btn-outline" style="flex: 1; padding: 10px; font-size: 13px;" onclick="openHistoryModal()">
+                <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span data-i18n="historyBtn">مێژووی کارەکان</span>
+            </button>
+            <a href="./render.html" class="btn btn-outline" style="flex: 1; padding: 10px; font-size: 13px; color: #3b82f6; border-color: #3b82f6;">
+                <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path></svg>
+                <span data-i18n="renderNavBtn">ڕێندەری VN</span>
+            </a>
+        </div>
+
         <div style="text-align: center; margin-top: 2px; font-size: 12px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
+    </div>
+
+    <!-- مۆداڵی مێژوو -->
+    <div id="history-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3 class="custom-modal-title" data-i18n="historyTitle">مێژووی ژێرنووسە دەستکاریکراوەکان</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;" id="history-count-text">تۆمارەکان: ٠ لە ٢٠</p>
+            
+            <div class="history-list" id="historyListContainer"></div>
+
+            <div class="custom-modal-actions">
+                <button class="btn btn-outline" style="color: #ef4444; border-color: #ef4444; width: 50%;" onclick="clearAllHistory()" data-i18n="clearAllBtn">سڕینەوەی هەمووی</button>
+                <button class="btn" onclick="document.getElementById('history-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
+            </div>
+        </div>
     </div>
 
     <div id="install-modal" class="custom-modal-overlay">
@@ -703,7 +748,6 @@
             </div>
         </div>
 
-        <!-- شاشەی ڤیدیۆ جێگیرکراو لە سەرەوە -->
         <div id="video-container">
             <video id="preview-video" controls playsinline webkit-playsinline preload="metadata"></video>
             <div id="video-subtitle-overlay"></div>
@@ -718,9 +762,9 @@
         </div>
     </div>
 
-    <!-- دوگمەی گەڕانەوە بۆ سەرەوە -->
-    <button id="scroll-to-top-btn" onclick="scrollToTop()" title="گەڕانەوە بۆ سەرەوە" data-i18n-title="scrollToTop">
-        <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- دوگمەی سەهم بۆ سەرکەوتن -->
+    <button id="scroll-to-top-btn" onclick="scrollToTop()" title="گەڕانەوە بۆ سەرەوە">
+        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
         </svg>
     </button>
@@ -786,15 +830,15 @@
             }
         }
 
-        // کۆنتڕۆڵی دوگمەی گەڕانەوە بۆ سەرەوە لەکاتی سکڕۆڵکردن
+        // کۆنتڕۆڵی تەواوی سەهمی سەرکەوتن
         window.addEventListener('scroll', () => {
-            const topBtn = document.getElementById('scroll-to-top-btn');
-            if (isEditing && window.scrollY > 200) {
-                topBtn.classList.add('show');
+            const btn = document.getElementById('scroll-to-top-btn');
+            if (isEditing && window.scrollY > 150) {
+                btn.classList.add('visible');
             } else {
-                topBtn.classList.remove('show');
+                btn.classList.remove('visible');
             }
-        });
+        }, { passive: true });
 
         function scrollToTop() {
             window.scrollTo({
@@ -837,19 +881,19 @@
 
         const i18n = {
             ckb: {
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", renderNavBtn: "ڕێندەری VN", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
                 msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
                 toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
             },
             ar: {
-                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
+                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", renderNavBtn: "رندر VN", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!",
                 msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
             },
             en: {
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!", scrollToTop: "Scroll to Top",
+                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", historyBtn: "History", renderNavBtn: "VN Renderer", historyTitle: "Edited Subtitles History", clearAllBtn: "Clear All", restoreBtn: "Open", deleteBtn: "Delete", historyWarning: "Warning: History is almost full!", historyEmpty: "No files saved in history", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
                 msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
                 toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto"
             }
@@ -864,6 +908,75 @@
         let isEditing = false;
         let lastSubtitleIndex = -1, currentSearchIndex = 0;
         let pendingBatchDownloads = []; 
+
+        // سیستەمی مێژوو تا ٢٠ فایل
+        function getHistory() {
+            try {
+                return JSON.parse(localStorage.getItem('kf_edit_history')) || [];
+            } catch(e) { return []; }
+        }
+
+        function saveToHistory(item) {
+            let hist = getHistory();
+            hist = hist.filter(h => h.fileName !== item.fileName);
+            hist.unshift(item);
+            if (hist.length > 20) hist.pop();
+            localStorage.setItem('kf_edit_history', JSON.stringify(hist));
+
+            if (hist.length >= 15 && hist.length <= 20) {
+                showToast(i18n[currentLang]['historyWarning'] + ` (${hist.length}/20)`, "warning");
+            }
+        }
+
+        function openHistoryModal() {
+            const container = document.getElementById('historyListContainer');
+            const hist = getHistory();
+            document.getElementById('history-count-text').innerText = `${hist.length} / 20`;
+            
+            if (hist.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding: 25px; color: var(--text-muted); font-size: 13px;">${i18n[currentLang]['historyEmpty']}</div>`;
+            } else {
+                container.innerHTML = hist.map(h => `
+                    <div class="history-item">
+                        <div class="history-info">
+                            <div class="history-name">${h.fileName}</div>
+                            <div class="history-meta">${h.date} • ${h.count} دێڕ • ${h.format.toUpperCase()}</div>
+                        </div>
+                        <div style="display:flex; gap: 6px;">
+                            <button class="btn" style="padding: 6px 10px; font-size: 11px; width:auto;" onclick="restoreFromHistory('${h.id}')">${i18n[currentLang]['restoreBtn']}</button>
+                            <button class="btn btn-outline" style="padding: 6px 8px; font-size: 11px; width:auto; color:#ef4444; border-color:#ef4444;" onclick="deleteHistoryItem('${h.id}')">✕</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            document.getElementById('history-modal').style.display = 'flex';
+        }
+
+        function restoreFromHistory(id) {
+            const hist = getHistory();
+            const item = hist.find(h => h.id === id);
+            if (item) {
+                originalData = item.originalData;
+                currentFileName = item.fileName;
+                isAssFormat = item.isAssFormat;
+                isVttFormat = item.isVttFormat;
+                assHeaderLines = item.assHeaderLines || [];
+                document.getElementById('history-modal').style.display = 'none';
+                buildEditorUI(item.savedState);
+            }
+        }
+
+        function deleteHistoryItem(id) {
+            let hist = getHistory();
+            hist = hist.filter(h => h.id !== id);
+            localStorage.setItem('kf_edit_history', JSON.stringify(hist));
+            openHistoryModal();
+        }
+
+        function clearAllHistory() {
+            localStorage.removeItem('kf_edit_history');
+            openHistoryModal();
+        }
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -1447,6 +1560,20 @@
             if(!isEditing) return;
             const session = { originalData, currentFileName, isAssFormat, isVttFormat, assHeaderLines, savedState: getCurrentState() };
             localStorage.setItem('kf_autosave_session', JSON.stringify(session));
+
+            // تۆمارکردن لە مێژوو
+            saveToHistory({
+                id: 'hist_' + Date.now(),
+                fileName: currentFileName,
+                date: new Date().toLocaleDateString('ckb', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                format: isAssFormat ? 'ass' : (isVttFormat ? 'vtt' : 'srt'),
+                count: originalData.length,
+                originalData,
+                savedState: getCurrentState(),
+                isAssFormat,
+                isVttFormat,
+                assHeaderLines
+            });
         }
 
         function clearSession() {
