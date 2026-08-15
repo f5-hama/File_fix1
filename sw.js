@@ -1,4 +1,4 @@
-const CACHE_NAME = 'subedit-pwa-v8';
+const CACHE_NAME = 'subedit-pwa-v9';
 
 const urlsToCache = [
     './',
