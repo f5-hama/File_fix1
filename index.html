@@ -168,6 +168,11 @@
             background: rgba(22, 34, 26, 0.8);
             border-color: #223327;
         }
+        body.dark-theme .install-sheet-icon { 
+            background: rgba(52, 211, 153, 0.15) !important; 
+            color: #34d399 !important; 
+            border: 1px solid rgba(52, 211, 153, 0.3) !important; 
+        }
 
         html[lang="en"] .btn,
         html[lang="en"] h2,
@@ -310,7 +315,7 @@
             background: var(--bg-color); 
             border: 1.5px solid var(--border-color); 
             color: var(--text-main); 
-            border-radius: 999px; 
+            border-radius: 9px; 
             padding: 6px 10px; 
             cursor: pointer; 
             display: flex; 
@@ -509,7 +514,18 @@
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
 
         .install-sheet { max-width: 360px; padding: 20px 16px; border-radius: 18px; }
-        .install-sheet-icon { width: 48px; height: 48px; margin: 0 auto 8px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
+        .install-sheet-icon { 
+            width: 50px; 
+            height: 50px; 
+            margin: 0 auto 12px auto; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: rgba(142, 182, 155, 0.15); 
+            color: var(--primary); 
+            border: 1px solid rgba(142, 182, 155, 0.3);
+        }
 
         @media (min-width: 768px) {
             #editor-screen { max-width: 960px; padding-bottom: 85px; }
