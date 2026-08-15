@@ -162,7 +162,7 @@
             border: 1px solid rgba(52, 211, 153, 0.35); 
         }
 
-        /* چاککردنی ئاڕاستەی ئایکۆنەکان لە زمانی ئینگلیزی بەبێ عەکس بوونی شاشە */
+        /* چاککردنی ئاڕاستەی ئایکۆنەکان لە زمانی ئینگلیزی */
         html[lang="en"] .btn,
         html[lang="en"] h2,
         html[lang="en"] .back-btn,
@@ -285,7 +285,6 @@
             animation: fadeIn 0.3s ease; 
         }
         
-        /* بەشی ئامرازەکان لە سەرەوە کە لەگەڵ شۆڕکردنەوەی شاشە بە سروشتی دەڕواتە سەرەوە */
         .header-tools-container { 
             position: relative;
             background: var(--card-bg); 
@@ -324,7 +323,7 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
 
-        /* شاشەی ڤیدیۆ کە هەمیشە لە سەرەوە جێگیر دەبێت (Sticky Video) بەبێ بەشی دوگمەکانی سەرەوە */
+        /* شاشەی ڤیدیۆ کە هەمیشە لە سەرەوە جێگیر دەبێت (Sticky Video) */
         #video-container { 
             display: none; 
             width: 100%; 
@@ -1042,14 +1041,25 @@
             document.getElementById('btn-tag-clean').classList.toggle('active', opt === 'clean');
         }
 
+        // دانانی خۆکاری 0.1+ بۆ فایلی VTT لە بەشی گۆڕین
         function updateBatchCount(input) {
             const display = document.getElementById('batchCountDisplay');
+            const shiftInput = document.getElementById('batchTimeShift');
+            
             if(input.files && input.files.length > 0) {
                 display.innerText = `${input.files.length} ${i18n[currentLang]['batchFilesSelected']}`; 
                 display.style.color = "var(--success)";
+                
+                const hasVtt = Array.from(input.files).some(f => f.name.toLowerCase().endsWith('.vtt'));
+                if (hasVtt) {
+                    shiftInput.value = "0.1";
+                } else {
+                    shiftInput.value = "";
+                }
             } else { 
                 display.innerText = i18n[currentLang]['batchNoFile']; 
                 display.style.color = "var(--text-muted)"; 
+                shiftInput.value = "";
             }
         }
 
@@ -1090,7 +1100,8 @@
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
             const inputVal = document.getElementById('batchTimeShift').value;
-            const timeShift = parseFloat(inputVal) || 0;
+            const hasExplicitShift = inputVal.trim() !== "";
+            const baseTimeShift = parseFloat(inputVal) || 0;
             const tagOption = document.getElementById('tagOptionValue').value;
 
             if (!files || files.length === 0) { 
@@ -1106,6 +1117,9 @@
                 const isOrigVtt = file.name.toLowerCase().endsWith('.vtt');
                 const text = await file.text();
                 let parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
+
+                // پەیڕەوکردنی کات و زیادکردنی 0.1 بۆ فایلی VTT
+                let timeShift = hasExplicitShift ? baseTimeShift : (isOrigVtt ? 0.1 : 0);
 
                 if (timeShift !== 0) {
                     parsed.forEach(item => { 
