@@ -20,15 +20,17 @@
         :root {
             --primary: #8EB69B; 
             --primary-hover: #7ca188; 
+            --primary-glow: rgba(142, 182, 155, 0.35);
             --success: #10b981;
             --bg-color: #f2f7f4; 
-            --card-bg: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.7);
             --text-main: #1e293b;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 15px rgba(0,0,0,0.05);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-sm: 0 2px 6px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 25px rgba(142, 182, 155, 0.15);
+            --shadow-lg: 0 16px 40px rgba(0,0,0,0.12);
         }
 
         * { 
@@ -45,6 +47,7 @@
             min-height: 100vh; 
             overflow-x: hidden; 
             touch-action: manipulation;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
         body.startup-bg {
@@ -58,119 +61,283 @@
             padding: 0; 
         }
 
+        /* دۆخی تاریکی پێشکەوتوو و زۆر هاوسەنگ لەگەڵ دۆخی ڕۆژ */
         body.dark-theme {
-            --bg-color: #121614; 
-            --card-bg: #1a201c; 
-            --text-main: #e2e8f0; 
+            --bg-color: #0d120f; 
+            --card-bg: rgba(22, 30, 26, 0.85); 
+            --card-border: rgba(104, 211, 145, 0.22);
+            --text-main: #f1f5f9; 
             --text-muted: #94a3b8;
-            --border-color: #26332a; 
-            --primary: #68d391;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.5); 
-            --shadow-md: 0 4px 15px rgba(0,0,0,0.4); 
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+            --border-color: #243329; 
+            --primary: #34d399;
+            --primary-hover: #10b981;
+            --primary-glow: rgba(52, 211, 153, 0.3);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.5); 
+            --shadow-md: 0 8px 30px rgba(0,0,0,0.6); 
+            --shadow-lg: 0 16px 45px rgba(0,0,0,0.75);
         }
 
-        body.dark-theme.startup-bg { background: linear-gradient(-45deg, #0d120f, #151f18, #0f1712, #1a261d); }
-        body.dark-theme .glass-card { background: rgba(26, 32, 28, 0.85); border: 1px solid rgba(104, 211, 145, 0.2); }
-        body.dark-theme .input-field { background: rgba(18, 22, 20, 0.9); color: #f1f5f9; border-color: #26332a; }
-        body.dark-theme .file-box { background: rgba(30, 41, 59, 0.2); border-color: #2d3748; }
-        body.dark-theme .file-box:hover, body.dark-theme .file-box.has-file { background: rgba(104, 211, 145, 0.1); border-color: var(--primary); }
-        body.dark-theme .subtitle-orig { background: #202823; color: #cbd5e1; border-color: var(--primary); }
-        body.dark-theme .subtitle-header { background: #151a17; border-color: #26332a; }
-        body.dark-theme .subtitle-kurd textarea { background: #121614; color: #f8fafc; border-color: #26332a; }
-        body.dark-theme .action-bar, body.dark-theme .sticky-header-container { background: rgba(20, 26, 22, 0.98); border-color: #26332a; }
-        body.dark-theme .custom-modal-content { background: #1a201c; border-color: #26332a; }
-        body.dark-theme .top-btn, body.dark-theme .back-btn { background: #1e2621; color: #cbd5e1; border-color: #314237; }
-        body.dark-theme .top-btn:hover { background: #26332a; color: var(--primary); }
-        body.dark-theme .btn:not(.btn-outline) { background: linear-gradient(135deg, #2f855a 0%, #1c4532 100%); color: #fff; }
-        body.dark-theme .btn-outline { background: rgba(104, 211, 145, 0.05); color: var(--primary); border: 1.5px solid var(--primary); }
-        body.dark-theme #install-app-btn { background: rgba(104, 211, 145, 0.15); color: var(--primary); border: 1px solid rgba(104, 211, 145, 0.3); }
-        body.dark-theme .install-sheet-icon { background: rgba(104, 211, 145, 0.15); color: var(--primary); border: 1px solid rgba(104, 211, 145, 0.25); }
+        body.dark-theme.startup-bg { 
+            background: linear-gradient(-45deg, #090e0b, #121c16, #0e1712, #18261e); 
+            background-size: 400% 400%;
+        }
+        body.dark-theme .glass-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--card-border); 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.5), 0 0 20px rgba(52, 211, 153, 0.08); 
+        }
+        body.dark-theme .input-field { 
+            background: rgba(15, 21, 18, 0.95); 
+            color: #f1f5f9; 
+            border-color: #27382d; 
+        }
+        body.dark-theme .file-box { 
+            background: rgba(26, 36, 31, 0.5); 
+            border-color: #2d4234; 
+        }
+        body.dark-theme .file-box:hover, body.dark-theme .file-box.has-file { 
+            background: rgba(52, 211, 153, 0.1); 
+            border-color: var(--primary); 
+        }
+        body.dark-theme .subtitle-orig { 
+            background: #18221c; 
+            color: #cbd5e1; 
+            border-color: var(--primary); 
+        }
+        body.dark-theme .subtitle-header { 
+            background: #121a15; 
+            border-color: #243329; 
+        }
+        body.dark-theme .subtitle-kurd textarea { 
+            background: #0f1512; 
+            color: #f8fafc; 
+            border-color: #243329; 
+        }
+        body.dark-theme .action-bar, body.dark-theme .sticky-header-container { 
+            background: rgba(18, 24, 21, 0.98); 
+            border-color: #243329; 
+        }
+        body.dark-theme .custom-modal-content { 
+            background: #16201b; 
+            border-color: var(--card-border); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 25px rgba(52, 211, 153, 0.1);
+        }
+        body.dark-theme .top-btn, body.dark-theme .back-btn { 
+            background: #1a241e; 
+            color: #e2e8f0; 
+            border-color: #2c3e32; 
+        }
+        body.dark-theme .top-btn:hover { 
+            background: #243329; 
+            color: var(--primary); 
+        }
+        body.dark-theme .btn:not(.btn-outline) { 
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%); 
+            color: #fff; 
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        }
+        body.dark-theme .btn-outline { 
+            background: rgba(52, 211, 153, 0.06); 
+            color: var(--primary); 
+            border-color: rgba(52, 211, 153, 0.4); 
+        }
+        body.dark-theme .btn-outline:hover {
+            background: rgba(52, 211, 153, 0.15);
+            border-color: var(--primary);
+        }
+        body.dark-theme #install-app-btn { 
+            background: rgba(52, 211, 153, 0.15); 
+            color: var(--primary); 
+            border: 1px solid rgba(52, 211, 153, 0.35); 
+        }
+        body.dark-theme .install-sheet-icon { 
+            background: rgba(52, 211, 153, 0.15); 
+            color: var(--primary); 
+            border: 1px solid rgba(52, 211, 153, 0.3); 
+        }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         #progress-container { width: 100%; height: 6px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
-        #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.2s ease; }
+        #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.25s ease; }
         
         #toast-container { position: fixed; bottom: calc(90px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: max-content; max-width: 90%; }
-        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
+        .toast { background: rgba(30, 41, 59, 0.95); color: white; padding: 12px 22px; border-radius: 14px; font-size: 13.5px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.25); backdrop-filter: blur(10px); opacity: 0; transform: translateY(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .toast.show { opacity: 1; transform: translateY(0); }
 
-        .glass-card { max-width: 500px; margin: 25px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 30px 22px; border-radius: 24px; box-shadow: 0 8px 32px 0 rgba(142, 182, 155, 0.15); display: flex; flex-direction: column; gap: 18px; animation: slideUpFade 0.5s ease-out; position: relative; }
+        .glass-card { 
+            max-width: 500px; 
+            margin: 25px auto; 
+            background: var(--card-bg); 
+            backdrop-filter: blur(18px); 
+            -webkit-backdrop-filter: blur(18px); 
+            border: 1px solid var(--card-border); 
+            padding: 28px 22px; 
+            border-radius: 24px; 
+            box-shadow: var(--shadow-md); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 16px; 
+            animation: slideUpFade 0.45s ease-out; 
+            position: relative; 
+        }
         #login-screen { display: flex; } #setup-screen { display: none; }
         
-        .input-field { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid rgba(142, 182, 155, 0.4); background: rgba(255, 255, 255, 0.9); font-size: 15px; color: var(--text-main); outline: none; transition: 0.3s; text-align: center; }
-        .file-box { position: relative; padding: 22px 15px; border: 2px dashed #b5d1c0; border-radius: 14px; background: rgba(242, 247, 244, 0.7); transition: all 0.3s ease; text-align: center; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .file-box:hover, .file-box.has-file { border-color: var(--primary); background: rgba(142, 182, 155, 0.1); }
+        .input-field { 
+            width: 100%; 
+            padding: 13px 15px; 
+            border-radius: 12px; 
+            border: 2px solid rgba(142, 182, 155, 0.4); 
+            background: rgba(255, 255, 255, 0.9); 
+            font-size: 14.5px; 
+            color: var(--text-main); 
+            outline: none; 
+            transition: all 0.25s ease; 
+            text-align: center; 
+        }
+        .input-field:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px var(--primary-glow); 
+        }
+
+        .file-box { 
+            position: relative; 
+            padding: 20px 15px; 
+            border: 2px dashed #b5d1c0; 
+            border-radius: 16px; 
+            background: rgba(242, 247, 244, 0.7); 
+            transition: all 0.25s ease; 
+            text-align: center; 
+            cursor: pointer; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .file-box:hover, .file-box.has-file { 
+            border-color: var(--primary); 
+            background: rgba(142, 182, 155, 0.12); 
+            transform: translateY(-1px);
+        }
         .file-box input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-        .file-box .upload-icon { color: var(--primary); margin-bottom: 6px; }
+        .file-box .upload-icon { color: var(--primary); margin-bottom: 6px; transition: transform 0.25s ease; }
+        .file-box:hover .upload-icon { transform: scale(1.08); }
         .file-box label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px !important; font-size: 14px; pointer-events: none; }
         .file-name-display { font-size: 12.5px; color: var(--text-muted); font-weight: bold; pointer-events: none; word-break: break-all; }
         
-        .clear-file-btn { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
+        .clear-file-btn { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: transform 0.2s; }
+        .clear-file-btn:hover { transform: scale(1.1); }
         html[dir="ltr"] .clear-file-btn { right: auto; left: 8px; }
 
-        .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 13px; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: white; border: none; border-radius: 12px; font-size: 14.5px; font-weight: bold; cursor: pointer; transition: all 0.25s; gap: 8px; box-shadow: 0 6px 15px rgba(124, 161, 136, 0.4); }
+        .btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
+            padding: 13px; 
+            background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 14px; 
+            font-size: 14.5px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            gap: 8px; 
+            box-shadow: 0 6px 16px rgba(124, 161, 136, 0.4); 
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(124, 161, 136, 0.55); }
         .btn:active { transform: scale(0.97); }
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); box-shadow: none; }
-        .fmt-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); padding: 10px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .fmt-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-outline:hover { background: rgba(142, 182, 155, 0.12); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(142, 182, 155, 0.2); }
+        
+        .fmt-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); padding: 10px; flex: 1; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .fmt-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 2px 8px var(--primary-glow); }
         .icon { width: 20px; height: 20px; flex-shrink: 0; }
 
-        #editor-screen { display: none; max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: calc(150px + env(safe-area-inset-bottom)); animation: fadeIn 0.5s ease; }
-        .sticky-header-container { position: sticky; top: 0; z-index: 50; background: var(--card-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); margin: -15px -15px 15px -15px; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
-        .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; gap: 10px; border-bottom: 1px dashed var(--border-color); }
+        #editor-screen { display: none; max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: calc(150px + env(safe-area-inset-bottom)); animation: fadeIn 0.4s ease; }
+        .sticky-header-container { position: sticky; top: 0; z-index: 50; background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); margin: -15px -15px 15px -15px; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
+        .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; gap: 10px; border-bottom: 1px dashed var(--border-color); position: relative; }
         .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 10px 15px; flex-wrap: wrap; }
-        .top-btn, .back-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 8px 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; gap: 4px; }
+        .top-btn, .back-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 10px; padding: 8px 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; gap: 4px; transition: all 0.2s ease; }
+        .top-btn:active, .back-btn:active { transform: scale(0.95); }
         html[dir="ltr"] .back-btn svg { transform: rotate(180deg); }
 
-        .floating-search-bar { display: none; position: fixed; bottom: calc(135px + env(safe-area-inset-bottom)); left: 15px; right: 15px; background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 12px; border-radius: 14px; box-shadow: 0 -4px 25px rgba(0,0,0,0.15); border: 1px solid var(--primary); z-index: 150; }
+        .floating-search-bar { display: none; position: fixed; bottom: calc(135px + env(safe-area-inset-bottom)); left: 15px; right: 15px; background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 12px; border-radius: 16px; box-shadow: var(--shadow-lg); border: 1.5px solid var(--primary); z-index: 150; animation: slideUpFade 0.3s ease; }
         .search-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-        .floating-search-bar input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); outline: none; font-size: 14px; color: var(--text-main); }
+        .floating-search-bar input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); outline: none; font-size: 14px; color: var(--text-main); }
         .search-btns { display: flex; gap: 8px; justify-content: space-between; }
-        .search-btn { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .search-btn { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s; }
+        .search-btn:active { transform: scale(0.96); }
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; }
 
-        #video-container { display: none; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-md); border: 2px solid var(--primary); position: sticky; top: 115px; z-index: 45; }
+        #video-container { display: none; width: 100%; background: #000; border-radius: 16px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-md); border: 2px solid var(--primary); position: sticky; top: 115px; z-index: 45; }
         #preview-video { width: 100%; max-height: 250px; display: block; }
         #video-subtitle-overlay { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 16px; font-weight: bold; pointer-events: none; padding: 0 10%; line-height: 1.5; direction: rtl; }
 
-        .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); }
-        .subtitle-card.active-sub { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
-        .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; border-bottom: 1px dashed var(--border-color); }
+        .subtitle-card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); transition: border-color 0.25s, box-shadow 0.25s; }
+        .subtitle-card.active-sub { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25); }
+        .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 10px 14px; border-radius: 12px; margin-bottom: 14px; border-bottom: 1px dashed var(--border-color); }
         .subtitle-line-num { font-size: 15px; font-weight: bold; color: var(--primary); direction: ltr; }
         .subtitle-time { font-size: 13px; color: var(--text-muted); direction: ltr; }
-        .subtitle-orig { background: var(--bg-color); padding: 14px; border-radius: 10px; margin-bottom: 14px; font-size: 15px; color: var(--text-main); border-right: 4px solid var(--primary); line-height: 1.6; direction: auto; unicode-bidi: plaintext; text-align: start; }
+        .subtitle-orig { background: var(--bg-color); padding: 14px; border-radius: 12px; margin-bottom: 14px; font-size: 15px; color: var(--text-main); border-right: 4px solid var(--primary); line-height: 1.6; direction: auto; unicode-bidi: plaintext; text-align: start; }
         html[dir="ltr"] .subtitle-orig { border-right: none; border-left: 4px solid var(--primary); }
-        .subtitle-kurd textarea { width: 100%; min-height: 85px; padding: 14px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 16px; line-height: 1.6; resize: vertical; outline: none; direction: auto; unicode-bidi: plaintext; text-align: start; }
-        .subtitle-kurd textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(142, 182, 155, 0.15); }
-        .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .subtitle-kurd textarea { width: 100%; min-height: 85px; padding: 14px; border-radius: 12px; border: 2px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 16px; line-height: 1.6; resize: vertical; outline: none; direction: auto; unicode-bidi: plaintext; text-align: start; transition: border-color 0.2s, box-shadow 0.2s; }
+        .subtitle-kurd textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+        .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+        .play-sub-btn:hover { transform: scale(1.1); }
 
-        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 16px 16px 0 0; }
+        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 12px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 18px 18px 0 0; }
         
-        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
-        .custom-modal-content { background: var(--card-bg); padding: 22px; border-radius: 18px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--border-color); }
+        .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 15px; animation: fadeIn 0.3s ease; }
+        .custom-modal-content { background: var(--card-bg); padding: 24px 20px; border-radius: 20px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.35s ease; }
         .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 10px; font-size: 17px; }
         .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
 
+        /* چاککردنی تەواوی دەرچوونی مێنۆی زمان لە شاشە */
         .custom-select-wrapper { position: relative; display: inline-block; }
-        .custom-select-btn { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 12.5px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        .custom-select-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 5px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow-md); z-index: 1000; min-width: 100px; overflow: hidden; }
-        html[dir="ltr"] .custom-select-menu { left: auto; right: 0; }
+        .custom-select-btn { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 12.5px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .custom-select-btn:active { transform: scale(0.96); }
+        .custom-select-menu { 
+            display: none; 
+            position: absolute; 
+            top: calc(100% + 6px); 
+            right: 0; 
+            left: auto;
+            margin-top: 0; 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            box-shadow: var(--shadow-md); 
+            z-index: 1000; 
+            min-width: 110px; 
+            max-width: calc(100vw - 30px);
+            overflow: hidden; 
+            animation: fadeIn 0.2s ease;
+        }
+        html[dir="ltr"] .custom-select-menu { left: 0; right: auto; }
         .custom-select-menu.show { display: block; }
-        .custom-select-item { padding: 8px 12px; font-size: 13px; cursor: pointer; color: var(--text-main); text-align: right; font-weight: bold; }
+        .custom-select-item { padding: 9px 14px; font-size: 13px; cursor: pointer; color: var(--text-main); text-align: right; font-weight: bold; transition: background 0.2s; }
         html[dir="ltr"] .custom-select-item { text-align: left; }
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
 
-        #install-app-btn { display: none; align-items: center; justify-content: center; gap: 5px; padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(142, 182, 155, 0.5); background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        #install-app-btn { display: none; align-items: center; justify-content: center; gap: 5px; padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(142, 182, 155, 0.5); background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        #install-app-btn:active { transform: scale(0.96); }
         .install-sheet { max-width: 380px; padding: 24px 20px 20px; border-radius: 22px; }
         .install-sheet-icon { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
 
-        .pgs-preview-box { background: rgba(0,0,0,0.3); border: 1.5px dashed var(--border-color); border-radius: 12px; padding: 10px; margin: 10px 0; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
-        .pgs-preview-box img { max-width: 100%; max-height: 45px; background: #fff; padding: 4px 8px; border-radius: 6px; }
+        .pgs-preview-box { background: rgba(0,0,0,0.25); border: 1.5px dashed var(--border-color); border-radius: 14px; padding: 10px; margin: 10px 0; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .pgs-preview-box img { max-width: 100%; max-height: 45px; background: #fff; padding: 4px 8px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+
+        /* دوگمەکانی هەڵبژاردنی زمانی PGS بە شێوازی مۆدێرنی Pills */
+        .pgs-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+        .pgs-lang-btn { background: var(--bg-color); color: var(--text-main); border: 1.5px solid var(--border-color); padding: 10px 8px; border-radius: 12px; font-size: 12.5px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; text-align: center; }
+        .pgs-lang-btn:active { transform: scale(0.96); }
+        .pgs-lang-btn.active { background: rgba(16, 185, 129, 0.15); color: var(--primary); border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); }
 
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
@@ -247,21 +414,31 @@
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
-        <!-- دوگمە سەرەکییەکان: دەستپێکردن، گۆڕینی فایل، گۆڕینی PGS -->
-        <div style="display:flex; width: 100%; gap:8px;">
-            <button class="btn" style="flex: 1.3;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
-            <button class="btn btn-outline" style="flex: 1; padding: 12px;" onclick="openConverterModal()"><span data-i18n="batchBtn">گۆڕینی فایل</span></button>
-            <button class="btn btn-outline" style="flex: 1.2; padding: 12px; border-color: var(--primary);" onclick="openPgsDirectModal()"><span>گۆڕینی PGS (.sup)</span></button>
+        <!-- دوگمەی دەستپێکردن بە گەورەیی لەسەرەوە و گۆڕینەکان لە خوارەوە لە تەنیشت یەک -->
+        <div style="display: flex; flex-direction: column; width: 100%; gap: 10px; margin-top: 5px;">
+            <button class="btn" style="padding: 14px; font-size: 15px;" onclick="startEditing()">
+                <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span data-i18n="startBtn">دەستپێکردن</span>
+            </button>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button class="btn btn-outline" style="padding: 11px 8px; font-size: 13px;" onclick="openConverterModal()">
+                    <span data-i18n="batchBtn">گۆڕینی فایل</span>
+                </button>
+                <button class="btn btn-outline" style="padding: 11px 8px; font-size: 13px; border-color: var(--primary);" onclick="openPgsDirectModal()">
+                    <span>گۆڕینی PGS (.sup)</span>
+                </button>
+            </div>
         </div>
 
         <div style="text-align: center; margin-top: 5px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی فەرمی گۆڕینی فایلی PGS (.sup) بە شێوازی تایبەت -->
+    <!-- مۆداڵی گۆڕینی فایلی PGS (.sup) -->
     <div id="pgs-direct-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 450px;">
+        <div class="custom-modal-content" style="max-width: 440px;">
             <h3 class="custom-modal-title">گۆڕینی فایلی PGS (.sup) بۆ SRT / ASS</h3>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">فایلی ژێرنووسی PGS دیاری بکە تا تێکستەکەی دەربهێنرێت:</p>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">فایلی ژێرنووسی PGS دیاری بکە تا بە خێرایی و بەرزترین وردی تێکستەکەی دەربهێنرێت:</p>
             
             <div class="file-box" id="boxDirectPgs" style="margin-bottom: 10px; padding: 15px;">
                 <div class="upload-icon"><svg style="width:28px;height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
@@ -274,14 +451,15 @@
                 <p style="font-size: 12px; color: var(--primary); font-weight: bold; margin: 6px 0;">٣ وێنەی نموونە لە ناو فایلەکە:</p>
                 <div class="pgs-preview-box" id="direct-pgs-images"></div>
                 
-                <div style="margin: 10px 0; text-align: right;" dir="rtl">
-                    <label style="font-size: 12.5px; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 4px;">زمانی ژێرنووسەکە هەڵبژێرە:</label>
-                    <select id="directPgsLanguage" class="input-field" style="padding: 8px; font-size: 13px;">
-                        <option value="eng" selected>English (ئینگلیزی)</option>
-                        <option value="fra">French (فەڕەنسی)</option>
-                        <option value="spa">Spanish (ئیسپانی)</option>
-                        <option value="ara">Arabic (عەرەبی)</option>
-                    </select>
+                <div style="margin: 12px 0 6px 0; text-align: right;" dir="rtl">
+                    <label style="font-size: 12.5px; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 6px;">زمانی ژێرنووسەکە هەڵبژێرە:</label>
+                    <div class="pgs-lang-grid">
+                        <button type="button" class="pgs-lang-btn active" onclick="selectPgsLanguage('eng', this)">English (ئینگلیزی)</button>
+                        <button type="button" class="pgs-lang-btn" onclick="selectPgsLanguage('fra', this)">French (فەڕەنسی)</button>
+                        <button type="button" class="pgs-lang-btn" onclick="selectPgsLanguage('spa', this)">Spanish (ئیسپانی)</button>
+                        <button type="button" class="pgs-lang-btn" onclick="selectPgsLanguage('ara', this)">Arabic (عەرەبی)</button>
+                    </div>
+                    <input type="hidden" id="selectedPgsLangValue" value="eng">
                 </div>
             </div>
 
@@ -416,6 +594,7 @@
             <div class="top-nav">
                 <button class="back-btn" onclick="confirmGoBack()"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg><span data-i18n="backBtn">گەڕانەوە</span></button>
                 <h3 style="margin:0; font-size:14px; color:var(--primary); text-align:center; flex-grow:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" data-i18n="editorTitle">دەستکاریکردنی ژێرنووس</h3>
+                
                 <div class="custom-select-wrapper">
                     <button class="custom-select-btn" onclick="toggleLangMenu(this)">
                         <span class="current-lang-text">کوردی</span>
@@ -495,7 +674,7 @@
         const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#8EB69B"><path d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3V6h18v12zM5 14h14v2H5zm0-4h8v2H5zm10 0h4v2h-4z"/></svg>`;
         const manifest = {
             name: "Subtitle Editor", short_name: "SubEdit", start_url: ".", display: "standalone",
-            background_color: "#f2f7f4", theme_color: "#8EB69B",
+            background_color: "#0d120f", theme_color: "#8EB69B",
             icons: [{ src: "data:image/svg+xml;base64," + btoa(svgIcon), sizes: "192x192", type: "image/svg+xml" }]
         };
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
@@ -616,8 +795,14 @@
         function logout() { localStorage.removeItem('kf_user'); checkLogin(); }
         window.onload = () => { checkLogin(); changeLanguage('ckb'); };
 
-        function toggleLangMenu(btn) { btn.nextElementSibling.classList.toggle('show'); }
-        document.addEventListener('click', e => { if(!e.target.closest('.custom-select-wrapper')) document.querySelectorAll('.custom-select-menu').forEach(m => m.classList.remove('show')); });
+        function toggleLangMenu(btn) { 
+            btn.nextElementSibling.classList.toggle('show'); 
+        }
+        document.addEventListener('click', e => { 
+            if(!e.target.closest('.custom-select-wrapper')) {
+                document.querySelectorAll('.custom-select-menu').forEach(m => m.classList.remove('show')); 
+            }
+        });
 
         function toggleClearBtn(input, boxId) {
             const box = document.getElementById(boxId);
@@ -793,6 +978,7 @@
             }
         }
 
+        // داگرتنی پارێزراو بێ زیادبوونی پاشگری .txt
         function triggerDownload(content, filename, mimeType = 'text/plain;charset=utf-8') {
             const blob = (content instanceof Blob) ? content : new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
@@ -823,9 +1009,9 @@
             return cleaned.trim();
         }
 
-        // ==========================================
-        // سیستەمی فەرمی و دەقیقی PGS (.sup)
-        // ==========================================
+        // =========================================================================
+        // سیستەمی PGS / OCR بە فلتەری دژە-تەڵخی و بەرزترین وردی
+        // =========================================================================
         function openPgsDirectModal() {
             document.getElementById('pgs-direct-modal').style.display = 'flex';
             document.getElementById('directPgsFileInput').value = '';
@@ -838,6 +1024,12 @@
             document.getElementById('pgs-direct-modal').style.display = 'none';
         }
 
+        function selectPgsLanguage(lang, btn) {
+            document.getElementById('selectedPgsLangValue').value = lang;
+            document.querySelectorAll('.pgs-lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
         async function onDirectPgsSelected(input) {
             if (!input.files || !input.files[0]) return;
             const file = input.files[0];
@@ -848,7 +1040,7 @@
             try {
                 parsedPgsDisplaySets = await extractPgsDisplaySets(file);
                 if (!parsedPgsDisplaySets || parsedPgsDisplaySets.length === 0) {
-                    showToast("هیچ داتایەکی ژێرنووس نەدۆزرایەوە!", "error");
+                    showToast("هیچ داتایەکی ژێرنووس لەم فایلەدا نەدۆزرایەوە!", "error");
                     return;
                 }
 
@@ -859,7 +1051,7 @@
                 let step = Math.max(1, Math.floor(parsedPgsDisplaySets.length / 4));
 
                 for (let i = 0; i < parsedPgsDisplaySets.length && sampleCount < 3; i += step) {
-                    let canvas = renderOdsToCanvas(parsedPgsDisplaySets[i].ods);
+                    let canvas = renderOdsToCanvas(parsedPgsDisplaySets[i].ods, true);
                     if (canvas) {
                         let img = document.createElement('img');
                         img.src = canvas.toDataURL();
@@ -930,29 +1122,37 @@
             return displaySets;
         }
 
-        function renderOdsToCanvas(odsPayload) {
+        // دیکۆدکردنی پێشکەوتووی ODS بە گەورەکردن و فلتەری ڕوونی بەرز
+        function renderOdsToCanvas(odsPayload, forPreview = false) {
             if (!odsPayload || odsPayload.length < 11) return null;
             let w = (odsPayload[7] << 8) | odsPayload[8];
             let h = (odsPayload[9] << 8) | odsPayload[10];
             if (w <= 0 || h <= 0 || w > 3840 || h > 2160) return null;
 
-            let canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            let ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, w, h);
-
-            let imgData = ctx.createImageData(w, h);
+            let rawCanvas = document.createElement('canvas');
+            rawCanvas.width = w; rawCanvas.height = h;
+            let rawCtx = rawCanvas.getContext('2d', { willReadFrequently: true });
+            
+            let imgData = rawCtx.createImageData(w, h);
             let rle = odsPayload.slice(11);
             let pIdx = 0;
 
+            let minX = w, maxX = 0, minY = h, maxY = 0;
+
             for (let i = 0; i < rle.length && pIdx < w * h; i++) {
                 let b = rle[i];
+                let curX = pIdx % w;
+                let curY = Math.floor(pIdx / w);
+
                 if (b !== 0) {
                     imgData.data[pIdx * 4] = 0;
                     imgData.data[pIdx * 4 + 1] = 0;
                     imgData.data[pIdx * 4 + 2] = 0;
                     imgData.data[pIdx * 4 + 3] = 255;
+                    if (curX < minX) minX = curX;
+                    if (curX > maxX) maxX = curX;
+                    if (curY < minY) minY = curY;
+                    if (curY > maxY) maxY = curY;
                     pIdx++;
                 } else if (i + 1 < rle.length) {
                     let flag = rle[++i];
@@ -962,24 +1162,53 @@
                     }
                     let isColor = (flag & 0x80) !== 0;
                     let colorVal = isColor && i + 1 < rle.length ? rle[++i] : 0;
-                    let pixelColor = (isColor && colorVal !== 0) ? 0 : 255;
+                    let isText = (isColor && colorVal !== 0);
+                    let pixelVal = isText ? 0 : 255;
 
                     for (let r = 0; r < run && pIdx < w * h; r++) {
-                        imgData.data[pIdx * 4] = pixelColor;
-                        imgData.data[pIdx * 4 + 1] = pixelColor;
-                        imgData.data[pIdx * 4 + 2] = pixelColor;
+                        imgData.data[pIdx * 4] = pixelVal;
+                        imgData.data[pIdx * 4 + 1] = pixelVal;
+                        imgData.data[pIdx * 4 + 2] = pixelVal;
                         imgData.data[pIdx * 4 + 3] = 255;
+
+                        if (isText) {
+                            let cx = pIdx % w;
+                            let cy = Math.floor(pIdx / w);
+                            if (cx < minX) minX = cx;
+                            if (cx > maxX) maxX = cx;
+                            if (cy < minY) minY = cy;
+                            if (cy > maxY) maxY = cy;
+                        }
                         pIdx++;
                     }
                 }
             }
-            ctx.putImageData(imgData, 0, 0);
-            return canvas;
+            rawCtx.putImageData(imgData, 0, 0);
+
+            if (forPreview) return rawCanvas;
+
+            // بڕینی بەشە بەتاڵەکان و گەورەکردنی وێنەکە بە 2.2x بۆ ئەوەی OCR بێ یەک هەڵە بیخوێنێتەوە
+            let cropW = Math.max(10, maxX - minX + 1);
+            let cropH = Math.max(10, maxY - minY + 1);
+            let scale = 2.2;
+            let pad = 24;
+
+            let finalCanvas = document.createElement('canvas');
+            finalCanvas.width = Math.round(cropW * scale) + (pad * 2);
+            finalCanvas.height = Math.round(cropH * scale) + (pad * 2);
+            let finalCtx = finalCanvas.getContext('2d');
+            
+            finalCtx.fillStyle = '#ffffff';
+            finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+            finalCtx.imageSmoothingEnabled = false;
+            finalCtx.drawImage(rawCanvas, minX, minY, cropW, cropH, pad, pad, Math.round(cropW * scale), Math.round(cropH * scale));
+
+            return finalCanvas;
         }
 
         async function startDirectOcr() {
             closePgsDirectModal();
-            const lang = document.getElementById('directPgsLanguage').value || 'eng';
+            const lang = document.getElementById('selectedPgsLangValue').value || 'eng';
             
             const ocrModal = document.getElementById('ocr-progress-modal');
             const ocrStatus = document.getElementById('ocr-status-text');
@@ -987,10 +1216,18 @@
             const ocrPercent = document.getElementById('ocr-percent-text');
 
             ocrModal.style.display = 'flex';
-            ocrStatus.innerText = "خەریکی چالاککردنی سیستەمی ناسینەوەی تێکستە...";
+            ocrStatus.innerText = "خەریکی چالاککردنی خێرای مۆتۆڕی OCR...";
 
             try {
-                const worker = await Tesseract.createWorker(lang);
+                // ڕێکخستنی Tesseract بە مۆدی خێرای PSM 6 بۆ ژێرنووس
+                const worker = await Tesseract.createWorker(lang, 1, {
+                    corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5/tesseract-core.wasm.js'
+                });
+                
+                await worker.setParameters({
+                    tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK,
+                });
+
                 let total = parsedPgsDisplaySets.length;
                 pgsRecognizedData = [];
 
@@ -1002,14 +1239,21 @@
                     ocrBar.style.width = percent + '%';
                     ocrPercent.innerText = percent + '%';
 
-                    let canvas = renderOdsToCanvas(ds.ods);
-                    let recognizedText = "...";
+                    let canvas = renderOdsToCanvas(ds.ods, false);
+                    let recognizedText = "";
 
                     if (canvas) {
                         const ret = await worker.recognize(canvas);
-                        recognizedText = ret.data.text.trim().replace(/\n+/g, '\n');
-                        if (!recognizedText) recognizedText = "...";
+                        recognizedText = ret.data.text.trim();
+                        // چاککردنی هەڵە باوەکانی OCR لە ژێرنووس
+                        recognizedText = recognizedText
+                            .replace(/^[|_~—\-]+/, '')
+                            .replace(/[|_~—]+$/, '')
+                            .replace(/\n+/g, '\n')
+                            .trim();
                     }
+
+                    if (!recognizedText) recognizedText = "...";
 
                     let st = ds.startSec;
                     let en = ds.endSec > st ? ds.endSec : st + 2.5;
@@ -1029,7 +1273,7 @@
                 ocrModal.style.display = 'none';
 
                 document.getElementById('pgs-result-filename').innerText = activePgsFile.name;
-                document.getElementById('pgs-result-stats').innerText = `کۆی گشتی: ${pgsRecognizedData.length} دێڕ بە سەرکەوتوویی ناسرانەوە.`;
+                document.getElementById('pgs-result-stats').innerText = `کۆی گشتی: ${pgsRecognizedData.length} دێڕ بە وردیی بەرز ناسرانەوە.`;
                 document.getElementById('pgs-result-modal').style.display = 'flex';
 
             } catch (e) {
@@ -1050,7 +1294,8 @@
 
         function downloadPgsAs(format) {
             let content = "";
-            let filename = activePgsFile.name.replace(/\.[^/.]+$/, "") + "." + format;
+            let baseName = activePgsFile.name.replace(/\.[^/.]+$/, "");
+            let filename = baseName + "." + format;
 
             if (format === 'srt') {
                 pgsRecognizedData.forEach((item, idx) => {
@@ -1069,7 +1314,7 @@
             }
 
             triggerDownload(content.trim() + '\n\n', filename);
-            showToast("فایلەکە بە سەرکەوتوویی داگیرا!", "success");
+            showToast("فایلەکە دابەزی!", "success");
         }
 
         async function prepareBatchProcess() {
