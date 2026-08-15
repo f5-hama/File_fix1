@@ -13,8 +13,6 @@
     </script>
 
     <link rel="stylesheet" href="./fonts.css">
-    <!-- کتێبخانەی Tesseract بۆ ناسینەوەی تێکست لە PGS -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
     <style>
         :root {
@@ -58,11 +56,15 @@
             background: linear-gradient(-45deg, #eaf2ed, #cce0d4, #8eb69b, #d9e8de);
             background-size: 400% 400%;
             animation: gradientBG 12s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         body.editor-bg { 
             background-color: var(--bg-color); 
             padding: 0; 
+            display: block;
         }
 
         /* دۆخی تاریکی پێشکەوتوو */
@@ -75,7 +77,6 @@
             --border-color: #223327; 
             --primary: #34d399;
             --primary-hover: #10b981;
-            --primary-glow: rgba(52, 211, 153, 0.3);
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.5); 
             --shadow-md: 0 8px 30px rgba(0,0,0,0.6); 
             --shadow-lg: 0 16px 45px rgba(0,0,0,0.75);
@@ -173,14 +174,15 @@
         .toast.show { opacity: 1; transform: translateY(0); }
 
         .glass-card { 
-            max-width: 500px; 
-            margin: 25px auto; 
+            width: 100%;
+            max-width: 480px; 
+            margin: auto; 
             background: var(--card-bg); 
             backdrop-filter: blur(18px); 
             -webkit-backdrop-filter: blur(18px); 
             border: 1px solid var(--card-border); 
             padding: 26px 20px; 
-            border-radius: 22px; 
+            border-radius: 24px; 
             box-shadow: var(--shadow-md); 
             display: flex; 
             flex-direction: column; 
@@ -264,8 +266,25 @@
         .fmt-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .icon { width: 18px; height: 18px; flex-shrink: 0; }
 
-        #editor-screen { display: none; max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: calc(150px + env(safe-area-inset-bottom)); animation: fadeIn 0.4s ease; }
-        .sticky-header-container { position: sticky; top: 0; z-index: 50; background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); margin: -15px -15px 15px -15px; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
+        #editor-screen { 
+            display: none; 
+            width: 100%;
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 0 15px calc(150px + env(safe-area-inset-bottom)) 15px; 
+            animation: fadeIn 0.4s ease; 
+        }
+        .sticky-header-container { 
+            position: sticky; 
+            top: 0; 
+            z-index: 50; 
+            background: var(--card-bg); 
+            backdrop-filter: blur(14px); 
+            -webkit-backdrop-filter: blur(14px); 
+            margin: 0 -15px 15px -15px; 
+            box-shadow: var(--shadow-md); 
+            border-bottom: 1px solid var(--border-color); 
+        }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; gap: 10px; border-bottom: 1px dashed var(--border-color); position: relative; }
         .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 8px 15px; flex-wrap: wrap; }
         .top-btn, .back-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 7px 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; gap: 4px; transition: all 0.2s ease; }
@@ -281,19 +300,19 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; }
 
-        /* ڕێکخستنی جێگیری ڤیدیۆ بەبێ پچڕان یان سەریەکەوتنی شاشە */
-        #video-container { display: none; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-top: 10px; margin-bottom: 18px; box-shadow: var(--shadow-md); border: 1.5px solid var(--primary); position: relative; z-index: 10; }
+        /* جێگیریی تەواوی ڤیدیۆ بەبێ شاردنەوەی سەرەوە یان جووڵانی نەخوازراو */
+        #video-container { display: none; width: 100%; background: #000; border-radius: 16px; overflow: hidden; margin-bottom: 18px; box-shadow: var(--shadow-md); border: 1.5px solid var(--primary); position: relative; z-index: 10; }
         #preview-video { width: 100%; max-height: 240px; display: block; }
         #video-subtitle-overlay { position: absolute; bottom: 12px; left: 0; width: 100%; text-align: center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 15px; font-weight: bold; pointer-events: none; padding: 0 8%; line-height: 1.4; direction: rtl; }
 
-        .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); transition: all 0.2s ease; }
+        .subtitle-card { background: var(--card-bg); border-radius: 16px; padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); transition: all 0.2s ease; }
         .subtitle-card.active-sub { border-color: var(--success); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25); }
         .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 8px 12px; border-radius: 10px; margin-bottom: 12px; border-bottom: 1px dashed var(--border-color); }
         .subtitle-line-num { font-size: 14px; font-weight: bold; color: var(--primary); direction: ltr; }
         .subtitle-time { font-size: 12.5px; color: var(--text-muted); direction: ltr; }
         .subtitle-orig { background: var(--bg-color); padding: 12px; border-radius: 10px; margin-bottom: 12px; font-size: 14.5px; color: var(--text-main); border-right: 3.5px solid var(--primary); line-height: 1.5; direction: auto; unicode-bidi: plaintext; text-align: start; }
         html[dir="ltr"] .subtitle-orig { border-right: none; border-left: 3.5px solid var(--primary); }
-        .subtitle-kurd textarea { width: 100%; min-height: 80px; padding: 12px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 15px; line-height: 1.5; resize: vertical; outline: none; direction: auto; unicode-bidi: plaintext; text-align: start; transition: border-color 0.2s; }
+        .subtitle-kurd textarea { width: 100%; min-height: 80px; padding: 12px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 15px; line-height: 1.5; resize: vertical; outline: none; direction: auto; unicode-bidi: plaintext; text-align: start; }
         .subtitle-kurd textarea:focus { border-color: var(--primary); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         .play-sub-btn:hover { transform: scale(1.12); }
@@ -305,19 +324,19 @@
         .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 16.5px; }
         .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
 
-        /* چاککردنی مێنۆی زمان بۆ ئەوەی لە شاشە دەرنەچێت */
+        /* چاککردنی تەواوی مێنۆی زمان بە دووریی پارێزراو لە لێواری شاشە */
         .custom-select-wrapper { position: relative; display: inline-block; }
         .custom-select-btn { padding: 6px 11px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 12px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
         .custom-select-btn:active { transform: scale(0.96); }
         .custom-select-menu { 
             display: none; 
             position: absolute; 
-            top: calc(100% + 4px); 
+            top: calc(100% + 5px); 
             right: 0; 
             left: auto;
             background: var(--card-bg); 
             border: 1px solid var(--border-color); 
-            border-radius: 10px; 
+            border-radius: 12px; 
             box-shadow: var(--shadow-md); 
             z-index: 2500; 
             min-width: 105px; 
@@ -336,15 +355,6 @@
         #install-app-btn:active { transform: scale(0.96); }
         .install-sheet { max-width: 380px; padding: 22px 18px; border-radius: 20px; }
         .install-sheet-icon { width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
-
-        /* وێنەی پاکی تێکستی Arialی ڕەش لەسەر سپی تەواو هاوشێوەی SubtitleTools */
-        .pgs-preview-box { background: #ffffff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 10px; margin: 8px 0; max-height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
-        .pgs-preview-box img { max-width: 100%; border-radius: 4px; }
-
-        .pgs-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
-        .pgs-lang-btn { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); padding: 9px 6px; border-radius: 10px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; text-align: center; }
-        .pgs-lang-btn:active { transform: scale(0.96); }
-        .pgs-lang-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
 
         @media (min-width: 768px) {
             #editor-screen { max-width: 1100px; padding-bottom: 90px; }
@@ -385,7 +395,7 @@
     </div>
 
     <div id="setup-screen" class="glass-card">
-        <!-- هێدەری هاوسەنگ: چوونەدەرەوە لە لایەک، دابەزاندنی ئەپ لە ناوەڕاست، زمان لە لایەکی تر -->
+        <!-- هێدەری تەواو هاوسەنگ لە نێوان چوونەدەرەوە و دابەزاندن و زمان -->
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 6px;">
             <button style="padding: 6px 8px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
             <button id="install-app-btn" onclick="installApp()"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
@@ -420,95 +430,17 @@
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
-        <div style="display: flex; flex-direction: column; width: 100%; gap: 8px; margin-top: 4px;">
-            <button class="btn" style="padding: 13px;" onclick="startEditing()">
+        <div style="display: flex; gap: 10px; width: 100%; margin-top: 4px;">
+            <button class="btn" style="flex: 1.4; padding: 13px;" onclick="startEditing()">
                 <svg style="width:17px;height:17px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span data-i18n="startBtn">دەستپێکردن</span>
             </button>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button class="btn btn-outline" style="padding: 11px 6px; font-size: 13px;" onclick="openConverterModal()">
-                    <span data-i18n="batchBtn">گۆڕینی فایل</span>
-                </button>
-                <button class="btn btn-outline" style="padding: 11px 6px; font-size: 13px;" onclick="openPgsDirectModal()">
-                    <span data-i18n="pgsBtn">گۆڕینی PGS (.sup)</span>
-                </button>
-            </div>
+            <button class="btn btn-outline" style="flex: 1; padding: 13px;" onclick="openConverterModal()">
+                <span data-i18n="batchBtn">گۆڕینی فایل</span>
+            </button>
         </div>
 
         <div style="text-align: center; margin-top: 4px; font-size: 12.5px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
-    </div>
-
-    <!-- مۆداڵی PGS (.sup) -->
-    <div id="pgs-direct-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content">
-            <h3 class="custom-modal-title" data-i18n="pgsModalTitle">گۆڕینی فایلی PGS (.sup) بۆ SRT / ASS</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;" data-i18n="pgsModalDesc">فایلی ژێرنووسی PGS دیاری بکە تا بە خێرایی و بەرزترین وردی تێکستەکەی دەربهێنرێت:</p>
-            
-            <div class="file-box" id="boxDirectPgs" style="margin-bottom: 10px; padding: 14px;">
-                <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
-                <label data-i18n="selectPgsFile">فایلی .sup هەڵبژێرە:</label>
-                <div class="file-name-display" id="directPgsFileName" data-i18n="batchNoFile">هیچ فایلێک دیاری نەکراوە</div>
-                <input type="file" id="directPgsFileInput" accept=".sup" onchange="onDirectPgsSelected(this)">
-            </div>
-
-            <div id="pgs-sample-section" style="display: none;">
-                <p style="font-size: 12px; color: var(--primary); font-weight: bold; margin: 4px 0;" data-i18n="sampleImagesText">٣ وێنەی نموونە لە ناو فایلەکە:</p>
-                <!-- لێرە وێنەی Arialی ڕەش لەسەر سپی بە ڕوونی دادەنرێت -->
-                <div class="pgs-preview-box" id="direct-pgs-images"></div>
-                
-                <div style="margin: 8px 0 6px 0; text-align: right;" dir="auto">
-                    <label style="font-size: 12px; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 4px;" data-i18n="tagOptionLbl">پاککردنەوەی تاگەکانی شێواز و فۆرمات:</label>
-                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                        <button type="button" class="fmt-btn active" id="btn-pgs-tag-keep" onclick="setPgsTagOption('keep')" data-i18n="tagKeep">وەک خۆی</button>
-                        <button type="button" class="fmt-btn" id="btn-pgs-tag-clean" onclick="setPgsTagOption('clean')" data-i18n="tagClean">پاککردنەوە</button>
-                    </div>
-                    <input type="hidden" id="pgsTagOptionValue" value="keep">
-
-                    <label style="font-size: 12px; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 4px;" data-i18n="choosePgsLang">زمانی ژێرنووسەکە هەڵبژێرە:</label>
-                    <div class="pgs-lang-grid" id="pgsLangContainer"></div>
-                    <input type="hidden" id="selectedPgsLangValue" value="eng">
-                </div>
-            </div>
-
-            <div class="custom-modal-actions">
-                <button class="btn" id="startDirectOcrBtn" onclick="startDirectOcr()" style="width: 50%; display: none;" data-i18n="startOcrBtn">دەستپێکردنی ناسینەوە</button>
-                <button class="btn btn-outline" onclick="closePgsDirectModal()" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- مۆداڵی پڕۆگرێس لە کاتی ناسینەوەی تێکست -->
-    <div id="ocr-progress-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 360px;">
-            <h3 class="custom-modal-title" style="margin-bottom: 6px;" data-i18n="ocrProgressTitle">ناسینەوەی تێکست لە PGS</h3>
-            <p id="ocr-status-text" style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;" data-i18n="ocrReading">خەریکی خوێندنەوەیە...</p>
-            <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 999px; overflow: hidden; margin-bottom: 6px;">
-                <div id="ocr-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34e89e, #10b981); transition: width 0.2s;"></div>
-            </div>
-            <span id="ocr-percent-text" style="font-size: 12.5px; font-weight: bold; color: var(--primary);">0%</span>
-        </div>
-    </div>
-
-    <!-- مۆداڵی ئەنجامی PGS -->
-    <div id="pgs-result-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content">
-            <h3 class="custom-modal-title" style="color: var(--success);" data-i18n="ocrDoneTitle">ناسینەوە بە سەرکەوتوویی تەواو بوو! ✓</h3>
-            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success); border-radius: 12px; padding: 10px; margin-bottom: 12px; text-align: center;">
-                <div id="pgs-result-filename" style="font-weight: bold; font-size: 13px; color: var(--text-main); word-break: break-all; margin-bottom: 3px;"></div>
-                <div id="pgs-result-stats" style="font-size: 12px; color: var(--text-muted);"></div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button class="btn" onclick="openPgsInEditor()" data-i18n="openInEditor">دەستکاریکردن لە ماڵپەڕدا</button>
-                <div style="display: flex; gap: 6px;">
-                    <button class="btn btn-outline" onclick="downloadPgsAs('srt')">SRT</button>
-                    <button class="btn btn-outline" onclick="downloadPgsAs('ass')">ASS</button>
-                    <button class="btn btn-outline" onclick="downloadPgsAs('vtt')">VTT</button>
-                </div>
-                <button class="btn btn-outline" onclick="document.getElementById('pgs-result-modal').style.display='none'" style="color: var(--text-muted); border-color: var(--border-color);" data-i18n="closeBtn">داخستن</button>
-            </div>
-        </div>
     </div>
 
     <div id="install-modal" class="custom-modal-overlay">
@@ -728,26 +660,20 @@
 
         const i18n = {
             ckb: {
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", pgsBtn: "گۆڕینی PGS (.sup)", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
                 msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
-                pgsModalTitle: "گۆڕینی فایلی PGS (.sup) بۆ SRT / ASS", pgsModalDesc: "فایلی ژێرنووسی PGS دیاری بکە تا بە خێرایی و بەرزترین وردی تێکستەکەی دەربهێنرێت:", selectPgsFile: "فایلی .sup هەڵبژێرە:", sampleImagesText: "٣ وێنەی نموونە لە ناو فایلەکە:", choosePgsLang: "زمانی ژێرنووسەکە هەڵبژێرە:", startOcrBtn: "دەستپێکردنی ناسینەوە", ocrProgressTitle: "ناسینەوەی تێکست لە PGS", ocrReading: "خەریکی خوێندنەوەیە...", ocrDoneTitle: "ناسینەوە بە سەرکەوتوویی تەواو بوو! ✓", openInEditor: "دەستکاریکردن لە ماڵپەڕدا",
-                pgsLang_eng: "English (ئینگلیزی)", pgsLang_fra: "French (فەڕەنسی)", pgsLang_spa: "Spanish (ئیسپانی)", pgsLang_ara: "Arabic (عەرەبی)",
                 toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
             },
             ar: {
-                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", pgsBtn: "تحويل PGS (.sup)", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
-                msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "يرجى النقر على سماح لتنزيل الملفات.", batchDownloadBtn: "بدء التنزيل",
-                pgsModalTitle: "تحويل ملف PGS (.sup) إلى SRT / ASS", pgsModalDesc: "حدد ملف PGS لاستخراج النص بأعلى دقة:", selectPgsFile: "اختر ملف .sup:", sampleImagesText: "٣ صور عينة من الملف:", choosePgsLang: "اختر لغة الترجمة:", startOcrBtn: "بدء التعرف على النص", ocrProgressTitle: "التعرف على النص من PGS", ocrReading: "جاري القراءة...", ocrDoneTitle: "اكتمل التعرف بنجاح! ✓", openInEditor: "فتح في المحرر",
-                pgsLang_eng: "English (الإنجليزية)", pgsLang_fra: "French (الفرنسية)", pgsLang_spa: "Spanish (الإسبانية)", pgsLang_ara: "Arabic (العربية)",
+                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
+                msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "يرجى النقر على سماح لتنزيل الملفات.", batchDownloadBtn: "بدء التنزيل",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
             },
             en: {
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (SRT / ASS / VTT)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", pgsBtn: "Convert PGS (.sup)", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", tagOptionLbl: "Clean formatting tags:", tagKeep: "Keep original", tagClean: "Clean", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "Unfinished session detected. Continue?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
-                msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!", msgInstallMenu: "Install option available in browser menu", installModalTitle: "Install App", installModalDesc: "Install as app for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Files", batchDownloadDesc: "Click allow to download files.", batchDownloadBtn: "Start Download",
-                pgsModalTitle: "Convert PGS (.sup) to SRT / ASS", pgsModalDesc: "Select a PGS file to extract text with highest accuracy:", selectPgsFile: "Select .sup file:", sampleImagesText: "3 sample images from file:", choosePgsLang: "Select subtitle language:", startOcrBtn: "Start OCR", ocrProgressTitle: "Extracting text from PGS", ocrReading: "Reading...", ocrDoneTitle: "OCR completed successfully! ✓", openInEditor: "Edit in Website",
-                pgsLang_eng: "English", pgsLang_fra: "French", pgsLang_spa: "Spanish", pgsLang_ara: "Arabic",
+                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (SRT / ASS / VTT)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", tagOptionLbl: "Clean formatting tags:", tagKeep: "Keep original", tagClean: "Clean", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "Unfinished session detected. Continue?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Unsaved changes will be lost. Are you sure you want to leave?", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
+                msgSelect: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No results found!", msgInstallMenu: "Install option available in browser menu", installModalTitle: "Install App", installModalDesc: "Install as app for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Files", batchDownloadDesc: "Your browser will prompt to download multiple files. Please click allow to proceed.", batchDownloadBtn: "Start Download",
                 toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto"
             }
         };
@@ -762,44 +688,25 @@
         let lastSubtitleIndex = -1, currentSearchIndex = 0;
         let pendingBatchDownloads = []; 
 
-        let activePgsFile = null;
-        let parsedPgsDisplaySets = [];
-        let pgsRecognizedData = [];
-
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.style.direction = (currentLang === 'en') ? 'ltr' : 'rtl';
+            toast.style.unicodeBidi = 'isolate';
             toast.innerHTML = `<span>${message}</span>`;
             container.appendChild(toast);
             requestAnimationFrame(() => toast.classList.add('show'));
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        function updatePgsLangPills() {
-            const container = document.getElementById('pgsLangContainer');
-            if (!container) return;
-            const currentSelected = document.getElementById('selectedPgsLangValue').value || 'eng';
-            
-            container.innerHTML = `
-                <button type="button" class="pgs-lang-btn ${currentSelected === 'eng' ? 'active' : ''}" onclick="selectPgsLanguage('eng', this)">${i18n[currentLang]['pgsLang_eng']}</button>
-                <button type="button" class="pgs-lang-btn ${currentSelected === 'fra' ? 'active' : ''}" onclick="selectPgsLanguage('fra', this)">${i18n[currentLang]['pgsLang_fra']}</button>
-                <button type="button" class="pgs-lang-btn ${currentSelected === 'spa' ? 'active' : ''}" onclick="selectPgsLanguage('spa', this)">${i18n[currentLang]['pgsLang_spa']}</button>
-                <button type="button" class="pgs-lang-btn ${currentSelected === 'ara' ? 'active' : ''}" onclick="selectPgsLanguage('ara', this)">${i18n[currentLang]['pgsLang_ara']}</button>
-            `;
-        }
-
-        function setPgsTagOption(opt) {
-            document.getElementById('pgsTagOptionValue').value = opt;
-            document.getElementById('btn-pgs-tag-keep').classList.toggle('active', opt === 'keep');
-            document.getElementById('btn-pgs-tag-clean').classList.toggle('active', opt === 'clean');
-        }
-
         function changeLanguage(lang) {
             currentLang = lang; 
+            const isEn = (lang === 'en');
+            document.getElementById('html-tag').setAttribute('dir', isEn ? 'ltr' : 'rtl');
+            document.getElementById('html-tag').setAttribute('lang', lang);
             document.title = i18n[lang]['pageTitle'];
-            document.querySelectorAll('.current-lang-text').forEach(e => { e.innerText = lang === 'en' ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی'); });
+            document.querySelectorAll('.current-lang-text').forEach(e => { e.innerText = isEn ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی'); });
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (i18n[lang][key]) { 
@@ -813,8 +720,7 @@
             if(localStorage.getItem('kf_user')) {
                 document.getElementById('welcome-msg').innerText = i18n[currentLang]['welcomeText'];
             }
-            updatePgsLangPills();
-            // داخستنی خۆکاری مێنۆی زمان
+            // داخستنی خۆکاری مێنۆی زمان پاش هەڵبژاردن
             document.querySelectorAll('.custom-select-menu').forEach(m => m.classList.remove('show'));
         }
 
@@ -832,7 +738,7 @@
                 document.getElementById('setup-screen').style.display = 'none';
             }
             const hour = new Date().getHours();
-            if(hour >= 19 || hour < 13) {
+            if(hour >= 19 || hour < 6) {
                 document.body.classList.add('dark-theme');
                 document.documentElement.classList.add('dark-theme');
             } else {
@@ -1009,18 +915,7 @@
             const display = document.getElementById('batchCountDisplay');
             if(input.files && input.files.length > 0) {
                 display.innerText = `${input.files.length} فایل دیاریکراون`; display.style.color = "var(--success)";
-                let hasVtt = false;
-                for (let i = 0; i < input.files.length; i++) {
-                    if (input.files[i].name.toLowerCase().endsWith('.vtt')) {
-                        hasVtt = true;
-                        break;
-                    }
-                }
-                if (hasVtt) {
-                    document.getElementById('batchTimeShift').value = "0.1";
-                } else {
-                    document.getElementById('batchTimeShift').value = "";
-                }
+                document.getElementById('batchTimeShift').value = "";
             } else { 
                 display.innerText = i18n[currentLang]['batchNoFile']; 
                 display.style.color = "var(--text-muted)"; 
@@ -1029,7 +924,7 @@
         }
 
         // داگرتنی پارێزراو کە بە هیچ جۆرێک .txt زیاد ناکات
-        function triggerDownload(content, filename, mimeType = 'application/octet-stream') {
+        function triggerDownload(content, filename) {
             const cleanFilename = filename.replace(/\.txt$/i, '');
             const blob = (content instanceof Blob) ? content : new Blob([content], { type: 'application/octet-stream' });
             const url = URL.createObjectURL(blob);
@@ -1060,327 +955,11 @@
             return cleaned.trim();
         }
 
-        // =========================================================================
-        // سیستەمی PGS بە فۆنتی Arial وەک SubtitleTools
-        // =========================================================================
-        function openPgsDirectModal() {
-            document.getElementById('pgs-direct-modal').style.display = 'flex';
-            document.getElementById('directPgsFileInput').value = '';
-            document.getElementById('directPgsFileName').innerText = i18n[currentLang]['batchNoFile'];
-            document.getElementById('pgs-sample-section').style.display = 'none';
-            document.getElementById('startDirectOcrBtn').style.display = 'none';
-            updatePgsLangPills();
-        }
-
-        function closePgsDirectModal() {
-            document.getElementById('pgs-direct-modal').style.display = 'none';
-        }
-
-        function selectPgsLanguage(lang, btn) {
-            document.getElementById('selectedPgsLangValue').value = lang;
-            document.querySelectorAll('.pgs-lang-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        // دروستکردنی وێنەی ڕوون بە فۆنتی ستانداردی Arial لەسەر باکگراوندی سپی
-        function createCleanArialPreviewCanvas(text) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 440;
-            canvas.height = 64;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#111827';
-            ctx.font = 'bold 22px Arial, Helvetica, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(text || 'Subtitle Preview Text', canvas.width / 2, canvas.height / 2);
-            return canvas;
-        }
-
-        async function onDirectPgsSelected(input) {
-            if (!input.files || !input.files[0]) return;
-            const file = input.files[0];
-            activePgsFile = file;
-            document.getElementById('directPgsFileName').innerText = file.name;
-
-            try {
-                parsedPgsDisplaySets = await extractPgsDisplaySets(file);
-                if (!parsedPgsDisplaySets || parsedPgsDisplaySets.length === 0) {
-                    showToast(i18n[currentLang]['msgNotFound'], "error");
-                    return;
-                }
-
-                const container = document.getElementById('direct-pgs-images');
-                container.innerHTML = '';
-                
-                // دروستکردنی ٣ نموونەی ڕوون بە فۆنتی Arial لەسەر باکگراوندی سپیی تەواو پاک
-                let sampleTexts = ["Please shake my hand.", "Are you not good with women?", "The Goddess of Fate knows it, too."];
-                for (let i = 0; i < 3; i++) {
-                    let canvas = createCleanArialPreviewCanvas(sampleTexts[i]);
-                    let img = document.createElement('img');
-                    img.src = canvas.toDataURL();
-                    container.appendChild(img);
-                }
-
-                document.getElementById('pgs-sample-section').style.display = 'block';
-                document.getElementById('startDirectOcrBtn').style.display = 'inline-flex';
-            } catch (err) {
-                showToast("Error reading PGS file", "error");
-            }
-        }
-
-        async function extractPgsDisplaySets(file) {
-            const buffer = await file.arrayBuffer();
-            const data = new Uint8Array(buffer);
-            let offset = 0;
-            let segments = [];
-
-            while (offset < data.length - 13) {
-                if (data[offset] === 0x50 && data[offset + 1] === 0x47) {
-                    let pts = ((data[offset + 2] << 24) | (data[offset + 3] << 16) | (data[offset + 4] << 8) | data[offset + 5]) >>> 0;
-                    let type = data[offset + 10];
-                    let len = (data[offset + 11] << 8) | data[offset + 12];
-                    let payload = data.slice(offset + 13, offset + 13 + len);
-                    segments.push({ pts, type, payload });
-                    offset += 13 + len;
-                } else {
-                    offset++;
-                }
-            }
-
-            let displaySets = [];
-            let currentSet = { startSec: 0, endSec: 0, ods: null, pds: null };
-
-            for (let seg of segments) {
-                let sec = seg.pts / 90000.0;
-                if (seg.type === 0x16) { // PCS
-                    if (seg.payload.length >= 4) {
-                        let numObjects = seg.payload[3];
-                        if (numObjects > 0) {
-                            if (currentSet.ods) {
-                                if (currentSet.endSec <= currentSet.startSec) currentSet.endSec = sec;
-                                displaySets.push(currentSet);
-                            }
-                            currentSet = { startSec: sec, endSec: 0, ods: null, pds: null };
-                        } else {
-                            currentSet.endSec = sec;
-                            if (currentSet.ods) {
-                                displaySets.push(currentSet);
-                                currentSet = { startSec: 0, endSec: 0, ods: null, pds: null };
-                            }
-                        }
-                    }
-                } else if (seg.type === 0x15) { // ODS
-                    currentSet.ods = seg.payload;
-                } else if (seg.type === 0x14) { // PDS
-                    currentSet.pds = seg.payload;
-                }
-            }
-            if (currentSet.ods) {
-                if (currentSet.endSec <= currentSet.startSec) currentSet.endSec = currentSet.startSec + 3.0;
-                displaySets.push(currentSet);
-            }
-
-            return displaySets;
-        }
-
-        function renderOdsToCanvas(odsPayload) {
-            if (!odsPayload || odsPayload.length < 11) return null;
-            let w = (odsPayload[7] << 8) | odsPayload[8];
-            let h = (odsPayload[9] << 8) | odsPayload[10];
-            if (w <= 0 || h <= 0 || w > 3840 || h > 2160) return null;
-
-            let rawCanvas = document.createElement('canvas');
-            rawCanvas.width = w; rawCanvas.height = h;
-            let rawCtx = rawCanvas.getContext('2d', { willReadFrequently: true });
-            
-            let imgData = rawCtx.createImageData(w, h);
-            let rle = odsPayload.slice(11);
-            let pIdx = 0;
-
-            let minX = w, maxX = 0, minY = h, maxY = 0;
-
-            for (let i = 0; i < rle.length && pIdx < w * h; i++) {
-                let b = rle[i];
-                let curX = pIdx % w;
-                let curY = Math.floor(pIdx / w);
-
-                if (b !== 0) {
-                    imgData.data[pIdx * 4] = 0;
-                    imgData.data[pIdx * 4 + 1] = 0;
-                    imgData.data[pIdx * 4 + 2] = 0;
-                    imgData.data[pIdx * 4 + 3] = 255;
-                    if (curX < minX) minX = curX;
-                    if (curX > maxX) maxX = curX;
-                    if (curY < minY) minY = curY;
-                    if (curY > maxY) maxY = curY;
-                    pIdx++;
-                } else if (i + 1 < rle.length) {
-                    let flag = rle[++i];
-                    let run = flag & 0x3f;
-                    if ((flag & 0x40) !== 0 && i + 1 < rle.length) {
-                        run = (run << 8) | rle[++i];
-                    }
-                    let isColor = (flag & 0x80) !== 0;
-                    let colorVal = isColor && i + 1 < rle.length ? rle[++i] : 0;
-                    let isText = (isColor && colorVal !== 0);
-                    let pixelVal = isText ? 0 : 255;
-
-                    for (let r = 0; r < run && pIdx < w * h; r++) {
-                        imgData.data[pIdx * 4] = pixelVal;
-                        imgData.data[pIdx * 4 + 1] = pixelVal;
-                        imgData.data[pIdx * 4 + 2] = pixelVal;
-                        imgData.data[pIdx * 4 + 3] = 255;
-
-                        if (isText) {
-                            let cx = pIdx % w;
-                            let cy = Math.floor(pIdx / w);
-                            if (cx < minX) minX = cx;
-                            if (cx > maxX) maxX = cx;
-                            if (cy < minY) minY = cy;
-                            if (cy > maxY) maxY = cy;
-                        }
-                        pIdx++;
-                    }
-                }
-            }
-            rawCtx.putImageData(imgData, 0, 0);
-
-            let cropW = Math.max(10, maxX - minX + 1);
-            let cropH = Math.max(10, maxY - minY + 1);
-            let scale = 1.8;
-            let pad = 16;
-
-            let finalCanvas = document.createElement('canvas');
-            finalCanvas.width = Math.round(cropW * scale) + (pad * 2);
-            finalCanvas.height = Math.round(cropH * scale) + (pad * 2);
-            let finalCtx = finalCanvas.getContext('2d');
-            
-            finalCtx.fillStyle = '#ffffff';
-            finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-            finalCtx.imageSmoothingEnabled = false;
-            finalCtx.drawImage(rawCanvas, minX, minY, cropW, cropH, pad, pad, Math.round(cropW * scale), Math.round(cropH * scale));
-
-            return finalCanvas;
-        }
-
-        async function startDirectOcr() {
-            closePgsDirectModal();
-            const lang = document.getElementById('selectedPgsLangValue').value || 'eng';
-            const tagOption = document.getElementById('pgsTagOptionValue').value || 'keep';
-            
-            const ocrModal = document.getElementById('ocr-progress-modal');
-            const ocrStatus = document.getElementById('ocr-status-text');
-            const ocrBar = document.getElementById('ocr-progress-bar');
-            const ocrPercent = document.getElementById('ocr-percent-text');
-
-            ocrModal.style.display = 'flex';
-            ocrStatus.innerText = i18n[currentLang]['ocrReading'];
-
-            try {
-                const worker = await Tesseract.createWorker(lang);
-                await worker.setParameters({
-                    tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK,
-                });
-
-                let total = parsedPgsDisplaySets.length;
-                pgsRecognizedData = [];
-
-                for (let i = 0; i < total; i++) {
-                    let ds = parsedPgsDisplaySets[i];
-                    let percent = Math.round(((i + 1) / total) * 100);
-                    
-                    ocrStatus.innerText = `${i18n[currentLang]['ocrReading']} ${i + 1} / ${total}`;
-                    ocrBar.style.width = percent + '%';
-                    ocrPercent.innerText = percent + '%';
-
-                    let canvas = renderOdsToCanvas(ds.ods);
-                    let recognizedText = "";
-
-                    if (canvas) {
-                        const ret = await worker.recognize(canvas);
-                        recognizedText = ret.data.text.trim();
-                        recognizedText = recognizedText
-                            .replace(/^[|_~—\-]+/, '')
-                            .replace(/[|_~—]+$/, '')
-                            .replace(/\n+/g, '\n')
-                            .trim();
-                        
-                        if (tagOption === 'clean') {
-                            recognizedText = cleanSubtitleTags(recognizedText);
-                        }
-                    }
-
-                    if (!recognizedText) recognizedText = "...";
-
-                    let st = ds.startSec;
-                    let en = ds.endSec > st ? ds.endSec : st + 2.5;
-
-                    pgsRecognizedData.push({
-                        id: i + 1,
-                        time: `${formatTimeSRT(st)} --> ${formatTimeSRT(en)}`,
-                        startSec: st,
-                        endSec: en,
-                        assPrefix: '',
-                        parsedLines: extLines(recognizedText.replace(/\n/g, '\\N')),
-                        text: recognizedText
-                    });
-                }
-
-                await worker.terminate();
-                ocrModal.style.display = 'none';
-
-                document.getElementById('pgs-result-filename').innerText = activePgsFile.name;
-                document.getElementById('pgs-result-stats').innerText = `${pgsRecognizedData.length} lines converted.`;
-                document.getElementById('pgs-result-modal').style.display = 'flex';
-
-            } catch (e) {
-                ocrModal.style.display = 'none';
-                showToast("Error during OCR process", "error");
-            }
-        }
-
-        function openPgsInEditor() {
-            document.getElementById('pgs-result-modal').style.display = 'none';
-            originalData = pgsRecognizedData;
-            currentFileName = activePgsFile.name;
-            isAssFormat = false;
-            isVttFormat = false;
-            let state = originalData.map(orig => orig.text);
-            buildEditorUI(state);
-        }
-
-        function downloadPgsAs(format) {
-            let content = "";
-            let baseName = activePgsFile.name.replace(/\.[^/.]+$/, "");
-            let filename = baseName + "." + format;
-
-            if (format === 'srt') {
-                pgsRecognizedData.forEach((item, idx) => {
-                    content += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${item.text}\n\n`;
-                });
-            } else if (format === 'vtt') {
-                content = "WEBVTT\n\n";
-                pgsRecognizedData.forEach(item => {
-                    content += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${item.text}\n\n`;
-                });
-            } else if (format === 'ass') {
-                content = `[Script Info]\nTitle: Converted\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
-                pgsRecognizedData.forEach(item => {
-                    content += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${item.text.replace(/\n/g, '\\N')}\n`;
-                });
-            }
-
-            triggerDownload(content.trim() + '\n\n', filename);
-            showToast(i18n[currentLang]['msgDone'], "success");
-        }
-
         async function prepareBatchProcess() {
             const files = document.getElementById('convertFileInput').files;
             const targetFormat = document.getElementById('convertFormatValue').value;
             const inputVal = document.getElementById('batchTimeShift').value;
-            const timeShift = parseFloat(inputVal) || 0;
+            const timeShift = parseFloat(inputVal) || 0; // بە تەواوی تەنها بەپێی نووسراوی بەکارهێنەر
             const tagOption = document.getElementById('tagOptionValue').value;
 
             if (!files || files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
@@ -1394,13 +973,11 @@
                 const text = await file.text();
                 let parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
 
-                let fileTimeShift = timeShift;
-                if (isOrigVtt && inputVal === "") {
-                    fileTimeShift = 0.1;
-                }
-
-                if (fileTimeShift !== 0) {
-                    parsed.forEach(item => { item.startSec = Math.max(0, item.startSec + fileTimeShift); item.endSec = Math.max(0, item.endSec + fileTimeShift); });
+                if (timeShift !== 0) {
+                    parsed.forEach(item => { 
+                        item.startSec = Math.max(0, item.startSec + timeShift); 
+                        item.endSec = Math.max(0, item.endSec + timeShift); 
+                    });
                 }
 
                 if (tagOption === 'clean') {
@@ -1495,7 +1072,7 @@
             let cs = totalCs % 100;
             let totalS = Math.floor(totalCs / 100);
             let s = totalS % 60;
-            let totalM = Math.floor(totalCs / 100);
+            let totalM = Math.floor(totalS / 60);
             let m = totalM % 60;
             let h = Math.floor(totalM / 60);
             return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
@@ -1640,6 +1217,7 @@
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('editor-screen').style.display = 'block';
             
+            // چاککردنی تەواوی نەمانی فلاشە سپییەکە
             if (document.documentElement.classList.contains('dark-theme')) {
                 document.body.className = 'editor-bg dark-theme';
             } else {
