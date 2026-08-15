@@ -273,7 +273,7 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; }
 
-        /* ڕێکخستنی ڤیدیۆ تا سەرەوە نەشارێتەوە لە کاتی سکڕۆڵ */
+        /* ڕێکخستنی جێگیری ڤیدیۆ بەبێ تێکچوونی سکڕۆڵ */
         #video-container { display: none; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 16px; box-shadow: var(--shadow-md); border: 1.5px solid var(--primary); position: relative; z-index: 10; }
         #preview-video { width: 100%; max-height: 240px; display: block; }
         #video-subtitle-overlay { position: absolute; bottom: 12px; left: 0; width: 100%; text-align: center; color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 15px; font-weight: bold; pointer-events: none; padding: 0 8%; line-height: 1.4; direction: rtl; }
@@ -296,7 +296,7 @@
         .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 16.5px; }
         .custom-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
 
-        /* ڕێکخستنی تەواوی دەرنەچوونی مێنۆی زمان لە شاشە */
+        /* چاککردنی مێنۆی زمان بۆ ئەوەی لە شاشە دەرنەچێت */
         .custom-select-wrapper { position: relative; display: inline-block; }
         .custom-select-btn { padding: 6px 11px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 12px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 4px; }
         .custom-select-menu { 
@@ -309,11 +309,11 @@
             border: 1px solid var(--border-color); 
             border-radius: 10px; 
             box-shadow: var(--shadow-md); 
-            z-index: 1000; 
-            min-width: 100px; 
+            z-index: 2500; 
+            min-width: 105px; 
             overflow: hidden; 
         }
-        html[dir="ltr"] .custom-select-menu { left: 0; right: auto; }
+        html[dir="ltr"] .custom-select-menu { left: auto; right: 0; }
         .custom-select-menu.show { display: block; }
         .custom-select-item { padding: 8px 12px; font-size: 12.5px; cursor: pointer; color: var(--text-main); text-align: right; font-weight: bold; }
         html[dir="ltr"] .custom-select-item { text-align: left; }
@@ -323,7 +323,7 @@
         .install-sheet { max-width: 380px; padding: 22px 18px; border-radius: 20px; }
         .install-sheet-icon { width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
 
-        /* وێنەی ڕەشی تۆخ لەسەر باکگراوندی سپی تەواو بێ لێڵی */
+        /* وێنەی پاکی تێکستی ڕەش لەسەر سپی هاوشێوەی SubtitleTools */
         .pgs-preview-box { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 12px; margin: 10px 0; max-height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; align-items: center; }
         .pgs-preview-box img { max-width: 100%; max-height: 48px; background: #ffffff; border-radius: 4px; }
 
@@ -370,20 +370,19 @@
     </div>
 
     <div id="setup-screen" class="glass-card">
+        <!-- هێدەری ڕێکخراو کە دوگمەی دابەزاندن بە تەواوی لە نێوان چوونەدەرەوە و زمانەکەیە -->
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <button style="padding: 6px 8px; width:auto; border:none; background:transparent; color:#ef4444; font-size:13px; text-decoration:underline; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="install-app-btn" onclick="installApp()"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
-                <div class="custom-select-wrapper">
-                    <button class="custom-select-btn" onclick="toggleLangMenu(this)">
-                        <span class="current-lang-text">کوردی</span>
-                        <svg class="icon" style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="custom-select-menu">
-                        <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
-                        <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
-                        <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
-                    </div>
+            <button id="install-app-btn" onclick="installApp()"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
+            <div class="custom-select-wrapper">
+                <button class="custom-select-btn" onclick="toggleLangMenu(this)">
+                    <span class="current-lang-text">کوردی</span>
+                    <svg class="icon" style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="custom-select-menu">
+                    <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
+                    <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
+                    <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
                 </div>
             </div>
         </div>
@@ -406,7 +405,7 @@
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
-        <!-- دوگمەکان: دەستپێکردن لەسەرەوە، گۆڕینەکان لە خوارەوە لە تەنیشت یەک بە یەکسانی -->
+        <!-- دوگمەکان: دەستپێکردن لەسەرەوە، گۆڕینەکان لە خوارەوە لە تەنیشت یەک بە تەواوی هاوشێوە -->
         <div style="display: flex; flex-direction: column; width: 100%; gap: 8px; margin-top: 4px;">
             <button class="btn" style="padding: 13px;" onclick="startEditing()">
                 <svg style="width:17px;height:17px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -445,11 +444,8 @@
                 
                 <div style="margin: 10px 0 6px 0; text-align: right;" dir="auto">
                     <label style="font-size: 12px; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 6px;" data-i18n="choosePgsLang">زمانی ژێرنووسەکە هەڵبژێرە:</label>
-                    <div class="pgs-lang-grid">
-                        <button type="button" class="pgs-lang-btn active" onclick="selectPgsLanguage('eng', this)">English (ئینگلیزی)</button>
-                        <button type="button" class="pgs-lang-btn" onclick="selectPgsLanguage('fra', this)">French (فەڕەنسی)</button>
-                        <button type="button" class="pgs-lang-btn" onclick="selectPgsLanguage('spa', this)">Spanish (ئیسپانی)</button>
-                        <button type="button" class="pgs-lang-btn" onclick="selectPgsLanguage('ara', this)">Arabic (عەرەبی)</button>
+                    <div class="pgs-lang-grid" id="pgsLangContainer">
+                        <!-- دوگمەکانی زمان لێرە بەپێی زمانی هەڵبژێردراو دادەنرێن -->
                     </div>
                     <input type="hidden" id="selectedPgsLangValue" value="eng">
                 </div>
@@ -606,10 +602,10 @@
                 <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;"></div>
                 
                 <input type="file" id="headerVideoInput" accept="video/*" style="position: absolute; top: -9999px; left: -9999px; opacity: 0; width: 1px; height: 1px; pointer-events: none;" onchange="loadHeaderVideo(this)">
-                <button id="add-video-btn" class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="triggerVideoUpload()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
-                <button id="remove-video-btn" class="top-btn" style="color: #ef4444; border-color: #ef4444; display: none;" onclick="closeHeaderVideo()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <button id="add-video-btn" class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="triggerVideoUpload()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
+                <button id="remove-video-btn" class="top-btn" style="color: #ef4444; border-color: #ef4444; display: none;" onclick="closeHeaderVideo()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                 <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;"></div>
-                <button class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="toggleSearchBar()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                <button class="top-btn" style="color: var(--primary); border-color: var(--primary);" onclick="toggleSearchBar()"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
             </div>
         </div>
 
@@ -621,7 +617,7 @@
             <div class="search-row">
                 <div class="search-input-group" style="flex: 2;"><input type="text" id="searchInput" data-i18n="searchPlh" placeholder="گەڕان بەدوای..." onkeydown="if(event.key === 'Enter') findNext(1)"></div>
                 <button class="search-btn" style="flex: 0; padding: 8px;" onclick="findNext(-1)"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
-                <button class="search-btn" style="flex: 0; padding: 8px;" onclick="findNext(1)"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" transform="rotate(180 12 12)"></path></svg></button>
+                <button class="search-btn" style="flex: 0; padding: 8px;" onclick="findNext(1)"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
             </div>
             <div class="search-row">
                 <div class="search-input-group"><input type="text" id="replaceInput" data-i18n="replacePlh" placeholder="گۆڕین بە..."></div>
@@ -717,18 +713,21 @@
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
                 pgsModalTitle: "گۆڕینی فایلی PGS (.sup) بۆ SRT / ASS", pgsModalDesc: "فایلی ژێرنووسی PGS دیاری بکە تا بە خێرایی و بەرزترین وردی تێکستەکەی دەربهێنرێت:", selectPgsFile: "فایلی .sup هەڵبژێرە:", sampleImagesText: "٣ وێنەی نموونە لە ناو فایلەکە:", choosePgsLang: "زمانی ژێرنووسەکە هەڵبژێرە:", startOcrBtn: "دەستپێکردنی ناسینەوە", ocrProgressTitle: "ناسینەوەی تێکست لە PGS", ocrReading: "خەریکی خوێندنەوەیە...", ocrDoneTitle: "ناسینەوە بە سەرکەوتوویی تەواو بوو! ✓", openInEditor: "دەستکاریکردن لە ماڵپەڕدا",
+                pgsLang_eng: "English (ئینگلیزی)", pgsLang_fra: "French (فەڕەنسی)", pgsLang_spa: "Spanish (ئیسپانی)", pgsLang_ara: "Arabic (عەرەبی)",
                 toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
             },
             ar: {
                 pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", pgsBtn: "تحويل PGS (.sup)", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
                 msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "يرجى النقر على سماح لتنزيل الملفات.", batchDownloadBtn: "بدء التنزيل",
                 pgsModalTitle: "تحويل ملف PGS (.sup) إلى SRT / ASS", pgsModalDesc: "حدد ملف PGS لاستخراج النص بأعلى دقة:", selectPgsFile: "اختر ملف .sup:", sampleImagesText: "٣ صور عينة من الملف:", choosePgsLang: "اختر لغة الترجمة:", startOcrBtn: "بدء التعرف على النص", ocrProgressTitle: "التعرف على النص من PGS", ocrReading: "جاري القراءة...", ocrDoneTitle: "اكتمل التعرف بنجاح! ✓", openInEditor: "فتح في المحرر",
+                pgsLang_eng: "English (الإنجليزية)", pgsLang_fra: "French (الفرنسية)", pgsLang_spa: "Spanish (الإسبانية)", pgsLang_ara: "Arabic (العربية)",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
             },
             en: {
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (SRT / ASS / VTT)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", pgsBtn: "Convert PGS (.sup)", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", tagOptionLbl: "Clean formatting tags:", tagKeep: "Keep original", tagClean: "Clean", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "Unfinished session detected. Continue?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
                 msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!", msgInstallMenu: "Install option available in browser menu", installModalTitle: "Install App", installModalDesc: "Install as app for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Files", batchDownloadDesc: "Click allow to download files.", batchDownloadBtn: "Start Download",
                 pgsModalTitle: "Convert PGS (.sup) to SRT / ASS", pgsModalDesc: "Select a PGS file to extract text with highest accuracy:", selectPgsFile: "Select .sup file:", sampleImagesText: "3 sample images from file:", choosePgsLang: "Select subtitle language:", startOcrBtn: "Start OCR", ocrProgressTitle: "Extracting text from PGS", ocrReading: "Reading...", ocrDoneTitle: "OCR completed successfully! ✓", openInEditor: "Edit in Website",
+                pgsLang_eng: "English", pgsLang_fra: "French", pgsLang_spa: "Spanish", pgsLang_ara: "Arabic",
                 toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto"
             }
         };
@@ -757,6 +756,19 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
+        function updatePgsLangPills() {
+            const container = document.getElementById('pgsLangContainer');
+            if (!container) return;
+            const currentSelected = document.getElementById('selectedPgsLangValue').value || 'eng';
+            
+            container.innerHTML = `
+                <button type="button" class="pgs-lang-btn ${currentSelected === 'eng' ? 'active' : ''}" onclick="selectPgsLanguage('eng', this)">${i18n[currentLang]['pgsLang_eng']}</button>
+                <button type="button" class="pgs-lang-btn ${currentSelected === 'fra' ? 'active' : ''}" onclick="selectPgsLanguage('fra', this)">${i18n[currentLang]['pgsLang_fra']}</button>
+                <button type="button" class="pgs-lang-btn ${currentSelected === 'spa' ? 'active' : ''}" onclick="selectPgsLanguage('spa', this)">${i18n[currentLang]['pgsLang_spa']}</button>
+                <button type="button" class="pgs-lang-btn ${currentSelected === 'ara' ? 'active' : ''}" onclick="selectPgsLanguage('ara', this)">${i18n[currentLang]['pgsLang_ara']}</button>
+            `;
+        }
+
         function changeLanguage(lang) {
             currentLang = lang; 
             document.getElementById('html-tag').setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
@@ -769,6 +781,9 @@
             if(localStorage.getItem('kf_user')) {
                 document.getElementById('welcome-msg').innerText = i18n[currentLang]['welcomeText'];
             }
+            updatePgsLangPills();
+            // داخستنی خۆکاری مێنۆی زمان پاش گۆڕین
+            document.querySelectorAll('.custom-select-menu').forEach(m => m.classList.remove('show'));
         }
 
         function checkLogin() {
@@ -785,7 +800,7 @@
                 document.getElementById('setup-screen').style.display = 'none';
             }
             const hour = new Date().getHours();
-            if(hour >= 19 || hour < 11) {
+            if(hour >= 19 || hour < 12) {
                 document.body.classList.add('dark-theme');
                 document.documentElement.classList.add('dark-theme');
             } else {
@@ -837,7 +852,7 @@
             document.getElementById('back-confirm-modal').style.display = 'none';
             document.getElementById('editor-screen').style.display = 'none';
             document.getElementById('setup-screen').style.display = 'flex';
-            document.body.className = document.body.classList.contains('dark-theme') ? 'startup-bg dark-theme' : 'startup-bg';
+            document.body.className = document.documentElement.classList.contains('dark-theme') ? 'startup-bg dark-theme' : 'startup-bg';
             closeHeaderVideo();
             clearSession(); 
             history.replaceState(null, '', window.location.pathname);
@@ -981,7 +996,8 @@
             }
         }
 
-        function triggerDownload(content, filename, mimeType = 'text/plain;charset=utf-8') {
+        // داگرتنی پارێزراو بەبێ پاشگری زیادەی .txt
+        function triggerDownload(content, filename, mimeType = 'application/octet-stream') {
             const blob = (content instanceof Blob) ? content : new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1001,7 +1017,7 @@
             setTimeout(() => {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-            }, 800);
+            }, 1000);
         }
 
         function cleanSubtitleTags(text) {
@@ -1012,7 +1028,7 @@
         }
 
         // =========================================================================
-        // سیستەمی PGS بە وێنەی ڕەشی تۆخ لەسەر باکگراوندی سپی تەواو (زۆر خێرا و بێ هەڵە)
+        // سیستەمی PGS بە تێکستی ڕەشی ساف لەسەر سپیی تەواو پاک هاوشێوەی SubtitleTools
         // =========================================================================
         function openPgsDirectModal() {
             document.getElementById('pgs-direct-modal').style.display = 'flex';
@@ -1020,6 +1036,7 @@
             document.getElementById('directPgsFileName').innerText = i18n[currentLang]['batchNoFile'];
             document.getElementById('pgs-sample-section').style.display = 'none';
             document.getElementById('startDirectOcrBtn').style.display = 'none';
+            updatePgsLangPills();
         }
 
         function closePgsDirectModal() {
@@ -1123,7 +1140,7 @@
             return displaySets;
         }
 
-        // پڕۆسێسکردنی دڵنیایی بە وێنەی ڕەش و سپی تەواو ڕوون
+        // دیکۆدکردنی پێشکەوتوو بە پیتە ڕەشەکانی وەک Arial لەسەر سپیی پاک
         function renderOdsToCanvas(odsPayload) {
             if (!odsPayload || odsPayload.length < 11) return null;
             let w = (odsPayload[7] << 8) | odsPayload[8];
@@ -1188,8 +1205,8 @@
 
             let cropW = Math.max(10, maxX - minX + 1);
             let cropH = Math.max(10, maxY - minY + 1);
-            let scale = 2.0;
-            let pad = 20;
+            let scale = 1.8;
+            let pad = 16;
 
             let finalCanvas = document.createElement('canvas');
             finalCanvas.width = Math.round(cropW * scale) + (pad * 2);
@@ -1289,6 +1306,11 @@
             let content = "";
             let baseName = activePgsFile.name.replace(/\.[^/.]+$/, "");
             let filename = baseName + "." + format;
+            const mimeMap = {
+                srt: 'application/x-subrip;charset=utf-8',
+                ass: 'text/x-ssa;charset=utf-8',
+                vtt: 'text/vtt;charset=utf-8'
+            };
 
             if (format === 'srt') {
                 pgsRecognizedData.forEach((item, idx) => {
@@ -1306,7 +1328,7 @@
                 });
             }
 
-            triggerDownload(content.trim() + '\n\n', filename);
+            triggerDownload(content.trim() + '\n\n', filename, mimeMap[format]);
             showToast(i18n[currentLang]['msgDone'], "success");
         }
 
@@ -1320,6 +1342,11 @@
             if (!files || files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
             
             pendingBatchDownloads = []; 
+            const mimeMap = {
+                srt: 'application/x-subrip;charset=utf-8',
+                ass: 'text/x-ssa;charset=utf-8',
+                vtt: 'text/vtt;charset=utf-8'
+            };
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -1379,7 +1406,8 @@
 
                 pendingBatchDownloads.push({
                     content: finalContent.trim() + '\n\n',
-                    filename: file.name.replace(/\.[^/.]+$/, "") + "_edited." + targetFormat
+                    filename: file.name.replace(/\.[^/.]+$/, "") + "_edited." + targetFormat,
+                    mime: mimeMap[targetFormat]
                 });
             }
             
@@ -1391,7 +1419,7 @@
             document.getElementById('batch-download-modal').style.display = 'none';
             for (let i = 0; i < pendingBatchDownloads.length; i++) {
                 const item = pendingBatchDownloads[i];
-                triggerDownload(item.content, item.filename);
+                triggerDownload(item.content, item.filename, item.mime);
                 await new Promise(r => setTimeout(r, 900)); 
             }
             showToast(i18n[currentLang]['msgDone'], "success");
@@ -1574,7 +1602,6 @@
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('editor-screen').style.display = 'block';
             
-            // پاراستنی دۆخی تاریکی بەبێ سپی‌بوونی شاشە
             if (document.documentElement.classList.contains('dark-theme')) {
                 document.body.className = 'editor-bg dark-theme';
             } else {
@@ -1761,9 +1788,10 @@
             });
 
             const extension = isAssFormat ? '.ass' : (isVttFormat ? '.vtt' : '.srt');
+            const mimeType = isAssFormat ? 'text/x-ssa;charset=utf-8' : (isVttFormat ? 'text/vtt;charset=utf-8' : 'application/x-subrip;charset=utf-8');
             const filename = 'Edited_' + currentFileName.replace(/\.[^/.]+$/, "") + extension;
             
-            triggerDownload(final.trim() + '\n\n', filename);
+            triggerDownload(final.trim() + '\n\n', filename, mimeType);
             clearSession();
         }
     </script>
