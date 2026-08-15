@@ -72,7 +72,7 @@
             display: block;
         }
 
-        /* دۆخی تاریکی پێشکەوتوو */
+        /* دۆخی تاریک */
         body.dark-theme, html.dark-theme {
             --bg-color: #0d120f; 
             --card-bg: rgba(20, 28, 23, 0.96); 
@@ -152,10 +152,6 @@
             color: var(--primary); 
             border-color: rgba(52, 211, 153, 0.35); 
         }
-        body.dark-theme .btn-outline:hover {
-            background: rgba(52, 211, 153, 0.12);
-            border-color: var(--primary);
-        }
         body.dark-theme #install-app-btn { 
             background: rgba(52, 211, 153, 0.15); 
             color: var(--primary); 
@@ -170,7 +166,7 @@
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.25s ease; }
         
         #toast-container { position: fixed; bottom: calc(95px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: max-content; max-width: 92%; }
-        .toast { background: rgba(22, 30, 26, 0.96); border: 1px solid var(--card-border); color: white; padding: 10px 18px; border-radius: 12px; font-size: 13.5px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px); opacity: 0; transform: translateY(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; unicode-bidi: plaintext; }
+        .toast { background: rgba(22, 30, 26, 0.96); border: 1px solid var(--card-border); color: white; padding: 10px 18px; border-radius: 12px; font-size: 13.5px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px); opacity: 0; transform: translateY(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; }
         .toast.error { border-color: rgba(239, 68, 68, 0.6); background: rgba(35, 15, 15, 0.96); color: #fca5a5; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
@@ -237,7 +233,7 @@
         .file-box label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px !important; font-size: 13.5px; pointer-events: none; }
         .file-name-display { font-size: 12px; color: var(--text-muted); font-weight: bold; pointer-events: none; word-break: break-all; }
         
-        .clear-file-btn { position: absolute; top: 8px; inset-inline-end: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: transform 0.2s; }
+        .clear-file-btn { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: transform 0.2s; }
         .clear-file-btn:hover { transform: scale(1.1); }
 
         .btn { 
@@ -275,6 +271,8 @@
             padding: 0 12px calc(140px + env(safe-area-inset-bottom)) 12px; 
             animation: fadeIn 0.3s ease; 
         }
+        
+        /* سەرەوەی جێگیر بە شێوەیەکی تەنک و بێ سەرئێشە */
         .sticky-header-container { 
             position: sticky; 
             top: 0; 
@@ -287,16 +285,15 @@
             border-bottom: 1px solid var(--border-color); 
         }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; gap: 8px; border-bottom: 1px dashed var(--border-color); }
-        .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 7px 12px; }
-        .tool-divider { width: 1px; height: 18px; background: var(--border-color); margin: 0 2px; }
+        .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 6px 12px; }
+        .tool-divider { width: 1px; height: 16px; background: var(--border-color); margin: 0 2px; }
         
-        /* تەنها ئایکۆن لەگەڵ قەبارەی گونجاو لە بەشی سەرەوە */
         .top-btn, .back-btn { 
             background: var(--bg-color); 
             border: 1.5px solid var(--border-color); 
             color: var(--text-main); 
             border-radius: 9px; 
-            padding: 7px 11px; 
+            padding: 6px 10px; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
@@ -316,19 +313,19 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
 
-        /* بەشی ڤیدیۆ جێگیرکراو لەناو سەرەوە (Sticky Video) */
+        /* شاشەی ڤیدیۆ کە لەگەڵ پەڕەکە دەجووڵێت و شاشە داگیر ناکات */
         #video-container { 
             display: none; 
-            width: calc(100% - 20px); 
-            margin: 8px auto 6px auto; 
+            width: 100%; 
+            margin: 0 0 14px 0; 
             background: #000; 
-            border-radius: 12px; 
+            border-radius: 14px; 
             overflow: hidden; 
             box-shadow: var(--shadow-md); 
             border: 1.5px solid var(--primary); 
             position: relative; 
         }
-        #preview-video { width: 100%; max-height: 180px; display: block; object-fit: contain; background: #000; }
+        #preview-video { width: 100%; max-height: 220px; display: block; object-fit: contain; background: #000; }
         #video-subtitle-overlay { position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 14px; font-weight: bold; pointer-events: none; padding: 0 5%; line-height: 1.4; }
 
         .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: all 0.2s ease; }
@@ -336,17 +333,16 @@
         .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 6px 10px; border-radius: 8px; margin-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
         .subtitle-line-num { font-size: 13px; font-weight: bold; color: var(--primary); direction: ltr; }
         .subtitle-time { font-size: 12px; color: var(--text-muted); direction: ltr; }
-        .subtitle-orig { background: var(--bg-color); padding: 10px 12px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; color: var(--text-main); border-inline-start: 3.5px solid var(--primary); line-height: 1.5; direction: auto; unicode-bidi: plaintext; text-align: start; }
-        .subtitle-kurd textarea { width: 100%; min-height: 75px; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 14.5px; line-height: 1.5; resize: vertical; outline: none; direction: auto; unicode-bidi: plaintext; text-align: start; }
+        .subtitle-orig { background: var(--bg-color); padding: 10px 12px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; color: var(--text-main); border-right: 3.5px solid var(--primary); line-height: 1.5; text-align: start; }
+        .subtitle-kurd textarea { width: 100%; min-height: 75px; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 14.5px; line-height: 1.5; resize: vertical; outline: none; text-align: start; }
         .subtitle-kurd textarea:focus { border-color: var(--primary); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         .play-sub-btn:hover { transform: scale(1.1); }
 
-        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 12px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 14px 14px 0 0; transition: transform 0.25s ease, opacity 0.25s ease; }
+        .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 12px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); z-index: 100; border-radius: 14px 14px 0 0; transition: transform 0.22s ease, opacity 0.22s ease; }
         
-        /* شاردنەوەی دوگمەکانی خوارەوە لەکاتی کردنەوەی کیبۆرد */
-        body.keyboard-active .action-bar {
-            transform: translateY(100%);
+        body.keyboard-open .action-bar {
+            transform: translateY(120%);
             opacity: 0;
             pointer-events: none;
         }
@@ -363,7 +359,7 @@
             display: none; 
             position: absolute; 
             top: calc(100% + 4px); 
-            inset-inline-end: 0;
+            left: 0;
             background: var(--card-bg); 
             border: 1px solid var(--border-color); 
             border-radius: 10px; 
@@ -393,7 +389,7 @@
             .subtitle-kurd textarea { flex-grow: 1; height: 100%; min-height: 100px; }
             .action-bar { display: flex; justify-content: center; flex-direction: row; gap: 12px; padding: 12px 24px; }
             .action-bar .btn, .action-bar .btn-outline { width: auto; min-width: 170px; padding: 11px 16px; }
-            #preview-video { max-height: 260px; }
+            #preview-video { max-height: 360px; }
         }
     </style>
 </head>
@@ -598,12 +594,6 @@
                     <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </button>
             </div>
-
-            <!-- شاشەی ڤیدیۆ کە هەمیشە لە سەرەوە جێگیر دەبێت -->
-            <div id="video-container">
-                <video id="preview-video" controls playsinline webkit-playsinline preload="metadata"></video>
-                <div id="video-subtitle-overlay"></div>
-            </div>
         </div>
 
         <div class="floating-search-bar" id="searchBarPanel">
@@ -625,6 +615,11 @@
             </div>
         </div>
 
+        <div id="video-container">
+            <video id="preview-video" controls playsinline webkit-playsinline preload="metadata"></video>
+            <div id="video-subtitle-overlay"></div>
+        </div>
+
         <div id="subtitles-container"></div>
         
         <div class="action-bar">
@@ -641,7 +636,7 @@
                 <button class="btn btn-outline" style="padding: 7px 10px; font-size: 12px;" onclick="copyForAI()"><span data-i18n="aiCopy">کۆپی ئەسڵی</span></button>
                 <button class="btn btn-outline" style="padding: 7px 10px; font-size: 12px;" onclick="pasteFromClipboard()"><span data-i18n="aiPaste">پەیست بکە</span></button>
             </div>
-            <textarea id="ai-paste-area" style="width:100%; height:150px; padding:10px; border-radius:10px; border:1.5px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:14px; outline:none; resize:none; margin-bottom:6px;" dir="auto"></textarea>
+            <textarea id="ai-paste-area" style="width:100%; height:150px; padding:10px; border-radius:10px; border:1.5px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:14px; outline:none; resize:none; margin-bottom:6px; text-align: start;"></textarea>
             <div class="custom-modal-actions">
                 <button class="btn" onclick="processAIPaste()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
                 <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
@@ -695,39 +690,55 @@
             }
         }
 
-        // کۆنتڕۆڵی شاردنەوەی دوگمەکانی خوارەوە لەکاتی کردنەوەی کیبۆرد
+        // بەڕێوەبردنی تەواوی کیبۆرد بۆ دڵنیابوونەوە لە گەڕانەوەی Action Bar
+        function handleKeyboardVisibility() {
+            if (window.visualViewport) {
+                const isKb = window.visualViewport.height < (window.innerHeight - 100);
+                if (isKb) {
+                    document.body.classList.add('keyboard-open');
+                } else {
+                    document.body.classList.remove('keyboard-open');
+                }
+            }
+        }
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', handleKeyboardVisibility);
+        }
+
         document.addEventListener('focusin', (e) => {
             if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
-                document.body.classList.add('keyboard-active');
+                document.body.classList.add('keyboard-open');
             }
         });
+
         document.addEventListener('focusout', (e) => {
             if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
                 setTimeout(() => {
                     const active = document.activeElement;
                     if (!active || (active.tagName !== 'TEXTAREA' && active.tagName !== 'INPUT')) {
-                        document.body.classList.remove('keyboard-active');
+                        document.body.classList.remove('keyboard-open');
                     }
-                }, 100);
+                }, 150);
             }
         });
 
         const i18n = {
             ckb: {
                 pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
-                msgSelect: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
+                msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
                 toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
             },
             ar: {
                 pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!",
-                msgSelect: "الرجاء تحديد الملف الأصلي!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
+                msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
             },
             en: {
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
-                msgSelect: "Please select the original subtitle file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
+                msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
                 toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto"
             }
         };
@@ -747,6 +758,7 @@
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.innerText = message;
+            toast.style.direction = (currentLang === 'en') ? 'ltr' : 'rtl';
             container.appendChild(toast);
             requestAnimationFrame(() => toast.classList.add('show'));
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
@@ -756,11 +768,7 @@
             currentLang = lang; 
             const isEn = (lang === 'en');
             
-            // چاککردنی ئاڕاستەی گشتی بۆ ئینگلیزی تا هێماکان پێچەوانە نەبنەوە
-            document.getElementById('html-tag').setAttribute('dir', isEn ? 'ltr' : 'rtl');
-            document.getElementById('html-tag').setAttribute('lang', lang);
             document.title = i18n[lang]['pageTitle'];
-            
             document.querySelectorAll('.current-lang-text').forEach(e => { 
                 e.innerText = isEn ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی'); 
             });
@@ -772,7 +780,14 @@
                         el.placeholder = i18n[lang][key]; 
                     } else { 
                         el.innerHTML = i18n[lang][key]; 
-                    } 
+                    }
+                    if (isEn) {
+                        el.style.direction = 'ltr';
+                        el.style.unicodeBidi = 'isolate';
+                    } else {
+                        el.style.direction = 'rtl';
+                        el.style.unicodeBidi = 'normal';
+                    }
                 }
             });
 
@@ -783,8 +798,10 @@
                 }
             });
 
-            if(localStorage.getItem('kf_user')) {
-                document.getElementById('welcome-msg').innerText = i18n[currentLang]['welcomeText'];
+            const welcomeEl = document.getElementById('welcome-msg');
+            if(localStorage.getItem('kf_user') && welcomeEl) {
+                welcomeEl.innerText = i18n[currentLang]['welcomeText'];
+                welcomeEl.style.direction = isEn ? 'ltr' : 'rtl';
             }
             
             ['boxOriginal', 'boxKurdish'].forEach(id => {
@@ -1021,15 +1038,20 @@
             }
         }
 
-        // بەهیچ شێوەیەک .txt زیاد ناکات لەکاتی داگرتن
+        // داگرتنی ڕاستەوخۆ بەبێ ئەگەری دروستبوونی پاشگری .txt
         function triggerDownload(content, filename) {
-            const cleanFilename = filename.replace(/\.txt$/i, '');
+            let cleanFilename = filename.replace(/\.txt$/i, '').trim();
             let mimeType = 'application/octet-stream';
-            if (cleanFilename.endsWith('.srt')) mimeType = 'application/x-subrip';
-            else if (cleanFilename.endsWith('.vtt')) mimeType = 'text/vtt';
-            else if (cleanFilename.endsWith('.ass')) mimeType = 'text/x-ssa';
+            
+            if (cleanFilename.endsWith('.srt')) {
+                mimeType = 'application/x-subrip';
+            } else if (cleanFilename.endsWith('.vtt')) {
+                mimeType = 'text/vtt;charset=utf-8';
+            } else if (cleanFilename.endsWith('.ass')) {
+                mimeType = 'text/x-ssa;charset=utf-8';
+            }
 
-            const blob = (content instanceof Blob) ? content : new Blob([content], { type: mimeType });
+            const blob = new Blob([content], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1058,7 +1080,7 @@
             const tagOption = document.getElementById('tagOptionValue').value;
 
             if (!files || files.length === 0) { 
-                showToast(i18n[currentLang]['msgSelect'], "error"); 
+                showToast(i18n[currentLang]['msgSelectBatch'], "error"); 
                 return; 
             }
             
@@ -1087,12 +1109,13 @@
                         finalContent += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${lines.join('\n')}\n\n`; 
                     });
                 } else if (targetFormat === 'vtt') {
+                    // فۆرماتی دروستی VTT بەبێ ژمارەی دێڕ
                     finalContent = "WEBVTT\n\n";
-                    parsed.forEach((item, idx) => { 
+                    parsed.forEach(item => { 
                         let textStr = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : item.text);
                         let lines = textStr.split('\n').map(l => l.trim()).filter(l => l !== "");
                         if (lines.length === 0) lines = ['...'];
-                        finalContent += `${idx + 1}\n${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${lines.join('\n')}\n\n`; 
+                        finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${lines.join('\n')}\n\n`; 
                     });
                 } else if (targetFormat === 'ass') {
                     let header = (isOrigAss && assHeaderLines.length > 0) 
@@ -1302,7 +1325,7 @@
             const fOrig = document.getElementById('fileOriginal').files[0];
             const fKurd = document.getElementById('fileKurdish').files[0];
             if(!fOrig) { 
-                showToast(i18n[currentLang]['msgSelect'], "error"); 
+                showToast(i18n[currentLang]['msgSelectOrig'], "error"); 
                 return; 
             }
             
@@ -1535,7 +1558,8 @@
                     final += prefix + dialogueText + '\n'; 
                 } 
                 else if (isVttFormat) { 
-                    final += `${idx + 1}\n${formatTimeVTT(orig.startSec)} --> ${formatTimeVTT(orig.endSec)}\n${fp.join('\n')}\n\n`; 
+                    // فۆرماتی ستانداردی VTT بەبێ ژمارەی زیادە لە سەرەوە
+                    final += `${formatTimeVTT(orig.startSec)} --> ${formatTimeVTT(orig.endSec)}\n${fp.join('\n')}\n\n`; 
                 } 
                 else { 
                     final += `${idx + 1}\n${formatTimeSRT(orig.startSec)} --> ${formatTimeSRT(orig.endSec)}\n${fp.join('\n')}\n\n`; 
