@@ -162,7 +162,6 @@
             border: 1px solid rgba(52, 211, 153, 0.35); 
         }
 
-        /* چاککردنی ئاڕاستەی ئایکۆنەکان لە زمانی ئینگلیزی */
         html[lang="en"] .btn,
         html[lang="en"] h2,
         html[lang="en"] .back-btn,
@@ -323,7 +322,7 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
 
-        /* شاشەی ڤیدیۆ کە هەمیشە لە سەرەوە جێگیر دەبێت (Sticky Video) */
+        /* شاشەی ڤیدیۆ جێگیرکراو لە سەرەوە */
         #video-container { 
             display: none; 
             width: 100%; 
@@ -345,8 +344,37 @@
         .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 6px 10px; border-radius: 8px; margin-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
         .subtitle-line-num { font-size: 13px; font-weight: bold; color: var(--primary); direction: ltr; }
         .subtitle-time { font-size: 12px; color: var(--text-muted); direction: ltr; }
-        .subtitle-orig { background: var(--bg-color); padding: 10px 12px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; color: var(--text-main); border-right: 3.5px solid var(--primary); line-height: 1.5; text-align: start; }
-        .subtitle-kurd textarea { width: 100%; min-height: 75px; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 14.5px; line-height: 1.5; resize: vertical; outline: none; text-align: start; }
+        
+        /* ئاڕاستەی خۆکاری دروست بەبێ تێکچوونی خاڵبەندی و کەوانەکان */
+        .subtitle-orig { 
+            background: var(--bg-color); 
+            padding: 10px 12px; 
+            border-radius: 8px; 
+            margin-bottom: 10px; 
+            font-size: 14px; 
+            color: var(--text-main); 
+            border-inline-start: 3.5px solid var(--primary); 
+            line-height: 1.5; 
+            direction: auto; 
+            unicode-bidi: plaintext; 
+            text-align: start; 
+        }
+        .subtitle-kurd textarea { 
+            width: 100%; 
+            min-height: 75px; 
+            padding: 10px 12px; 
+            border-radius: 8px; 
+            border: 1.5px solid var(--border-color); 
+            background: var(--card-bg); 
+            color: var(--text-main); 
+            font-size: 14.5px; 
+            line-height: 1.5; 
+            resize: vertical; 
+            outline: none; 
+            direction: auto; 
+            unicode-bidi: plaintext; 
+            text-align: start; 
+        }
         .subtitle-kurd textarea:focus { border-color: var(--primary); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         .play-sub-btn:hover { transform: scale(1.1); }
@@ -627,7 +655,6 @@
             </div>
         </div>
 
-        <!-- شاشەی ڤیدیۆ کە بە جێگیری دەمێنێتەوە لە سەرەوە -->
         <div id="video-container">
             <video id="preview-video" controls playsinline webkit-playsinline preload="metadata"></video>
             <div id="video-subtitle-overlay"></div>
@@ -649,7 +676,7 @@
                 <button class="btn btn-outline" style="padding: 7px 10px; font-size: 12px;" onclick="copyForAI()"><span data-i18n="aiCopy">کۆپی ئەسڵی</span></button>
                 <button class="btn btn-outline" style="padding: 7px 10px; font-size: 12px;" onclick="pasteFromClipboard()"><span data-i18n="aiPaste">پەیست بکە</span></button>
             </div>
-            <textarea id="ai-paste-area" style="width:100%; height:150px; padding:10px; border-radius:10px; border:1.5px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:14px; outline:none; resize:none; margin-bottom:6px; text-align: start;"></textarea>
+            <textarea id="ai-paste-area" style="width:100%; height:150px; padding:10px; border-radius:10px; border:1.5px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:14px; outline:none; resize:none; margin-bottom:6px; text-align: start; direction: auto; unicode-bidi: plaintext;"></textarea>
             <div class="custom-modal-actions">
                 <button class="btn" onclick="processAIPaste()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
                 <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
@@ -1041,7 +1068,6 @@
             document.getElementById('btn-tag-clean').classList.toggle('active', opt === 'clean');
         }
 
-        // دانانی خۆکاری 0.1+ بۆ فایلی VTT لە بەشی گۆڕین
         function updateBatchCount(input) {
             const display = document.getElementById('batchCountDisplay');
             const shiftInput = document.getElementById('batchTimeShift');
@@ -1118,7 +1144,6 @@
                 const text = await file.text();
                 let parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
 
-                // پەیڕەوکردنی کات و زیادکردنی 0.1 بۆ فایلی VTT
                 let timeShift = hasExplicitShift ? baseTimeShift : (isOrigVtt ? 0.1 : 0);
 
                 if (timeShift !== 0) {
@@ -1235,29 +1260,54 @@
             })); 
         }
 
+        // ناساندنی پێشکەوتووی Dialogue و پاراستنی وردی هەموو ستایلەکانی فایلی ئەسڵی
         function parseASSContent(data, isOrig) {
             let items = []; 
             if(isOrig) assHeaderLines = []; 
             let id = 1;
             let lines = data.split(/\r?\n/);
+            let inEvents = false;
+
             for (let line of lines) {
-                if(line.startsWith('Dialogue:')) {
-                    let parts = line.split(',');
-                    if(parts.length >= 10) {
-                        let st = parts[1].trim(), en = parts[2].trim();
-                        let rawText = parts.slice(9).join(',');
+                let trimmed = line.trim();
+                if (trimmed.startsWith('[Events]')) {
+                    inEvents = true;
+                    if (isOrig) assHeaderLines.push(line);
+                    continue;
+                }
+                
+                if (trimmed.startsWith('Format:') && inEvents) {
+                    if (isOrig) assHeaderLines.push(line);
+                    continue;
+                }
+
+                if (trimmed.startsWith('Dialogue:')) {
+                    const m = line.match(/^Dialogue:\s*([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),(.*)$/);
+                    if (m) {
+                        let layer = m[1].trim();
+                        let st = m[2].trim();
+                        let en = m[3].trim();
+                        let style = m[4].trim();
+                        let name = m[5].trim();
+                        let marginL = m[6].trim();
+                        let marginR = m[7].trim();
+                        let marginV = m[8].trim();
+                        let effect = m[9].trim();
+                        let rawText = m[10];
+
                         let t = extLines(rawText);
                         items.push({ 
                             id: id++, 
                             time: `${st} --> ${en}`, 
                             startSec: timeToSeconds(st), 
                             endSec: timeToSeconds(en), 
-                            assPrefix: parts.slice(0,9).join(',') + ',', 
+                            assMeta: { layer, style, name, marginL, marginR, marginV, effect },
+                            assPrefix: `Dialogue: ${layer},${st},${en},${style},${name},${marginL},${marginR},${marginV},${effect},`,
                             parsedLines: t, 
                             text: t.map(l => l.text).join('\n') 
                         });
                     }
-                } else if (isOrig && !line.startsWith('Format:') && !line.startsWith('[Events]')) {
+                } else if (isOrig && !inEvents) {
                     assHeaderLines.push(line);
                 }
             }
@@ -1374,7 +1424,7 @@
                 if (kurdData.length === originalData.length && kurdData[i]) {
                     return kurdData[i].text;
                 }
-                let matched = kurdData.find(k => Math.abs(k.startSec - orig.startSec) <= 1.2);
+                let matched = kurdData.find(k => Math.abs(k.startSec - orig.startSec) <= 1.5);
                 if (matched) return matched.text;
                 return kurdData[i] ? kurdData[i].text : '';
             });
@@ -1395,8 +1445,8 @@
                         </div>
                         <div class="subtitle-time">${orig.time}</div>
                     </div>
-                    <div class="subtitle-orig">${orig.text.replace(/\n/g, '<br>')}</div>
-                    <div class="subtitle-kurd"><textarea>${kText}</textarea></div>
+                    <div class="subtitle-orig" dir="auto">${orig.text.replace(/\n/g, '<br>')}</div>
+                    <div class="subtitle-kurd"><textarea dir="auto">${kText}</textarea></div>
                 </div>`;
             }
             document.getElementById('subtitles-container').innerHTML = html;
@@ -1559,30 +1609,46 @@
             saveSession();
         }
 
+        // پاشەکەوتکردن بە گواستنەوەی تەواوی کات، ستایل و کۆدەکانی فایلی ئەسڵی بۆ فایلی وەرگێڕدراو
         function downloadEditedFile() {
-            let final = isAssFormat ? (assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n') : (isVttFormat ? "WEBVTT\n\n" : "");
+            let final = "";
+            if (isAssFormat) {
+                let header = assHeaderLines.join('\n');
+                if (!header.includes('[Events]')) {
+                    header += '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text';
+                }
+                final = header + '\n';
+            } else if (isVttFormat) {
+                final = "WEBVTT\n\n";
+            }
             
             document.querySelectorAll('.subtitle-card').forEach((card, idx) => {
                 let orig = originalData[idx];
                 if (!orig) return;
 
                 let kt = card.querySelector('textarea').value;
-                let textToUse = kt.trim() !== "" ? kt : orig.text;
+                let textToUse = (kt && kt.trim() !== "") ? kt : orig.text;
                 
                 let lines = textToUse.split('\n').map(l => l.trim()).filter(l => l !== "");
                 if (lines.length === 0) lines = [orig.text.trim() || '...'];
                 
                 let ol = orig.parsedLines || [];
                 let fp = []; 
-                for(let j=0; j<lines.length; j++) {
-                    let tag = (ol[j] && ol[j].tags) ? ol[j].tags : '';
-                    fp.push(tag + lines[j]); 
+                for(let j = 0; j < lines.length; j++) {
+                    let lineText = lines[j];
+                    let origTag = (ol[j] && ol[j].tags) ? ol[j].tags : (j === 0 && ol[0] && ol[0].tags ? ol[0].tags : '');
+                    if (origTag && !lineText.startsWith('{')) {
+                        fp.push(origTag + lineText);
+                    } else {
+                        fp.push(lineText);
+                    }
                 }
                 
                 if (isAssFormat) { 
                     let dialogueText = fp.join('\\N');
-                    let prefix = orig.assPrefix || `Dialogue: 0,${formatTimeASS(orig.startSec)},${formatTimeASS(orig.endSec)},Default,,0,0,0,,`;
-                    final += prefix + dialogueText + '\n'; 
+                    let meta = orig.assMeta || { layer: '0', style: 'Default', name: '', marginL: '0', marginR: '0', marginV: '0', effect: '' };
+                    let linePrefix = `Dialogue: ${meta.layer},${formatTimeASS(orig.startSec)},${formatTimeASS(orig.endSec)},${meta.style},${meta.name},${meta.marginL},${meta.marginR},${meta.marginV},${meta.effect},`;
+                    final += linePrefix + dialogueText + '\n'; 
                 } 
                 else if (isVttFormat) { 
                     final += `${formatTimeVTT(orig.startSec)} --> ${formatTimeVTT(orig.endSec)}\n${fp.join('\n')}\n\n`; 
