@@ -169,7 +169,6 @@
         .install-sheet { max-width: 380px; padding: 24px 20px 20px; border-radius: 22px; }
         .install-sheet-icon { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); color: #fff; }
 
-        /* ستایلی پێشاندانی نموونەی وێنەکانی PGS */
         .pgs-preview-box { background: rgba(0,0,0,0.3); border: 1.5px dashed var(--border-color); border-radius: 12px; padding: 10px; margin: 10px 0; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
         .pgs-preview-box img { max-width: 100%; max-height: 45px; background: #fff; padding: 4px 8px; border-radius: 6px; }
 
@@ -235,9 +234,9 @@
         <div class="file-box" id="boxOriginal">
             <button type="button" class="clear-file-btn" onclick="clearFile('fileOriginal', 'boxOriginal')" style="display: none;"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             <div class="upload-icon"><svg style="width:30px;height:30px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
-            <label data-i18n="origFileLbl">فایلی ئەسڵی (SRT / ASS / VTT / PGS .sup)</label>
+            <label data-i18n="origFileLbl">فایلی ئەسڵی (SRT / ASS / VTT)</label>
             <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
-            <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt,.sup" onchange="toggleClearBtn(this, 'boxOriginal')">
+            <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxOriginal')">
         </div>
         
         <div class="file-box" id="boxKurdish">
@@ -248,46 +247,56 @@
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
-        <div style="display:flex; width: 100%; gap:10px;">
-            <button class="btn" style="flex: 1.4;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
+        <!-- دوگمە سەرەکییەکان: دەستپێکردن، گۆڕینی فایل، گۆڕینی PGS -->
+        <div style="display:flex; width: 100%; gap:8px;">
+            <button class="btn" style="flex: 1.3;" onclick="startEditing()"><span data-i18n="startBtn">دەستپێکردن</span></button>
             <button class="btn btn-outline" style="flex: 1; padding: 12px;" onclick="openConverterModal()"><span data-i18n="batchBtn">گۆڕینی فایل</span></button>
+            <button class="btn btn-outline" style="flex: 1.2; padding: 12px; border-color: var(--primary);" onclick="openPgsDirectModal()"><span>گۆڕینی PGS (.sup)</span></button>
         </div>
 
         <div style="text-align: center; margin-top: 5px; font-size: 13px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-    <!-- مۆداڵی پێشاندانی وێنەکانی PGS و هەڵبژاردنی زمان (وەک لە وێنەکەدا هەیە) -->
-    <div id="pgs-lang-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 440px;">
-            <h3 class="custom-modal-title">پشکنینی فایلی PGS (.sup)</h3>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 6px;">ئەم ٣ وێنەیەی خوارەوە لە ناو فایلی PGSەکەت دەرکەوتوون، زمانەکەی دیاری بکە:</p>
+    <!-- مۆداڵی فەرمی گۆڕینی فایلی PGS (.sup) بە شێوازی تایبەت -->
+    <div id="pgs-direct-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width: 450px;">
+            <h3 class="custom-modal-title">گۆڕینی فایلی PGS (.sup) بۆ SRT / ASS</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">فایلی ژێرنووسی PGS دیاری بکە تا تێکستەکەی دەربهێنرێت:</p>
             
-            <div class="pgs-preview-box" id="pgs-images-container">
-                <!-- لێرە ٣ وێنەی ڕاستەقینەی ناو فایلی PGS نیشان دەدرێن -->
+            <div class="file-box" id="boxDirectPgs" style="margin-bottom: 10px; padding: 15px;">
+                <div class="upload-icon"><svg style="width:28px;height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+                <label>فایلی .sup هەڵبژێرە:</label>
+                <div class="file-name-display" id="directPgsFileName">هیچ فایلێک دیاری نەکراوە</div>
+                <input type="file" id="directPgsFileInput" accept=".sup" onchange="onDirectPgsSelected(this)">
             </div>
 
-            <div style="margin: 14px 0 8px 0; text-align: right;" dir="rtl">
-                <label style="font-size: 13px; font-weight: bold; color: var(--primary); display: block; margin-bottom: 6px;">زمانی تێکستی ناو وێنەکان:</label>
-                <select id="pgsLanguageSelect" class="input-field" style="padding: 10px; font-size: 13px;">
-                    <option value="eng" selected>English (ئینگلیزی)</option>
-                    <option value="fra">French (فەڕەنسی)</option>
-                    <option value="spa">Spanish (ئیسپانی)</option>
-                    <option value="ara">Arabic (عەرەبی)</option>
-                </select>
+            <div id="pgs-sample-section" style="display: none;">
+                <p style="font-size: 12px; color: var(--primary); font-weight: bold; margin: 6px 0;">٣ وێنەی نموونە لە ناو فایلەکە:</p>
+                <div class="pgs-preview-box" id="direct-pgs-images"></div>
+                
+                <div style="margin: 10px 0; text-align: right;" dir="rtl">
+                    <label style="font-size: 12.5px; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 4px;">زمانی ژێرنووسەکە هەڵبژێرە:</label>
+                    <select id="directPgsLanguage" class="input-field" style="padding: 8px; font-size: 13px;">
+                        <option value="eng" selected>English (ئینگلیزی)</option>
+                        <option value="fra">French (فەڕەنسی)</option>
+                        <option value="spa">Spanish (ئیسپانی)</option>
+                        <option value="ara">Arabic (عەرەبی)</option>
+                    </select>
+                </div>
             </div>
 
             <div class="custom-modal-actions">
-                <button class="btn" onclick="startPgsOCRProcess()" style="width: 50%;">دەستپێکردنی ناسینەوە</button>
-                <button class="btn btn-outline" onclick="closePgsLangModal()" style="width: 50%;">پاشگەزبوونەوە</button>
+                <button class="btn" id="startDirectOcrBtn" onclick="startDirectOcr()" style="width: 50%; display: none;">دەستپێکردنی ناسینەوە</button>
+                <button class="btn btn-outline" onclick="closePgsDirectModal()" style="width: 50%;">داخستن</button>
             </div>
         </div>
     </div>
 
-    <!-- مۆداڵی باڕی پێشکەوتنی ناسینەوەی تێکست -->
+    <!-- مۆداڵی پڕۆگرێس لە کاتی ناسینەوەی تێکست -->
     <div id="ocr-progress-modal" class="custom-modal-overlay">
         <div class="custom-modal-content" style="max-width: 380px;">
             <h3 class="custom-modal-title" style="margin-bottom: 6px;">ناسینەوەی تێکست لە PGS</h3>
-            <p id="ocr-status-text" style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">خەریکی خوێندنەوەیە...</p>
+            <p id="ocr-status-text" style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">خەریکی پشکنینی وێنەکانە...</p>
             <div style="width: 100%; height: 10px; background: var(--border-color); border-radius: 999px; overflow: hidden; margin-bottom: 8px;">
                 <div id="ocr-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #34e89e, #10b981); transition: width 0.2s;"></div>
             </div>
@@ -295,7 +304,7 @@
         </div>
     </div>
 
-    <!-- مۆداڵی کارت و داگرتنی ئەنجام (وەک لە وێنەی دووەمدا دیارە) -->
+    <!-- مۆداڵی ئەنجام و داگرتنی فایلی SRT / ASS -->
     <div id="pgs-result-modal" class="custom-modal-overlay">
         <div class="custom-modal-content" style="max-width: 440px;">
             <h3 class="custom-modal-title" style="color: var(--success);">ناسینەوە بە سەرکەوتوویی تەواو بوو! ✓</h3>
@@ -361,13 +370,13 @@
     <div id="converter-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="batchTitle">کارکردن بە کۆمەڵ لەسەر چەند فایلێک</h3>
-            <p style="font-size: 13.5px; color:var(--text-muted); margin-bottom:15px; line-height: 1.6;" data-i18n="batchDesc">دەتوانیت چەندین فایل پێکەوە هەڵبژێریت (SRT, ASS, VTT, PGS .sup)، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.</p>
+            <p style="font-size: 13.5px; color:var(--text-muted); margin-bottom:15px; line-height: 1.6;" data-i18n="batchDesc">دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.</p>
             
             <div class="file-box" id="boxBatch" style="margin-bottom: 20px; padding: 15px;">
                 <div class="upload-icon"><svg style="width:28px;height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>
                 <label data-i18n="batchSelectLbl">فایلەکان هەڵبژێرە:</label>
                 <div class="file-name-display" id="batchCountDisplay" data-i18n="batchNoFile">هیچ فایلێک دیاری نەکراوە</div>
-                <input type="file" id="convertFileInput" accept=".srt,.ass,.vtt,.sup" multiple onchange="updateBatchCount(this)">
+                <input type="file" id="convertFileInput" accept=".srt,.ass,.vtt" multiple onchange="updateBatchCount(this)">
             </div>
 
             <div style="margin-bottom: 20px; text-align: right;" dir="auto">
@@ -441,7 +450,7 @@
             <div class="search-row">
                 <div class="search-input-group" style="flex: 2;"><input type="text" id="searchInput" data-i18n="searchPlh" placeholder="گەڕان بەدوای..." onkeydown="if(event.key === 'Enter') findNext(1)"></div>
                 <button class="search-btn" style="flex: 0; padding: 10px;" onclick="findNext(-1)"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
-                <button class="search-btn" style="flex: 0; padding: 10px;" onclick="findNext(1)"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" transform="rotate(180 12 12)"></path></svg></button>
+                <button class="search-btn" style="flex: 0; padding: 10px;" onclick="findNext(1)"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
             </div>
             <div class="search-row">
                 <div class="search-input-group"><input type="text" id="replaceInput" data-i18n="replacePlh" placeholder="گۆڕین بە..."></div>
@@ -532,17 +541,17 @@
 
         const i18n = {
             ckb: {
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT / PGS .sup)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت (SRT, ASS, VTT, PGS .sup)، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchTimeLbl: "پێشخستن/دواخستنی کات (بۆ هەموویان):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
                 msgSelect: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە تەواو بوو!", msgCopied: "کۆپیکرا!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن"
             },
             ar: {
-                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT / PGS .sup)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق:", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
+                pageTitle: "محرر الترجمات", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ترجمات الفيديو.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchTimeLbl: "تقديم/تأخير الوقت (للجميع):", tagOptionLbl: "تنظيف وسوم التنسيق:", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً!",
                 msgSelect: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية!", msgCopied: "تم النسخ!", msgNotFound: "لم يتم العثور على نتائج!", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "يرجى النقر على سماح لتنزيل الملفات.", batchDownloadBtn: "بدء التنزيل"
             },
             en: {
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (SRT / ASS / VTT / PGS .sup)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", tagOptionLbl: "Clean formatting tags:", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "Unfinished session detected. Continue?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
+                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This website is for translating and editing video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original File (SRT / ASS / VTT)", clickSelect: "Click to select", transFileLbl: "Translated File (Optional)", startBtn: "Start Editing", batchBtn: "Convert File", batchTitle: "Batch Process", batchDesc: "Select multiple files to shift their timing or convert their format.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchTimeLbl: "Time Shift (for all):", tagOptionLbl: "Clean formatting tags:", batchFmtLbl: "Output Format:", applyBtn: "Apply", closeBtn: "Close", editorTitle: "Editing Subtitle", backBtn: "Back", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Insert Translation", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Continue Session?", resumeDesc: "Unfinished session detected. Continue?", resumeBtn: "Continue", startNewBtn: "Start Over", backTitle: "Are you sure?", confirmBack: "Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!",
                 msgSelect: "Please select a file!", msgDone: "Process completed!", msgCopied: "Copied!", msgNotFound: "No results found!", installModalTitle: "Install App", installModalDesc: "Install as app for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Files", batchDownloadDesc: "Click allow to download files.", batchDownloadBtn: "Start Download"
             }
         };
@@ -557,7 +566,6 @@
         let lastSubtitleIndex = -1, currentSearchIndex = 0;
         let pendingBatchDownloads = []; 
 
-        // گۆڕاوە تایبەتەکانی پڕۆسەی PGS
         let activePgsFile = null;
         let parsedPgsDisplaySets = [];
         let pgsRecognizedData = [];
@@ -815,17 +823,66 @@
             return cleaned.trim();
         }
 
-        // =========================================================================
-        // سیستەمی دیکۆدکردنی فەرمی و بێ هەڵەی PGS (.sup) بە ڕەنگ و پالتە و تایمینگ
-        // =========================================================================
+        // ==========================================
+        // سیستەمی فەرمی و دەقیقی PGS (.sup)
+        // ==========================================
+        function openPgsDirectModal() {
+            document.getElementById('pgs-direct-modal').style.display = 'flex';
+            document.getElementById('directPgsFileInput').value = '';
+            document.getElementById('directPgsFileName').innerText = 'هیچ فایلێک دیاری نەکراوە';
+            document.getElementById('pgs-sample-section').style.display = 'none';
+            document.getElementById('startDirectOcrBtn').style.display = 'none';
+        }
+
+        function closePgsDirectModal() {
+            document.getElementById('pgs-direct-modal').style.display = 'none';
+        }
+
+        async function onDirectPgsSelected(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            activePgsFile = file;
+            document.getElementById('directPgsFileName').innerText = file.name;
+            showToast("خەریکی پشکنینی وێنەکانە...", "success");
+
+            try {
+                parsedPgsDisplaySets = await extractPgsDisplaySets(file);
+                if (!parsedPgsDisplaySets || parsedPgsDisplaySets.length === 0) {
+                    showToast("هیچ داتایەکی ژێرنووس نەدۆزرایەوە!", "error");
+                    return;
+                }
+
+                const container = document.getElementById('direct-pgs-images');
+                container.innerHTML = '';
+                
+                let sampleCount = 0;
+                let step = Math.max(1, Math.floor(parsedPgsDisplaySets.length / 4));
+
+                for (let i = 0; i < parsedPgsDisplaySets.length && sampleCount < 3; i += step) {
+                    let canvas = renderOdsToCanvas(parsedPgsDisplaySets[i].ods);
+                    if (canvas) {
+                        let img = document.createElement('img');
+                        img.src = canvas.toDataURL();
+                        container.appendChild(img);
+                        sampleCount++;
+                    }
+                }
+
+                document.getElementById('pgs-sample-section').style.display = 'block';
+                document.getElementById('startDirectOcrBtn').style.display = 'inline-flex';
+            } catch (err) {
+                showToast("هەڵەیەک لە خوێندنەوەی فایلی PGS ڕوویدا", "error");
+            }
+        }
+
         async function extractPgsDisplaySets(file) {
             const buffer = await file.arrayBuffer();
             const data = new Uint8Array(buffer);
             let offset = 0;
-            
             let segments = [];
+
             while (offset < data.length - 13) {
-                if (data[offset] === 0x50 && data[offset + 1] === 0x47) { // PG header
+                if (data[offset] === 0x50 && data[offset + 1] === 0x47) {
                     let pts = ((data[offset + 2] << 24) | (data[offset + 3] << 16) | (data[offset + 4] << 8) | data[offset + 5]) >>> 0;
                     let type = data[offset + 10];
                     let len = (data[offset + 11] << 8) | data[offset + 12];
@@ -873,7 +930,6 @@
             return displaySets;
         }
 
-        // دیکۆدکردنی ODS بۆ Canvas
         function renderOdsToCanvas(odsPayload) {
             if (!odsPayload || odsPayload.length < 11) return null;
             let w = (odsPayload[7] << 8) | odsPayload[8];
@@ -921,47 +977,9 @@
             return canvas;
         }
 
-        async function handlePgsFileFlow(file) {
-            activePgsFile = file;
-            showToast("خەریکی پشکنین و هێنانی وێنەکانە...", "success");
-
-            try {
-                parsedPgsDisplaySets = await extractPgsDisplaySets(file);
-                if (!parsedPgsDisplaySets || parsedPgsDisplaySets.length === 0) {
-                    showToast("هیچ داتایەکی ژێرنووس لەم فایلەدا نەدۆزرایەوە!", "error");
-                    return;
-                }
-
-                // هێنانی ٣ وێنەی ڕاستەقینە بۆ پێشاندانی لە مۆداڵ
-                const container = document.getElementById('pgs-images-container');
-                container.innerHTML = '';
-                
-                let sampleCount = 0;
-                let step = Math.max(1, Math.floor(parsedPgsDisplaySets.length / 4));
-
-                for (let i = 0; i < parsedPgsDisplaySets.length && sampleCount < 3; i += step) {
-                    let canvas = renderOdsToCanvas(parsedPgsDisplaySets[i].ods);
-                    if (canvas) {
-                        let img = document.createElement('img');
-                        img.src = canvas.toDataURL();
-                        container.appendChild(img);
-                        sampleCount++;
-                    }
-                }
-
-                document.getElementById('pgs-lang-modal').style.display = 'flex';
-            } catch (err) {
-                showToast("هەڵەیەک ڕوویدا لە خوێندنەوەی فایلی PGS", "error");
-            }
-        }
-
-        function closePgsLangModal() {
-            document.getElementById('pgs-lang-modal').style.display = 'none';
-        }
-
-        async function startPgsOCRProcess() {
-            closePgsLangModal();
-            const lang = document.getElementById('pgsLanguageSelect').value || 'eng';
+        async function startDirectOcr() {
+            closePgsDirectModal();
+            const lang = document.getElementById('directPgsLanguage').value || 'eng';
             
             const ocrModal = document.getElementById('ocr-progress-modal');
             const ocrStatus = document.getElementById('ocr-status-text');
@@ -1010,14 +1028,13 @@
                 await worker.terminate();
                 ocrModal.style.display = 'none';
 
-                // پیشاندانی کارتی ئەنجام
                 document.getElementById('pgs-result-filename').innerText = activePgsFile.name;
-                document.getElementById('pgs-result-stats').innerText = `کۆی گشتی: ${pgsRecognizedData.length} دێڕ بە سەرکەوتوویی خوێندرانەوە.`;
+                document.getElementById('pgs-result-stats').innerText = `کۆی گشتی: ${pgsRecognizedData.length} دێڕ بە سەرکەوتوویی ناسرانەوە.`;
                 document.getElementById('pgs-result-modal').style.display = 'flex';
 
             } catch (e) {
                 ocrModal.style.display = 'none';
-                showToast("هەڵەیەک ڕوویدا لە کاتی پڕۆسەی ناسینەوەی تێکستدا", "error");
+                showToast("هەڵەیەک لە کاتی ناسینەوەی تێکستدا ڕوویدا", "error");
             }
         }
 
@@ -1052,7 +1069,7 @@
             }
 
             triggerDownload(content.trim() + '\n\n', filename);
-            showToast("فایلەکە دابەزی!", "success");
+            showToast("فایلەکە بە سەرکەوتوویی داگیرا!", "success");
         }
 
         async function prepareBatchProcess() {
@@ -1064,15 +1081,6 @@
 
             if (!files || files.length === 0) { showToast(i18n[currentLang]['msgSelect'], "error"); return; }
             
-            // ئەگەر فایلی PGS لەناو کۆمەڵە فایلەکاندا هەبوو
-            let hasSup = false;
-            for (let f of files) { if (f.name.toLowerCase().endsWith('.sup')) { hasSup = true; break; } }
-            if (hasSup && files.length === 1) {
-                document.getElementById('converter-modal').style.display = 'none';
-                handlePgsFileFlow(files[0]);
-                return;
-            }
-
             pendingBatchDownloads = []; 
 
             for (let i = 0; i < files.length; i++) {
@@ -1284,12 +1292,6 @@
             currentFileName = fOrig.name; 
             isAssFormat = fOrig.name.toLowerCase().endsWith('.ass'); 
             isVttFormat = fOrig.name.toLowerCase().endsWith('.vtt'); 
-            const isSupFormat = fOrig.name.toLowerCase().endsWith('.sup');
-            
-            if (isSupFormat) {
-                handlePgsFileFlow(fOrig);
-                return;
-            }
 
             originalData = isAssFormat ? parseASSContent(await fOrig.text(), true) : (isVttFormat ? parseVTTContent(await fOrig.text()) : parseSRTContent(await fOrig.text()));
             
