@@ -72,6 +72,7 @@
             display: block;
         }
 
+        /* دۆخی تاریک */
         body.dark-theme, html.dark-theme {
             --bg-color: #0d120f; 
             --card-bg: rgba(20, 28, 23, 0.96); 
@@ -162,6 +163,61 @@
         body.dark-theme .history-item {
             background: rgba(22, 34, 26, 0.8);
             border-color: #223327;
+        }
+
+        /* دوگمەی دابەزاندنی ئەپ لە دۆخی ڕۆژدا (Glassmorphism) */
+        #install-app-btn { 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 4px; 
+            padding: 5px 12px; 
+            border-radius: 999px; 
+            border: 1px solid rgba(142, 182, 155, 0.4); 
+            background: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            color: #1e3a2b; 
+            font-size: 11.5px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            white-space: nowrap; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        #install-app-btn:hover {
+            background: rgba(142, 182, 155, 0.2);
+            border-color: var(--primary);
+        }
+
+        .install-sheet-icon { 
+            width: 52px; 
+            height: 52px; 
+            margin: 0 auto 12px auto; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: rgba(142, 182, 155, 0.18); 
+            color: #235c43; 
+            border: 1px solid rgba(142, 182, 155, 0.35);
+            backdrop-filter: blur(8px);
+        }
+        body.dark-theme .install-sheet-icon { 
+            background: rgba(52, 211, 153, 0.15) !important; 
+            color: #34d399 !important; 
+            border: 1px solid rgba(52, 211, 153, 0.3) !important; 
+        }
+
+        .custom-modal-title {
+            color: #235c43;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 16.5px;
+            font-weight: bold;
+        }
+        body.dark-theme .custom-modal-title {
+            color: var(--primary) !important;
         }
 
         html[lang="en"] .btn,
@@ -389,23 +445,6 @@
             pointer-events: none;
         }
 
-        #install-app-btn { 
-            display: none; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 4px; 
-            padding: 5px 10px; 
-            border-radius: 999px; 
-            border: 1px solid rgba(142, 182, 155, 0.5); 
-            background: rgba(142, 182, 155, 0.15); 
-            color: #2b5240; 
-            font-size: 11.5px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: all 0.2s; 
-            white-space: nowrap; 
-        }
-
         #scroll-to-top-btn {
             position: fixed;
             bottom: calc(80px + env(safe-area-inset-bottom));
@@ -474,12 +513,13 @@
             font-size: 11px;
             color: var(--text-muted);
             margin-top: 3px;
+            direction: ltr;
+            unicode-bidi: isolate;
+            text-align: start;
         }
 
         .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 12px; animation: fadeIn 0.2s ease; }
         .custom-modal-content { background: var(--card-bg); padding: 20px 16px; border-radius: 18px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.25s ease; }
-        .custom-modal-title { color: var(--primary); margin-top: 0; margin-bottom: 8px; font-size: 16px; }
-        .custom-modal-actions { display: flex; gap: 8px; justify-content: center; margin-top: 14px; }
 
         .custom-select-wrapper { position: relative; display: inline-block; }
         .custom-select-btn { padding: 5px 9px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 11.5px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; white-space: nowrap; }
@@ -504,18 +544,6 @@
         .custom-select-item:hover { background: var(--bg-color); color: var(--primary); }
 
         .install-sheet { max-width: 360px; padding: 20px 16px; border-radius: 18px; }
-        .install-sheet-icon { 
-            width: 50px; 
-            height: 50px; 
-            margin: 0 auto 12px auto; 
-            border-radius: 16px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: rgba(142, 182, 155, 0.15); 
-            color: var(--primary); 
-            border: 1px solid rgba(142, 182, 155, 0.3);
-        }
 
         @media (min-width: 768px) {
             #editor-screen { max-width: 960px; padding-bottom: 85px; }
@@ -615,7 +643,7 @@
     <div id="history-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="historyTitle">مێژووی ژێرنووسە دەستکاریکراوەکان</h3>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;" id="history-count-text">تۆمارەکان: ٠ لە ٢٠</p>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0; direction: ltr; unicode-bidi: isolate;" id="history-count-text">1 / 20</p>
             
             <div class="history-list" id="historyListContainer"></div>
 
@@ -916,7 +944,7 @@
                 toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
             },
             ar: {
-                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للااختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
+                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
                 msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
             },
@@ -963,11 +991,11 @@
             if (hist.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding: 25px; color: var(--text-muted); font-size: 13px;">${i18n[currentLang]['historyEmpty']}</div>`;
             } else {
-                container.innerHTML = hist.map(h => `
+                container.innerHTML = hist.map((h, idx) => `
                     <div class="history-item">
                         <div class="history-info">
                             <div class="history-name">${h.fileName}</div>
-                            <div class="history-meta">${h.date} • ${h.count} دێڕ • ${h.format.toUpperCase()}</div>
+                            <div class="history-meta"><span>${h.date}</span> • <span>${h.count} دێڕ</span> • <span>${h.format.toUpperCase()}</span></div>
                         </div>
                         <div style="display:flex; gap: 6px;">
                             <button class="btn" style="padding: 6px 10px; font-size: 11px; width:auto;" onclick="restoreFromHistory('${h.id}')">${i18n[currentLang]['restoreBtn']}</button>
@@ -1513,6 +1541,7 @@
                             time: `${st} --> ${en}`, 
                             startSec: timeToSeconds(st), 
                             endSec: timeToSeconds(en), 
+                            rawText: rawText,
                             assMeta: { layer, style, name, marginL, marginR, marginV, effect },
                             assPrefix: `Dialogue: ${layer},${st},${en},${style},${name},${marginL},${marginR},${marginV},${effect},`,
                             parsedLines: t, 
@@ -1545,6 +1574,7 @@
                         time: `${st} --> ${en}`, 
                         startSec: timeToSeconds(st), 
                         endSec: timeToSeconds(en), 
+                        rawText: rawText,
                         assPrefix: '', 
                         parsedLines: pl, 
                         text: pl.map(x => x.text).join('\n') 
@@ -1574,6 +1604,7 @@
                         time: `${st} --> ${en}`, 
                         startSec: timeToSeconds(st), 
                         endSec: timeToSeconds(en), 
+                        rawText: rawText,
                         assPrefix: '', 
                         parsedLines: pl, 
                         text: pl.map(x => x.text).join('\n') 
@@ -1591,7 +1622,7 @@
             saveToHistory({
                 id: 'hist_' + Date.now(),
                 fileName: currentFileName,
-                date: new Date().toLocaleDateString('ckb', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                date: new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }) + ', ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                 format: isAssFormat ? 'ass' : (isVttFormat ? 'vtt' : 'srt'),
                 count: originalData.length,
                 originalData,
@@ -1623,6 +1654,32 @@
             }
         }
 
+        /* 🧠 AI/Smart Tag Transfser function: Transfer HTML/ASS tags from original to translated text */
+        function smartApplyTags(origText, transText) {
+            if (!origText || !transText) return transText;
+            
+            let result = transText;
+
+            // 1. Transfer HTML tags (e.g., <i>...</i>, <b>...</b>, <u>...</u>)
+            if (/<i>(.*?)<\/i>/i.test(origText) && !/<i>/i.test(result)) {
+                result = `<i>${result}</i>`;
+            }
+            if (/<b>(.*?)<\/b>/i.test(origText) && !/<b>/i.test(result)) {
+                result = `<b>${result}</b>`;
+            }
+            if (/<u>(.*?)<\/u>/i.test(origText) && !/<u>/i.test(result)) {
+                result = `<u>${result}</u>`;
+            }
+
+            // 2. Transfer ASS Inline Tags (e.g. {\i1}, {\b1}, {\c...})
+            const assTags = origText.match(/\{[^}]+\}/g);
+            if (assTags && !result.includes('{')) {
+                result = assTags.join('') + result;
+            }
+
+            return result;
+        }
+
         async function startEditing() {
             const fOrig = document.getElementById('fileOriginal').files[0];
             const fKurd = document.getElementById('fileKurdish').files[0];
@@ -1646,12 +1703,17 @@
             }
 
             let state = originalData.map((orig, i) => {
+                let transRaw = '';
                 if (kurdData.length === originalData.length && kurdData[i]) {
-                    return kurdData[i].text;
+                    transRaw = kurdData[i].text;
+                } else {
+                    let matched = kurdData.find(k => Math.abs(k.startSec - orig.startSec) <= 1.5);
+                    if (matched) transRaw = matched.text;
+                    else transRaw = kurdData[i] ? kurdData[i].text : '';
                 }
-                let matched = kurdData.find(k => Math.abs(k.startSec - orig.startSec) <= 1.5);
-                if (matched) return matched.text;
-                return kurdData[i] ? kurdData[i].text : '';
+
+                // ڕاستەوخۆ تاگەکانی HTML و ASS لە ئەسڵەکەوە دەگوازێتەوە سەر وەرگێڕدراوەکە
+                return smartApplyTags(orig.rawText || orig.text, transRaw);
             });
             
             buildEditorUI(state);
