@@ -152,11 +152,6 @@
             color: var(--primary); 
             border-color: rgba(52, 211, 153, 0.35); 
         }
-        body.dark-theme #install-app-btn { 
-            background: rgba(52, 211, 153, 0.15) !important; 
-            color: #34d399 !important; 
-            border: 1px solid rgba(52, 211, 153, 0.35) !important; 
-        }
         body.dark-theme button[onclick="logout()"] {
             color: #f87171 !important;
         }
@@ -165,59 +160,50 @@
             border-color: #223327;
         }
 
-        /* دوگمەی دابەزاندنی ئەپ لە دۆخی ڕۆژدا (Glassmorphism) */
+        /* 🎨 دوگمەی دابەزاندنی ئەپ و ئایکۆنی مۆداڵ لە دۆخی ڕۆژدا (تەنها بۆ دۆخی ڕۆژ) */
         #install-app-btn { 
             display: none; 
             align-items: center; 
             justify-content: center; 
-            gap: 4px; 
-            padding: 5px 12px; 
+            gap: 6px; 
+            padding: 6px 14px; 
             border-radius: 999px; 
-            border: 1px solid rgba(142, 182, 155, 0.4); 
-            background: rgba(255, 255, 255, 0.6); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            color: #1e3a2b; 
-            font-size: 11.5px; 
+            border: none; 
+            background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); 
+            color: #ffffff !important; 
+            font-size: 12px; 
             font-weight: bold; 
             cursor: pointer; 
-            transition: all 0.2s; 
+            box-shadow: 0 4px 12px rgba(124, 161, 136, 0.35);
+            transition: all 0.2s ease; 
             white-space: nowrap; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         #install-app-btn:hover {
-            background: rgba(142, 182, 155, 0.2);
-            border-color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(124, 161, 136, 0.45);
+        }
+        body.dark-theme #install-app-btn { 
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important; 
+            color: #ffffff !important; 
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
         }
 
         .install-sheet-icon { 
-            width: 52px; 
-            height: 52px; 
+            width: 64px; 
+            height: 64px; 
             margin: 0 auto 12px auto; 
-            border-radius: 16px; 
+            border-radius: 22px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            background: rgba(142, 182, 155, 0.18); 
-            color: #235c43; 
-            border: 1px solid rgba(142, 182, 155, 0.35);
-            backdrop-filter: blur(8px);
+            background: linear-gradient(135deg, #a8d5b8 0%, #7ca188 100%); 
+            color: #ffffff !important; 
+            box-shadow: 0 6px 16px rgba(124, 161, 136, 0.35);
         }
         body.dark-theme .install-sheet-icon { 
-            background: rgba(52, 211, 153, 0.15) !important; 
-            color: #34d399 !important; 
-            border: 1px solid rgba(52, 211, 153, 0.3) !important; 
-        }
-
-        .custom-modal-title {
-            color: #235c43;
-            margin-top: 0;
-            margin-bottom: 8px;
-            font-size: 16.5px;
-            font-weight: bold;
-        }
-        body.dark-theme .custom-modal-title {
-            color: var(--primary) !important;
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important; 
+            color: #ffffff !important; 
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
         }
 
         html[lang="en"] .btn,
@@ -520,6 +506,22 @@
 
         .custom-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 20, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 12px; animation: fadeIn 0.2s ease; }
         .custom-modal-content { background: var(--card-bg); padding: 20px 16px; border-radius: 18px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.25s ease; }
+        
+        .custom-modal-actions { 
+            display: flex !important; 
+            flex-direction: row !important; 
+            gap: 10px !important; 
+            justify-content: center !important; 
+            align-items: center !important; 
+            margin-top: 16px !important; 
+            width: 100% !important; 
+        }
+        .custom-modal-actions .btn, 
+        .custom-modal-actions .btn-outline { 
+            flex: 1 !important; 
+            width: 50% !important; 
+            margin: 0 !important;
+        }
 
         .custom-select-wrapper { position: relative; display: inline-block; }
         .custom-select-btn { padding: 5px 9px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); font-size: 11.5px; font-weight: bold; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; white-space: nowrap; }
@@ -606,7 +608,7 @@
         <div class="file-box" id="boxOriginal">
             <button type="button" class="clear-file-btn" onclick="clearFile('fileOriginal', 'boxOriginal')" style="display: none;"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
-            <label data-i18n="origFileLbl">فایلی ئەسڵی (SRT / ASS / VTT)</label>
+            <label data-i18n="origFileLbl">فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)</label>
             <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
             <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxOriginal')">
         </div>
@@ -643,20 +645,20 @@
     <div id="history-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="historyTitle">مێژووی ژێرنووسە دەستکاریکراوەکان</h3>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0; direction: ltr; unicode-bidi: isolate;" id="history-count-text">1 / 20</p>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0; direction: ltr; unicode-bidi: isolate;" id="history-count-text">0 / 20</p>
             
             <div class="history-list" id="historyListContainer"></div>
 
             <div class="custom-modal-actions">
-                <button class="btn btn-outline" style="color: #ef4444; border-color: #ef4444; width: 50%;" onclick="clearAllHistory()" data-i18n="clearAllBtn">سڕینەوەی هەمووی</button>
-                <button class="btn" onclick="document.getElementById('history-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
+                <button class="btn btn-outline" style="color: #ef4444; border-color: #ef4444;" onclick="clearAllHistory()" data-i18n="clearAllBtn">سڕینەوەی هەمووی</button>
+                <button class="btn" onclick="document.getElementById('history-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
     </div>
 
     <div id="install-modal" class="custom-modal-overlay">
         <div class="custom-modal-content install-sheet">
-            <div class="install-sheet-icon"><svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>
+            <div class="install-sheet-icon"><svg style="width:28px;height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></div>
             <h3 class="custom-modal-title" data-i18n="installModalTitle">دابەزاندنی ئەپ</h3>
             <p style="font-size: 12.5px; line-height: 1.6; color: var(--text-main);" data-i18n="installModalDesc">ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟</p>
             <div class="custom-modal-actions">
@@ -679,8 +681,8 @@
             <h3 class="custom-modal-title" data-i18n="resumeTitle">دەتەوێت بەردەوام بیت؟</h3>
             <p style="font-size: 13px; color:var(--text-main); margin-bottom:14px; line-height: 1.6;" data-i18n="resumeDesc">پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟</p>
             <div class="custom-modal-actions">
-                <button class="btn" onclick="resumeSession()" style="width: 50%;" data-i18n="resumeBtn">بەردەوامبوون</button>
-                <button class="btn btn-outline" onclick="clearSession()" style="width: 50%; color: #ef4444; border-color: #ef4444;" data-i18n="startNewBtn">دەستپێکردنەوە</button>
+                <button class="btn" onclick="resumeSession()" data-i18n="resumeBtn">بەردەوامبوون</button>
+                <button class="btn btn-outline" onclick="clearSession()" style="color: #ef4444; border-color: #ef4444;" data-i18n="startNewBtn">دەستپێکردنەوە</button>
             </div>
         </div>
     </div>
@@ -690,8 +692,8 @@
             <h3 class="custom-modal-title" data-i18n="backTitle">ئایا دڵنیایت؟</h3>
             <p style="font-size: 13px; color:var(--text-main); margin-bottom:14px; line-height: 1.6;" data-i18n="confirmBack">ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.</p>
             <div class="custom-modal-actions">
-                <button class="btn" onclick="document.getElementById('back-confirm-modal').style.display='none'" style="width: 50%;" data-i18n="cancelBtn">پاشگەزبوونەوە</button>
-                <button class="btn btn-outline" onclick="executeGoBack()" style="width: 50%; color: var(--text-muted); border-color: var(--text-muted);" data-i18n="yesLeave">بەڵێ، دەرچوون</button>
+                <button class="btn" onclick="document.getElementById('back-confirm-modal').style.display='none'" data-i18n="cancelBtn">پاشگەزبوونەوە</button>
+                <button class="btn btn-outline" onclick="executeGoBack()" style="color: var(--text-muted); border-color: var(--text-muted);" data-i18n="yesLeave">بەڵێ، دەرچوون</button>
             </div>
         </div>
     </div>
@@ -702,7 +704,7 @@
             <p style="font-size: 12.5px; color:var(--text-muted); margin-bottom:12px; line-height: 1.5;" data-i18n="batchDesc">دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.</p>
             
             <div class="file-box" id="boxBatch" style="margin-bottom: 12px; padding: 12px;">
-                <div class="upload-icon"><svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>
+                <div class="upload-icon"><svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 00-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>
                 <label data-i18n="batchSelectLbl">فایلەکان هەڵبژێرە:</label>
                 <div class="file-name-display" id="batchCountDisplay" data-i18n="batchNoFile">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="convertFileInput" accept=".srt,.ass,.vtt" multiple onchange="updateBatchCount(this)">
@@ -733,8 +735,8 @@
             </div>
             
             <div class="custom-modal-actions">
-                <button class="btn" onclick="prepareBatchProcess()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
-                <button class="btn btn-outline" onclick="document.getElementById('converter-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
+                <button class="btn" onclick="prepareBatchProcess()" data-i18n="applyBtn">جێبەجێکردن</button>
+                <button class="btn btn-outline" onclick="document.getElementById('converter-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
     </div>
@@ -834,8 +836,8 @@
             </div>
             <textarea id="ai-paste-area" style="width:100%; height:150px; padding:10px; border-radius:10px; border:1.5px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:14px; outline:none; resize:none; margin-bottom:6px; text-align: start; direction: auto; unicode-bidi: plaintext;"></textarea>
             <div class="custom-modal-actions">
-                <button class="btn" onclick="processAIPaste()" style="width: 50%;" data-i18n="applyBtn">جێبەجێکردن</button>
-                <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" style="width: 50%;" data-i18n="closeBtn">داخستن</button>
+                <button class="btn" onclick="processAIPaste()" data-i18n="applyBtn">جێبەجێکردن</button>
+                <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
     </div>
@@ -937,7 +939,7 @@
 
         const i18n = {
             ckb: {
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (SRT / ASS / VTT)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
                 msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
                 batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
@@ -991,7 +993,7 @@
             if (hist.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding: 25px; color: var(--text-muted); font-size: 13px;">${i18n[currentLang]['historyEmpty']}</div>`;
             } else {
-                container.innerHTML = hist.map((h, idx) => `
+                container.innerHTML = hist.map((h) => `
                     <div class="history-item">
                         <div class="history-info">
                             <div class="history-name">${h.fileName}</div>
@@ -1418,6 +1420,10 @@
                     finalContent = header;
                     parsed.forEach(item => { 
                         let textStr = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : item.text);
+                        // Convert HTML tags to native ASS tags
+                        textStr = textStr.replace(/<i>/gi, '{\\i1}').replace(/<\/i>/gi, '{\\i0}')
+                                         .replace(/<b>/gi, '{\\b1}').replace(/<\/b>/gi, '{\\b0}')
+                                         .replace(/<u>/gi, '{\\u1}').replace(/<\/u>/gi, '{\\u0}');
                         let lines = textStr.split('\n').map(l => l.trim()).filter(l => l !== "");
                         if (lines.length === 0) lines = ['...'];
                         finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${lines.join('\\N')}\n`; 
@@ -1660,7 +1666,6 @@
             
             let result = transText;
 
-            // 1. Transfer HTML tags (e.g., <i>...</i>, <b>...</b>, <u>...</u>)
             if (/<i>(.*?)<\/i>/i.test(origText) && !/<i>/i.test(result)) {
                 result = `<i>${result}</i>`;
             }
@@ -1671,7 +1676,6 @@
                 result = `<u>${result}</u>`;
             }
 
-            // 2. Transfer ASS Inline Tags (e.g. {\i1}, {\b1}, {\c...})
             const assTags = origText.match(/\{[^}]+\}/g);
             if (assTags && !result.includes('{')) {
                 result = assTags.join('') + result;
@@ -1712,7 +1716,6 @@
                     else transRaw = kurdData[i] ? kurdData[i].text : '';
                 }
 
-                // ڕاستەوخۆ تاگەکانی HTML و ASS لە ئەسڵەکەوە دەگوازێتەوە سەر وەرگێڕدراوەکە
                 return smartApplyTags(orig.rawText || orig.text, transRaw);
             });
             
@@ -1915,6 +1918,13 @@
                 let kt = card.querySelector('textarea').value;
                 let textToUse = (kt && kt.trim() !== "") ? kt : orig.text;
                 
+                // Convert HTML tags back to ASS tags if saving in ASS format
+                if (isAssFormat) {
+                    textToUse = textToUse.replace(/<i>/gi, '{\\i1}').replace(/<\/i>/gi, '{\\i0}')
+                                         .replace(/<b>/gi, '{\\b1}').replace(/<\/b>/gi, '{\\b0}')
+                                         .replace(/<u>/gi, '{\\u1}').replace(/<\/u>/gi, '{\\u0}');
+                }
+
                 let lines = textToUse.split('\n').map(l => l.trim()).filter(l => l !== "");
                 if (lines.length === 0) lines = [orig.text.trim() || '...'];
                 
