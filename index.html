@@ -51,6 +51,7 @@
 body { 
     font-family: 'KurdForest', Tahoma, Arial, sans-serif; 
     padding: 12px; 
+    overflow-x: hidden;
     touch-action: manipulation;
 }
 
@@ -332,9 +333,11 @@ body {
 .header-tools-container { 
     position: relative;
     background: var(--card-bg); 
-    margin: 0 -12px 10px -12px; 
+    border-radius: 14px;
+    margin: 0 0 10px 0; 
     box-shadow: var(--shadow-sm); 
-    border-bottom: 1px solid var(--border-color); 
+    border: 1px solid var(--border-color); 
+    overflow: hidden;
 }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; gap: 8px; border-bottom: 1px dashed var(--border-color); }
         .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 6px 12px; }
@@ -374,10 +377,7 @@ body {
     overflow: hidden; 
     box-shadow: 0 8px 24px rgba(0,0,0,0.3); 
     border: 1.5px solid var(--primary); 
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    position: relative;
 }
         #preview-video { width: 100%; max-height: 200px; display: block; object-fit: contain; background: #000; }
         #video-subtitle-overlay { position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 14px; font-weight: bold; pointer-events: none; padding: 0 5%; line-height: 1.4; }
