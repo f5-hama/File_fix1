@@ -15,7 +15,56 @@
     <link rel="stylesheet" href="./fonts.css">
     
     <style>
-        :root {
+      
+    /*      */
+.setup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--border-color);
+}
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    inset-inline-start: 0;
+    width: 220px;
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    padding: 8px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    animation: slideUpFade 0.2s ease;
+}
+.menu-dropdown.show { display: block; }
+.menu-btn-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 9px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: start;
+}
+.menu-btn-item:hover {
+    background: rgba(142, 182, 155, 0.15);
+    color: var(--primary);
+}
+    
+  :root {
             --primary: #8EB69B; 
             --primary-hover: #7ca188; 
             --primary-glow: rgba(142, 182, 155, 0.35);
@@ -337,7 +386,6 @@ body.editor-bg {
     margin: 0 0 10px 0; 
     box-shadow: var(--shadow-sm); 
     border: 1px solid var(--border-color); 
-    overflow: hidden;
 }
         .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; gap: 8px; border-bottom: 1px dashed var(--border-color); }
         .top-tools { display: flex; gap: 8px; align-items: center; justify-content: center; padding: 6px 12px; }
@@ -380,7 +428,7 @@ body.editor-bg {
     position: -webkit-sticky;
     position: sticky;
     top: 4px;
-    z-index: 100;
+    z-index: 90;
 }
 
          #preview-video { width: 100%; max-height: 160px; display: block; object-fit: contain; background: #000; }
@@ -562,85 +610,187 @@ body.editor-bg {
             #preview-video { max-height: 320px; }
             #scroll-to-top-btn { bottom: 90px; left: calc(50% - 460px); }
         }
-    </style>
+    
+/*      */
+.site-features-box {
+    margin-top: 14px;
+    background: rgba(142, 182, 155, 0.05); /*     */
+    border: 1px solid rgba(142, 182, 155, 0.2);
+    border-radius: 14px;
+    padding: 12px;
+    text-align: start;
+}
+.site-features-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--primary);
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.site-features-box ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.site-features-box li {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+}
+.site-features-box li svg {
+    width: 15px;
+    height: 15px;
+    color: var(--primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+/*       */
+html[lang="en"] .site-features-box {
+    direction: ltr;
+    text-align: left;
+}
+</style>
 </head>
 <body class="startup-bg">
 
-    <div id="login-screen" class="glass-card">
+<div id="login-screen" class="glass-card">
+        <!--    -->
         <div style="display: flex; justify-content: flex-end; width: 100%;">
             <div class="custom-select-wrapper">
                 <button class="custom-select-btn" onclick="toggleLangMenu(this)">
-                    <span class="current-lang-text">کوردی</span>
+                    <span class="current-lang-text"></span>
                     <svg class="icon" style="width:13px;height:13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div class="custom-select-menu">
-                    <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
-                    <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
+                    <div class="custom-select-item" onclick="changeLanguage('ckb')"></div>
+                    <div class="custom-select-item" onclick="changeLanguage('ar')"></div>
                     <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
                 </div>
             </div>
         </div>
+
+        <!--   -->
         <h2 style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 4px 0; font-size: 19px;">
             <svg class="icon" style="width:24px; height:24px; color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            <span data-i18n="loginTitle">چوونەژوورەوەی وەرگێڕ</span>
+            <span data-i18n="loginTitle"> </span>
         </h2>
-        <p style="text-align:center; font-size:13px; color:var(--text-muted); margin: 0; line-height: 1.5;" data-i18n="appDesc">ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.</p>
-        <button class="btn" style="margin-top: 8px;" onclick="performLogin()"><span data-i18n="loginBtn">چوونەژوورەوە</span></button>
+        <p style="text-align:center; font-size:13px; color:var(--text-muted); margin: 0; line-height: 1.5;" data-i18n="appDesc">        .</p>
+        
+        <!--   -->
+        <button class="btn" style="margin-top: 6px;" onclick="performLogin()"><span data-i18n="loginBtn"></span></button>
+
+        <!--        -->
+        <div class="site-features-box">
+            <div class="site-features-title">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span data-i18n="featuresHead"> </span>
+            </div>
+            <ul>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span data-i18n="feat1">   SRT ASS  VTT   .</span>
+                </li>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span data-i18n="feat2">       .</span>
+                </li>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span data-i18n="feat3">      (AI)    .</span>
+                </li>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span data-i18n="feat4">         (Batch).</span>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div id="setup-screen" class="glass-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 6px;">
-            <button style="padding: 5px 6px; width:auto; border:none; background:transparent; color:#ef4444; font-size:12.5px; text-decoration:underline; font-weight:bold; cursor: pointer;" onclick="logout()" data-i18n="logoutBtn">چوونەدەرەوە</button>
-            <button id="install-app-btn" onclick="installApp()"><svg style="width:13px;height:13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span data-i18n="installApp">دابەزاندنی ئەپ</span></button>
-            <div class="custom-select-wrapper">
-                <button class="custom-select-btn" onclick="toggleLangMenu(this)">
-                    <span class="current-lang-text">کوردی</span>
-                    <svg class="icon" style="width:13px;height:13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="custom-select-menu">
-                    <div class="custom-select-item" onclick="changeLanguage('ckb')">کوردی</div>
-                    <div class="custom-select-item" onclick="changeLanguage('ar')">العربية</div>
-                    <div class="custom-select-item" onclick="changeLanguage('en')">English</div>
+        <!--  :     -->
+        <div class="setup-header">
+            <!--   -->
+            <button class="top-btn" onclick="toggleSetupMenu(event)">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+
+            <!--   -->
+            <div id="welcome-msg" style="font-size: 15px; color: var(--primary); font-weight: bold;">!</div>
+
+            <!--        -->
+            <div id="setupMenuDropdown" class="menu-dropdown">
+                <!-- .   -->
+                <div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;"> / Language</div>
+                <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                    <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 5px; font-size:12px;" onclick="changeLanguage('ckb'); toggleSetupMenu();"></button>
+                    <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 5px; font-size:12px;" onclick="changeLanguage('ar'); toggleSetupMenu();"></button>
+                    <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 5px; font-size:12px;" onclick="changeLanguage('en'); toggleSetupMenu();">English</button>
                 </div>
+
+                <div style="height:1px; background:var(--border-color); margin:4px 0;"></div>
+
+                <!-- .   -->
+                <button class="menu-btn-item" onclick="openConverterModal(); toggleSetupMenu();">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    <span data-i18n="batchBtn"> </span>
+                </button>
+
+                <!-- .   -->
+                <button class="menu-btn-item" onclick="openHistoryModal(); toggleSetupMenu();">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span data-i18n="historyBtn"> </span>
+                </button>
+
+                <!-- .   -->
+                <button id="install-app-btn" class="menu-btn-item" onclick="installApp(); toggleSetupMenu();">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span data-i18n="installApp"> </span>
+                </button>
+
+                <div style="height:1px; background:var(--border-color); margin:4px 0;"></div>
+
+                <!-- .  -->
+                <button class="menu-btn-item" style="color: #ef4444;" onclick="logout()">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span data-i18n="logoutBtn"></span>
+                </button>
             </div>
         </div>
-
-        <div id="welcome-msg" style="text-align: center; font-size: 16px; color: var(--primary); font-weight: bold;"></div>
         
+        <!--    -->
         <div class="file-box" id="boxOriginal">
             <button type="button" class="clear-file-btn" onclick="clearFile('fileOriginal', 'boxOriginal')" style="display: none;"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
-            <label data-i18n="origFileLbl">فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)</label>
-            <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
+            <label data-i18n="origFileLbl">  ( /  / ...)</label>
+            <div class="file-name-display" data-i18n="clickSelect">   </div>
             <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxOriginal')">
         </div>
         
+        <!--    -->
         <div class="file-box" id="boxKurdish">
             <button type="button" class="clear-file-btn" onclick="clearFile('fileKurdish', 'boxKurdish')" style="display: none;"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
-            <label data-i18n="transFileLbl">فایلی وەرگێڕدراو (ئارەزوومەندانە)</label>
-            <div class="file-name-display" data-i18n="clickSelect">کرتە بکە بۆ هەڵبژاردن</div>
+            <label data-i18n="transFileLbl">  ()</label>
+            <div class="file-name-display" data-i18n="clickSelect">   </div>
             <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
-        <div style="display: flex; gap: 8px; width: 100%; margin-top: 2px;">
-            <button class="btn" style="flex: 1.3; padding: 12px;" onclick="startEditing()">
-                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span data-i18n="startBtn">دەستپێکردن</span>
-            </button>
-            <button class="btn btn-outline" style="flex: 1; padding: 12px;" onclick="openConverterModal()">
-                <span data-i18n="batchBtn">گۆڕینی فایل</span>
-            </button>
-        </div>
+        <!--     -->
+        <button class="btn" style="padding: 13px; margin-top: 4px;" onclick="startEditing()">
+            <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span data-i18n="startBtn"></span>
+        </button>
 
-        <div style="display: flex; width: 100%;">
-            <button class="btn btn-outline" style="width: 100%; padding: 11px; font-size: 13px;" onclick="openHistoryModal()">
-                <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span data-i18n="historyBtn">مێژووی کارەکان</span>
-            </button>
-        </div>
-
-        <div style="text-align: center; margin-top: 2px; font-size: 12px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
+        <!--  -->
+        <div style="text-align: center; margin-top: 4px; font-size: 12px; color: var(--text-muted);" data-i18n="developerInfo">: <strong> </strong></div>
     </div>
 
     <!-- مۆداڵی مێژوو -->
@@ -847,6 +997,21 @@ body.editor-bg {
     <div id="toast-container"></div>
 
     <script>
+        
+      function toggleSetupMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('setupMenuDropdown');
+    if (menu) menu.classList.toggle('show');
+}
+
+//       
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('setupMenuDropdown');
+    if (menu && !menu.contains(e.target)) {
+        menu.classList.remove('show');
+    }
+});
+
         const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#8EB69B"><path d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3V6h18v12zM5 14h14v2H5zm0-4h8v2H5zm10 0h4v2h-4z"/></svg>`;
         const manifest = {
             name: "Subtitle Editor", short_name: "SubEdit", start_url: ".", display: "standalone",
@@ -941,6 +1106,12 @@ body.editor-bg {
 
         const i18n = {
             ckb: {
+               linesText: "",
+featuresHead: " ",
+                feat1: "   SRT ASS  VTT   .",
+                feat2: "       .",
+                feat3: "      (AI)    .",
+                feat4: "         (Batch).",
                 pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
                 msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
@@ -948,11 +1119,23 @@ body.editor-bg {
                 toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
             },
             ar: {
+               linesText: "",
+ featuresHead: " ",
+feat1: "   SRT  ASS  VTT    .",
+feat2: "       .",
+feat3: "       .",
+feat4: "       .",
                 pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
                 msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
             },
             en: {
+               linesText: "lines",
+ featuresHead: "Website Features",
+feat1: "Full support for SRT, ASS, and VTT subtitles with intact timing.",
+feat2: "Real-time video subtitle sync and live interactive preview.",
+feat3: "Smart AI translation import, format cleaning, and batch search & replace.",
+feat4: "Batch conversion and multi-file time shifting capabilities.",
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", historyBtn: "History", historyTitle: "Edited Subtitles History", clearAllBtn: "Clear All", restoreBtn: "Open", deleteBtn: "Delete", historyWarning: "Warning: History is almost full!", historyEmpty: "No files saved in history", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!", scrollToTop: "Scroll to Top",
                 msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
                 toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto"
@@ -992,6 +1175,9 @@ body.editor-bg {
             const hist = getHistory();
             document.getElementById('history-count-text').innerText = `${hist.length} / 20`;
             
+            //   ( /  / lines)  
+            const lineWord = currentLang === 'en' ? 'lines' : (currentLang === 'ar' ? '' : '');
+
             if (hist.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding: 25px; color: var(--text-muted); font-size: 13px;">${i18n[currentLang]['historyEmpty']}</div>`;
             } else {
@@ -999,11 +1185,11 @@ body.editor-bg {
                     <div class="history-item">
                         <div class="history-info">
                             <div class="history-name">${h.fileName}</div>
-                            <div class="history-meta"><span>${h.date}</span> • <span>${h.count} دێڕ</span> • <span>${h.format.toUpperCase()}</span></div>
+                            <div class="history-meta"><span>${h.date}</span> � <span>${h.count} ${lineWord}</span> � <span>${h.format.toUpperCase()}</span></div>
                         </div>
                         <div style="display:flex; gap: 6px;">
                             <button class="btn" style="padding: 6px 10px; font-size: 11px; width:auto;" onclick="restoreFromHistory('${h.id}')">${i18n[currentLang]['restoreBtn']}</button>
-                            <button class="btn btn-outline" style="padding: 6px 8px; font-size: 11px; width:auto; color:#ef4444; border-color:#ef4444;" onclick="deleteHistoryItem('${h.id}')">✕</button>
+                            <button class="btn btn-outline" style="padding: 6px 8px; font-size: 11px; width:auto; color:#ef4444; border-color:#ef4444;" onclick="deleteHistoryItem('${h.id}')"></button>
                         </div>
                     </div>
                 `).join('');
