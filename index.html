@@ -49,7 +49,7 @@
         }
 
         body { 
-            font-family: 'KurdForest', Tahoma, Arial, sans-serif; 
+            font-family: 'KurdForest', Tahoma, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; 
             padding: 12px; 
             overflow-x: hidden; 
             touch-action: manipulation;
@@ -72,6 +72,7 @@
             display: block;
         }
 
+        /* دۆخی تاریک */
         body.dark-theme, html.dark-theme {
             --bg-color: #0d120f; 
             --card-bg: rgba(20, 28, 23, 0.96); 
@@ -159,6 +160,7 @@
             border-color: #223327;
         }
 
+        /* 🎨 دوگمەی دابەزاندنی ئەپ و ئایکۆنی مۆداڵ لە دۆخی ڕۆژدا (تەنها بۆ دۆخی ڕۆژ) */
         #install-app-btn { 
             display: none; 
             align-items: center; 
@@ -601,7 +603,7 @@
             </div>
         </div>
 
-        <div id="welcome-msg" style="text-align: center; font-size: 16px; color: var(--primary); font-weight: bold;">بەخێربێیت!</div>
+        <div id="welcome-msg" style="text-align: center; font-size: 16px; color: var(--primary); font-weight: bold;"></div>
         
         <div class="file-box" id="boxOriginal">
             <button type="button" class="clear-file-btn" onclick="clearFile('fileOriginal', 'boxOriginal')" style="display: none;"><svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -702,7 +704,7 @@
             <p style="font-size: 12.5px; color:var(--text-muted); margin-bottom:12px; line-height: 1.5;" data-i18n="batchDesc">دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.</p>
             
             <div class="file-box" id="boxBatch" style="margin-bottom: 12px; padding: 12px;">
-                <div class="upload-icon"><svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>
+                <div class="upload-icon"><svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 00-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg></div>
                 <label data-i18n="batchSelectLbl">فایلەکان هەڵبژێرە:</label>
                 <div class="file-name-display" id="batchCountDisplay" data-i18n="batchNoFile">هیچ فایلێک دیاری نەکراوە</div>
                 <input type="file" id="convertFileInput" accept=".srt,.ass,.vtt" multiple onchange="updateBatchCount(this)">
@@ -886,6 +888,7 @@
             }
         }
 
+        // کۆنتڕۆڵی دوگمەی سەهم بۆ سەرکەوتن
         window.addEventListener('scroll', () => {
             const btn = document.getElementById('scroll-to-top-btn');
             if (isEditing && window.scrollY > 150) {
@@ -1417,23 +1420,11 @@
                     finalContent = header;
                     parsed.forEach(item => { 
                         let textStr = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : item.text);
+                        // Convert HTML tags to native ASS tags
                         textStr = textStr.replace(/<i>/gi, '{\\i1}').replace(/<\/i>/gi, '{\\i0}')
                                          .replace(/<b>/gi, '{\\b1}').replace(/<\/b>/gi, '{\\b0}')
                                          .replace(/<u>/gi, '{\\u1}').replace(/<\/u>/gi, '{\\u0}');
-
-                        let lines = textStr.split('\n').map(l => {
-                            let s = l.trim();
-                            const hasRTL = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(s);
-                            if (hasRTL && !s.startsWith('\u202B') && !s.startsWith('\u200F')) {
-                                if (s.startsWith('{')) {
-                                    s = s.replace(/^(\{[^}]+\})+/, '$&\u202B');
-                                } else {
-                                    s = '\u202B' + s;
-                                }
-                            }
-                            return s;
-                        }).filter(l => l !== "");
-
+                        let lines = textStr.split('\n').map(l => l.trim()).filter(l => l !== "");
                         if (lines.length === 0) lines = ['...'];
                         finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${lines.join('\\N')}\n`; 
                     });
@@ -1669,6 +1660,7 @@
             }
         }
 
+        /* 🧠 AI/Smart Tag Transfser function: Transfer HTML/ASS tags from original to translated text */
         function smartApplyTags(origText, transText) {
             if (!origText || !transText) return transText;
             
@@ -1926,6 +1918,7 @@
                 let kt = card.querySelector('textarea').value;
                 let textToUse = (kt && kt.trim() !== "") ? kt : orig.text;
                 
+                // Convert HTML tags back to ASS tags if saving in ASS format
                 if (isAssFormat) {
                     textToUse = textToUse.replace(/<i>/gi, '{\\i1}').replace(/<\/i>/gi, '{\\i0}')
                                          .replace(/<b>/gi, '{\\b1}').replace(/<\/b>/gi, '{\\b0}')
@@ -1940,18 +1933,6 @@
                 for(let j = 0; j < lines.length; j++) {
                     let lineText = lines[j];
                     let origTag = (ol[j] && ol[j].tags) ? ol[j].tags : (j === 0 && ol[0] && ol[0].tags ? ol[0].tags : '');
-                    
-                    if (isAssFormat) {
-                        const hasRTL = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(lineText);
-                        if (hasRTL && !lineText.startsWith('\u202B') && !lineText.startsWith('\u200F')) {
-                            if (lineText.startsWith('{')) {
-                                lineText = lineText.replace(/^(\{[^}]+\})+/, '$&\u202B');
-                            } else {
-                                lineText = '\u202B' + lineText;
-                            }
-                        }
-                    }
-
                     if (origTag && !lineText.startsWith('{')) {
                         fp.push(origTag + lineText);
                     } else {
