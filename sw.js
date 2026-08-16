@@ -1,12 +1,16 @@
-const CACHE_NAME = 'subedit-v3';
+const CACHE_NAME = 'subedit-v4';
+
+// دۆزینەوەی خۆکاری ناوی بوخچەی GitHub Pages
+const GH_PATH = self.location.pathname.replace(/\/sw\.js$/, '');
+
 const ASSETS_TO_CACHE = [
-    './',
-    './index.html',
-    './fonts.css',
-    './sw.js'
+    GH_PATH + '/',
+    GH_PATH + '/index.html',
+    GH_PATH + '/fonts.css',
+    GH_PATH + '/sw.js'
 ];
 
-// 1. Install Event - Caching Essential Files
+// 1. Install Event - پاشەکەوتکردنی فایلەکان
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
@@ -16,14 +20,14 @@ self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
 
-// 2. Activate Event - Cleaning Up Old Caches
+// 2. Activate Event - پاککردنەوەی مێمۆری کۆن
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
+        caches.keys().then((keys) => {
             return Promise.all(
-                cacheNames.map((cache) => {
-                    if (cache !== CACHE_NAME) {
-                        return caches.delete(cache);
+                keys.map((key) => {
+                    if (key !== CACHE_NAME) {
+                        return caches.delete(key);
                     }
                 })
             );
@@ -32,27 +36,27 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// 3. Fetch Event - Serving Cached Assets Offline
+// 3. Fetch Event - کردنەوەی ئۆفلاین
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
+        caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
             if (cachedResponse) {
                 return cachedResponse;
             }
-            return fetch(event.request).then((response) => {
-                if (!response || response.status !== 200 || response.type !== 'basic') {
-                    return response;
+            return fetch(event.request).then((networkResponse) => {
+                if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseClone);
+                    });
                 }
-                const responseToCache = response.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, responseToCache);
-                });
-                return response;
+                return networkResponse;
             }).catch(() => {
+                // کاتێک بێ ئینتەرنێتیت خۆکارانە فایلی index.html دەکاتەوە
                 if (event.request.mode === 'navigate') {
-                    return caches.match('./index.html');
+                    return caches.match(GH_PATH + '/index.html') || caches.match(GH_PATH + '/');
                 }
             });
         })
