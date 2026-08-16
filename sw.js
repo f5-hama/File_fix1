@@ -7,6 +7,7 @@ const ASSETS_TO_CACHE = [
     GH_PATH + '/',
     GH_PATH + '/index.html',
     GH_PATH + '/fonts.css',
+    GH_PATH + '/KurdForest.ttf',
     GH_PATH + '/sw.js'
 ];
 
