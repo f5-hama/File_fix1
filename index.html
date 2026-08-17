@@ -784,21 +784,31 @@
         <div style="text-align: center; margin-top: 4px; font-size: 12px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-<!-- مۆداڵی بارکردنی خێرای وێنە -->
+<!-- مۆداڵی گۆڕینی وێنە بۆ لینک بە کلیلی سەیڤکراو -->
 <div id="img-upload-modal" class="custom-modal-overlay">
     <div class="custom-modal-content">
-        <h3 class="custom-modal-title" style="margin: 0 0 10px 0; color: var(--primary); font-size: 16px;">گۆڕینی وێنە بۆ لینک</h3>
+        <h3 class="custom-modal-title" style="margin: 0 0 8px 0; color: var(--primary); font-size: 16px;">گۆڕینی وێنە بۆ لینک</h3>
         
-        <div class="file-box" style="margin-bottom: 12px; padding: 16px;">
-            <div class="upload-icon"><svg style="width:28px;height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
+        <!-- بەشی کلیلی API کە خۆی سەیڤ دەبێت -->
+        <div style="background: rgba(142, 182, 155, 0.08); border: 1px dashed var(--border-color); border-radius: 12px; padding: 10px; margin-bottom: 12px; text-align: start;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);">کلیلی API (تەنها یەکجار دایبنێ):</label>
+                <a href="https://api.imgbb.com/" target="_blank" style="font-size: 11px; color: var(--primary); font-weight: bold; text-decoration: underline;">وەرگرتنی کلیل لە کوێیە؟</a>
+            </div>
+            <input type="text" id="imgbbApiKeyInput" oninput="saveImgbbKey(this)" placeholder="کلیلەکەت لێرە پەیست بکە..." class="input-field" style="padding: 8px; font-size: 11.5px; direction: ltr; text-align: left;">
+        </div>
+
+        <!-- بۆکسی هەڵبژاردنی وێنە -->
+        <div class="file-box" style="margin-bottom: 12px; padding: 14px;">
+            <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
             <label style="color:var(--primary); font-weight:bold; font-size:13px;">کرتە بکە و وێنەکە هەڵبژێرە</label>
             <div class="file-name-display" id="imgNameDisplay">هیچ وێنەیەک دیاری نەکراوە</div>
             <input type="file" id="imageFileInput" accept="image/*" onchange="uploadDirectImage(this)">
         </div>
 
-        <div id="imgUploadLoader" style="display: none; color: var(--primary); font-size: 13px; font-weight: bold; margin: 10px 0;">خەریکی بارکردنی وێنەکەیە، تکایە کەمێک بوەستە...</div>
+        <div id="imgUploadLoader" style="display: none; color: var(--primary); font-size: 13px; font-weight: bold; margin: 8px 0;">خەریکی بارکردنی وێنەکەیە، تکایە کەمێک بوەستە...</div>
 
-        <!-- بەشی پیشاندانی لینک و کۆپیکردن -->
+        <!-- بەشی پیشاندانی لینکی وێنە و کۆپیکردن -->
         <div id="imgResultBox" style="display: none; margin-top: 10px; text-align: start;">
             <label style="font-size: 12px; font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px;">لینکی ڕاستەوخۆی وێنەکە:</label>
             <input type="text" id="generatedImgUrl" readonly class="input-field" style="margin-bottom: 8px; font-size: 12px; direction: ltr; text-align: left;">
@@ -808,7 +818,7 @@
             </button>
         </div>
 
-        <div class="custom-modal-actions" style="margin-top: 14px;">
+        <div class="custom-modal-actions" style="margin-top: 12px;">
             <button class="btn btn-outline" onclick="document.getElementById('img-upload-modal').style.display='none'">داخستن</button>
         </div>
     </div>
@@ -1508,16 +1518,35 @@
             }
         }
 
+// کردنەوەی مۆداڵ و هێنانەوەی کلیلە سەیڤکراوەکە
 function openImgUploaderModal() {
     document.getElementById('img-upload-modal').style.display = 'flex';
     document.getElementById('imgResultBox').style.display = 'none';
     document.getElementById('imgUploadLoader').style.display = 'none';
     document.getElementById('imageFileInput').value = '';
     document.getElementById('imgNameDisplay').innerText = 'هیچ وێنەیەک دیاری نەکراوە';
+
+    // هێنانەوەی کلیلی پێشوو ئەگەر سەیڤ کرابێت
+    const savedKey = localStorage.getItem('user_imgbb_key') || '';
+    document.getElementById('imgbbApiKeyInput').value = savedKey;
 }
 
+// سەیڤکردنی خۆکارانەی کلیلی API لەناو مۆبایل
+function saveImgbbKey(input) {
+    localStorage.setItem('user_imgbb_key', input.value.trim());
+}
+
+// بارکردنی وێنەکە بە بەکارهێنانی کلیلە سەیڤکراوەکەت
 async function uploadDirectImage(input) {
     if (!input.files || !input.files[0]) return;
+    
+    const key = localStorage.getItem('user_imgbb_key') || document.getElementById('imgbbApiKeyInput').value.trim();
+    if (!key) {
+        showToast('تکایە سەرەتا کلیلی API لە سەرەوە دابنێ!', 'error');
+        document.getElementById('imgbbApiKeyInput').focus();
+        return;
+    }
+
     const file = input.files[0];
     const loader = document.getElementById('imgUploadLoader');
     const resultBox = document.getElementById('imgResultBox');
@@ -1528,42 +1557,34 @@ async function uploadDirectImage(input) {
     loader.style.color = 'var(--primary)';
     resultBox.style.display = 'none';
 
-    // خوێندنەوەی وێنە بە Base64 بۆ ئەوەی بەبێ کێشە بنێردرێت
-    const reader = new FileReader();
-    reader.onload = async function() {
-        try {
-            const base64Data = reader.result.split(',')[1];
-            const formData = new FormData();
-            formData.append('image', base64Data);
+    try {
+        const formData = new FormData();
+        formData.append('image', file);
 
-            // ناردنی ڕاستەوخۆ بۆ سێرڤەری ImgBB
-            const response = await fetch('https://api.imgbb.com/1/upload?key=762894e2014f83c023b233b2f10395e2', {
-                method: 'POST',
-                body: formData
-            });
+        const response = await fetch('https://api.imgbb.com/1/upload?key=' + key, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
 
-            const resData = await response.json();
-
-            if (resData && resData.data && (resData.data.url || resData.data.display_url)) {
-                const finalImgUrl = resData.data.url || resData.data.display_url;
-                document.getElementById('generatedImgUrl').value = finalImgUrl;
-                resultBox.style.display = 'block';
-                loader.style.display = 'none';
-                showToast('لینکی وێنەکە بە سەرکەوتوویی ئامادە کرا!', 'success');
-            } else {
-                throw new Error('Upload error');
-            }
-        } catch (err) {
-            loader.style.display = 'block';
-            loader.style.color = '#ef4444';
-            loader.innerText = 'کێشەیەک لە هێڵی ئینتەرنێت هەیە!';
-            showToast('بارکردن سەرکەوتوو نەبوو!', 'error');
+        if (data && data.data && (data.data.url || data.data.display_url)) {
+            const directUrl = data.data.url || data.data.display_url;
+            document.getElementById('generatedImgUrl').value = directUrl;
+            resultBox.style.display = 'block';
+            loader.style.display = 'none';
+            showToast('لینکی وێنەکە بە سەرکەوتوویی ئامادە کرا!', 'success');
+        } else {
+            throw new Error(data.error ? data.error.message : 'Upload failed');
         }
-    };
-    reader.readAsDataURL(file);
+    } catch (e) {
+        loader.style.display = 'block';
+        loader.style.color = '#ef4444';
+        loader.innerText = 'هەڵە لە بارکردن: تکایە دڵنیابە لە دروستی کلیلەکە یان ئینتەرنێت.';
+        showToast('بارکردن سەرکەوتوو نەبوو!', 'error');
+    }
 }
 
-// فەنکشنی کۆپیکردنی خێرا
+// کۆپیکردنی لینک بە یەک کرتە
 function copyDirectImgLink() {
     const input = document.getElementById('generatedImgUrl');
     if (!input.value) return;
