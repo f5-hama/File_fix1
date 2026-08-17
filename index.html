@@ -718,7 +718,7 @@
                 </button>
 
                 <div id="setupMenuDropdown" class="menu-dropdown">
-                    <div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;">زمان / Language</div>
+                    <div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;"><div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;" data-i18n="langLabel">زمان</div></div>
                     <div style="display: flex; gap: 4px; margin-bottom: 6px; width: 100%;">
                         <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 6px 2px; font-size:11.5px; background: rgba(142, 182, 155, 0.1);" onclick="changeLanguage('ckb'); toggleSetupMenu();">کوردی</button>
                         <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 6px 2px; font-size:11.5px; background: rgba(142, 182, 155, 0.1);" onclick="changeLanguage('ar'); toggleSetupMenu();">العربية</button>
@@ -751,7 +751,7 @@
                 </div>
             </div>
 
-            <div id="welcome-msg" style="flex-grow: 1; text-align: center; font-size: 15px; color: var(--primary); font-weight: bold; margin-inline-end: 36px;">بەخێربێیت!</div>
+            <div id="welcome-msg" style="position: absolute; left: 0; right: 0; text-align: center; font-size: 15px; color: var(--primary); font-weight: bold; pointer-events: none;">بەخێربێیت!</div>
         </div>
         
         <div class="file-box" id="boxOriginal">
@@ -1101,6 +1101,7 @@
                 feat2: "پێشبینینی ڕاستەوخۆی ژێرنووس لەسەر ڤیدیۆ بە هاوکاتکردنی ورد.",
                 feat3: "گونجاندنی خێرا بۆ وەرگێڕانی زیرەکی دەستکرد (AI) و گەڕان و گۆڕین.",
                 feat4: "گۆڕینی کات و فۆرماتی چەندین فایل پێکەوە بە کۆمەڵ (Batch).",
+                langLabel: "زمان",
                 linesText: "دێڕ"
             },
             ar: {
@@ -1112,6 +1113,7 @@
                 feat2: "معاينة مباشرة للترجمة على الفيديو مع مزامنة دقيقة.",
                 feat3: "إدراج ذكي لترجمات الذكاء الاصطناعي مع البحث والاستبدال.",
                 feat4: "تحويل التوقيت والصيغ لعدة ملفات معاً دفعة واحدة.",
+                langLabel: "اللغة",
                 linesText: "سطر"
             },
             en: {
@@ -1123,6 +1125,7 @@
                 feat2: "Real-time video subtitle sync and live interactive preview.",
                 feat3: "Smart AI translation import, format cleaning, and batch search & replace.",
                 feat4: "Batch conversion and multi-file time shifting capabilities.",
+                langLabel: "Language",
                 linesText: "lines"
             }
         };
@@ -1257,6 +1260,7 @@
             const welcomeEl = document.getElementById('welcome-msg');
             if(localStorage.getItem('kf_user') && welcomeEl) {
                 welcomeEl.innerText = i18n[currentLang]['welcomeText'];
+                welcomeEl.style.direction = isEn ? 'ltr' : 'rtl';
             }
             
             ['boxOriginal', 'boxKurdish'].forEach(id => {
@@ -1284,7 +1288,7 @@
                 document.getElementById('setup-screen').style.display = 'none';
             }
             const hour = new Date().getHours();
-            if(hour >= 3 || hour < 6) {
+            if(hour >= 19 || hour < 6) {
                 document.body.classList.add('dark-theme');
                 document.documentElement.classList.add('dark-theme');
             } else {
