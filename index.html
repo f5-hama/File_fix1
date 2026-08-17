@@ -705,6 +705,14 @@
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     <span data-i18n="feat4">گۆڕینی کات و فۆرماتی چەندین فایل پێکەوە بە کۆمەڵ (Batch).</span>
                 </li>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span data-i18n="feat4">گۆڕینی کات و فۆرماتی چەندین فایل پێکەوە بە کۆمەڵ (Batch).</span>
+                </li>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span data-i18n="feat5">گۆڕینی ڕاستەوخۆی وێنە بۆ لینکی هەمیشەیی بەبێ بەسەرچوون.</span>
+                </li>
             </ul>
         </div>
     </div>
@@ -735,7 +743,7 @@
                     <!-- دوگمەی بارکردنی وێنە -->
 <button class="menu-btn-item" onclick="openImgUploaderModal(); toggleSetupMenu();">
     <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-    <span>گۆڕینی وێنە بۆ لینک</span>
+    <span data-i18n="imgToLinkBtn">گۆڕینی وێنە بۆ لینک</span>
 </button>
 
                     <button class="menu-btn-item" onclick="openHistoryModal(); toggleSetupMenu();">
@@ -784,42 +792,39 @@
         <div style="text-align: center; margin-top: 4px; font-size: 12px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
     </div>
 
-<!-- مۆداڵی گۆڕینی وێنە بۆ لینک بە کلیلی سەیڤکراو -->
+<!-- مۆداڵی گۆڕینی وێنە بۆ لینک بە هەموو زمانەکان -->
 <div id="img-upload-modal" class="custom-modal-overlay">
     <div class="custom-modal-content">
-        <h3 class="custom-modal-title" style="margin: 0 0 8px 0; color: var(--primary); font-size: 16px;">گۆڕینی وێنە بۆ لینک</h3>
+        <h3 class="custom-modal-title" style="margin: 0 0 8px 0; color: var(--primary); font-size: 16px;" data-i18n="imgModalTitle">گۆڕینی وێنە بۆ لینک</h3>
         
-        <!-- بەشی کلیلی API کە خۆی سەیڤ دەبێت -->
         <div style="background: rgba(142, 182, 155, 0.08); border: 1px dashed var(--border-color); border-radius: 12px; padding: 10px; margin-bottom: 12px; text-align: start;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);">کلیلی API (تەنها یەکجار دایبنێ):</label>
-                <a href="https://api.imgbb.com/" target="_blank" style="font-size: 11px; color: var(--primary); font-weight: bold; text-decoration: underline;">وەرگرتنی کلیل لە کوێیە؟</a>
+                <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);" data-i18n="imgApiKeyLbl">کلیلی API (تەنها یەکجار دایبنێ):</label>
+                <a href="https://api.imgbb.com/" target="_blank" style="font-size: 11px; color: var(--primary); font-weight: bold; text-decoration: underline;" data-i18n="imgGetApiLink">وەرگرتنی کلیل لە کوێیە؟</a>
             </div>
-            <input type="text" id="imgbbApiKeyInput" oninput="saveImgbbKey(this)" placeholder="کلیلەکەت لێرە پەیست بکە..." class="input-field" style="padding: 8px; font-size: 11.5px; direction: ltr; text-align: left;">
+            <input type="text" id="imgbbApiKeyInput" oninput="saveImgbbKey(this)" placeholder="API Key..." class="input-field" style="padding: 8px; font-size: 11.5px; direction: ltr; text-align: left;">
         </div>
 
-        <!-- بۆکسی هەڵبژاردنی وێنە -->
         <div class="file-box" style="margin-bottom: 12px; padding: 14px;">
             <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
-            <label style="color:var(--primary); font-weight:bold; font-size:13px;">کرتە بکە و وێنەکە هەڵبژێرە</label>
-            <div class="file-name-display" id="imgNameDisplay">هیچ وێنەیەک دیاری نەکراوە</div>
+            <label style="color:var(--primary); font-weight:bold; font-size:13px;" data-i18n="imgSelectLbl">کرتە بکە و وێنەکە هەڵبژێرە</label>
+            <div class="file-name-display" id="imgNameDisplay" data-i18n="imgNoFile">هیچ وێنەیەک دیاری نەکراوە</div>
             <input type="file" id="imageFileInput" accept="image/*" onchange="uploadDirectImage(this)">
         </div>
 
-        <div id="imgUploadLoader" style="display: none; color: var(--primary); font-size: 13px; font-weight: bold; margin: 8px 0;">خەریکی بارکردنی وێنەکەیە، تکایە کەمێک بوەستە...</div>
+        <div id="imgUploadLoader" style="display: none; color: var(--primary); font-size: 13px; font-weight: bold; margin: 8px 0;">...</div>
 
-        <!-- بەشی پیشاندانی لینکی وێنە و کۆپیکردن -->
         <div id="imgResultBox" style="display: none; margin-top: 10px; text-align: start;">
-            <label style="font-size: 12px; font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px;">لینکی ڕاستەوخۆی وێنەکە:</label>
+            <label style="font-size: 12px; font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px;" data-i18n="imgDirectLinkLbl">لینکی ڕاستەوخۆی وێنەکە:</label>
             <input type="text" id="generatedImgUrl" readonly class="input-field" style="margin-bottom: 8px; font-size: 12px; direction: ltr; text-align: left;">
             <button class="btn" onclick="copyDirectImgLink()">
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                <span>کۆپیکردنی لینک</span>
+                <span data-i18n="imgCopyBtn">کۆپیکردنی لینک</span>
             </button>
         </div>
 
         <div class="custom-modal-actions" style="margin-top: 12px;">
-            <button class="btn btn-outline" onclick="document.getElementById('img-upload-modal').style.display='none'">داخستن</button>
+            <button class="btn btn-outline" onclick="document.getElementById('img-upload-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
         </div>
     </div>
 </div>
@@ -1137,6 +1142,14 @@
 
         const i18n = {
             ckb: {
+                imgToLinkBtn: "گۆڕینی وێنە بۆ لینک",
+                imgModalTitle: "گۆڕینی وێنە بۆ لینک",
+                imgNoFile: "هیچ وێنەیەک دیاری نەکراوە",
+                imgApiKeyLbl: "کلیلی API (تەنها یەکجار دایبنێ):",
+                imgGetApiLink: "وەرگرتنی کلیل لە کوێیە؟",
+                imgSelectLbl: "کرتە بکە و وێنەکە هەڵبژێرە",
+                imgDirectLinkLbl: "لینکی ڕاستەوخۆی وێنەکە:",
+                imgCopyBtn: "کۆپیکردنی لینک",
                 pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
                 msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
                 installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
@@ -1147,10 +1160,19 @@
                 feat2: "پێشبینینی ڕاستەوخۆی ژێرنووس لەسەر ڤیدیۆ بە هاوکاتکردنی ورد.",
                 feat3: "گونجاندنی خێرا بۆ وەرگێڕانی زیرەکی دەستکرد (AI) و گەڕان و گۆڕین.",
                 feat4: "گۆڕینی کات و فۆرماتی چەندین فایل پێکەوە بە کۆمەڵ (Batch).",
+                feat5: "گۆڕینی ڕاستەوخۆی وێنە بۆ لینکی هەمیشەیی بەبێ بەسەرچوون.",
                 langLabel: "زمان",
                 linesText: "دێڕ"
             },
             ar: {
+                imgToLinkBtn: "تحويل الصورة لرابط",
+                imgModalTitle: "تحويل الصورة إلى رابط",
+                imgNoFile: "لم يتم تحديد أي صورة",
+                imgApiKeyLbl: "مفتاح API (ضعه مرة واحدة):",
+                imgGetApiLink: "من أين أحصل على المفتاح؟",
+                imgSelectLbl: "انقر لاختيار الصورة",
+                imgDirectLinkLbl: "رابط الصورة المباشر:",
+                imgCopyBtn: "نسخ الرابط",
                 pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
                 msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
                 toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)",
@@ -1159,10 +1181,19 @@
                 feat2: "معاينة مباشرة للترجمة على الفيديو مع مزامنة دقيقة.",
                 feat3: "إدراج ذكي لترجمات الذكاء الاصطناعي مع البحث والاستبدال.",
                 feat4: "تحويل التوقيت والصيغ لعدة ملفات معاً دفعة واحدة.",
+                feat5: "تحويل مباشر للصور إلى روابط دائمة وغير منتهية الصلاحية.",
                 langLabel: "اللغة",
                 linesText: "سطر"
             },
             en: {
+                imgToLinkBtn: "Image to Link",
+                imgModalTitle: "Convert Image to Link",
+                imgNoFile: "No image selected",
+                imgApiKeyLbl: "API Key (Enter once):",
+                imgGetApiLink: "Where to get key?",
+                imgSelectLbl: "Click to select image",
+                imgDirectLinkLbl: "Direct Image Link:",
+                imgCopyBtn: "Copy Link",
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", historyBtn: "History", historyTitle: "Edited Subtitles History", clearAllBtn: "Clear All", restoreBtn: "Open", deleteBtn: "Delete", historyWarning: "Warning: History is almost full!", historyEmpty: "No files saved in history", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!", scrollToTop: "Scroll to Top",
                 msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
                 toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto",
@@ -1171,6 +1202,7 @@
                 feat2: "Real-time video subtitle sync and live interactive preview.",
                 feat3: "Smart AI translation import, format cleaning, and batch search & replace.",
                 feat4: "Batch conversion and multi-file time shifting capabilities.",
+                feat5: "Direct image to permanent, non-expiring link conversion.",
                 langLabel: "Language",
                 linesText: "lines"
             }
@@ -1524,7 +1556,7 @@ function openImgUploaderModal() {
     document.getElementById('imgResultBox').style.display = 'none';
     document.getElementById('imgUploadLoader').style.display = 'none';
     document.getElementById('imageFileInput').value = '';
-    document.getElementById('imgNameDisplay').innerText = 'هیچ وێنەیەک دیاری نەکراوە';
+    document.getElementById('imgNameDisplay').innerText = (i18n[currentLang] && i18n[currentLang]['imgNoFile']) ? i18n[currentLang]['imgNoFile'] : 'No image selected';
 
     // هێنانەوەی کلیلی پێشوو ئەگەر سەیڤ کرابێت
     const savedKey = localStorage.getItem('user_imgbb_key') || '';
