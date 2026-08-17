@@ -722,7 +722,7 @@
                 </button>
 
                 <div id="setupMenuDropdown" class="menu-dropdown">
-                    <div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;"><div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;" data-i18n="langLabel">زمان</div></div>
+                    <div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;" data-i18n="langLabel">زمان</div>
                     <div style="display: flex; gap: 4px; margin-bottom: 6px; width: 100%;">
                         <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 6px 2px; font-size:11.5px; background: rgba(142, 182, 155, 0.1);" onclick="changeLanguage('ckb'); toggleSetupMenu();">کوردی</button>
                         <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 6px 2px; font-size:11.5px; background: rgba(142, 182, 155, 0.1);" onclick="changeLanguage('ar'); toggleSetupMenu();">العربية</button>
@@ -1299,7 +1299,9 @@
             currentLang = lang; 
             const isEn = (lang === 'en');
             
-            document.getElementById('html-tag').setAttribute('lang', lang);
+            const htmlTag = document.getElementById('html-tag');
+            htmlTag.setAttribute('lang', lang);
+            htmlTag.setAttribute('dir', isEn ? 'ltr' : 'rtl');
             document.title = i18n[lang]['pageTitle'];
             
             document.querySelectorAll('.current-lang-text').forEach(e => { 
@@ -2299,6 +2301,15 @@ function processAssStyleLine(line) {
 
                 let lines = textToUse.split('\n').map(l => l.trim()).filter(l => l !== "");
                 if (lines.length === 0) lines = [orig.text.trim() || '...'];
+
+                // ڕێکخستنی ئاڕاستەی کوردی/عەرەبی (RTL) بۆ ئەوەی هێماکان و ژمارەکان عەکس نەبن
+                lines = lines.map(line => {
+                    // ئەگەر دەقەکە پیتی کوردی یان عەرەبی تێدابوو و تاگی نەبوو، ئاڕاستەکەی جێگیر بکە
+                    if (/[\u0600-\u06FF\u0750-\u077F]/.test(line) && !line.startsWith('{\\')) {
+                        return '\u200F' + line; // نیشانەی فەرمی RTL بۆ ڕاگرتنی ڕێکی هێماکان
+                    }
+                    return line;
+                });
                 
                 let ol = orig.parsedLines || [];
                 let fp = []; 
