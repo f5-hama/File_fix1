@@ -205,14 +205,6 @@
             box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
         }
 
-        html[lang="en"] .btn,
-        html[lang="en"] h2,
-        html[lang="en"] .back-btn,
-        html[lang="en"] #install-app-btn,
-        html[lang="en"] .custom-select-btn {
-            flex-direction: row-reverse;
-        }
-
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes slideUpFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -589,10 +581,17 @@
             flex-shrink: 0;
             margin-top: 2px;
         }
-        html[lang="en"] .site-features-box {
-            direction: ltr;
-            text-align: left;
-        }
+/* چارەسەری بنەڕەتی بۆ هەموو هێماکان ( ! ، ؟ : ... کەوانەکان ) لە ئینگلیزیدا */
+html[lang="en"] [data-i18n],
+html[lang="en"] #welcome-msg,
+html[lang="en"] span,
+html[lang="en"] p,
+html[lang="en"] label,
+html[lang="en"] h2,
+html[lang="en"] h3,
+html[lang="en"] .file-name-display {
+    unicode-bidi: plaintext !important;
+}
 
         /* ستایلی سەرەوە و مێنیوی سێتەپ */
         .setup-header {
@@ -655,6 +654,23 @@
             #preview-video { max-height: 320px; }
             #scroll-to-top-btn { bottom: 90px; left: calc(50% - 460px); }
         }
+        /* ڕێکخستنی شوێنی ئایکۆن و هێماکان بە تەواوی بۆ زمانی ئینگلیزی */
+html[lang="en"] .btn,
+html[lang="en"] .menu-btn-item,
+html[lang="en"] .site-features-box li,
+html[lang="en"] .site-features-title,
+html[lang="en"] .top-btn,
+html[lang="en"] .back-btn,
+html[lang="en"] .custom-select-btn {
+    direction: ltr;
+    flex-direction: row;
+    text-align: left;
+}
+
+html[lang="en"] .site-features-box {
+    direction: ltr;
+    text-align: left;
+}
     </style>
 </head>
 <body class="startup-bg">
@@ -1299,15 +1315,18 @@
             currentLang = lang; 
             const isEn = (lang === 'en');
             
+            // هێشتنەوەی دیزاین و شوێنی دوگمە و ئایکۆنەکان وەک خۆی بەبێ عەکس بوونەوە
             const htmlTag = document.getElementById('html-tag');
             htmlTag.setAttribute('lang', lang);
-            htmlTag.setAttribute('dir', isEn ? 'ltr' : 'rtl');
+            htmlTag.setAttribute('dir', 'rtl');
+            document.body.setAttribute('dir', 'rtl');
             document.title = i18n[lang]['pageTitle'];
             
             document.querySelectorAll('.current-lang-text').forEach(e => { 
                 e.innerText = isEn ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی'); 
             });
             
+            // تەنها وەرگێڕانی تێکستەکان بەبێ تێکدانی دیزاین
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (i18n[lang] && i18n[lang][key]) { 
@@ -1315,13 +1334,6 @@
                         el.placeholder = i18n[lang][key]; 
                     } else { 
                         el.innerHTML = i18n[lang][key]; 
-                    }
-                    if (isEn) {
-                        el.style.direction = 'ltr';
-                        el.style.unicodeBidi = 'isolate';
-                    } else {
-                        el.style.direction = 'rtl';
-                        el.style.unicodeBidi = 'normal';
                     }
                 }
             });
@@ -1336,7 +1348,6 @@
             const welcomeEl = document.getElementById('welcome-msg');
             if(localStorage.getItem('kf_user') && welcomeEl) {
                 welcomeEl.innerText = i18n[currentLang]['welcomeText'];
-                welcomeEl.style.direction = isEn ? 'ltr' : 'rtl';
             }
             
             ['boxOriginal', 'boxKurdish'].forEach(id => {
