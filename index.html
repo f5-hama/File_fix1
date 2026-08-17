@@ -716,53 +716,56 @@ html[lang="en"] .site-features-box {
 
     <div id="setup-screen" class="glass-card">
         <!--  :     -->
-        <div class="setup-header">
-            <!--   -->
-            <button class="top-btn" onclick="toggleSetupMenu(event)">
-                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
+        <!--  :        -->
+        <div class="setup-header" style="display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%;">
+            <!--    -->
+            <div style="position: relative;">
+                <button class="top-btn" onclick="toggleSetupMenu(event)">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
 
-            <!--   -->
-            <div id="welcome-msg" style="font-size: 15px; color: var(--primary); font-weight: bold;">!</div>
+                <!--   -->
+                <div id="setupMenuDropdown" class="menu-dropdown">
+                    <!--      -->
+                    <div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;"> / Language</div>
+                    <div style="display: flex; gap: 4px; margin-bottom: 6px; width: 100%;">
+                        <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 6px 2px; font-size:11.5px; background: rgba(142, 182, 155, 0.1);" onclick="changeLanguage('ckb'); toggleSetupMenu();"></button>
+                        <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 6px 2px; font-size:11.5px; background: rgba(142, 182, 155, 0.1);" onclick="changeLanguage('ar'); toggleSetupMenu();"></button>
+                        <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 6px 2px; font-size:11.5px; background: rgba(142, 182, 155, 0.1);" onclick="changeLanguage('en'); toggleSetupMenu();">English</button>
+                    </div>
 
-            <!--        -->
-            <div id="setupMenuDropdown" class="menu-dropdown">
-                <!-- .   -->
-                <div style="font-size: 11px; color: var(--text-muted); padding: 4px 8px; font-weight: bold;"> / Language</div>
-                <div style="display: flex; gap: 4px; margin-bottom: 4px;">
-                    <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 5px; font-size:12px;" onclick="changeLanguage('ckb'); toggleSetupMenu();"></button>
-                    <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 5px; font-size:12px;" onclick="changeLanguage('ar'); toggleSetupMenu();"></button>
-                    <button class="menu-btn-item" style="justify-content:center; flex:1; padding: 5px; font-size:12px;" onclick="changeLanguage('en'); toggleSetupMenu();">English</button>
+                    <div style="height:1px; background:var(--border-color); margin:4px 0;"></div>
+
+                    <!--   -->
+                    <button class="menu-btn-item" onclick="openConverterModal(); toggleSetupMenu();">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        <span data-i18n="batchBtn"> </span>
+                    </button>
+
+                    <!--   -->
+                    <button class="menu-btn-item" onclick="openHistoryModal(); toggleSetupMenu();">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span data-i18n="historyBtn"> </span>
+                    </button>
+
+                    <!--   -->
+                    <button id="install-app-btn" class="menu-btn-item" onclick="installApp(); toggleSetupMenu();">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span data-i18n="installApp"> </span>
+                    </button>
+
+                    <div style="height:1px; background:var(--border-color); margin:4px 0;"></div>
+
+                    <!--  -->
+                    <button class="menu-btn-item" style="color: #ef4444;" onclick="logout()">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        <span data-i18n="logoutBtn"></span>
+                    </button>
                 </div>
-
-                <div style="height:1px; background:var(--border-color); margin:4px 0;"></div>
-
-                <!-- .   -->
-                <button class="menu-btn-item" onclick="openConverterModal(); toggleSetupMenu();">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                    <span data-i18n="batchBtn"> </span>
-                </button>
-
-                <!-- .   -->
-                <button class="menu-btn-item" onclick="openHistoryModal(); toggleSetupMenu();">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span data-i18n="historyBtn"> </span>
-                </button>
-
-                <!-- .   -->
-                <button id="install-app-btn" class="menu-btn-item" onclick="installApp(); toggleSetupMenu();">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    <span data-i18n="installApp"> </span>
-                </button>
-
-                <div style="height:1px; background:var(--border-color); margin:4px 0;"></div>
-
-                <!-- .  -->
-                <button class="menu-btn-item" style="color: #ef4444;" onclick="logout()">
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    <span data-i18n="logoutBtn"></span>
-                </button>
             </div>
+
+            <!--     -->
+            <div id="welcome-msg" style="flex-grow: 1; text-align: center; font-size: 15px; color: var(--primary); font-weight: bold; margin-inline-end: 36px;">!</div>
         </div>
         
         <!--    -->
@@ -1106,39 +1109,39 @@ document.addEventListener('click', (e) => {
 
         const i18n = {
             ckb: {
-               linesText: "",
-featuresHead: " ",
+                pageTitle: " ", loginTitle: " ", appDesc: "        .", loginBtn: "", logoutBtn: "", installApp: " ", origFileLbl: "  ( /  / ...)", clickSelect: "   ", transFileLbl: "  ()", startBtn: "", batchBtn: " ", historyBtn: " ", historyTitle: "  ", clearAllBtn: " ", restoreBtn: "", deleteBtn: "", historyWarning: ":     !", historyEmpty: "    ", batchTitle: "     ", batchDesc: "         .", batchSelectLbl: " :", batchNoFile: "   ", batchFilesSelected: " ", batchTimeLbl: "/  ( ):", tagOptionLbl: "    :", tagKeep: " ", tagClean: "", batchFmtLbl: " :", applyBtn: "", closeBtn: "", editorTitle: " ", backBtn: "", undoBtn: "", redoBtn: "", videoBtn: "", removeVideoBtn: " ", searchNavBtn: "", searchLbl: "  ", searchPlh: " ...", replacePlh: " ...", replaceBtn: "", replaceAllBtn: " ", aiBtn: " ", dirBtn: " ", saveBtn: "  ", aiTitle: "  AI", aiCopy: " ", aiPaste: " ", resumeTitle: "  ", resumeDesc: "           ", resumeBtn: "", startNewBtn: "", backTitle: " ", confirmBack: "         .", yesLeave: " ", cancelBtn: "", developerInfo: ": <strong> </strong>", welcomeText: "!", scrollToTop: "  ",
+                msgSelectOrig: "   !", msgSelectBatch: "  !", msgDone: "    !", msgCopied: "  !", msgNotFound: "  !", msgInstallMenu: "     ",
+                installModalTitle: " ", installModalDesc: "                 ", installConfirmBtn: "",
+                batchDownloadTitle: " ", batchDownloadDesc: "        .    ''        .", batchDownloadBtn: " ",
+                toastDirRTL: ":    (RTL)", toastDirLTR: ":    (LTR)", toastDirAuto: ":  (Auto)",
+                featuresHead: " ",
                 feat1: "   SRT ASS  VTT   .",
                 feat2: "       .",
                 feat3: "      (AI)    .",
                 feat4: "         (Batch).",
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
-                msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
-                installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
-                batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
-                toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)"
+                linesText: ""
             },
             ar: {
-               linesText: "",
- featuresHead: " ",
-feat1: "   SRT  ASS  VTT    .",
-feat2: "       .",
-feat3: "       .",
-feat4: "       .",
-                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
-                msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
-                toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)"
+                pageTitle: " ", loginTitle: "  ", appDesc: "      .", loginBtn: " ", logoutBtn: " ", installApp: " ", origFileLbl: "  (SRT / ASS / VTT)", clickSelect: " ", transFileLbl: "  ()", startBtn: "", batchBtn: " ", historyBtn: " ", historyTitle: "  ", clearAllBtn: " ", restoreBtn: "", deleteBtn: "", historyWarning: ":     !", historyEmpty: "    ", batchTitle: "   ", batchDesc: "        .", batchSelectLbl: " :", batchNoFile: "    ", batchFilesSelected: " ", batchTimeLbl: "/  ():", tagOptionLbl: "  :", tagKeep: " ", tagClean: "", batchFmtLbl: " :", applyBtn: "", closeBtn: "", editorTitle: " ", backBtn: "", undoBtn: "", redoBtn: "", videoBtn: "", removeVideoBtn: " ", searchNavBtn: "", searchLbl: " ", searchPlh: " ...", replacePlh: " ...", replaceBtn: "", replaceAllBtn: " ", aiBtn: " ", dirBtn: " ", saveBtn: " ", aiTitle: "  AI", aiCopy: " ", aiPaste: "", resumeTitle: "  ", resumeDesc: "        ", resumeBtn: "", startNewBtn: "  ", backTitle: "  ", confirmBack: "          .", yesLeave: " ", cancelBtn: "", developerInfo: ": <strong> </strong>", welcomeText: " !", scrollToTop: " ",
+                msgSelectOrig: "   !", msgSelectBatch: "  !", msgDone: "  !", msgCopied: "   !", msgNotFound: "    !", msgInstallMenu: "    ", installModalTitle: " ", installModalDesc: "          ", installConfirmBtn: "", batchDownloadTitle: " ", batchDownloadDesc: "     .     .", batchDownloadBtn: " ",
+                toastDirRTL: ":    (RTL)", toastDirLTR: ":    (LTR)", toastDirAuto: ":  (Auto)",
+                featuresHead: " ",
+                feat1: "   SRT  ASS  VTT    .",
+                feat2: "       .",
+                feat3: "       .",
+                feat4: "       .",
+                linesText: ""
             },
             en: {
-               linesText: "lines",
- featuresHead: "Website Features",
-feat1: "Full support for SRT, ASS, and VTT subtitles with intact timing.",
-feat2: "Real-time video subtitle sync and live interactive preview.",
-feat3: "Smart AI translation import, format cleaning, and batch search & replace.",
-feat4: "Batch conversion and multi-file time shifting capabilities.",
                 pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", historyBtn: "History", historyTitle: "Edited Subtitles History", clearAllBtn: "Clear All", restoreBtn: "Open", deleteBtn: "Delete", historyWarning: "Warning: History is almost full!", historyEmpty: "No files saved in history", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Muhammad Abdulqadir</strong>", welcomeText: "Welcome!", scrollToTop: "Scroll to Top",
                 msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
-                toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto"
+                toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto",
+                featuresHead: "Website Features",
+                feat1: "Full support for SRT, ASS, and VTT subtitles with intact timing.",
+                feat2: "Real-time video subtitle sync and live interactive preview.",
+                feat3: "Smart AI translation import, format cleaning, and batch search & replace.",
+                feat4: "Batch conversion and multi-file time shifting capabilities.",
+                linesText: "lines"
             }
         };
 
@@ -1175,8 +1178,7 @@ feat4: "Batch conversion and multi-file time shifting capabilities.",
             const hist = getHistory();
             document.getElementById('history-count-text').innerText = `${hist.length} / 20`;
             
-            //   ( /  / lines)  
-            const lineWord = currentLang === 'en' ? 'lines' : (currentLang === 'ar' ? '' : '');
+            const lineLabel = (i18n[currentLang] && i18n[currentLang]['linesText']) ? i18n[currentLang]['linesText'] : '';
 
             if (hist.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding: 25px; color: var(--text-muted); font-size: 13px;">${i18n[currentLang]['historyEmpty']}</div>`;
@@ -1185,7 +1187,7 @@ feat4: "Batch conversion and multi-file time shifting capabilities.",
                     <div class="history-item">
                         <div class="history-info">
                             <div class="history-name">${h.fileName}</div>
-                            <div class="history-meta"><span>${h.date}</span> � <span>${h.count} ${lineWord}</span> � <span>${h.format.toUpperCase()}</span></div>
+                            <div class="history-meta"><span>${h.date}</span> | <span>${h.count} ${lineLabel}</span> | <span>${h.format.toUpperCase()}</span></div>
                         </div>
                         <div style="display:flex; gap: 6px;">
                             <button class="btn" style="padding: 6px 10px; font-size: 11px; width:auto;" onclick="restoreFromHistory('${h.id}')">${i18n[currentLang]['restoreBtn']}</button>
