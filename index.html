@@ -1699,6 +1699,33 @@ function copyDirectImgLink() {
                 URL.revokeObjectURL(url);
             }, 1000);
         }
+        
+        // فەنکشنی زیرەک بۆ ڕێکخستنی شێوازەکانی فایلی ASS بەبێ دەستکاری ڕەنگ و تەکنیکەکان
+function processAssStyleLine(line) {
+    if (!line.startsWith('Style:')) return line;
+    const parts = line.split(',');
+    if (parts.length < 23) return line;
+
+    const styleName = parts[0].replace(/^Style:\s*/i, '').trim();
+
+    // ١. ئەگەر تەکنیک، تابلۆ، گۆرانی، تایتڵ، یان ستاف بوو، ١٠٠٪ بەبێ دەستکاری وەک خۆی دەمێنێتەوە
+    const isTech = /sign|title|ep_|show_|op|ed|song|insert|credit|staff|karaoke|logo|preview|sponsor/i.test(styleName);
+    if (isTech) return line;
+
+    // ٢. پشکنینی ئەوەی ئایا قسەی سەرەوەیە یان نا
+    const alignVal = parts[18].trim();
+    const isTop = /top|سەرەوە/i.test(styleName) || alignVal === '8' || alignVal === '7' || alignVal === '9';
+
+    // ٣. تەنها ئەم ٤ شتە لەسەر دیالۆگەکان نوێ دەکرێنەوە:
+    parts[2] = '26';                               // قەبارەی فۆنت
+    parts[15] = '1';                              // شێوازی سنوور (BorderStyle)
+    parts[16] = '0.6';                            // ئەستووری هێڵی دەور (Stroke)
+    parts[17] = '0.5';                            // قەبارەی سێبەر (Shadow)
+    parts[21] = isTop ? '10' : '20';               // بەرزی لە لێوار (10 بۆ سەرەوە، 20 بۆ خوارەوە)
+
+    // ٤. هەموو شتەکانی تر (ڕەنگی دەق، ڕەنگی Stroke، ڕەنگی Shadow، فلاش باک، لاربوون، فۆنت) وەک خۆیان دەمێننەوە
+    return parts.join(',');
+}
 
         function cleanSubtitleTags(text) {
             if (!text) return "";
@@ -1753,9 +1780,15 @@ function copyDirectImgLink() {
                         finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${lines.join('\n')}\n\n`; 
                     });
                 } else if (targetFormat === 'ass') {
-                    let header = (isOrigAss && assHeaderLines.length > 0) 
-                        ? (assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n')
-                        : `[Script Info]\nTitle: Converted Subtitle\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                    let header = '';
+                    if (isOrigAss && assHeaderLines.length > 0) {
+                        // تەنها ئەو ستایلانەی ناو فایلەکە خۆی نوێ دەکرێنەوە بەبێ دروستکردنی ستایلی زیادە
+                        const modifiedHeaderLines = assHeaderLines.map(l => processAssStyleLine(l));
+                        header = modifiedHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
+                    } else {
+                        // ئەگەر فایلەکە لە بنەڕەتدا SRT یان VTT بوو، بەم ستایلە گونجاوانە دەبێتە ASS
+                        header = `[Script Info]\nTitle: Converted Subtitle\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\nStyle: Italic,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,-1,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\nStyle: Top,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,8,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                    }
                     
                     finalContent = header;
                     parsed.forEach(item => { 
@@ -2240,7 +2273,7 @@ function copyDirectImgLink() {
         function downloadEditedFile() {
             let final = "";
             if (isAssFormat) {
-                let header = assHeaderLines.join('\n');
+                let header = assHeaderLines.map(l => processAssStyleLine(l)).join('\n');
                 if (!header.includes('[Events]')) {
                     header += '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text';
                 }
