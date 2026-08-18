@@ -562,13 +562,16 @@
             gap: 6px;
         }
         .site-features-box ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 150px; /* بەرزیی جێگیر */
+    overflow-y: auto;  /* دەتوانیت بۆ خوارەوە بیبەیت */
+    padding-inline-end: 4px;
+}
         .site-features-box li {
             font-size: 12px;
             color: var(--text-muted);
@@ -736,6 +739,10 @@ html[lang="en"] .site-features-box {
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                     <span data-i18n="feat7">گۆڕینی فایلی وێنەیی PGS (.sup) بۆ دەق بە تەکنەلۆژیای زیرەکی OCR.</span>
                 </li>
+                <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    <span data-i18n="feat8">پاککردنەوەی دەنگە زیادەکانی وەک [music] و (screaming) لە ژێرنووس.</span>
+                </li>
             </ul>
         </div>
     </div>
@@ -772,6 +779,18 @@ html[lang="en"] .site-features-box {
                     <button class="menu-btn-item" onclick="openPgsModal(); toggleSetupMenu();">
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         <span data-i18n="pgsBtn">گۆڕینی PGS (.sup)</span>
+                    </button>
+                    
+                    <!-- دوگمەی پاککەرەوەی دەنگەکان SDH -->
+                    <button class="menu-btn-item" onclick="openSdhModal(); toggleSetupMenu();">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                        <span data-i18n="sdhBtn">پاککردنەوەی دەنگەکان (SDH)</span>
+                    </button>
+
+                    <!-- دوگمەی کورتکراوەکانی کیبۆرد -->
+                    <button class="menu-btn-item" onclick="openShortcutsModal(); toggleSetupMenu();">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        <span data-i18n="shortcutsBtn">کورتکراوەکانی کیبۆرد</span>
                     </button>
 
                     <!-- دوگمەی بارکردنی وێنە -->
@@ -916,6 +935,55 @@ html[lang="en"] .site-features-box {
             <div class="custom-modal-actions">
                 <button class="btn" onclick="document.getElementById('back-confirm-modal').style.display='none'" data-i18n="cancelBtn">پاشگەزبوونەوە</button>
                 <button class="btn btn-outline" onclick="executeGoBack()" style="color: var(--text-muted); border-color: var(--text-muted);" data-i18n="yesLeave">بەڵێ، دەرچوون</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ١. مۆداڵی پاککردنەوەی دەنگەکان SDH -->
+    <div id="sdh-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3 class="custom-modal-title" data-i18n="sdhTitle">پاککردنەوەی دەنگەکان (SDH Cleaner)</h3>
+            <p style="font-size: 12px; color:var(--text-muted); margin-bottom:12px; line-height: 1.5;" data-i18n="sdhDesc">هەموو دەنگە بێزارکەرەکانی وەک [music] و (screaming) لە ژێرنووس دەسڕێتەوە بەبێ تێکدانی کاتەکان.</p>
+            <div class="file-box" style="margin-bottom: 12px; padding: 14px;">
+                <label data-i18n="batchSelectLbl">فایلەکان هەڵبژێرە:</label>
+                <div class="file-name-display" id="sdhCountDisplay" data-i18n="batchNoFile">هیچ فایلێک دیاری نەکراوە</div>
+                <input type="file" id="sdhFileInput" accept=".srt,.ass,.vtt" multiple onchange="updateSdhCount(this)">
+            </div>
+            <div class="custom-modal-actions">
+                <button class="btn" onclick="executeSdhCleaner()" data-i18n="applyBtn">پاککردنەوە و داگرتن</button>
+                <button class="btn btn-outline" onclick="document.getElementById('sdh-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ٢. مۆداڵی کورتکراوەکانی کیبۆرد بە هەموو زمانەکان -->
+    <div id="shortcuts-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width: 420px; text-align: start;">
+            <h3 class="custom-modal-title" style="text-align: center;" data-i18n="shortcutsTitle">کورتکراوەکانی کیبۆرد</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin: 12px 0; font-size: 12.5px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; background: rgba(142, 182, 155, 0.08); border-radius: 8px;">
+                    <span data-i18n="scPlayPause">کارپێکردن/ڕاگرتنی ڤیدیۆ</span>
+                    <kbd dir="ltr" style="background:var(--border-color); padding: 3px 7px; border-radius: 6px; font-weight: bold; font-size: 11.5px;">Ctrl + Space</kbd>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; background: rgba(142, 182, 155, 0.08); border-radius: 8px;">
+                    <span data-i18n="scSeek">پێش/پاشخستنی ڤیدیۆ (٢ چرکە)</span>
+                    <kbd dir="ltr" style="background:var(--border-color); padding: 3px 7px; border-radius: 6px; font-weight: bold; font-size: 11.5px;">Ctrl + ➔ / ⬅</kbd>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; background: rgba(142, 182, 155, 0.08); border-radius: 8px;">
+                    <span data-i18n="scNextLine">چوونە دێڕی دواتر</span>
+                    <kbd dir="ltr" style="background:var(--border-color); padding: 3px 7px; border-radius: 6px; font-weight: bold; font-size: 11.5px;">Tab</kbd>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; background: rgba(142, 182, 155, 0.08); border-radius: 8px;">
+                    <span data-i18n="scSave">سەیڤکردن و داگرتن</span>
+                    <kbd dir="ltr" style="background:var(--border-color); padding: 3px 7px; border-radius: 6px; font-weight: bold; font-size: 11.5px;">Ctrl + S</kbd>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; background: rgba(142, 182, 155, 0.08); border-radius: 8px;">
+                    <span data-i18n="scSearch">گەڕان و گۆڕین</span>
+                    <kbd dir="ltr" style="background:var(--border-color); padding: 3px 7px; border-radius: 6px; font-weight: bold; font-size: 11.5px;">Ctrl + F</kbd>
+                </div>
+            </div>
+            <div class="custom-modal-actions">
+                <button class="btn btn-outline" style="width: 100%;" onclick="document.getElementById('shortcuts-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
     </div>
@@ -1308,7 +1376,18 @@ html[lang="en"] .site-features-box {
                 feat5: "گۆڕینی ڕاستەوخۆی وێنە بۆ لینکی هەمیشەیی بەبێ بەسەرچوون.",
                 feat6: "چاککردنی ئاڕاستەی RTL و هێماکان بەبێ دەستکاری هیچ شتێکی تر.",
                 feat7: "گۆڕینی فایلی وێنەیی PGS (.sup) بۆ دەق بە تەکنەلۆژیای زیرەکی OCR.",
+                feat8: "پاککردنەوەی دەنگە زیادەکانی وەک [music] و (screaming) لە ژێرنووس.",
                 pgsReadingLine: "خەریکی خوێندنەوەی دێڕی #",
+                sdhBtn: "پاککردنەوەی دەنگەکان (SDH)",
+                sdhTitle: "پاککردنەوەی دەنگەکان (SDH Cleaner)",
+                sdhDesc: "هەموو دەنگە بێزارکەرەکانی وەک [music] و (screaming) لە ژێرنووس دەسڕێتەوە بەبێ تێکدانی کاتەکان.",
+                shortcutsBtn: "کورتکراوەکانی کیبۆرد",
+                shortcutsTitle: "کورتکراوەکانی کیبۆرد",
+                scPlayPause: "کارپێکردن/ڕاگرتنی ڤیدیۆ",
+                scSeek: "پێش/پاشخستنی ڤیدیۆ (٢ چرکە)",
+                scNextLine: "چوونە دێڕی دواتر",
+                scSave: "سەیڤکردن و داگرتن",
+                scSearch: "گەڕان و گۆڕین",
                 langLabel: "زمان",
                 linesText: "دێڕ"
             },
@@ -1351,7 +1430,18 @@ html[lang="en"] .site-features-box {
                 feat5: "تحويل مباشر للصور إلى روابط دائمة وغير منتهية الصلاحية.",
                 feat6: "إصلاح محاذاة RTL والأقواس دون تعديل أي شيء آخر بالملف.",
                 feat7: "تحويل ملفات الصور PGS (.sup) إلى نصوص بتقنية OCR الذكية.",
+                feat8: "تنظيف المؤثرات الصوتية مثل [music] و (screaming) تلقائياً من الترجمة.",
                 pgsReadingLine: "جاري قراءة السطر #",
+                sdhBtn: "تنظيف الأصوات (SDH)",
+                sdhTitle: "تنظيف المؤثرات الصوتية (SDH)",
+                sdhDesc: "حذف جميع المؤثرات الصوتية مثل [موسيقى] و (صراخ) تلقائياً دون التأثير على التوقيت.",
+                shortcutsBtn: "اختصارات لوحة المفاتيح",
+                shortcutsTitle: "اختصارات لوحة المفاتيح",
+                scPlayPause: "تشغيل/إيقاف الفيديو",
+                scSeek: "تقديم/تأخير الفيديو (ثانيتان)",
+                scNextLine: "الانتقال للسطر التالي",
+                scSave: "حفظ وتنزيل الملف",
+                scSearch: "بحث واستبدال",
                 langLabel: "اللغة",
                 linesText: "سطر"
             },
@@ -1394,7 +1484,18 @@ html[lang="en"] .site-features-box {
                 feat5: "Direct image to permanent, non-expiring link conversion.",
                 feat6: "Fix RTL text & bracket alignment without touching other file data.",
                 feat7: "Convert Blu-ray PGS (.sup) subtitle images to text with smart OCR.",
+                feat8: "Automatically clean SDH sound descriptors like [music] and (screaming).",
                 pgsReadingLine: "Reading line #",
+                sdhBtn: "SDH Audio Cleaner",
+                sdhTitle: "SDH / Hearing Impaired Cleaner",
+                sdhDesc: "Automatically removes sound descriptors like [music] and (screaming) without affecting timing.",
+                shortcutsBtn: "Keyboard Shortcuts",
+                shortcutsTitle: "Keyboard Shortcuts",
+                scPlayPause: "Play / Pause Video",
+                scSeek: "Seek Video (±2s)",
+                scNextLine: "Next Subtitle Line",
+                scSave: "Save & Download",
+                scSearch: "Search & Replace",
                 langLabel: "Language",
                 linesText: "lines"
             }
@@ -1861,6 +1962,181 @@ function setPgsLanguage(code, name) {
     document.getElementById('pgsCurrentLangText').innerText = name;
     document.getElementById('pgsLangMenu').classList.remove('show');
 }
+
+// ١. کردنەوە و بەڕێوەبردنی مۆداڵە نوێیەکان
+function openSdhModal() {
+    document.getElementById('sdh-modal').style.display = 'flex';
+    document.getElementById('sdhFileInput').value = '';
+    document.getElementById('sdhCountDisplay').innerText = i18n[currentLang]['batchNoFile'] || 'هیچ فایلێک دیاری نەکراوە';
+}
+function updateSdhCount(input) {
+    document.getElementById('sdhCountDisplay').innerText = input.files.length ? `${input.files.length} فایل هەڵبژێردراون` : 'هیچ فایلێک دیاری نەکراوە';
+}
+
+function updateKurdFixCount(input) {
+    document.getElementById('kurdFixCountDisplay').innerText = input.files.length ? `${input.files.length} فایل هەڵبژێردراون` : 'هیچ فایلێک دیاری نەکراوە';
+}
+
+function openShortcutsModal() {
+    document.getElementById('shortcuts-modal').style.display = 'flex';
+}
+
+// بزوێنەری زیرەک بۆ پاککردنەوەی دەنگەکان و ڕێکخستنی داشەکان (-)
+function cleanSdhLinesArray(lines) {
+    let cleaned = lines.map(line => {
+        let l = line.replace(/\[[^\]]*\]/g, '')               // سڕینەوەی [music] و هاوشێوەکانی
+                    .replace(/\([^\)]*(?:whispers|sighs|screams|groans|gasps|chuckles|cries|applause|music|laughter|cough|clears throat|panting|grunts|shouts|snickers|giggles|snorts|sobbing|thud|footsteps|creaking|rustling|door|phone|bell|thunder|wind)[^\)]*\)/gi, '') // سڕینەوەی دەنگ لەناو کەوانە
+                    .replace(/\([A-Za-z\s]+\)/g, '')          // سڕینەوەی (screaming)
+                    .replace(/[♪♫#][^♪♫#]*[♪♫#]/g, '')       // سڕینەوەی ♪ نۆتەی مۆسیقا ♪
+                    .replace(/^[A-Z0-9\s._'-]+:\s*/, '')      // سڕینەوەی ناوی بێژەر لە سەرەتا
+                    .trim();
+
+        // ئەگەر تەنها داش (-) یان فاریزە بە تەنیا مابووەوە، بیسڕەوە
+        if (/^[-–—•\s,.:]+$/.test(l)) l = '';
+        return l;
+    }).filter(l => l.length > 0);
+
+    // ئەگەر تەنها یەک دێڕ مابووەوە، داشی سەرەتای ڕستەکەش لابە
+    if (cleaned.length === 1) {
+        cleaned[0] = cleaned[0].replace(/^[-–—•]\s*/, '').trim();
+    }
+
+    return cleaned;
+}
+
+// جێبەجێکردنی پاککردنەوەی دەنگەکان بۆ هەموو فۆرماتەکان (SRT, ASS, VTT)
+async function executeSdhCleaner() {
+    const files = document.getElementById('sdhFileInput').files;
+    if (!files.length) return showToast('تکایە فایل هەڵبژێرە!', 'error');
+    document.getElementById('sdh-modal').style.display = 'none';
+
+    for (let f of files) {
+        const content = await f.text();
+        const lower = f.name.toLowerCase();
+        let finalCleaned = '';
+
+        if (lower.endsWith('.ass')) {
+            const lines = content.split(/\r?\n/);
+            finalCleaned = lines.map(line => {
+                if (line.startsWith('Dialogue:')) {
+                    return line.replace(/(Dialogue:[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,)(.*)/, (m, p, t) => {
+                        let subLines = t.split('\\N');
+                        let res = cleanSdhLinesArray(subLines);
+                        return p + (res.join('\\N') || '...');
+                    });
+                }
+                return line;
+            }).join('\n');
+        } else {
+            // بۆ فۆرماتەکانی SRT و VTT بە شێوازی بلۆک
+            const blocks = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split(/\n\s*\n/);
+            let newBlocks = [];
+
+            for (let b of blocks) {
+                let lines = b.trim().split('\n');
+                let timeIdx = lines.findIndex(x => x.includes('-->'));
+                if (timeIdx !== -1) {
+                    let header = lines.slice(0, timeIdx + 1);
+                    let textLines = lines.slice(timeIdx + 1);
+                    let res = cleanSdhLinesArray(textLines);
+                    if (res.length > 0) {
+                        newBlocks.push(header.join('\n') + '\n' + res.join('\n'));
+                    }
+                } else if (b.startsWith('WEBVTT') || b.startsWith('NOTE')) {
+                    newBlocks.push(b);
+                }
+            }
+            finalCleaned = newBlocks.join('\n\n');
+        }
+
+        triggerDownload(finalCleaned, f.name.replace(/\.[^/.]+$/, "") + "_SDH_Cleaned." + f.name.split('.').pop());
+        await new Promise(r => setTimeout(r, 500));
+    }
+    showToast('دەنگە زیادەکان و داشەکان بە سەرکەوتوویی پاککرانەوە!', 'success');
+}
+
+// بزوێنەری پاک و سەلامەتی ڕێنووسی کوردی (١٠٠٪ بێ تێکچوون)
+function normalizeKurdishText(text) {
+    if (!text) return '';
+
+    // پاراستنی تاگەکانی ASS ({\...}) و HTML (<i>...</i>) بە دەستلێنەدراوی
+    return text.replace(/(\{[^}]*\}|<[^>]*>|[^{}<]+)/g, (match) => {
+        if (match.startsWith('{') || match.startsWith('<')) return match;
+
+        let s = match;
+
+        // ١. چاککردنی پیتی (ي)ی دوو خاڵ و (ك)ی عەرەبی بۆ کوردی
+        s = s.replace(/ي/g, 'ی')
+             .replace(/ى/g, 'ی')
+             .replace(/ك/g, 'ک');
+
+        // ٢. گۆڕینی هێماکانی (?, ;) بۆ کوردی
+        s = s.replace(/\?/g, '؟')
+             .replace(/;/g, '؛');
+
+        // ٣. گۆڕینی فاریزە (,) بۆ (،) بەبێ دەستکاری ژمارەی وەک 1,000
+        s = s.replace(/(\D|^),/g, '$1،').replace(/,(\D|$)/g, '،$1');
+
+        // ٤. سڕینەوەی سپەیزی دووبارە (دوو بۆشایی دەبێتە یەک بۆشایی)
+        s = s.replace(/ {2,}/g, ' ');
+
+        return s;
+    });
+}
+
+async function executeKurdishFixer() {
+    const files = document.getElementById('kurdFixFileInput').files;
+    if (!files.length) return showToast('تکایە فایل هەڵبژێرە!', 'error');
+    document.getElementById('kurd-fix-modal').style.display = 'none';
+
+    for (let f of files) {
+        const content = await f.text();
+        const lines = content.split(/\r?\n/).map(line => {
+            if (line.includes('-->') || /^\d+$/.test(line.trim()) || line.startsWith('Format:') || line.startsWith('Style:')) return line;
+            if (line.startsWith('Dialogue:')) {
+                return line.replace(/(Dialogue:[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,)(.*)/, (m, p, t) => {
+                    return p + t.split('\\N').map(sub => normalizeKurdishText(sub)).join('\\N');
+                });
+            }
+            return normalizeKurdishText(line);
+        }).join('\n');
+
+        triggerDownload(lines, f.name.replace(/\.[^/.]+$/, "") + "_Kurdish_Fixed." + f.name.split('.').pop());
+        await new Promise(r => setTimeout(r, 500));
+    }
+    showToast('ڕێنووسی کوردی بە سەرکەوتوویی چاککرا!', 'success');
+}
+
+// ٤. چالاککردنی کورتکراوەکانی کیبۆرد لەناو ئەدیتۆر
+document.addEventListener('keydown', e => {
+    if (!isEditing) return;
+    const video = document.getElementById('preview-video');
+
+    // Ctrl + Space -> کارپێکردن/ڕاگرتنی ڤیدیۆ
+    if (e.ctrlKey && e.code === 'Space') {
+        e.preventDefault();
+        if (video) video.paused ? video.play() : video.pause();
+    }
+    // Ctrl + ➔ / ⬅ -> پێش و پاشخستنی ڤیدیۆ بە ٢ چرکە
+    if (e.ctrlKey && e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (video) video.currentTime = Math.min(video.duration, video.currentTime + 2);
+    }
+    if (e.ctrlKey && e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (video) video.currentTime = Math.max(0, video.currentTime - 2);
+    }
+    // Ctrl + S -> سەیڤکردنی خێرا
+    if (e.ctrlKey && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        downloadEditedFile();
+    }
+    // Ctrl + F -> گەڕان و گۆڕین
+    if (e.ctrlKey && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        toggleSearchBar();
+    }
+});
 
 function openPgsModal() {
     document.getElementById('pgs-modal').style.display = 'flex';
@@ -2347,7 +2623,7 @@ function processAssStyleLine(line) {
     if (parts.length > 16) parts[16] = '0.6';       // Stroke = 0.6
     if (parts.length > 17) parts[17] = '0.5';       // Shadow = 0.5
     if (parts.length > 18 && isTop) parts[18] = '8'; // جێگیرکردنی Alignment لەسەر 8 بۆ سەرەوە
-    if (parts.length > 21) parts[21] = isTop ? '10' : '20'; // بەرزی 10 بۆ سەرەوە، 20 بۆ خوارەوە
+    if (parts.length > 21) parts[21] = isTop ? '20' : '20'; // بەرزی 20 بۆ سەرەوە، 20 بۆ خوارەوە
 
     return 'Style: ' + parts.join(',');
 }
@@ -2443,23 +2719,38 @@ function processAssSmartSubtitle(rawText, styleName) {
                 } else if (targetFormat === 'ass') {
                     let header = '';
                     if (isOrigAss && assHeaderLines.length > 0) {
-                        // تەنها ئەو ستایلانەی ناو فایلەکە خۆی نوێ دەکرێنەوە بەبێ دروستکردنی ستایلی زیادە
-                        const modifiedHeaderLines = assHeaderLines.map(l => processAssStyleLine(l));
-                        header = modifiedHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
+                        // کاتێک ASS دەکرێتە ASS: هەموو ستایل و سەرەتای فایل وەک خۆی دەمێنێتەوە
+                        header = assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
                     } else {
-                        // ئەگەر فایلەکە لە بنەڕەتدا SRT یان VTT بوو، بەم ستایلە گونجاوانە دەبێتە ASS
-                        header = `[Script Info]\nTitle: Converted Subtitle\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\nStyle: Italic,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,-1,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\nStyle: Top,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,8,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                        // کاتێک فایلی تر (وەک SRT/VTT) دەکرێتە ASS: تەنها ستایلی Default زیاد دەکرێت
+                        header = `[Script Info]\nTitle: Converted Subtitle\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
                     }
                     
                     finalContent = header;
                     parsed.forEach(item => { 
-                        let textStr = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : item.text);
+                        let textStr = (tagOption === 'clean' ? cleanSubtitleTags(item.text) : (item.rawText || item.text));
                         textStr = textStr.replace(/<i>/gi, '{\\i1}').replace(/<\/i>/gi, '{\\i0}')
                                          .replace(/<b>/gi, '{\\b1}').replace(/<\/b>/gi, '{\\b0}')
                                          .replace(/<u>/gi, '{\\u1}').replace(/<\/u>/gi, '{\\u0}');
                         let lines = textStr.split('\n').map(l => l.trim()).filter(l => l !== "");
                         if (lines.length === 0) lines = ['...'];
-                        finalContent += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${lines.join('\\N')}\n`; 
+
+                        // تەنها چاککردنی RTL بەبێ دەستکاری هیچ شتێکی تر
+                        lines = lines.map(line => applyPureRtlFixToLine(line));
+
+                        let dStyle = (item.assMeta && item.assMeta.style) ? item.assMeta.style : 'Default';
+                        let dLayer = (item.assMeta && item.assMeta.layer) ? item.assMeta.layer : '0';
+                        let dName = (item.assMeta && item.assMeta.name) ? item.assMeta.name : '';
+                        let dMarginL = (item.assMeta && item.assMeta.marginL) ? item.assMeta.marginL : '0';
+                        let dMarginR = (item.assMeta && item.assMeta.marginR) ? item.assMeta.marginR : '0';
+                        let dMarginV = (item.assMeta && item.assMeta.marginV) ? item.assMeta.marginV : '0';
+// ئەگەر دێڕەکە تاگی {\an8}ی تێدابوو، بەرزییەکەی لە سەرەوە دەبێتە 20
+if (/\\an[789]|\\a[567]/i.test(textStr)) {
+    dMarginV = '20';
+}
+                        let dEffect = (item.assMeta && item.assMeta.effect) ? item.assMeta.effect : '';
+                        
+                        finalContent += `Dialogue: ${dLayer},${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},${dStyle},${dName},${dMarginL},${dMarginR},${dMarginV},${dEffect},${lines.join('\\N')}\n`; 
                     });
                 }
 
@@ -2988,7 +3279,12 @@ function copyForAI() {
                 if (isAssFormat) { 
                     let dialogueText = fp.join('\\N');
                     let meta = orig.assMeta || { layer: '0', style: 'Default', name: '', marginL: '0', marginR: '0', marginV: '0', effect: '' };
-                    let linePrefix = `Dialogue: ${meta.layer},${formatTimeASS(orig.startSec)},${formatTimeASS(orig.endSec)},${meta.style},${meta.name},${meta.marginL},${meta.marginR},${meta.marginV},${meta.effect},`;
+                    let finalMarginV = meta.marginV;
+// ئەگەر دێڕەکە تاگی {\an8}ی تێدابوو بەرزییەکەی لە سەرەوە دەبێتە 20
+if (/\\an[789]|\\a[567]/i.test(dialogueText)) {
+    finalMarginV = '20';
+}
+                    let linePrefix = `Dialogue: ${meta.layer},${formatTimeASS(orig.startSec)},${formatTimeASS(orig.endSec)},${meta.style},${meta.name},${meta.marginL},${meta.marginR},${finalMarginV},${meta.effect},`;
                     final += linePrefix + dialogueText + '\n'; 
                 } 
                 else if (isVttFormat) { 
