@@ -2322,37 +2322,70 @@ async function executeRtlFix() {
             }, 1000);
         }
         
-        // فەنکشنی زیرەک بۆ ڕێکخستنی شێوازەکانی فایلی ASS بەبێ دەستکاری ڕەنگ و تەکنیکەکان
-// فەنکشنی تەواو و بەهێز بۆ جێبەجێکردنی ستایلی ASS لەسەر هەموو جۆرە فایلێک
+// ١. ڕێکخستنی ستایلەکانی ASS بۆ سەرەوە (Top = 10) و خوارەوە (Main = 20)
 function processAssStyleLine(line) {
     if (!line || typeof line !== 'string') return line;
     let cleanLine = line.trim();
     if (!cleanLine.startsWith('Style:')) return line;
 
-    // لێکردنەوەی ناوی Style: لە پێشەوە
     let content = cleanLine.substring(6).trim();
     let parts = content.split(',').map(p => p.trim());
     if (parts.length < 18) return line;
 
     let styleName = parts[0];
 
-    // ١. پاراستنی ١٠٠٪ی تەکنیک، تابلۆ، گۆرانی، تایتڵ و ستاف
+    // پاراستنی تەکنیک و تابلۆکان
     const isTech = /sign|title|ep_|show_|op|ed|song|insert|credit|staff|karaoke|logo|preview|sponsor/i.test(styleName);
     if (isTech) return line;
 
-    // ٢. پشکنینی قسەی سەرەوە (Alignment: 7, 8, 9 یان ناوی Top)
+    // پشکنینی قسەی سەرەوە (وەک Main - Top، Italics - Top، یان ئەلیگنمێنت 8)
     const alignVal = parts[18] || '2';
     const isTop = /top|سەرەوە/i.test(styleName) || alignVal === '8' || alignVal === '7' || alignVal === '9';
 
-    // ٣. جێبەجێکردنی ٤ دەستکارییە داواکراوەکە:
-    parts[2] = '26';                                // سایزی فۆنت = 26
+    parts[2] = '26';                                // قەبارەی فۆنت = 26
     if (parts.length > 15) parts[15] = '1';         // BorderStyle = 1
-    if (parts.length > 16) parts[16] = '0.6';       // Stroke (Outline) = 0.6
+    if (parts.length > 16) parts[16] = '0.6';       // Stroke = 0.6
     if (parts.length > 17) parts[17] = '0.5';       // Shadow = 0.5
-    if (parts.length > 21) parts[21] = isTop ? '10' : '20'; // بەرزی: 10 بۆ سەرەوە، 20 بۆ خوارەوە
+    if (parts.length > 18 && isTop) parts[18] = '8'; // جێگیرکردنی Alignment لەسەر 8 بۆ سەرەوە
+    if (parts.length > 21) parts[21] = isTop ? '10' : '20'; // بەرزی 10 بۆ سەرەوە، 20 بۆ خوارەوە
 
-    // ٤. پاراستنی تەواوی ڕەنگەکان و فۆنت و تایبەتمەندییە ئەسڵییەکان
     return 'Style: ' + parts.join(',');
+}
+
+// ٢. چاککردنی تاگەکانی ناو خودی دێڕی قسەکان
+function processAssSmartSubtitle(rawText, styleName) {
+    if (!rawText) return rawText;
+
+    const isTech = /\\p[1-9]|\\clip|\\iclip|\\org/i.test(rawText) || 
+                   /sign|title|ep_|show_|op|ed|song|insert|credit|staff|karaoke|logo|sponsor/i.test(styleName || '');
+    if (isTech) return rawText;
+
+    let text = rawText;
+
+    // ڕێکخستنی Stroke و Shadow بۆ 0.6 و 0.5 لەناو دێڕەکانیش
+    text = text.replace(/\\bord[0-9.]+/gi, '\\bord0.6')
+               .replace(/\\shad[0-9.]+/gi, '\\shad0.5');
+
+    // ئەگەر قسەی سەرەوە بێت و تاگی نەبێت
+    if (/\\an[789]|\\a[567]/i.test(text) && !text.includes('\\bord0.6')) {
+        text = text.replace(/^\{/, '{\\bord0.6\\shad0.5');
+        if (!text.startsWith('{')) text = '{\\bord0.6\\shad0.5}' + text;
+    }
+
+    // جێگیرکردنی RTL بە شێوازی فەرمیی Re:Zero
+    if (/[\u0600-\u06FF\u0750-\u077F]/.test(text)) {
+        let clean = text.replace(/[\u200F\u202B]/g, '');
+        const leadingTagsMatch = clean.match(/^(\{[^}]*\})+/);
+        if (leadingTagsMatch) {
+            const tags = leadingTagsMatch[0];
+            const rest = clean.substring(tags.length);
+            text = tags + '\u202B' + rest;
+        } else {
+            text = '\u202B' + clean;
+        }
+    }
+
+    return text;
 }
 
         function cleanSubtitleTags(text) {
@@ -2869,22 +2902,21 @@ function processAssStyleLine(line) {
             } 
         }
 
-        function copyForAI() {
-            let t = originalData.map((x,i) => `[${i+1}] ${x.text.replace(/\n/g, ' ')}`).join('\n');
-            let ta = document.createElement("textarea"); 
-            ta.value = t; 
-            document.body.appendChild(ta); 
-            ta.select(); 
-            document.execCommand('copy'); 
-            document.body.removeChild(ta); 
-            showToast(i18n[currentLang]['msgCopied'], "success");
-        }
+        // کۆپیکردنی تەواوی دەقی ئەسڵی بە دوو دێڕ و تاگە لاری و تەکنیکەکانەوە بۆ AI
+function copyForAI() {
+    let t = originalData.map((x, i) => {
+        let fullText = x.rawText || x.text;
+        return `[${i + 1}] ${fullText}`;
+    }).join('\n');
 
-        async function pasteFromClipboard() { 
-            try { 
-                document.getElementById('ai-paste-area').value = await navigator.clipboard.readText(); 
-            } catch(e){} 
-        }
+    let ta = document.createElement("textarea"); 
+    ta.value = t; 
+    document.body.appendChild(ta); 
+    ta.select(); 
+    document.execCommand('copy'); 
+    document.body.removeChild(ta); 
+    showToast(i18n[currentLang]['msgCopied'], "success");
+}
 
         function processAIPaste() {
             let txt = document.getElementById('ai-paste-area').value; 
