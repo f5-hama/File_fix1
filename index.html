@@ -2705,23 +2705,17 @@ function processAssStyleLine(line) {
                 kurdData = isKAss ? parseASSContent(kText, false) : (isKVtt ? parseVTTContent(kText) : parseSRTContent(kText));
             }
 
-            let usedKurdIndices = new Set();
             let state = originalData.map((orig, i) => {
                 let transRaw = '';
                 if (kurdData.length === originalData.length && kurdData[i]) {
                     transRaw = kurdData[i].text;
-                } else if (kurdData.length > 0) {
-                    // تەنها بە یەک دێڕی گونجاو دەبەسترێتەوە و ئەگەر دێڕەکە نەبوو بە بەتاڵی دەمێنێتەوە
-                    let matchedIdx = kurdData.findIndex((k, kIdx) => !usedKurdIndices.has(kIdx) && Math.abs(k.startSec - orig.startSec) <= 1.0);
-                    if (matchedIdx !== -1) {
-                        transRaw = kurdData[matchedIdx].text;
-                        usedKurdIndices.add(matchedIdx);
-                    } else {
-                        transRaw = ''; // ئەگەر دێڕ نەبوو با بە تەواوی بەتاڵ بێت نەک دووبارە بێتەوە
-                    }
+                } else {
+                    let matched = kurdData.find(k => Math.abs(k.startSec - orig.startSec) <= 1.5);
+                    if (matched) transRaw = matched.text;
+                    else transRaw = kurdData[i] ? kurdData[i].text : '';
                 }
 
-                return transRaw ? smartApplyTags(orig.rawText || orig.text, transRaw) : '';
+                return smartApplyTags(orig.rawText || orig.text, transRaw);
             });
             
             buildEditorUI(state);
