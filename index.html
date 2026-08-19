@@ -2482,22 +2482,50 @@ function openShortcutsModal() {
     document.getElementById('shortcuts-modal').style.display = 'flex';
 }
 
-// بزوێنەری زیرەک بۆ پاککردنەوەی دەنگەکان و ڕێکخستنی داشەکان (-)
+// بزوێنەری زیرەک بۆ پاککردنەوەی هەموو دەنگ و گۆرانییەکان (تەنانەت بە وتەزاشەوە)
 function cleanSdhLinesArray(lines) {
-    let cleaned = lines.map(line => {
-        let l = line.replace(/\[[^\]]*\]/g, '')               // سڕینەوەی [music] و هاوشێوەکانی
-                    .replace(/\([^\)]*(?:whispers|sighs|screams|groans|gasps|chuckles|cries|applause|music|laughter|cough|clears throat|panting|grunts|shouts|snickers|giggles|snorts|sobbing|thud|footsteps|creaking|rustling|door|phone|bell|thunder|wind)[^\)]*\)/gi, '') // سڕینەوەی دەنگ لەناو کەوانە
-                    .replace(/\([A-Za-z\s]+\)/g, '')          // سڕینەوەی (screaming)
-                    .replace(/[♪♫#][^♪♫#]*[♪♫#]/g, '')       // سڕینەوەی ♪ نۆتەی مۆسیقا ♪
-                    .replace(/^[A-Z0-9\s._'-]+:\s*/, '')      // سڕینەوەی ناوی بێژەر لە سەرەتا
-                    .trim();
+    const soundKeywords = /sigh|gasp|scream|groan|chuckle|whisper|cry|applause|music|song|theme|tune|melody|lyrics|singing|laughter|cough|throat|pant|grunt|shout|snicker|giggle|snort|sob|thud|footstep|creak|rustl|door|phone|bell|thunder|wind|bark|growl|buzz|siren|beep|engine|cheer|yell|clatter|radio|television|newscaster|reporter|broadcast|announcer|narrator|inaudible|muffled|static|humming|splash|drip|click|clack|gunshot|bullet|explosion|boom|bang|chime/i;
 
-        // ئەگەر تەنها داش (-) یان فاریزە بە تەنیا مابووەوە، بیسڕەوە
+    let cleaned = lines.map(line => {
+        let l = line.trim();
+
+        // ١. سڕینەوەی دەنگ و گۆرانییەکان لەناو چوارگۆشە [...] (تەنانەت ئەگەر ناوی لەناو وتەزاش بێت)
+        l = l.replace(/\[([^\]]+)\]/g, (match, inside) => {
+            const inner = inside.trim();
+            // ئەگەر دەنگ یان مۆسیقا بێت، دەستبەجێ دەیسڕێتەوە
+            if (soundKeywords.test(inner)) return '';
+            // ئەگەر تابلۆی نووسینی سەر شاشە بێت دەیپارێزێت
+            if (/^(sign|text|note|title|notice|chapter|episode)\b/i.test(inner)) return match;
+            if (/\b(later|morning|evening|night|afternoon|ago|meanwhile|\d{4})\b/i.test(inner)) return match;
+            return '';
+        });
+
+        // ٢. سڕینەوەی دەنگەکان لەناو کەوانەی بازنەیی (...)
+        l = l.replace(/\(([^)]+)\)/g, (match, inside) => {
+            const inner = inside.trim();
+            // ئەگەر دەنگ، گۆرانی، یان هەواڵ بێت دەیسڕێتەوە
+            if (soundKeywords.test(inner)) return '';
+            // ئەگەر ناوی بێژەر بێت بە تەنیا (وەک android 2) دەیسڕێتەوە
+            if (/^[A-Za-z0-9\s._'-]+$/i.test(inner) && inner.split(' ').length <= 4) return '';
+            // ئەگەر تابلۆ و ناوی شوێن و کات بێت دەیپارێزێت
+            if (/['"«»]/.test(inner) || /^(sign|text|note|title|notice|chapter|episode|part)\b/i.test(inner)) return match;
+            if (/\b(later|morning|evening|night|afternoon|ago|meanwhile|yesterday|tomorrow|hours|days|years?|b\.?c|a\.?d|\d{4})\b/i.test(inner)) return match;
+            return match;
+        });
+
+        // سڕینەوەی نۆتەی مۆسیقا
+        l = l.replace(/[♪♫#][^♪♫#]*[♪♫#]/g, '');
+
+        // سڕینەوەی ناوی بێژەر لە سەرەتای دێڕ: SPEAKER:
+        l = l.replace(/^[A-Z0-9\s._'-]+:\s*/, '');
+
+        l = l.trim();
+        // ئەگەر تەنها داش (-) یان هێمای بەتاڵ مابێتەوە، بیسڕەوە
         if (/^[-–—•\s,.:]+$/.test(l)) l = '';
         return l;
     }).filter(l => l.length > 0);
 
-    // ئەگەر تەنها یەک دێڕ مابووەوە، داشی سەرەتای ڕستەکەش لابە
+    // ئەگەر تەنها یەک دێڕ مابێتەوە، داشی سەرەتای ڕستەکەش لادەبات
     if (cleaned.length === 1) {
         cleaned[0] = cleaned[0].replace(/^[-–—•]\s*/, '').trim();
     }
@@ -2505,7 +2533,7 @@ function cleanSdhLinesArray(lines) {
     return cleaned;
 }
 
-// جێبەجێکردنی پاککردنەوەی دەنگەکان بۆ هەموو فۆرماتەکان (SRT, ASS, VTT)
+// جێبەجێکردنی پاککردنەوە و ڕیزبەندیی تەواوی ژمارەکانی SRT لە ١ەوە
 async function executeSdhCleaner() {
     const files = document.getElementById('sdhFileInput').files;
     if (!files.length) return showToast('تکایە فایل هەڵبژێرە!', 'error');
@@ -2529,83 +2557,37 @@ async function executeSdhCleaner() {
                 return line;
             }).join('\n');
         } else {
-            // بۆ فۆرماتەکانی SRT و VTT بە شێوازی بلۆک
+            // بۆ SRT و VTT بە ڕیزبەندیی خاوێنی ژمارەکان لە ١ەوە
             const blocks = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split(/\n\s*\n/);
-            let newBlocks = [];
+            let validBlocks = [];
+            let counter = 1;
 
             for (let b of blocks) {
                 let lines = b.trim().split('\n');
                 let timeIdx = lines.findIndex(x => x.includes('-->'));
                 if (timeIdx !== -1) {
-                    let header = lines.slice(0, timeIdx + 1);
+                    let timeLine = lines[timeIdx];
                     let textLines = lines.slice(timeIdx + 1);
                     let res = cleanSdhLinesArray(textLines);
+                    // تەنها ئەو دێڕانە دەهێڵێتەوە کە قسەی ڕاستەقینەن
                     if (res.length > 0) {
-                        newBlocks.push(header.join('\n') + '\n' + res.join('\n'));
+                        if (lower.endsWith('.vtt')) {
+                            validBlocks.push(`${timeLine}\n${res.join('\n')}`);
+                        } else {
+                            validBlocks.push(`${counter++}\n${timeLine}\n${res.join('\n')}`);
+                        }
                     }
                 } else if (b.startsWith('WEBVTT') || b.startsWith('NOTE')) {
-                    newBlocks.push(b);
+                    validBlocks.push(b);
                 }
             }
-            finalCleaned = newBlocks.join('\n\n');
+            finalCleaned = validBlocks.join('\n\n') + '\n\n';
         }
 
         triggerDownload(finalCleaned, f.name.replace(/\.[^/.]+$/, "") + "_SDH_Cleaned." + f.name.split('.').pop());
         await new Promise(r => setTimeout(r, 500));
     }
-    showToast('دەنگە زیادەکان و داشەکان بە سەرکەوتوویی پاککرانەوە!', 'success');
-}
-
-// بزوێنەری پاک و سەلامەتی ڕێنووسی کوردی (١٠٠٪ بێ تێکچوون)
-function normalizeKurdishText(text) {
-    if (!text) return '';
-
-    // پاراستنی تاگەکانی ASS ({\...}) و HTML (<i>...</i>) بە دەستلێنەدراوی
-    return text.replace(/(\{[^}]*\}|<[^>]*>|[^{}<]+)/g, (match) => {
-        if (match.startsWith('{') || match.startsWith('<')) return match;
-
-        let s = match;
-
-        // ١. چاککردنی پیتی (ي)ی دوو خاڵ و (ك)ی عەرەبی بۆ کوردی
-        s = s.replace(/ي/g, 'ی')
-             .replace(/ى/g, 'ی')
-             .replace(/ك/g, 'ک');
-
-        // ٢. گۆڕینی هێماکانی (?, ;) بۆ کوردی
-        s = s.replace(/\?/g, '؟')
-             .replace(/;/g, '؛');
-
-        // ٣. گۆڕینی فاریزە (,) بۆ (،) بەبێ دەستکاری ژمارەی وەک 1,000
-        s = s.replace(/(\D|^),/g, '$1،').replace(/,(\D|$)/g, '،$1');
-
-        // ٤. سڕینەوەی سپەیزی دووبارە (دوو بۆشایی دەبێتە یەک بۆشایی)
-        s = s.replace(/ {2,}/g, ' ');
-
-        return s;
-    });
-}
-
-async function executeKurdishFixer() {
-    const files = document.getElementById('kurdFixFileInput').files;
-    if (!files.length) return showToast('تکایە فایل هەڵبژێرە!', 'error');
-    document.getElementById('kurd-fix-modal').style.display = 'none';
-
-    for (let f of files) {
-        const content = await f.text();
-        const lines = content.split(/\r?\n/).map(line => {
-            if (line.includes('-->') || /^\d+$/.test(line.trim()) || line.startsWith('Format:') || line.startsWith('Style:')) return line;
-            if (line.startsWith('Dialogue:')) {
-                return line.replace(/(Dialogue:[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,)(.*)/, (m, p, t) => {
-                    return p + t.split('\\N').map(sub => normalizeKurdishText(sub)).join('\\N');
-                });
-            }
-            return normalizeKurdishText(line);
-        }).join('\n');
-
-        triggerDownload(lines, f.name.replace(/\.[^/.]+$/, "") + "_Kurdish_Fixed." + f.name.split('.').pop());
-        await new Promise(r => setTimeout(r, 500));
-    }
-    showToast('ڕێنووسی کوردی بە سەرکەوتوویی چاککرا!', 'success');
+    showToast('دەنگە زیادەکان و گۆرانییەکان بە سەرکەوتوویی پاککرانەوە!', 'success');
 }
 
 // ٤. چالاککردنی کورتکراوەکانی کیبۆرد لەناو ئەدیتۆر
