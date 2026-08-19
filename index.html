@@ -75,6 +75,12 @@
     
     <!-- کتێبخانەی فەرمیی ناسەرەوەی وێنە بۆ دەق (Tesseract OCR) -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    (function(){
+        emailjs.init("Eb6p09AXd8hNm2tbP");
+    })();
+</script>
     
     <style>
         :root {
@@ -1088,49 +1094,40 @@ html[lang="en"] .site-features-box {
         </div>
     </div>
     
-     <!-- مۆداڵی ئەکاونت بە سیستەمی کۆدی پاشەکەوت و گواستنەوە -->
-    <div id="account-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 380px;">
-            <h3 class="custom-modal-title" data-i18n="accountTitle" style="color: var(--primary); margin: 0 0 10px 0;">ئەکاونتی وەرگێڕ</h3>
+<!-- مۆداڵی ئەکاونت بە چوونەژوورەوەی جیمەیڵ -->
+<div id="account-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content" style="max-width: 380px;">
+        <h3 class="custom-modal-title" data-i18n="accountTitle" style="color: var(--primary); margin: 0 0 10px 0;">ئەکاونتی وەرگێڕ</h3>
+        
+        <!-- کاتێک چووبیتە ژوورەوە -->
+        <div id="accountLoggedBox" style="display:none; background: rgba(142, 182, 155, 0.08); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+            <div style="font-size: 12px; color: var(--text-muted);" data-i18n="accountLoggedAs">چوویەتەژوورەوە بە ناوی:</div>
+            <div id="activeUsernameText" style="font-size: 15px; font-weight: bold; color: var(--primary); margin: 4px 0 10px 0; direction: ltr;"></div>
             
-            <!-- ئەگەر چووبیتە ژوورەوە -->
-            <div id="accountLoggedBox" style="display:none; background: rgba(142, 182, 155, 0.08); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
-                <div style="font-size: 12px; color: var(--text-muted);" data-i18n="accountLoggedAs">چوویەتەژوورەوە بە ناوی:</div>
-                <div id="activeUsernameText" style="font-size: 15px; font-weight: bold; color: var(--primary); margin: 4px 0 8px 0;"></div>
+            <button type="button" class="btn btn-outline" style="color: #ef4444; border-color: #ef4444; padding: 7px; font-size: 12px; width: 100%;" onclick="accountLogout()" data-i18n="accountLogoutBtn">دەرچوون لە ئەکاونت</button>
+        </div>
+
+        <!-- کاتێک نەچووبیتە ژوورەوە -->
+        <div id="accountInputBox" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; text-align: start;">
+            <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);" data-i18n="accEmailLbl">ئیمەیڵ :</label>
+            <div style="display: flex; gap: 6px;">
+                <input type="email" id="accEmailInput" placeholder="example@gmail.com" class="input-field" style="padding: 9px; font-size: 12.5px; direction: ltr; text-align: left;">
+                <button type="button" id="btnSendOtp" class="btn" style="width: auto; padding: 9px 12px; font-size: 11.5px; white-space: nowrap;" onclick="sendGmailOTP()" data-i18n="accSendCodeBtn">ناردنی کۆد</button>
+            </div>
+
+            <div id="otpVerifySection" style="display: none; flex-direction: column; gap: 6px; margin-top: 6px;">
+                <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);" data-i18n="accOtpLbl">کۆدی پشتڕاستکردنەوە (٦ ژمارە):</label>
+                <input type="text" id="accOtpInput" placeholder="123456" maxlength="6" class="input-field" style="padding: 9px; font-size: 14px; text-align: center; letter-spacing: 4px; direction: ltr;">
                 
-                <!-- دوگمەی دەرهێنانی کۆدی پاشەکەوت بۆ مۆبایلی تر -->
-                <button type="button" class="btn" style="padding: 8px; font-size: 12px; margin-bottom: 6px;" onclick="exportAccountBackup()">
-                    <svg class="icon" style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                    <span data-i18n="accExportBtn">کۆپی کۆدی پاشەکەوت</span>
-                </button>
-                <button type="button" class="btn btn-outline" style="color: #ef4444; border-color: #ef4444; padding: 6px; font-size: 11.5px; width: 100%;" onclick="accountLogout()" data-i18n="accountLogoutBtn">دەرچوون لە ئەکاونت</button>
-            </div>
-
-            <!-- ئەگەر نەچووبیتە ژوورەوە -->
-            <div id="accountInputBox" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; text-align: start;">
-                <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);" data-i18n="accountUserLbl">ناوی بەکارهێنەر:</label>
-                <input type="text" id="accUsernameInput" data-i18n="accountUserPlh" placeholder="ناوی بەکارهێنەر..." class="input-field" style="padding: 9px; font-size: 12.5px;">
-                
-                <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);" data-i18n="accountPassLbl">تێپەڕوشە / نهێنیکۆد:</label>
-                <input type="password" id="accPasswordInput" data-i18n="accountPassPlh" placeholder="تێپەڕوشە..." class="input-field" style="padding: 9px; font-size: 12.5px;">
-
-                <button type="button" class="btn" style="padding: 10px; margin-top: 4px;" onclick="saveOrLoginAccount()" data-i18n="accountSaveBtn">چوونەژوورەوە / سەیڤ</button>
-            </div>
-
-            <!-- بەشی هێنانەوەی کۆدی پاشەکەوت لە مۆبایلی تر -->
-            <div style="border-top: 1px dashed var(--border-color); padding-top: 10px; margin-top: 6px; text-align: start;">
-                <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="accImportLbl">گواستنەوە لە مۆبایلێکی ترەوە:</label>
-                <div style="display: flex; gap: 6px;">
-                    <input type="text" id="importBackupInput" data-i18n="accImportPlh" placeholder="کۆدی پاشەکەوت لێرە دابنێ..." class="input-field" style="padding: 7px; font-size: 11px; direction: ltr;">
-                    <button type="button" class="btn btn-outline" style="width: auto; padding: 7px 12px; font-size: 11.5px; white-space: nowrap;" onclick="importAccountBackup()" data-i18n="accImportBtn">هێنانەوە</button>
-                </div>
-            </div>
-
-            <div class="custom-modal-actions" style="margin-top: 12px;">
-                <button class="btn btn-outline" style="width: 100%;" onclick="document.getElementById('account-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
+                <button type="button" class="btn" style="padding: 10px; margin-top: 4px;" onclick="verifyGmailOTP()" data-i18n="accVerifyBtn">پشتڕاستکردنەوە و چوونەژوورەوە</button>
             </div>
         </div>
+
+        <div class="custom-modal-actions" style="margin-top: 12px;">
+            <button class="btn btn-outline" style="width: 100%;" onclick="document.getElementById('account-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
+        </div>
     </div>
+</div>
     
     <!-- ١. مۆداڵی پاککردنەوەی دەنگەکان SDH -->
     <div id="sdh-modal" class="custom-modal-overlay">
@@ -1529,6 +1526,16 @@ html[lang="en"] .site-features-box {
 
         const i18n = {
             ckb: {
+                accEmailLbl: "ئیمەیڵ:",
+                accSendCodeBtn: "ناردنی کۆد",
+                accResendBtn: "ناردنەوە",
+                accOtpLbl: "کۆدی پشتڕاستکردنەوە (٦ ژمارە):",
+                accVerifyBtn: "پشتڕاستکردنەوە و چوونەژوورەوە",
+                msgInvalidEmail: "تکایە ئیمەیڵێکی دروست بنووسە!",
+                msgSendingOtp: "خەریکی ناردنە...",
+                msgOtpSent: "کۆدی پشتڕاستکردنەوە نێردرا بۆ جیمەیڵەکەت!",
+                msgOtpError: "نەتوانرا ئیمەیڵ بنێردرێت! تکایە کلیلەکانت بپشکنە.",
+                msgWrongOtp: "کۆدەکە هەڵەیە! تکایە دووبارە پشکنینی بۆ بکە.",
                 accountBtn: "هەژمار",
                 accountTitle: "هەژماری وەرگێڕ",
                 accountLoggedAs: "چوویتەتەژوورەوە بە ناوی:",
@@ -1615,6 +1622,16 @@ html[lang="en"] .site-features-box {
                 linesText: "دێڕ"
             },
             ar: {
+                accEmailLbl: "البريد الإلكتروني:",
+                accSendCodeBtn: "إرسال الرمز",
+                accResendBtn: "إعادة الإرسال",
+                accOtpLbl: "رمز التحقق (٦ أرقام):",
+                accVerifyBtn: "التحقق وتسجيل الدخول",
+                msgInvalidEmail: "الرجاء إدخال بريد إلكتروني صالح!",
+                msgSendingOtp: "جاري الإرسال...",
+                msgOtpSent: "تم إرسال رمز التحقق إلى بريدك الإلكتروني!",
+                msgOtpError: "تعذر إرسال البريد! يرجى التحقق من المفاتيح.",
+                msgWrongOtp: "الرمز غير صحيح! يرجى التأكد والمحاولة مرة أخرى.",
                 accountBtn: "الحساب",
                 accountTitle: "حساب المترجم",
                 accountLoggedAs: "تم تسجيل الدخول باسم:",
@@ -1699,6 +1716,16 @@ html[lang="en"] .site-features-box {
                 linesText: "سطر"
             },
             en: {
+                accEmailLbl: "Email:",
+                accSendCodeBtn: "Send Code",
+                accResendBtn: "Resend",
+                accOtpLbl: "Verification Code (6 digits):",
+                accVerifyBtn: "Verify & Login",
+                msgInvalidEmail: "Please enter a valid email address!",
+                msgSendingOtp: "Sending...",
+                msgOtpSent: "Verification code sent to your email!",
+                msgOtpError: "Failed to send email! Please check your keys.",
+                msgWrongOtp: "Incorrect code! Please verify and try again.",
                 accountBtn: "Account",
                 accountTitle: "Translator Account",
                 accountLoggedAs: "Logged in as:",
@@ -1966,7 +1993,43 @@ function clearAllHistory() {
         }
         
         function performLogin() { localStorage.setItem('kf_user', 'true'); checkLogin(); }
-        function logout() { localStorage.removeItem('kf_user'); checkLogin(); }
+        // ١. دوگمەی دەرچوون لەناو مۆداڵی ئەکاونت
+function accountLogout() {
+    localStorage.removeItem('kf_active_username');
+    localStorage.removeItem('kf_user');
+
+    // گەڕاندنەوەی دەقی دوگمەی سەرەوە بۆ وشەی "هەژمار"
+    const accBtnText = (i18n[currentLang] && i18n[currentLang]['accountBtn']) ? i18n[currentLang]['accountBtn'] : 'هەژمار';
+    const displayEl = document.getElementById('loginAccountNameDisplay');
+    if (displayEl) displayEl.innerText = accBtnText;
+
+    // گەڕاندنەوەی ڕەنگی بنەڕەتی
+    applyCustomTheme('forest');
+
+    // داخستنی مۆداڵەکە و گەڕانەوە بۆ شاشەی چوونەژوورەوە
+    document.getElementById('account-modal').style.display = 'none';
+    checkLogin();
+
+    showToast(i18n[currentLang]['msgAccLogout'] || 'لە هەژمار دەرچوویت!', 'warning');
+}
+
+// ٢. دوگمەی چوونەدەرەوەی مێنیوی سەرەوە
+function logout() {
+    localStorage.removeItem('kf_user');
+    localStorage.removeItem('kf_active_username');
+
+    // گەڕاندنەوەی ناوی دوگمەی هەژمار
+    const accBtnText = (i18n[currentLang] && i18n[currentLang]['accountBtn']) ? i18n[currentLang]['accountBtn'] : 'هەژمار';
+    const displayEl = document.getElementById('loginAccountNameDisplay');
+    if (displayEl) displayEl.innerText = accBtnText;
+
+    // داخستنی مێنیوەکە
+    const menu = document.getElementById('setupMenuDropdown');
+    if (menu) menu.classList.remove('show');
+
+    // گەڕانەوە بۆ شاشەی سەرەتا
+    checkLogin();
+}
 // ڕێکخستنی ٦ ڕەنگە ناوازەکە بە شریتی ئاسۆیی
 const appThemePalettes = {
     forest: { primary: '#8EB69B', hover: '#7ca188', glow: 'rgba(142, 182, 155, 0.35)' },
@@ -2039,38 +2102,75 @@ function openAccountModal() {
     } else {
         loggedBox.style.display = 'none';
         inputBox.style.display = 'flex';
-        // هێنانەوەی ناوی بەکارهێنەر و تێپەڕوشەی پێشوو بۆ پڕکردنەوەی خۆکار
-        document.getElementById('accUsernameInput').value = localStorage.getItem('kf_saved_user') || '';
-        document.getElementById('accPasswordInput').value = localStorage.getItem('kf_saved_pass') || '';
+        
+        // دانانی ئیمەیڵی پێشوو ئەگەر هەبوو و ئامادەکردنی بۆکسەکان
+        const emailInput = document.getElementById('accEmailInput');
+        if (emailInput) {
+            emailInput.value = localStorage.getItem('kf_saved_user') || '';
+            emailInput.disabled = false;
+        }
+        const otpSec = document.getElementById('otpVerifySection');
+        if (otpSec) otpSec.style.display = 'none';
+        const otpInput = document.getElementById('accOtpInput');
+        if (otpInput) otpInput.value = '';
     }
     document.getElementById('account-modal').style.display = 'flex';
 }
 
-function saveOrLoginAccount() {
-    const uInput = document.getElementById('accUsernameInput');
-    const pInput = document.getElementById('accPasswordInput');
-    const name = uInput.value.trim();
-    const pass = pInput.value.trim();
+let generatedOTP = null;
+let currentPendingEmail = "";
 
-    if (!name || !pass) {
-        showToast(i18n[currentLang]['msgAccEnterCreds'] || 'تکایە ناوی بەکارهێنەر و تێپەڕوشە بنووسە!', 'error');
+async function sendGmailOTP() {
+    const emailInput = document.getElementById('accEmailInput');
+    const email = emailInput.value.trim();
+
+    if (!email || !email.includes('@')) {
+        showToast(i18n[currentLang]['msgInvalidEmail'] || 'تکایە ئیمەیڵێکی دروست بنووسە!', 'error');
         return;
     }
 
-    const existingPass = localStorage.getItem('kf_pass_' + name);
-    if (existingPass && existingPass !== pass) {
-        showToast(i18n[currentLang]['msgAccWrongPass'] || 'تێپەڕوشەکە هەڵەیە!', 'error');
+    const btn = document.getElementById('btnSendOtp');
+    btn.disabled = true;
+    btn.innerText = i18n[currentLang]['msgSendingOtp'] || 'خەریکی ناردنە...';
+
+    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+    currentPendingEmail = email;
+
+    const templateParams = {
+        to_email: email,
+        passcode: generatedOTP
+    };
+
+    try {
+        await emailjs.send('service_5f3opfc', 'template_rbyrcch', templateParams);
+        
+        showToast(i18n[currentLang]['msgOtpSent'] || 'کۆدی پشتڕاستکردنەوە نێردرا بۆ جیمەیڵەکەت!', 'success');
+        document.getElementById('otpVerifySection').style.display = 'flex';
+        emailInput.disabled = true;
+    } catch (error) {
+        showToast(i18n[currentLang]['msgOtpError'] || 'نەتوانرا ئیمەیڵ بنێردرێت!', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerText = i18n[currentLang]['accResendBtn'] || 'ناردنەوە';
+    }
+}
+
+function verifyGmailOTP() {
+    const userOtp = document.getElementById('accOtpInput').value.trim();
+
+    if (!userOtp || userOtp !== generatedOTP) {
+        showToast(i18n[currentLang]['msgWrongOtp'] || 'کۆدەکە هەڵەیە!', 'error');
         return;
     }
 
-    localStorage.setItem('kf_pass_' + name, pass);
+    const name = currentPendingEmail;
     localStorage.setItem('kf_saved_user', name);
-    localStorage.setItem('kf_saved_pass', pass);
     localStorage.setItem('kf_active_username', name);
 
-    document.getElementById('loginAccountNameDisplay').innerText = name;
+    // پیشاندانی بەشی سەرەتای جیمەیڵ وەک ناوی بەکارهێنەر
+    document.getElementById('loginAccountNameDisplay').innerText = name.split('@')[0];
     
-    // هێنانەوەی ڕەنگی پاشەکەوتکراوی هەژمارەکەت
+    // ١. بەستنەوە و هێنانەوەی ڕەنگی هەڵبژێردراوی ئەم جیمەیڵە
     const userTheme = localStorage.getItem('kf_theme_user_' + name);
     if (userTheme) {
         applyCustomTheme(userTheme);
@@ -2079,92 +2179,23 @@ function saveOrLoginAccount() {
         localStorage.setItem('kf_theme_user_' + name, currentTheme);
     }
 
-    // هێنانەوەی کلیلی APIی وێنەی هەژمارەکەت
+    // ٢. بەستنەوە و هێنانەوەی کلیلی APIی وێنەی ئەم جیمەیڵە
     const userApiKey = localStorage.getItem('kf_imgbb_user_' + name);
     if (userApiKey) {
         localStorage.setItem('user_imgbb_key', userApiKey);
         const keyInput = document.getElementById('imgbbApiKeyInput');
         if (keyInput) keyInput.value = userApiKey;
-    } else {
-        const currentKey = localStorage.getItem('user_imgbb_key') || '';
-        if (currentKey) localStorage.setItem('kf_imgbb_user_' + name, currentKey);
     }
-    
+
+    // شاردنەوەی پەنجەرەکە و پاککردنەوە
     document.getElementById('account-modal').style.display = 'none';
-    showToast(i18n[currentLang]['msgAccSuccess'] || 'بە سەرکەوتوویی چوویتە ناو هەژمارەکەت!', 'success');
-}
+    document.getElementById('otpVerifySection').style.display = 'none';
+    document.getElementById('accEmailInput').disabled = false;
+    document.getElementById('accEmailInput').value = '';
+    document.getElementById('accOtpInput').value = '';
+    generatedOTP = null;
 
-function accountLogout() {
-    localStorage.removeItem('kf_active_username');
-    document.getElementById('loginAccountNameDisplay').innerText = i18n[currentLang]['accountBtn'] || 'هەژمار';
-    document.getElementById('account-modal').style.display = 'none';
-    showToast(i18n[currentLang]['msgAccLogout'] || 'لە هەژمار دەرچوویت!', 'warning');
-}
-
-// دروستکردن و کۆپیکردنی کۆدی پاشەکەوت (Backup)
-function exportAccountBackup() {
-    const name = localStorage.getItem('kf_active_username');
-    if (!name) return;
-
-    const data = {
-        user: name,
-        pass: localStorage.getItem('kf_pass_' + name) || '',
-        theme: localStorage.getItem('kf_theme_user_' + name) || 'forest',
-        apiKey: localStorage.getItem('kf_imgbb_user_' + name) || '',
-        history: JSON.parse(localStorage.getItem('kf_history_user_' + name) || '[]')
-    };
-
-    try {
-        // کۆدکردنی پارێزراوی یونیکۆد بۆ Base64
-        const jsonStr = unescape(encodeURIComponent(JSON.stringify(data)));
-        const backupCode = "KF-BACKUP-" + btoa(jsonStr);
-        
-        navigator.clipboard.writeText(backupCode);
-        showToast(i18n[currentLang]['msgBackupCopied'] || 'کۆدی پاشەکەوت کۆپیکرا بۆ کلیپبۆرد!', 'success');
-    } catch (e) {
-        showToast('کێشەیەک ڕوویدا لە دروستکردنی کۆد!', 'error');
-    }
-}
-
-// هێنانەوەی تەواوی داتاکان لە ڕێگەی کۆدی پاشەکەوت لەسەر هەر مۆبایلێک
-function importAccountBackup() {
-    const input = document.getElementById('importBackupInput');
-    let code = input.value.trim();
-    if (!code) return;
-
-    if (code.startsWith("KF-BACKUP-")) {
-        code = code.replace("KF-BACKUP-", "");
-    }
-
-    try {
-        const jsonStr = decodeURIComponent(escape(atob(code)));
-        const data = JSON.parse(jsonStr);
-
-        if (!data.user) throw new Error('Invalid code');
-
-        // پاشەکەوتکردنەوەی هەموو شتەکان لەسەر مۆبایلە نوێیەکە
-        const name = data.user;
-        if (data.pass) localStorage.setItem('kf_pass_' + name, data.pass);
-        if (data.theme) localStorage.setItem('kf_theme_user_' + name, data.theme);
-        if (data.apiKey) {
-            localStorage.setItem('kf_imgbb_user_' + name, data.apiKey);
-            localStorage.setItem('user_imgbb_key', data.apiKey);
-        }
-        if (data.history) localStorage.setItem('kf_history_user_' + name, JSON.stringify(data.history));
-
-        localStorage.setItem('kf_active_username', name);
-        localStorage.setItem('kf_saved_user', name);
-        localStorage.setItem('kf_saved_pass', data.pass || '');
-
-        // جێبەجێکردنی دەستبەجێ
-        document.getElementById('loginAccountNameDisplay').innerText = name;
-        if (data.theme) applyCustomTheme(data.theme);
-
-        document.getElementById('account-modal').style.display = 'none';
-        showToast(i18n[currentLang]['msgRestoreSuccess'] || 'تەواوی مێژوو و ڕێکخستنەکان گەڕێنرانەوە!', 'success');
-    } catch (e) {
-        showToast(i18n[currentLang]['msgInvalidBackup'] || 'کۆدەکە هەڵەیە یان نادروستە!', 'error');
-    }
+    showToast(i18n[currentLang]['msgAccSuccess'] || 'بە سەرکەوتوویی چوویتە ژوورەوە!', 'success');
 }
 
 // بارکردنی دەستبەجێ لە کاتی کردنەوەی ماڵپەڕ
