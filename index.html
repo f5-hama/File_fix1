@@ -63,6 +63,9 @@
             background: rgba(14, 18, 22, 0.98) !important;
             border-color: #20262e !important;
         }
+        #progress-bar {
+    background: linear-gradient(90deg, ${pal.primary} 0%, ${pal.hover} 100%) !important;
+}
             `;
             const style = document.createElement('style');
             style.id = 'dynamic-theme-style';
@@ -75,6 +78,10 @@
     
     <!-- کتێبخانەی فەرمیی ناسەرەوەی وێنە بۆ دەق (Tesseract OCR) -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script type="module">
+    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0';
+    window.transformersPipeline = pipeline;
+</script>
     
     <style>
         :root {
@@ -223,7 +230,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         #progress-container { width: 100%; height: 5px; background: var(--border-color); position: absolute; bottom: 0; left: 0; overflow: hidden; }
-        #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #34e89e 0%, #0f9b0f 100%); transition: width 0.25s ease; }
+        #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%) !important; transition: width 0.25s ease; }
         
         #toast-container { position: fixed; bottom: calc(95px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: max-content; max-width: 92%; }
         .toast { background: rgba(22, 30, 26, 0.96); border: 1px solid var(--card-border); color: white; padding: 10px 18px; border-radius: 12px; font-size: 13.5px; font-weight: bold; box-shadow: 0 6px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px); opacity: 0; transform: translateY(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; }
@@ -891,6 +898,10 @@ html[lang="en"] .site-features-box {
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                         <span data-i18n="sdhBtn">پاککردنەوەی دەنگەکان (SDH)</span>
                     </button>
+                    <button class="menu-btn-item" onclick="openWhisperModal(); toggleSetupMenu();">
+    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+    <span>دەرهێنانی دەنگ بۆ ژێرنووس (Whisper)</span>
+</button>
 
                     <!-- دوگمەی کورتکراوەکانی کیبۆرد -->
                     <button class="menu-btn-item" onclick="openShortcutsModal(); toggleSetupMenu();">
@@ -1289,6 +1300,16 @@ html[lang="en"] .site-features-box {
                 <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 5px;" data-i18n="batchTimeLbl">پێشخستن/دواخستنی کات (بە چرکە):</label>
                 <input type="number" id="batchTimeShift" step="0.01" class="input-field" placeholder="0.00" dir="ltr" style="padding: 9px; text-align: center;">
             </div>
+            
+            <div style="margin-bottom: 12px; text-align: start;">
+    <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 5px;">گۆڕینی ڕێژەی چوارچێوە (FPS):</label>
+    <div style="display: flex; gap: 6px;">
+        <button type="button" class="fmt-btn active" id="btn-fps-none" onclick="setFpsOption('none')">وەک خۆی</button>
+        <button type="button" class="fmt-btn" id="btn-fps-23to25" onclick="setFpsOption('23.976_to_25')">23.976 ➔ 25</button>
+        <button type="button" class="fmt-btn" id="btn-fps-25to23" onclick="setFpsOption('25_to_23.976')">25 ➔ 23.976</button>
+    </div>
+    <input type="hidden" id="batchFpsOption" value="none">
+</div>
 
             <div style="margin-bottom: 12px; text-align: start;">
                 <label style="font-weight: bold; font-size: 13px; color: var(--primary); display: block; margin-bottom: 5px;" data-i18n="tagOptionLbl">پاککردنەوەی تاگەکانی شێواز و فۆرمات:</label>
@@ -1404,19 +1425,56 @@ html[lang="en"] .site-features-box {
     </button>
 
     <div id="ai-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content">
-            <h3 class="custom-modal-title" data-i18n="aiTitle">دانانی وەرگێڕانی AI</h3>
-            <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 8px;">
-                <button class="btn btn-outline" style="padding: 7px 10px; font-size: 12px;" onclick="copyForAI()"><span data-i18n="aiCopy">کۆپی ئەسڵی</span></button>
-                <button class="btn btn-outline" style="padding: 7px 10px; font-size: 12px;" onclick="pasteFromClipboard()"><span data-i18n="aiPaste">پەیست بکە</span></button>
+    <div class="custom-modal-content">
+        <h3 class="custom-modal-title" data-i18n="aiTitle">دانانی وەرگێڕانی AI</h3>
+        
+        <!-- بەشی Gemini API بە زمانەکانەوە -->
+        <div style="background: rgba(142, 182, 155, 0.08); border: 1px dashed var(--border-color); border-radius: 10px; padding: 8px; margin-bottom: 8px; text-align: start;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 11px; font-weight: bold; color: var(--primary);" data-i18n="geminiKeyLbl">کلیلی Gemini API:</label>
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size: 10.5px; color: var(--primary); text-decoration: underline;" data-i18n="geminiGetApi">وەرگرتنی کلیل</a>
             </div>
-            <textarea id="ai-paste-area" style="width:100%; height:150px; padding:10px; border-radius:10px; border:1.5px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:14px; outline:none; resize:none; margin-bottom:6px; text-align: start; direction: auto; unicode-bidi: plaintext;"></textarea>
-            <div class="custom-modal-actions">
-                <button class="btn" onclick="processAIPaste()" data-i18n="applyBtn">جێبەجێکردن</button>
-                <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
-            </div>
+            <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="input-field" style="padding: 7px; font-size: 11.5px; direction: ltr; text-align: left;" oninput="saveGeminiKey(this)">
+        </div>
+
+        <button type="button" class="btn" id="btnRunGeminiAI" onclick="translateWithGeminiAI()" style="margin-bottom: 8px; padding: 9px; font-size: 12px;">
+            <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <span data-i18n="geminiTranslateBtn">وەرگێڕانی ڕاستەوخۆ بە ژیریی دەستکرد</span>
+        </button>
+
+        <div id="aiLoadingStatus" style="display:none; font-size:12px; color:var(--primary); font-weight:bold; margin-bottom:8px; text-align:center;" data-i18n="geminiTranslating">خەریکی وەرگێڕانە، تکایە کەمێک بوەستە...</div>
+
+        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 8px;">
+            <button class="btn btn-outline" style="padding: 7px 10px; font-size: 12px;" onclick="copyForAI()"><span data-i18n="aiCopy">کۆپی ئەسڵی</span></button>
+            <button class="btn btn-outline" style="padding: 7px 10px; font-size: 12px;" onclick="pasteFromClipboard()"><span data-i18n="aiPaste">پەیست بکە</span></button>
+        </div>
+        <textarea id="ai-paste-area" style="width:100%; height:150px; padding:10px; border-radius:10px; border:1.5px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:14px; outline:none; resize:none; margin-bottom:6px; text-align: start; direction: auto; unicode-bidi: plaintext;"></textarea>
+        <div class="custom-modal-actions">
+            <button class="btn" onclick="processAIPaste()" data-i18n="applyBtn">جێبەجێکردن</button>
+            <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
         </div>
     </div>
+</div>
+    
+    <div id="whisper-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content" style="max-width: 440px;">
+        <h3 class="custom-modal-title" style="color: var(--primary); margin: 0 0 8px 0;">دەرهێنانی ژێرنووس لە دەنگ (Whisper AI)</h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">فایلی دەنگ یان ڤیدیۆ هەڵبژێرە بۆ دروستکردنی فایلی SRT بە شێوەی ئۆفلاین لەناو ئامێرەکەت.</p>
+        
+        <div class="file-box" style="margin-bottom: 12px; padding: 14px;">
+            <label>فایلی دەنگ یان ڤیدیۆ هەڵبژێرە:</label>
+            <div class="file-name-display" id="whisperFileNameDisplay">هیچ فایلێک دیاری نەکراوە</div>
+            <input type="file" id="whisperFileInput" accept="audio/*,video/*" onchange="if(this.files[0]) document.getElementById('whisperFileNameDisplay').innerText = this.files[0].name;">
+        </div>
+
+        <div id="whisperStatusBox" style="display:none; font-size:12px; color:var(--primary); font-weight:bold; margin-bottom:10px; text-align:center;">خەریکی بارکردنی مۆدێل و شی کردنەوەیە...</div>
+
+        <div class="custom-modal-actions">
+            <button class="btn" id="btnStartWhisper" onclick="runWhisperProcess()">دەستپێکردن</button>
+            <button class="btn btn-outline" onclick="document.getElementById('whisper-modal').style.display='none'">داخستن</button>
+        </div>
+    </div>
+</div>
 
     <div id="toast-container"></div>
 
@@ -1528,258 +1586,302 @@ html[lang="en"] .site-features-box {
         });
 
         const i18n = {
-            ckb: {
-                accountBtn: "هەژمار",
-                accountTitle: "هەژماری وەرگێڕ",
-                accountLoggedAs: "چوویتەتەژوورەوە بە ناوی:",
-                accountLogoutBtn: "دەرچوون لە هەژمار",
-                accountSaveBtn: "چوونەژوورەوە / پاشەکەوتکردن",
-                msgAccEnterCreds: "تکایە ناوی بەکارهێنەر و تێپەڕوشە بنووسە!",
-                msgAccWrongPass: "تێپەڕوشەکە هەڵەیە!",
-                msgAccSuccess: "بە سەرکەوتوویی چوویتە ناو هەژمارەکەت و ڕێکخستنەکانت بارکران!",
-                msgAccLogout: "لە هەژمار دەرچوویت!",
-                accountUserLbl: "ناوی بەکارهێنەر:",
-                accountUserPlh: "ناوی بەکارهێنەر...",
-                accountPassLbl: "تێپەڕوشە / نهێنیکۆد:",
-                accountPassPlh: "تێپەڕوشە...",
-                accExportBtn: "کۆپی کۆدی پاشەکەوت",
-                accImportPlh: "کۆدی پاشەکەوت لێرە دابنێ...",
-                accImportBtn: "هێنانەوە",
-                accImportLbl: "گواستنەوە لە مۆبایلێکی ترەوە:",
-                msgBackupCopied: "کۆدی پاشەکەوت کۆپیکرا بۆ کلیپبۆرد!",
-                msgRestoreSuccess: "تەواوی مێژوو و ڕێکخستنەکان بە سەرکەوتوویی گەڕێنرانەوە!",
-                msgInvalidBackup: "کۆدەکە هەڵەیە یان نادروستە!",
-                rtlFixBtn: "چاککردنی RTL",
-                pgsBtn: "گۆڕینی PGS (.sup)",
-                pgsTitle: "گۆڕینی فایلی PGS (.sup) بۆ دەق",
-                pgsDesc: "فایلی بلوڕەی (.sup) دەگۆڕێت بۆ ژێرنووسی نووسراو بە تەکنەلۆژیای زیرەکی OCR بەبێ تێکچوونی کاتەکان.",
-                pgsSelectLbl: "فایلی PGS (.sup) هەڵبژێرە:",
-                pgsLangLbl: "زمانی وێنەکە:",
-                pgsCancelBtn: "ڕاگرتنی پڕۆسەکە",
-                pgsLoadingData: "داگرتنی داتای زمان...",
-                pgsLangEng: "ئینگلیزی",
-                pgsLangAra: "عەرەبی",
-                pgsLangFas: "کوردی / فارسی",
-                pgsLangFra: "فەڕەنسی",
-                pgsLangDeu: "ئەڵمانی",
-                pgsLangSpa: "ئیسپانی",
-                pgsLangJpn: "ژاپۆنی",
-                rtlFixTitle: "چاککردنی ئاڕاستەی ژێرنووس (RTL Fix)",
-                rtlFixDesc: "فایلەکان هەڵبژێرە بۆ ڕێکخستنی کەوانە و هێماکان بەبێ دەستکاری هیچ شتێکی تری فایلەکە.",
-                rtlFixSelectLbl: "فایلەکان هەڵبژێرە (SRT, ASS, VTT):",
-                rtlFixApplyBtn: "چاککردن و داگرتن",
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
-                msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
-                msgPasteSuccess: "بە سەرکەوتوویی پەیست کرا!",
-                msgPasteManual: "دەست لەناو بۆکسەکە دابگرە بۆ پەیستکردن!",
-                installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
-                batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
-                toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)",
-                featuresHead: "تایبەتمەندییەکانی ماڵپەڕ",
-                feat1: "پشتیوانی تەواوی فۆرماتەکانی SRT، ASS و VTT بەبێ تێکچوونی کات.",
-                feat2: "پێشبینینی ڕاستەوخۆی ژێرنووس لەسەر ڤیدیۆ بە هاوکاتکردنی ورد.",
-                feat3: "گونجاندنی خێرا بۆ وەرگێڕانی زیرەکی دەستکرد (AI) و گەڕان و گۆڕین.",
-                feat4: "گۆڕینی کات و فۆرماتی چەندین فایل پێکەوە بە کۆمەڵ (Batch).",
-                feat5: "گۆڕینی ڕاستەوخۆی وێنە بۆ لینکی هەمیشەیی بەبێ بەسەرچوون.",
-                imgToLinkBtn: "گۆڕینی وێنە بۆ لینک",
-                imgModalTitle: "گۆڕینی وێنە بۆ لینک",
-                imgNoFile: "هیچ وێنەیەک دیاری نەکراوە",
-                imgApiKeyLbl: "کلیلی API (تەنها یەکجار دایبنێ):",
-                imgGetApiLink: "وەرگرتنی کلیل لە کوێیە؟",
-                imgSelectLbl: "کرتە بکە و وێنەکە هەڵبژێرە",
-                imgDirectLinkLbl: "لینکی ڕاستەوخۆی وێنەکە:",
-                imgCopyBtn: "کۆپیکردنی لینک",
-                feat6: "چاککردنی ئاڕاستەی RTL و هێماکان بەبێ دەستکاری هیچ شتێکی تر.",
-                feat7: "گۆڕینی فایلی وێنەیی PGS (.sup) بۆ دەق بە تەکنەلۆژیای زیرەکی OCR.",
-                feat8: "پاککردنەوەی دەنگە زیادەکانی وەک [music] و (screaming) لە ژێرنووس.",
-                pgsReadingLine: "خەریکی خوێندنەوەی دێڕی #",
-                sdhBtn: "پاککردنەوەی دەنگەکان (SDH)",
-                themeTitle: "هەڵبژاردنی ڕەنگی ڕووکار",
-                themeForest: "دارستان",
-                themeOcean: "زەریایی",
-                themePurple: "مۆری شاهانە",
-                themeRose: "گوڵەباخی",
-                themeAmber: "زێڕین",
-                themeEmerald: "زمڕوت",
-                sdhTitle: "پاککردنەوەی دەنگەکان (SDH Cleaner)",
-                sdhDesc: "هەموو دەنگە بێزارکەرەکانی وەک [music] و (screaming) لە ژێرنووس دەسڕێتەوە بەبێ تێکدانی کاتەکان.",
-                shortcutsBtn: "کورتکراوەکانی کیبۆرد",
-                shortcutsTitle: "کورتکراوەکانی کیبۆرد",
-                scPlayPause: "کارپێکردن/ڕاگرتنی ڤیدیۆ",
-                scSeek: "پێش/پاشخستنی ڤیدیۆ (٢ چرکە)",
-                scNextLine: "چوونە دێڕی دواتر",
-                scSave: "سەیڤکردن و داگرتن",
-                scSearch: "گەڕان و گۆڕین",
-                langLabel: "زمان",
-                linesText: "دێڕ"
-            },
-            ar: {
-                accountBtn: "الحساب",
-                accountTitle: "حساب المترجم",
-                accountLoggedAs: "تم تسجيل الدخول باسم:",
-                accountLogoutBtn: "تسجيل الخروج من الحساب",
-                accountSaveBtn: "دخول / حفظ الإعدادات",
-                msgAccEnterCreds: "الرجاء إدخال اسم المستخدم وكلمة المرور!",
-                msgAccWrongPass: "كلمة المرور غير صحيحة!",
-                msgAccSuccess: "تم تسجيل الدخول بنجاح وتحميل الإعدادات!",
-                msgAccLogout: "تم تسجيل الخروج من الحساب!",
-                accountUserLbl: "اسم المستخدم:",
-                accountUserPlh: "اسم المستخدم...",
-                accountPassLbl: "كلمة المرور / الرمز السري:",
-                accountPassPlh: "كلمة المرور...",
-                accExportBtn: "نسخ كود النسخ الاحتياطي",
-                accImportPlh: "الصق كود النسخ الاحتياطي هنا...",
-                accImportBtn: "استعادة",
-                accImportLbl: "النقل من هاتف آخر:",
-                msgBackupCopied: "تم نسخ كود النسخ الاحتياطي!",
-                msgRestoreSuccess: "تمت استعادة السجل والإعدادات بنجاح!",
-                msgInvalidBackup: "كود النسخ الاحتياطي غير صالح!",
-                rtlFixBtn: "إصلاح محاذاة RTL",
-                pgsBtn: "تحويل PGS (.sup)",
-                pgsTitle: "تحويل ملفات PGS (.sup) إلى نصوص",
-                pgsDesc: "تحويل ترجمات بلوراي الصورية إلى نصوص بدقة عالية مع الحفاظ على التوقيت.",
-                pgsSelectLbl: "اختر ملف PGS (.sup):",
-                pgsLangLbl: "لغة الصورة:",
-                pgsCancelBtn: "إلغاء العملية",
-                pgsLoadingData: "جاري تحميل بيانات اللغة...",
-                pgsLangEng: "الإنجليزية",
-                pgsLangAra: "العربية",
-                pgsLangFas: "الكردية / الفارسية",
-                pgsLangFra: "الفرنسية",
-                pgsLangDeu: "الألمانية",
-                pgsLangSpa: "الإسبانية",
-                pgsLangJpn: "اليابانية",
-                rtlFixTitle: "إصلاح اتجاه الترجمة (RTL Fix)",
-                rtlFixDesc: "اختر الملفات لإصلاح الأقواس وعلامات الترقيم دون تعديل أي شيء آخر في الملف.",
-                rtlFixSelectLbl: "اختر ملفات الترجمة (SRT, ASS, VTT):",
-                rtlFixApplyBtn: "إصلاح وتنزيل",
-                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
-                msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
-                msgPasteSuccess: "تم اللصق بنجاح!",
-                msgPasteManual: "المس الحقل مطولاً للصق النص يدويًا!",
-                toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)",
-                featuresHead: "مميزات الموقع",
-                feat1: "دعم كامل لملفات SRT و ASS و VTT دون أخطاء في التوقيت.",
-                feat2: "معاينة مباشرة للترجمة على الفيديو مع مزامنة دقيقة.",
-                feat3: "إدراج ذكي لترجمات الذكاء الاصطناعي مع البحث والاستبدال.",
-                feat4: "تحويل التوقيت والصيغ لعدة ملفات معاً دفعة واحدة.",
-                feat5: "تحويل مباشر للصور إلى روابط دائمة وغير منتهية الصلاحية.",
-                imgToLinkBtn: "تحويل الصورة لرابط",
-                imgModalTitle: "تحويل الصورة إلى رابط",
-                imgNoFile: "لم يتم تحديد أي صورة",
-                imgApiKeyLbl: "مفتاح API (ضعه مرة واحدة):",
-                imgGetApiLink: "من أين أحصل على المفتاح؟",
-                imgSelectLbl: "انقر لاختيار الصورة",
-                imgDirectLinkLbl: "رابط الصورة المباشر:",
-                imgCopyBtn: "نسخ الرابط",
-                feat6: "إصلاح محاذاة RTL والأقواس دون تعديل أي شيء آخر بالملف.",
-                feat7: "تحويل ملفات الصور PGS (.sup) إلى نصوص بتقنية OCR الذكية.",
-                feat8: "تنظيف المؤثرات الصوتية مثل [music] و (screaming) تلقائياً من الترجمة.",
-                pgsReadingLine: "جاري قراءة السطر #",
-                sdhBtn: "تنظيف الأصوات (SDH)",
-                themeTitle: "اختيار لون المظهر",
-                themeForest: "الغابة",
-                themeOcean: "محيطي",
-                themePurple: "أرجواني ملكي",
-                themeRose: "وردي نيون",
-                themeAmber: "ذهبي",
-                themeEmerald: "زمردي",
-                sdhTitle: "تنظيف المؤثرات الصوتية (SDH)",
-                sdhDesc: "حذف جميع المؤثرات الصوتية مثل [موسيقى] و (صراخ) تلقائياً دون التأثير على التوقيت.",
-                shortcutsBtn: "اختصارات لوحة المفاتيح",
-                shortcutsTitle: "اختصارات لوحة المفاتيح",
-                scPlayPause: "تشغيل/إيقاف الفيديو",
-                scSeek: "تقديم/تأخير الفيديو (ثانيتان)",
-                scNextLine: "الانتقال للسطر التالي",
-                scSave: "حفظ وتنزيل الملف",
-                scSearch: "بحث واستبدال",
-                langLabel: "اللغة",
-                linesText: "سطر"
-            },
-            en: {
-                accountBtn: "Account",
-                accountTitle: "Translator Account",
-                accountLoggedAs: "Logged in as:",
-                accountLogoutBtn: "Log out",
-                accountSaveBtn: "Login / Save",
-                msgAccEnterCreds: "Please enter username and password!",
-                msgAccWrongPass: "Incorrect password!",
-                msgAccSuccess: "Logged in successfully and settings loaded!",
-                msgAccLogout: "Logged out from account!",
-                accountUserLbl: "Username:",
-                accountUserPlh: "Username...",
-                accountPassLbl: "Password / PIN:",
-                accountPassPlh: "Password...",
-                accExportBtn: "Copy Backup Code",
-                accImportPlh: "Paste backup code here...",
-                accImportBtn: "Restore",
-                accImportLbl: "Transfer from another device:",
-                msgBackupCopied: "Backup code copied to clipboard!",
-                msgRestoreSuccess: "Data and settings restored successfully!",
-                msgInvalidBackup: "Invalid backup code!",
-                rtlFixBtn: "RTL Fix",
-                pgsBtn: "PGS (.sup) to Text",
-                pgsTitle: "Convert PGS (.sup) to Subtitles",
-                pgsDesc: "Extract Blu-ray SUP subtitle images into editable text using smart OCR with perfect timing.",
-                pgsSelectLbl: "Select PGS (.sup) File:",
-                pgsLangLbl: "Image Language:",
-                pgsCancelBtn: "Cancel Process",
-                pgsLoadingData: "Loading Language Data...",
-                pgsLangEng: "English",
-                pgsLangAra: "Arabic",
-                pgsLangFas: "Kurdish / Persian",
-                pgsLangFra: "French",
-                pgsLangDeu: "German",
-                pgsLangSpa: "Spanish",
-                pgsLangJpn: "Japanese",
-                rtlFixTitle: "Subtitle RTL Fixer",
-                rtlFixDesc: "Select subtitle files to fix punctuation and bracket alignment without altering any other file data.",
-                rtlFixSelectLbl: "Select Files (SRT, ASS, VTT):",
-                rtlFixApplyBtn: "Fix & Download",
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", historyBtn: "History", historyTitle: "Edited Subtitles History", clearAllBtn: "Clear All", restoreBtn: "Open", deleteBtn: "Delete", historyWarning: "Warning: History is almost full!", historyEmpty: "No files saved in history", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Mohammed Abdulqader</strong>", welcomeText: "Welcome!", scrollToTop: "Scroll to Top",
-                msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
-                msgPasteSuccess: "Pasted successfully!",
-                msgPasteManual: "Tap and hold inside the box to paste manually!",
-                toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto",
-                featuresHead: "Website Features",
-                feat1: "Full support for SRT, ASS, and VTT subtitles with intact timing.",
-                feat2: "Real-time video subtitle sync and live interactive preview.",
-                feat3: "Smart AI translation import, format cleaning, and batch search & replace.",
-                feat4: "Batch conversion and multi-file time shifting capabilities.",
-                feat5: "Direct image to permanent, non-expiring link conversion.",
-                imgToLinkBtn: "Image to Link",
-                imgModalTitle: "Convert Image to Link",
-                imgNoFile: "No image selected",
-                imgApiKeyLbl: "API Key (Enter once):",
-                imgGetApiLink: "Where to get key?",
-                imgSelectLbl: "Click to select image",
-                imgDirectLinkLbl: "Direct Image Link:",
-                imgCopyBtn: "Copy Link",
-                feat6: "Fix RTL text & bracket alignment without touching other file data.",
-                feat7: "Convert Blu-ray PGS (.sup) subtitle images to text with smart OCR.",
-                feat8: "Automatically clean SDH sound descriptors like [music] and (screaming).",
-                pgsReadingLine: "Reading line #",
-                sdhBtn: "SDH Audio Cleaner",
-                themeTitle: "Choose UI Theme Color",
-                themeForest: "Forest",
-                themeOcean: "Ocean Blue",
-                themePurple: "Royal Purple",
-                themeRose: "Neon Rose",
-                themeAmber: "Amber Gold",
-                themeEmerald: "Emerald",
-                sdhTitle: "SDH / Hearing Impaired Cleaner",
-                sdhDesc: "Automatically removes sound descriptors like [music] and (screaming) without affecting timing.",
-                shortcutsBtn: "Keyboard Shortcuts",
-                shortcutsTitle: "Keyboard Shortcuts",
-                scPlayPause: "Play / Pause Video",
-                scSeek: "Seek Video (±2s)",
-                scNextLine: "Next Subtitle Line",
-                scSave: "Save & Download",
-                scSearch: "Search & Replace",
-                langLabel: "Language",
-                linesText: "lines"
-            }
-        };
+    ckb: {
+        accountBtn: "هەژمار",
+        accountTitle: "هەژماری وەرگێڕ",
+        accountLoggedAs: "چوویتەتەژوورەوە بە ناوی:",
+        accountLogoutBtn: "دەرچوون لە هەژمار",
+        accountSaveBtn: "چوونەژوورەوە / پاشەکەوتکردن",
+        msgAccEnterCreds: "تکایە ناوی بەکارهێنەر و تێپەڕوشە بنووسە!",
+        msgAccWrongPass: "تێپەڕوشەکە هەڵەیە!",
+        msgAccSuccess: "بە سەرکەوتوویی چوویتە ناو هەژمارەکەت و ڕێکخستنەکانت بارکران!",
+        msgAccLogout: "لە هەژمار دەرچوویت!",
+        accountUserLbl: "ناوی بەکارهێنەر:",
+        accountUserPlh: "ناوی بەکارهێنەر...",
+        accountPassLbl: "تێپەڕوشە / نهێنیکۆد:",
+        accountPassPlh: "تێپەڕوشە...",
+        accExportBtn: "کۆپی کۆدی پاشەکەوت",
+        accImportPlh: "کۆدی پاشەکەوت لێرە دابنێ...",
+        accImportBtn: "هێنانەوە",
+        accImportLbl: "گواستنەوە لە مۆبایلێکی ترەوە:",
+        msgBackupCopied: "کۆدی پاشەکەوت کۆپیکرا بۆ کلیپبۆرد!",
+        msgRestoreSuccess: "تەواوی مێژوو و ڕێکخستنەکان بە سەرکەوتوویی گەڕێنرانەوە!",
+        msgInvalidBackup: "کۆدەکە هەڵەیە یان نادروستە!",
+        rtlFixBtn: "چاککردنی RTL",
+        pgsBtn: "گۆڕینی PGS (.sup)",
+        pgsTitle: "گۆڕینی فایلی PGS (.sup) بۆ دەق",
+        pgsDesc: "فایلی بلوڕەی (.sup) دەگۆڕێت بۆ ژێرنووسی نووسراو بە تەکنەلۆژیای زیرەکی OCR بەبێ تێکچوونی کاتەکان.",
+        pgsSelectLbl: "فایلی PGS (.sup) هەڵبژێرە:",
+        pgsLangLbl: "زمانی وێنەکە:",
+        pgsCancelBtn: "ڕاگرتنی پڕۆسەکە",
+        pgsLoadingData: "داگرتنی داتای زمان...",
+        pgsLangEng: "ئینگلیزی",
+        pgsLangAra: "عەرەبی",
+        pgsLangFas: "کوردی / فارسی",
+        pgsLangFra: "فەڕەنسی",
+        pgsLangDeu: "ئەڵمانی",
+        pgsLangSpa: "ئیسپانی",
+        pgsLangJpn: "ژاپۆنی",
+        rtlFixTitle: "چاککردنی ئاڕاستەی ژێرنووس (RTL Fix)",
+        rtlFixDesc: "فایلەکان هەڵبژێرە بۆ ڕێکخستنی کەوانە و هێماکان بەبێ دەستکاری هیچ شتێکی تری فایلەکە.",
+        rtlFixSelectLbl: "فایلەکان هەڵبژێرە (SRT, ASS, VTT):",
+        rtlFixApplyBtn: "چاککردن و داگرتن",
+        pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
+        msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
+        msgPasteSuccess: "بە سەرکەوتوویی پەیست کرا!",
+        msgPasteManual: "دەست لەناو بۆکسەکە دابگرە بۆ پەیستکردن!",
+        installModalTitle: "دابەزاندنی ئەپ", installModalDesc: "ئایا دەتەوێت ئەم ماڵپەڕە وەک ئەپێک دابەزێنیتە سەر شاشەی ئامێرەکەت بۆ ئەوەی خێراتر بێت و بەبێ ئینتەرنێتیش کاربکات؟", installConfirmBtn: "دابەزاندن",
+        batchDownloadTitle: "داگرتنی فایلەکان", batchDownloadDesc: "وێبگەڕەکەت داوای مۆڵەت دەکات بۆ داگرتنی چەند فایلێک پێکەوە. تکایە کرتە لە 'ڕێگەدان' بکە بۆ ئەوەی هەموو فایلەکان بێ کێشە دابەزن.", batchDownloadBtn: "دەستپێکردنی داگرتن",
+        toastDirRTL: "ئاڕاستە: ڕاست بۆ چەپ (RTL)", toastDirLTR: "ئاڕاستە: چەپ بۆ ڕاست (LTR)", toastDirAuto: "ئاڕاستە: خۆکار (Auto)",
+        
+        // تایبەتمەندییە نوێکراوەکان
+        featuresHead: "تایبەتمەندییەکانی ماڵپەڕ",
+        feat1: "پشتیوانی تەواوی فۆرماتەکانی SRT، ASS و VTT بەبێ تێکچوونی کات.",
+        feat2: "پێشبینینی ڕاستەوخۆی ژێرنووس لەسەر ڤیدیۆ بە هاوکاتکردنی ورد.",
+        feat3: "وەرگێڕانی زیرەکی دەستکرد (Gemini AI) بە ڕێنووسی کوردی و یاساکانی وەرگێڕان.",
+        feat4: "گۆڕینی کات، فۆرمات و ڕێژەی FPS بۆ چەندین فایل پێکەوە بە کۆمەڵ.",
+        feat5: "گۆڕینی ڕاستەوخۆی وێنە بۆ لینکی هەمیشەیی بەبێ بەسەرچوون.",
+        feat6: "چاککردنی ئاڕاستەی RTL و هێماکان بەبێ دەستکاری هیچ شتێکی تر.",
+        feat7: "گۆڕینی وێنەی PGS (.sup) و دەرهێنانی دەنگ بە Whisper AI بۆ دەق.",
+        feat8: "پاککردنەوەی هەموو جۆرە دەنگێکی [music] و *sighs* بە هەموو زمانەکان.",
+        
+        // بەشە نوێیەکان
+        geminiKeyLbl: "کلیلی Gemini API:",
+        geminiGetApi: "وەرگرتنی کلیل",
+        geminiTranslateBtn: "وەرگێڕانی ڕاستەوخۆ بە ژیریی دەستکرد",
+        geminiTranslating: "خەریکی وەرگێڕانە، تکایە کەمێک بوەستە...",
+        fpsLbl: "گۆڕینی ڕێژەی چوارچێوەکان (FPS):",
+        fpsNone: "وەک خۆی",
+        whisperBtn: "دەرهێنانی دەنگ بۆ ژێرنووس (Whisper)",
+        whisperTitle: "دەرهێنانی ژێرنووس لە دەنگ (Whisper AI)",
+        whisperDesc: "فایلی دەنگ یان ڤیدیۆ هەڵبژێرە بۆ دروستکردنی فایلی SRT بە شێوەی ئۆفلاین لەناو ئامێرەکەت.",
+        whisperSelectLbl: "فایلی دەنگ یان ڤیدیۆ هەڵبژێرە:",
+        whisperLoading: "خەریکی بارکردنی مۆدێل و شی کردنەوەیە...",
+
+        imgToLinkBtn: "گۆڕینی وێنە بۆ لینک",
+        imgModalTitle: "گۆڕینی وێنە بۆ لینک",
+        imgNoFile: "هیچ وێنەیەک دیاری نەکراوە",
+        imgApiKeyLbl: "کلیلی API (تەنها یەکجار دایبنێ):",
+        imgGetApiLink: "وەرگرتنی کلیل لە کوێیە؟",
+        imgSelectLbl: "کرتە بکە و وێنەکە هەڵبژێرە",
+        imgDirectLinkLbl: "لینکی ڕاستەوخۆی وێنەکە:",
+        imgCopyBtn: "کۆپیکردنی لینک",
+        pgsReadingLine: "خەریکی خوێندنەوەی دێڕی #",
+        sdhBtn: "پاککردنەوەی دەنگەکان (SDH)",
+        themeTitle: "هەڵبژاردنی ڕەنگی ڕووکار",
+        themeForest: "دارستان",
+        themeOcean: "زەریایی",
+        themePurple: "مۆری شاهانە",
+        themeRose: "گوڵەباخی",
+        themeAmber: "زێڕین",
+        themeEmerald: "زمڕوت",
+        sdhTitle: "پاککردنەوەی دەنگەکان (SDH Cleaner)",
+        sdhDesc: "هەموو دەنگە بێزارکەرەکانی وەک [music] و (screaming) لە ژێرنووس دەسڕێتەوە بەبێ تێکدانی کاتەکان.",
+        shortcutsBtn: "کورتکراوەکانی کیبۆرد",
+        shortcutsTitle: "کورتکراوەکانی کیبۆرد",
+        scPlayPause: "کارپێکردن/ڕاگرتنی ڤیدیۆ",
+        scSeek: "پێش/پاشخستنی ڤیدیۆ (٢ چرکە)",
+        scNextLine: "چوونە دێڕی دواتر",
+        scSave: "سەیڤکردن و داگرتن",
+        scSearch: "گەڕان و گۆڕین",
+        langLabel: "زمان",
+        linesText: "دێڕ"
+    },
+    ar: {
+        accountBtn: "الحساب",
+        accountTitle: "حساب المترجم",
+        accountLoggedAs: "تم تسجيل الدخول باسم:",
+        accountLogoutBtn: "تسجيل الخروج من الحساب",
+        accountSaveBtn: "دخول / حفظ الإعدادات",
+        msgAccEnterCreds: "الرجاء إدخال اسم المستخدم وكلمة المرور!",
+        msgAccWrongPass: "كلمة المرور غير صحيحة!",
+        msgAccSuccess: "تم تسجيل الدخول بنجاح وتحميل الإعدادات!",
+        msgAccLogout: "تم تسجيل الخروج من الحساب!",
+        accountUserLbl: "اسم المستخدم:",
+        accountUserPlh: "اسم المستخدم...",
+        accountPassLbl: "كلمة المرور / الرمز السري:",
+        accountPassPlh: "كلمة المرور...",
+        accExportBtn: "نسخ كود النسخ الاحتياطي",
+        accImportPlh: "الصق كود النسخ الاحتياطي هنا...",
+        accImportBtn: "استعادة",
+        accImportLbl: "النقل من هاتف آخر:",
+        msgBackupCopied: "تم نسخ كود النسخ الاحتياطي!",
+        msgRestoreSuccess: "تمت استعادة السجل والإعدادات بنجاح!",
+        msgInvalidBackup: "كود النسخ الاحتياطي غير صالح!",
+        rtlFixBtn: "إصلاح محاذاة RTL",
+        pgsBtn: "تحويل PGS (.sup)",
+        pgsTitle: "تحويل ملفات PGS (.sup) إلى نصوص",
+        pgsDesc: "تحويل ترجمات بلوراي الصورية إلى نصوص بدقة عالية مع الحفاظ على التوقيت.",
+        pgsSelectLbl: "اختر ملف PGS (.sup):",
+        pgsLangLbl: "لغة الصورة:",
+        pgsCancelBtn: "إلغاء العملية",
+        pgsLoadingData: "جاري تحميل بيانات اللغة...",
+        pgsLangEng: "الإنجليزية",
+        pgsLangAra: "العربية",
+        pgsLangFas: "الكردية / الفارسية",
+        pgsLangFra: "الفرنسية",
+        pgsLangDeu: "الألمانية",
+        pgsLangSpa: "الإسبانية",
+        pgsLangJpn: "اليابانية",
+        rtlFixTitle: "إصلاح اتجاه الترجمة (RTL Fix)",
+        rtlFixDesc: "اختر الملفات لإصلاح الأقواس وعلامات الترقيم دون تعديل أي شيء آخر في الملف.",
+        rtlFixSelectLbl: "اختر ملفات الترجمة (SRT, ASS, VTT):",
+        rtlFixApplyBtn: "إصلاح وتنزيل",
+        pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
+        msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
+        msgPasteSuccess: "تم اللصق بنجاح!",
+        msgPasteManual: "المس الحقل مطولاً للصق النص يدويًا!",
+        toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)",
+        
+        featuresHead: "مميزات الموقع",
+        feat1: "دعم كامل لملفات SRT و ASS و VTT دون أخطاء في التوقيت.",
+        feat2: "معاينة مباشرة للترجمة على الفيديو مع مزامنة دقيقة.",
+        feat3: "ترجمة ذكية بواسطة Gemini AI وفق القواعد اللغوية وRTL.",
+        feat4: "تحويل التوقيت والصيغ ومعدل الإطارات FPS لعدة ملفات معاً.",
+        feat5: "تحويل مباشر للصور إلى روابط دائمة وغير منتهية الصلاحية.",
+        feat6: "إصلاح محاذاة RTL والأقواس دون تعديل أي شيء آخر بالملف.",
+        feat7: "تحويل صور PGS واستخراج الترجمة من الصوت عبر Whisper AI.",
+        feat8: "تنظيف جميع المؤثرات الصوتية والرموز بكافة اللغات تلقائياً.",
+
+        geminiKeyLbl: "مفتاح Gemini API:",
+        geminiGetApi: "الحصول على مفتاح",
+        geminiTranslateBtn: "ترجمة مباشرة بالذكاء الاصطناعي",
+        geminiTranslating: "جاري الترجمة، يرجى الانتظار...",
+        fpsLbl: "تغيير معدل الإطارات (FPS):",
+        fpsNone: "الأصلي",
+        whisperBtn: "استخراج الترجمة من الصوت (Whisper)",
+        whisperTitle: "استخراج الترجمة من الصوت (Whisper AI)",
+        whisperDesc: "اختر ملف صوت أو فيديو لإنشاء ملف SRT بدون إنترنت داخل جهازك.",
+        whisperSelectLbl: "اختر ملف صوت أو فيديو:",
+        whisperLoading: "جاري تحميل النموذج والمعالجة...",
+
+        imgToLinkBtn: "تحويل الصورة لرابط",
+        imgModalTitle: "تحويل الصورة إلى رابط",
+        imgNoFile: "لم يتم تحديد أي صورة",
+        imgApiKeyLbl: "مفتاح API (ضعه مرة واحدة):",
+        imgGetApiLink: "من أين أحصل على المفتاح؟",
+        imgSelectLbl: "انقر لاختيار الصورة",
+        imgDirectLinkLbl: "رابط الصورة المباشر:",
+        imgCopyBtn: "نسخ الرابط",
+        pgsReadingLine: "جاري قراءة السطر #",
+        sdhBtn: "تنظيف الأصوات (SDH)",
+        themeTitle: "اختيار لون المظهر",
+        themeForest: "الغابة",
+        themeOcean: "محيطي",
+        themePurple: "أرجواني ملكي",
+        themeRose: "وردي نيون",
+        themeAmber: "ذهبي",
+        themeEmerald: "زمردي",
+        sdhTitle: "تنظيف المؤثرات الصوتية (SDH)",
+        sdhDesc: "حذف جميع المؤثرات الصوتية مثل [موسيقى] و (صراخ) تلقائياً دون التأثير على التوقيت.",
+        shortcutsBtn: "اختصارات لوحة المفاتيح",
+        shortcutsTitle: "اختصارات لوحة المفاتيح",
+        scPlayPause: "تشغيل/إيقاف الفيديو",
+        scSeek: "تقديم/تأخير الفيديو (ثانيتان)",
+        scNextLine: "الانتقال للسطر التالي",
+        scSave: "حفظ وتنزيل الملف",
+        scSearch: "بحث واستبدال",
+        langLabel: "اللغة",
+        linesText: "سطر"
+    },
+    en: {
+        accountBtn: "Account",
+        accountTitle: "Translator Account",
+        accountLoggedAs: "Logged in as:",
+        accountLogoutBtn: "Log out",
+        accountSaveBtn: "Login / Save",
+        msgAccEnterCreds: "Please enter username and password!",
+        msgAccWrongPass: "Incorrect password!",
+        msgAccSuccess: "Logged in successfully and settings loaded!",
+        msgAccLogout: "Logged out from account!",
+        accountUserLbl: "Username:",
+        accountUserPlh: "Username...",
+        accountPassLbl: "Password / PIN:",
+        accountPassPlh: "Password...",
+        accExportBtn: "Copy Backup Code",
+        accImportPlh: "Paste backup code here...",
+        accImportBtn: "Restore",
+        accImportLbl: "Transfer from another device:",
+        msgBackupCopied: "Backup code copied to clipboard!",
+        msgRestoreSuccess: "Data and settings restored successfully!",
+        msgInvalidBackup: "Invalid backup code!",
+        rtlFixBtn: "RTL Fix",
+        pgsBtn: "PGS (.sup) to Text",
+        pgsTitle: "Convert PGS (.sup) to Subtitles",
+        pgsDesc: "Extract Blu-ray SUP subtitle images into editable text using smart OCR with perfect timing.",
+        pgsSelectLbl: "Select PGS (.sup) File:",
+        pgsLangLbl: "Image Language:",
+        pgsCancelBtn: "Cancel Process",
+        pgsLoadingData: "Loading Language Data...",
+        pgsLangEng: "English",
+        pgsLangAra: "Arabic",
+        pgsLangFas: "Kurdish / Persian",
+        pgsLangFra: "French",
+        pgsLangDeu: "German",
+        pgsLangSpa: "Spanish",
+        pgsLangJpn: "Japanese",
+        rtlFixTitle: "Subtitle RTL Fixer",
+        rtlFixDesc: "Select subtitle files to fix punctuation and bracket alignment without altering any other file data.",
+        rtlFixSelectLbl: "Select Files (SRT, ASS, VTT):",
+        rtlFixApplyBtn: "Fix & Download",
+        pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", historyBtn: "History", historyTitle: "Edited Subtitles History", clearAllBtn: "Clear All", restoreBtn: "Open", deleteBtn: "Delete", historyWarning: "Warning: History is almost full!", historyEmpty: "No files saved in history", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Mohammed Abdulqader</strong>", welcomeText: "Welcome!", scrollToTop: "Scroll to Top",
+        msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
+        msgPasteSuccess: "Pasted successfully!",
+        msgPasteManual: "Tap and hold inside the box to paste manually!",
+        toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto",
+        
+        featuresHead: "Website Features",
+        feat1: "Full support for SRT, ASS, and VTT subtitles with intact timing.",
+        feat2: "Real-time video subtitle sync and live interactive preview.",
+        feat3: "Smart Gemini AI translation with strict formatting rules & RTL.",
+        feat4: "Batch converter with time-shift and FPS frame rate conversion.",
+        feat5: "Direct image to permanent, non-expiring link conversion.",
+        feat6: "Fix RTL text & bracket alignment without touching other file data.",
+        feat7: "Convert PGS (.sup) images & transcribe audio to text with Whisper AI.",
+        feat8: "Advanced multilingual SDH sound cleaner and symbol remover.",
+
+        geminiKeyLbl: "Gemini API Key:",
+        geminiGetApi: "Get API Key",
+        geminiTranslateBtn: "Direct AI Translation",
+        geminiTranslating: "Translating, please wait...",
+        fpsLbl: "Frame Rate (FPS):",
+        fpsNone: "Original",
+        whisperBtn: "Audio to Subtitle (Whisper)",
+        whisperTitle: "Extract Subtitle from Audio (Whisper AI)",
+        whisperDesc: "Select audio or video file to generate offline SRT subtitles on your device.",
+        whisperSelectLbl: "Select audio or video file:",
+        whisperLoading: "Loading model & transcribing...",
+
+        imgToLinkBtn: "Image to Link",
+        imgModalTitle: "Convert Image to Link",
+        imgNoFile: "No image selected",
+        imgApiKeyLbl: "API Key (Enter once):",
+        imgGetApiLink: "Where to get key?",
+        imgSelectLbl: "Click to select image",
+        imgDirectLinkLbl: "Direct Image Link:",
+        imgCopyBtn: "Copy Link",
+        pgsReadingLine: "Reading line #",
+        sdhBtn: "SDH Audio Cleaner",
+        themeTitle: "Choose UI Theme Color",
+        themeForest: "Forest",
+        themeOcean: "Ocean Blue",
+        themePurple: "Royal Purple",
+        themeRose: "Neon Rose",
+        themeAmber: "Amber Gold",
+        themeEmerald: "Emerald",
+        sdhTitle: "SDH / Hearing Impaired Cleaner",
+        sdhDesc: "Automatically removes sound descriptors like [music] and (screaming) without affecting timing.",
+        shortcutsBtn: "Keyboard Shortcuts",
+        shortcutsTitle: "Keyboard Shortcuts",
+        scPlayPause: "Play / Pause Video",
+        scSeek: "Seek Video (±2s)",
+        scNextLine: "Next Subtitle Line",
+        scSave: "Save & Download",
+        scSearch: "Search & Replace",
+        langLabel: "Language",
+        linesText: "lines"
+    }
+};
 
         let currentLang = 'ckb';
         let originalData = [];
@@ -2007,6 +2109,9 @@ function applyCustomTheme(themeKey) {
         .file-box .upload-icon, .file-box label {
             color: ${pal.primary} !important;
         }
+        #progress-bar {
+           background: linear-gradient(90deg, ${pal.primary} 0%, ${pal.hover} 100%) !important;
+       }
     `;
 
     localStorage.setItem('kf_selected_theme', themeKey);
@@ -2053,6 +2158,26 @@ function saveOrLoginAccount() {
         showToast(i18n[currentLang]['msgAccEnterCreds'] || 'تکایە ناوی بەکارهێنەر و تێپەڕوشە بنووسە!', 'error');
         return;
     }
+    
+    // لەناو فەنکشنی saveOrLoginAccount ئەم چەند دێڕە زیاد بکە:
+const userGeminiKey = localStorage.getItem('kf_gemini_user_' + name);
+if (userGeminiKey) {
+    localStorage.setItem('kf_gemini_key', userGeminiKey);
+    const gInput = document.getElementById('geminiApiKeyInput');
+    if (gInput) gInput.value = userGeminiKey;
+} else {
+    const currentGKey = localStorage.getItem('kf_gemini_key') || '';
+    if (currentGKey) localStorage.setItem('kf_gemini_user_' + name, currentGKey);
+}
+
+function saveGeminiKey(input) {
+    const key = input.value.trim();
+    localStorage.setItem('kf_gemini_key', key);
+    const activeUser = localStorage.getItem('kf_active_username');
+    if (activeUser) {
+        localStorage.setItem('kf_gemini_user_' + activeUser, key);
+    }
+}
 
     const existingPass = localStorage.getItem('kf_pass_' + name);
     if (existingPass && existingPass !== pass) {
@@ -2108,6 +2233,7 @@ function exportAccountBackup() {
         pass: localStorage.getItem('kf_pass_' + name) || '',
         theme: localStorage.getItem('kf_theme_user_' + name) || 'forest',
         apiKey: localStorage.getItem('kf_imgbb_user_' + name) || '',
+        geminiKey: localStorage.getItem('kf_gemini_user_' + name) || '',
         history: JSON.parse(localStorage.getItem('kf_history_user_' + name) || '[]')
     };
 
@@ -2147,6 +2273,10 @@ function importAccountBackup() {
             localStorage.setItem('kf_imgbb_user_' + name, data.apiKey);
             localStorage.setItem('user_imgbb_key', data.apiKey);
         }
+        if (data.geminiKey) {
+    localStorage.setItem('kf_gemini_user_' + name, data.geminiKey);
+    localStorage.setItem('kf_gemini_key', data.geminiKey);
+}
         if (data.history) localStorage.setItem('kf_history_user_' + name, JSON.stringify(data.history));
 
         localStorage.setItem('kf_active_username', name);
@@ -2482,112 +2612,57 @@ function openShortcutsModal() {
     document.getElementById('shortcuts-modal').style.display = 'flex';
 }
 
-// بزوێنەری زیرەک بۆ پاککردنەوەی هەموو دەنگ و گۆرانییەکان (تەنانەت بە وتەزاشەوە)
 function cleanSdhLinesArray(lines) {
-    const soundKeywords = /sigh|gasp|scream|groan|chuckle|whisper|cry|applause|music|song|theme|tune|melody|lyrics|singing|laughter|cough|throat|pant|grunt|shout|snicker|giggle|snort|sob|thud|footstep|creak|rustl|door|phone|bell|thunder|wind|bark|growl|buzz|siren|beep|engine|cheer|yell|clatter|radio|television|newscaster|reporter|broadcast|announcer|narrator|inaudible|muffled|static|humming|splash|drip|click|clack|gunshot|bullet|explosion|boom|bang|chime/i;
+    const soundKeywords = /sighs?|gasping|gasps?|screams?|screaming|groans?|groaning|chuckles?|whispering|whispers?|crying|cries|applause|laughter|coughs?|coughing|clears throat|panting|grunts?|grunting|shouts?|shouting|snickers?|giggles?|snorts?|sobbing|thud|footsteps?|creaking|rustling|door opens?|door closes?|thunder|wind|barks?|growls?|buzzing|sirens?|beeping|beep|engine revs?|cheering|yelling|clatter|inaudible|muffled|static|humming|splash|dripping|gunshot|bullet|explosion|boom|bang|chime|music|song|theme|tune|melody|lyrics|singing|audio|sound effect|sfx|on radio|on tv|over phone|over pa|off-screen|breaking news|speaking [a-z]+|in [a-z]+|موسيقى|ضحك|صراخ|تنهد|تصفيق|همس|بكاء|موسيقى تصويرية|مؤثرات|هتاف|نباح|انفجار|إطلاق نار|مۆسیقا|هاوار|پێکەنین|گریان|هەناسەبڕکێ|چەپڵە|تەقینەوە/i;
 
     let cleaned = lines.map(line => {
         let l = line.trim();
+        if (!l) return '';
 
-        // ١. سڕینەوەی دەنگ و گۆرانییەکان لەناو چوارگۆشە [...] (تەنانەت ئەگەر ناوی لەناو وتەزاش بێت)
+        // سڕینەوەی ناوی بێژەر لە سەرەتا
+        l = l.replace(/^(\{\\[^}]+\})?\s*([-–—•]\s*)?[\(\[][A-Za-z0-9\u0600-\u06FF\s.,_&/'"-]+[\)\]]\s*(?=[A-Za-z0-9\u0600-\u06FF"'«»])/i, (m, tag, dash) => (tag || '') + (dash || ''));
+        l = l.replace(/^(\{\\[^}]+\})?\s*([-–—•]\s*)?[A-Z0-9\u0600-\u06FF\s.,_&/'"-]+:\s*(?=[A-Za-z0-9\u0600-\u06FF"'«»])/i, (m, tag, dash) => (tag || '') + (dash || ''));
+
+        // دەنگ لەناو چوارگۆشە [...]
         l = l.replace(/\[([^\]]+)\]/g, (match, inside) => {
             const inner = inside.trim();
-            // ئەگەر دەنگ یان مۆسیقا بێت، دەستبەجێ دەیسڕێتەوە
             if (soundKeywords.test(inner)) return '';
-            // ئەگەر تابلۆی نووسینی سەر شاشە بێت دەیپارێزێت
             if (/^(sign|text|note|title|notice|chapter|episode)\b/i.test(inner)) return match;
             if (/\b(later|morning|evening|night|afternoon|ago|meanwhile|\d{4})\b/i.test(inner)) return match;
+            if (/['"«»]/.test(inner)) return match;
             return '';
         });
 
-        // ٢. سڕینەوەی دەنگەکان لەناو کەوانەی بازنەیی (...)
+        // دەنگ لەناو کەوانە (...)
         l = l.replace(/\(([^)]+)\)/g, (match, inside) => {
             const inner = inside.trim();
-            // ئەگەر دەنگ، گۆرانی، یان هەواڵ بێت دەیسڕێتەوە
             if (soundKeywords.test(inner)) return '';
-            // ئەگەر ناوی بێژەر بێت بە تەنیا (وەک android 2) دەیسڕێتەوە
-            if (/^[A-Za-z0-9\s._'-]+$/i.test(inner) && inner.split(' ').length <= 4) return '';
-            // ئەگەر تابلۆ و ناوی شوێن و کات بێت دەیپارێزێت
             if (/['"«»]/.test(inner) || /^(sign|text|note|title|notice|chapter|episode|part)\b/i.test(inner)) return match;
             if (/\b(later|morning|evening|night|afternoon|ago|meanwhile|yesterday|tomorrow|hours|days|years?|b\.?c|a\.?d|\d{4})\b/i.test(inner)) return match;
             return match;
         });
 
-        // سڕینەوەی نۆتەی مۆسیقا
-        l = l.replace(/[♪♫#][^♪♫#]*[♪♫#]/g, '');
+        // سڕینەوەی دەنگەکانی ناو ئەستێرە و تێڵدا (*...* و ~...~)
+        l = l.replace(/\*[^*]+\*/g, '');
+        l = l.replace(/~[^~]+~/g, '');
 
-        // سڕینەوەی ناوی بێژەر لە سەرەتای دێڕ: SPEAKER:
-        l = l.replace(/^[A-Z0-9\s._'-]+:\s*/, '');
+        // سڕینەوەی هەموو جۆرە هێماکانی مۆسیقا
+        l = l.replace(/[♪♫♩♬♯♭#][^♪♫♩♬♯♭#]*[♪♫♩♬♯♭#]/g, '');
+        l = l.replace(/[♪♫♩♬♯♭]/g, '');
+
+        // سڕینەوەی تاگی بەتاڵی HTML
+        l = l.replace(/<([a-z]+)[^>]*>\s*<\/\1>/gi, '');
 
         l = l.trim();
-        // ئەگەر تەنها داش (-) یان هێمای بەتاڵ مابێتەوە، بیسڕەوە
-        if (/^[-–—•\s,.:]+$/.test(l)) l = '';
+        if (/^(?:\{\\[^}]+\}|[-–—•\s,.:])+$/.test(l)) l = '';
         return l;
     }).filter(l => l.length > 0);
 
-    // ئەگەر تەنها یەک دێڕ مابێتەوە، داشی سەرەتای ڕستەکەش لادەبات
     if (cleaned.length === 1) {
-        cleaned[0] = cleaned[0].replace(/^[-–—•]\s*/, '').trim();
+        cleaned[0] = cleaned[0].replace(/^(\{\\[^}]+\})?\s*[-–—•]\s*/, (m, tag) => (tag ? tag + ' ' : '')).trim();
     }
 
     return cleaned;
-}
-
-// جێبەجێکردنی پاککردنەوە و ڕیزبەندیی تەواوی ژمارەکانی SRT لە ١ەوە
-async function executeSdhCleaner() {
-    const files = document.getElementById('sdhFileInput').files;
-    if (!files.length) return showToast('تکایە فایل هەڵبژێرە!', 'error');
-    document.getElementById('sdh-modal').style.display = 'none';
-
-    for (let f of files) {
-        const content = await f.text();
-        const lower = f.name.toLowerCase();
-        let finalCleaned = '';
-
-        if (lower.endsWith('.ass')) {
-            const lines = content.split(/\r?\n/);
-            finalCleaned = lines.map(line => {
-                if (line.startsWith('Dialogue:')) {
-                    return line.replace(/(Dialogue:[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,)(.*)/, (m, p, t) => {
-                        let subLines = t.split('\\N');
-                        let res = cleanSdhLinesArray(subLines);
-                        return p + (res.join('\\N') || '...');
-                    });
-                }
-                return line;
-            }).join('\n');
-        } else {
-            // بۆ SRT و VTT بە ڕیزبەندیی خاوێنی ژمارەکان لە ١ەوە
-            const blocks = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split(/\n\s*\n/);
-            let validBlocks = [];
-            let counter = 1;
-
-            for (let b of blocks) {
-                let lines = b.trim().split('\n');
-                let timeIdx = lines.findIndex(x => x.includes('-->'));
-                if (timeIdx !== -1) {
-                    let timeLine = lines[timeIdx];
-                    let textLines = lines.slice(timeIdx + 1);
-                    let res = cleanSdhLinesArray(textLines);
-                    // تەنها ئەو دێڕانە دەهێڵێتەوە کە قسەی ڕاستەقینەن
-                    if (res.length > 0) {
-                        if (lower.endsWith('.vtt')) {
-                            validBlocks.push(`${timeLine}\n${res.join('\n')}`);
-                        } else {
-                            validBlocks.push(`${counter++}\n${timeLine}\n${res.join('\n')}`);
-                        }
-                    }
-                } else if (b.startsWith('WEBVTT') || b.startsWith('NOTE')) {
-                    validBlocks.push(b);
-                }
-            }
-            finalCleaned = validBlocks.join('\n\n') + '\n\n';
-        }
-
-        triggerDownload(finalCleaned, f.name.replace(/\.[^/.]+$/, "") + "_SDH_Cleaned." + f.name.split('.').pop());
-        await new Promise(r => setTimeout(r, 500));
-    }
-    showToast('دەنگە زیادەکان و گۆرانییەکان بە سەرکەوتوویی پاککرانەوە!', 'success');
 }
 
 // ٤. چالاککردنی کورتکراوەکانی کیبۆرد لەناو ئەدیتۆر
@@ -3176,12 +3251,15 @@ function processAssSmartSubtitle(rawText, styleName) {
 
                 let timeShift = hasExplicitShift ? baseTimeShift : (isOrigVtt ? 0.1 : 0);
 
-                if (timeShift !== 0) {
-                    parsed.forEach(item => { 
-                        item.startSec = Math.max(0, parseFloat((item.startSec + timeShift).toFixed(3))); 
-                        item.endSec = Math.max(0, parseFloat((item.endSec + timeShift).toFixed(3))); 
-                    });
-                }
+                const fpsOption = document.getElementById('batchFpsOption') ? document.getElementById('batchFpsOption').value : 'none';
+let fpsRatio = 1.0;
+if (fpsOption === '23.976_to_25') fpsRatio = 23.976 / 25.0;
+else if (fpsOption === '25_to_23.976') fpsRatio = 25.0 / 23.976;
+
+parsed.forEach(item => { 
+    item.startSec = Math.max(0, parseFloat(((item.startSec * fpsRatio) + timeShift).toFixed(3))); 
+    item.endSec = Math.max(0, parseFloat(((item.endSec * fpsRatio) + timeShift).toFixed(3))); 
+});
 
                 let finalContent = "";
                 if (targetFormat === 'srt') {
@@ -3805,6 +3883,142 @@ if (/\\an[789]|\\a[567]/i.test(dialogueText)) {
             triggerDownload(final.trim() + '\n\n', filename);
             clearSession();
         }
+        
+        // کۆنترۆڵکردنی هەڵبژاردنی FPS
+function setFpsOption(opt) {
+    document.getElementById('batchFpsOption').value = opt;
+    document.querySelectorAll('#converter-modal .fmt-btn[id^="btn-fps"]').forEach(b => b.classList.remove('active'));
+    const btnId = opt === 'none' ? 'btn-fps-none' : (opt === '23.976_to_25' ? 'btn-fps-23to25' : 'btn-fps-25to23');
+    const targetBtn = document.getElementById(btnId);
+    if (targetBtn) targetBtn.classList.add('active');
+}
+
+// وەرگێڕانی زیرەکی دەستکرد بە مەرج و ڕێساکانی خۆت
+async function translateWithGeminiAI() {
+    const savedKey = localStorage.getItem('kf_gemini_key');
+    const inputKey = document.getElementById('geminiApiKeyInput') ? document.getElementById('geminiApiKeyInput').value.trim() : '';
+    const key = inputKey || savedKey;
+
+    if (!key) {
+        showToast("تکایە سەرەتا کلیلی Gemini API دابنێ!", "error");
+        return;
+    }
+
+    if (!originalData || originalData.length === 0) {
+        showToast("هیچ ژێرنووسێک نییە بۆ وەرگێڕان!", "error");
+        return;
+    }
+
+    const btn = document.getElementById('btnRunGeminiAI');
+    const status = document.getElementById('aiLoadingStatus');
+    if (btn) btn.disabled = true;
+    if (status) status.style.display = 'block';
+
+    const inputLines = originalData.map((x, i) => `[${i + 1}] ${x.rawText || x.text}`).join('\n');
+
+    const systemRules = `تۆ وەرگێڕێکی پڕۆفیشناڵی ژێرنووسی فیلم و ئەنیمێیت بۆ زمانی کوردی سۆرانی.
+ئەم یاسایانە بە تەواوی ١٠٠٪ جێبەجێ بکە:
+١. وەریگێڕە سەر زمانی کوردی سۆرانی بە جوانترین و ڕوونترین وەرگێڕان بەپێی واتا (Contextual) نەک وشە بە وشە.
+٢. تەنها ناوی کارەکتەرەکان بخەرە ناو کەوانەی بازنەیی () وەک (لوفی).
+٣. ناوی وڵات و شار و لادێکان بخەرە ناو کەوانەی دووانەیی "" وەک "تۆکیۆ".
+٤. وشە هەستیارەکانی وەک (ئاخ، ئۆف، ئاهـ، ئۆهـ، ئاه، ئۆه) بە تەواوی لابدە بەبێ تێکدانی مانای ڕستەکە.
+٥. هەر ڕستەیەک پێویستی بە تێبینی هەبوو، لە خوارەوەی هەمان ڕستە بە تاگی شێوازی زەرد بنووسە: {\\c&H00FFFF&}(تێبینی...).
+٦. پەند و دەستەواژە بیانییەکان بگۆڕە بۆ پەندی هاوتای کوردی لە مانا.
+٧. ستایلی دەقەکە بە شێوازی تەواوی ڕاست بۆ چەپ (RTL) بهێڵەرەوە.
+٨. ئەگەر لە دەقەکەدا وتی (ئێوەی دووان یان ئێوەی سیان) بیکە بە (ئەودووانەتان یان ئەوسیانەتان).
+٩. تەنها کۆتایی ڕستەکان کە یەک خاڵە (.) لایانببە، بەڵام سێ خاڵ (...)، وێرگووڵ (،)، نیشانەی سەرسوڕمان (!) و پرسیار (؟) و خاڵی ناوەڕاستی ڕستەکان وەک خۆی بهێڵەرەوە.
+١٠. پاشگری ناوەکانی وەک سان، چان، کون بەم شێوەیە بنووسە: (لوفی)-سان.
+١١. پیتە بزوێنەکانی دوای ناو بلکێنە بە کەوانەکە بەم جۆرە: (لوفی)ـیە یان "تۆکیۆ"ـیە.
+١٢. فۆرماتی دەرچوون دەبێت ڕێک بەم شێوازە بێت بۆ هەموو دێڕەکان بەبێ دەقی زیادە:
+[1] دەقی وەرگێڕدراو
+[2] دەقی وەرگێڕدراو`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        role: "user",
+                        parts: [{ text: systemRules + "\n\nئەم دێڕانەی خوارەوە بە تەواوی وەربگێڕە:\n" + inputLines }]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.2
+                }
+            })
+        });
+
+        const data = await response.json();
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            const translatedResult = data.candidates[0].content.parts[0].text;
+            document.getElementById('ai-paste-area').value = translatedResult;
+            processAIPaste();
+            showToast("وەرگێڕان بە سەرکەوتوویی جێبەجێ کرا!", "success");
+        } else {
+            throw new Error(data.error ? data.error.message : "وەڵام وەرنەگیرا");
+        }
+    } catch (err) {
+        showToast("هەڵە: " + err.message, "error");
+    } finally {
+        if (btn) btn.disabled = false;
+        if (status) status.style.display = 'none';
+    }
+}
+
+// بەشی دەرهێنانی دەنگ بۆ ژێرنووس (Whisper AI)
+function openWhisperModal() {
+    document.getElementById('whisper-modal').style.display = 'flex';
+    document.getElementById('whisperFileInput').value = '';
+    document.getElementById('whisperFileNameDisplay').innerText = 'هیچ فایلێک دیاری نەکراوە';
+    document.getElementById('whisperStatusBox').style.display = 'none';
+}
+
+async function runWhisperProcess() {
+    const fileInput = document.getElementById('whisperFileInput');
+    if (!fileInput.files || !fileInput.files[0]) {
+        showToast("تکایە فایلی دەنگ یان ڤیدیۆ هەڵبژێرە!", "error");
+        return;
+    }
+
+    if (!window.transformersPipeline) {
+        showToast("مۆدێلی Whisper لە وێبگەڕەکەت پشتگیری نەکراوە!", "error");
+        return;
+    }
+
+    const status = document.getElementById('whisperStatusBox');
+    const btn = document.getElementById('btnStartWhisper');
+    btn.disabled = true;
+    status.style.display = 'block';
+    status.innerText = "خەریکی بارکردنی مۆدێلی Whisperە...";
+
+    try {
+        const transcriber = await window.transformersPipeline('automatic-speech-recognition', 'Xenova/whisper-tiny.en');
+        const audioUrl = URL.createObjectURL(fileInput.files[0]);
+        
+        status.innerText = "خەریکی ناسینەوە و دروستکردنی ژێرنووسە...";
+        const output = await transcriber(audioUrl, { return_timestamps: true });
+
+        let srtText = "";
+        if (output.chunks) {
+            output.chunks.forEach((c, idx) => {
+                const s = formatTimeSRT(c.timestamp[0]);
+                const e = formatTimeSRT(c.timestamp[1] || (c.timestamp[0] + 2));
+                srtText += `${idx + 1}\n${s} --> ${e}\n${c.text.trim()}\n\n`;
+            });
+        }
+
+        triggerDownload(srtText, fileInput.files[0].name.replace(/\.[^/.]+$/, "") + "_Whisper.srt");
+        showToast("فایلی ژێرنووسەکە بە سەرکەوتوویی دابەزی!", "success");
+        document.getElementById('whisper-modal').style.display = 'none';
+    } catch (e) {
+        showToast("کێشەیەک ڕوویدا: " + e.message, "error");
+    } finally {
+        btn.disabled = false;
+        status.style.display = 'none';
+    }
+}
     </script>
 </body>
 </html>
