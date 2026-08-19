@@ -1421,7 +1421,7 @@ html[lang="en"] .site-features-box {
     <div id="toast-container"></div>
 
     <script>
-        const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#8EB69B"><path d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3V6h18v12zM5 14h14v2H5zm0-4h8v2H5zm10 0h4v2h-4z"/></svg>`;
+        const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" fill="#000000"/><path fill="#ffffff" d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3V6h18v12zM5 14h14v2H5zm0-4h8v2H5zm10 0h4v2h-4z"/></svg>`;
         const manifest = {
             name: "Subtitle Editor", short_name: "SubEdit", start_url: ".", display: "standalone",
             background_color: "#0d120f", theme_color: "#8EB69B",
@@ -2492,10 +2492,6 @@ function updateSdhCount(input) {
     }
 }
 
-function updateKurdFixCount(input) {
-    document.getElementById('kurdFixCountDisplay').innerText = input.files.length ? `${input.files.length} فایل هەڵبژێردراون` : 'هیچ فایلێک دیاری نەکراوە';
-}
-
 function openShortcutsModal() {
     document.getElementById('shortcuts-modal').style.display = 'flex';
 }
@@ -2674,10 +2670,14 @@ function handlePgsFileSelect(input) {
     }
 }
 
-function cancelPgsProcess() {
+async function cancelPgsProcess() {
     isPgsCancelled = true;
     document.getElementById('pgsStatusText').innerText = 'پڕۆسەکە ڕاگیرا.';
     document.getElementById('btnStartPgs').disabled = false;
+    if (pgsTesseractWorker) {
+        try { await pgsTesseractWorker.terminate(); } catch(e){}
+        pgsTesseractWorker = null;
+    }
 }
 
 // شی تەکنیکی پاکەتەکانی SUP و دەرهێنانی وێنە و کاتژمێری PTS
@@ -2949,7 +2949,10 @@ async function startPgsConversion() {
         statusText.innerText = 'کێشەیەک ڕوویدا لە خوێندنەوەی فایلەکە!';
         showToast('هەڵە: ' + err.message, 'error');
     } finally {
-        btnStart.disabled = false;
+    btnStart.disabled = false;
+    if (pgsTesseractWorker) {
+        try { await pgsTesseractWorker.terminate(); } catch(e){}
+        pgsTesseractWorker = null;
     }
 }
 
@@ -3675,31 +3678,34 @@ if (/\\an[789]|\\a[567]/i.test(textStr)) {
         }
 
         function setupVideoSync() {
-            const video = document.getElementById('preview-video');
-            video.addEventListener('timeupdate', () => {
-                let ct = video.currentTime; 
-                let found = -1;
-                for(let i=0; i<originalData.length; i++) { 
-                    if(ct >= originalData[i].startSec && ct <= originalData[i].endSec) { 
-                        found = i; 
-                        break; 
-                    } 
-                }
-                if(found !== lastSubtitleIndex) {
-                    lastSubtitleIndex = found;
-                    document.querySelectorAll('.active-sub').forEach(el => el.classList.remove('active-sub'));
-                    if(found !== -1) {
-                        let card = document.querySelector(`.subtitle-card[data-index="${found}"]`);
-                        if(card) { 
-                            card.classList.add('active-sub'); 
-                            document.getElementById('video-subtitle-overlay').innerHTML = (card.querySelector('textarea').value || originalData[found].text).replace(/\n/g, '<br>'); 
-                        }
-                    } else {
-                        document.getElementById('video-subtitle-overlay').innerHTML = '';
-                    }
-                }
-            });
+    const video = document.getElementById('preview-video');
+    if (!video) return;
+    
+    // بەکارهێنانی ontimeupdate ڕێگری دەکات لە دووبارەبوونەوەی کۆدەکان لە مێمۆریدا
+    video.ontimeupdate = () => {
+        let ct = video.currentTime; 
+        let found = -1;
+        for (let i = 0; i < originalData.length; i++) { 
+            if (ct >= originalData[i].startSec && ct <= originalData[i].endSec) { 
+                found = i; 
+                break; 
+            } 
         }
+        if (found !== lastSubtitleIndex) {
+            lastSubtitleIndex = found;
+            document.querySelectorAll('.active-sub').forEach(el => el.classList.remove('active-sub'));
+            if (found !== -1) {
+                let card = document.querySelector(`.subtitle-card[data-index="${found}"]`);
+                if (card) { 
+                    card.classList.add('active-sub'); 
+                    document.getElementById('video-subtitle-overlay').innerHTML = (card.querySelector('textarea').value || originalData[found].text).replace(/\n/g, '<br>'); 
+                }
+            } else {
+                document.getElementById('video-subtitle-overlay').innerHTML = '';
+            }
+        }
+    };
+}
 
         function seekToSubtitle(idx) { 
             let vid = document.getElementById('preview-video'); 
