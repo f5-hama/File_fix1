@@ -823,6 +823,10 @@ html[lang="en"] .site-features-box {
                     <span data-i18n="feat4">گۆڕینی کات و فۆرماتی چەندین فایل پێکەوە بە کۆمەڵ (Batch).</span>
                 </li>
                 <li>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span data-i18n="feat5">گۆڕینی ڕاستەوخۆی وێنە بۆ لینکی هەمیشەیی بەبێ بەسەرچوون.</span>
+                </li>
+                <li>
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                     <span data-i18n="feat6">چاککردنی ئاڕاستەی RTL و هێماکان بەبێ دەستکاری هیچ شتێکی تر.</span>
                 </li>
@@ -893,6 +897,12 @@ html[lang="en"] .site-features-box {
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                         <span data-i18n="shortcutsBtn">کورتکراوەکانی کیبۆرد</span>
                     </button>
+                    
+                    <!-- دوگمەی بارکردنی وێنە -->
+                    <button class="menu-btn-item" onclick="openImgUploaderModal(); toggleSetupMenu();">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span data-i18n="imgToLinkBtn">گۆڕینی وێنە بۆ لینک</span>
+                    </button>
 
                     <button class="menu-btn-item" onclick="openHistoryModal(); toggleSetupMenu();">
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -938,6 +948,43 @@ html[lang="en"] .site-features-box {
         </button>
 
         <div style="text-align: center; margin-top: 4px; font-size: 12px; color: var(--text-muted);" data-i18n="developerInfo">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
+    </div>
+    
+    <!-- مۆداڵی گۆڕینی وێنە بۆ لینک بە هەموو زمانەکان -->
+    <div id="img-upload-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3 class="custom-modal-title" style="margin: 0 0 8px 0; color: var(--primary); font-size: 16px;" data-i18n="imgModalTitle">گۆڕینی وێنە بۆ لینک</h3>
+            
+            <div style="background: rgba(142, 182, 155, 0.08); border: 1px dashed var(--border-color); border-radius: 12px; padding: 10px; margin-bottom: 12px; text-align: start;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);" data-i18n="imgApiKeyLbl">کلیلی API (تەنها یەکجار دایبنێ):</label>
+                    <a href="https://api.imgbb.com/" target="_blank" style="font-size: 11px; color: var(--primary); font-weight: bold; text-decoration: underline;" data-i18n="imgGetApiLink">وەرگرتنی کلیل لە کوێیە؟</a>
+                </div>
+                <input type="text" id="imgbbApiKeyInput" oninput="saveImgbbKey(this)" placeholder="API Key..." class="input-field" style="padding: 8px; font-size: 11.5px; direction: ltr; text-align: left;">
+            </div>
+
+            <div class="file-box" style="margin-bottom: 12px; padding: 14px;">
+                <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
+                <label style="color:var(--primary); font-weight:bold; font-size:13px;" data-i18n="imgSelectLbl">کرتە بکە و وێنەکە هەڵبژێرە</label>
+                <div class="file-name-display" id="imgNameDisplay" data-i18n="imgNoFile">هیچ وێنەیەک دیاری نەکراوە</div>
+                <input type="file" id="imageFileInput" accept="image/*" onchange="uploadDirectImage(this)">
+            </div>
+
+            <div id="imgUploadLoader" style="display: none; color: var(--primary); font-size: 13px; font-weight: bold; margin: 8px 0;">خەریکی بارکردنی وێنەکەیە، تکایە کەمێک بوەستە...</div>
+
+            <div id="imgResultBox" style="display: none; margin-top: 10px; text-align: start;">
+                <label style="font-size: 12px; font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px;" data-i18n="imgDirectLinkLbl">لینکی ڕاستەوخۆی وێنەکە:</label>
+                <input type="text" id="generatedImgUrl" readonly class="input-field" style="margin-bottom: 8px; font-size: 12px; direction: ltr; text-align: left;">
+                <button class="btn" onclick="copyDirectImgLink()">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    <span data-i18n="imgCopyBtn">کۆپیکردنی لینک</span>
+                </button>
+            </div>
+
+            <div class="custom-modal-actions" style="margin-top: 12px;">
+                <button class="btn btn-outline" onclick="document.getElementById('img-upload-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
+            </div>
+        </div>
     </div>
 
     <!-- مۆداڵی مێژوو -->
@@ -1531,6 +1578,15 @@ html[lang="en"] .site-features-box {
                 feat2: "پێشبینینی ڕاستەوخۆی ژێرنووس لەسەر ڤیدیۆ بە هاوکاتکردنی ورد.",
                 feat3: "گونجاندنی خێرا بۆ وەرگێڕانی زیرەکی دەستکرد (AI) و گەڕان و گۆڕین.",
                 feat4: "گۆڕینی کات و فۆرماتی چەندین فایل پێکەوە بە کۆمەڵ (Batch).",
+                feat5: "گۆڕینی ڕاستەوخۆی وێنە بۆ لینکی هەمیشەیی بەبێ بەسەرچوون.",
+                imgToLinkBtn: "گۆڕینی وێنە بۆ لینک",
+                imgModalTitle: "گۆڕینی وێنە بۆ لینک",
+                imgNoFile: "هیچ وێنەیەک دیاری نەکراوە",
+                imgApiKeyLbl: "کلیلی API (تەنها یەکجار دایبنێ):",
+                imgGetApiLink: "وەرگرتنی کلیل لە کوێیە؟",
+                imgSelectLbl: "کرتە بکە و وێنەکە هەڵبژێرە",
+                imgDirectLinkLbl: "لینکی ڕاستەوخۆی وێنەکە:",
+                imgCopyBtn: "کۆپیکردنی لینک",
                 feat6: "چاککردنی ئاڕاستەی RTL و هێماکان بەبێ دەستکاری هیچ شتێکی تر.",
                 feat7: "گۆڕینی فایلی وێنەیی PGS (.sup) بۆ دەق بە تەکنەلۆژیای زیرەکی OCR.",
                 feat8: "پاککردنەوەی دەنگە زیادەکانی وەک [music] و (screaming) لە ژێرنووس.",
@@ -1603,6 +1659,15 @@ html[lang="en"] .site-features-box {
                 feat2: "معاينة مباشرة للترجمة على الفيديو مع مزامنة دقيقة.",
                 feat3: "إدراج ذكي لترجمات الذكاء الاصطناعي مع البحث والاستبدال.",
                 feat4: "تحويل التوقيت والصيغ لعدة ملفات معاً دفعة واحدة.",
+                feat5: "تحويل مباشر للصور إلى روابط دائمة وغير منتهية الصلاحية.",
+                imgToLinkBtn: "تحويل الصورة لرابط",
+                imgModalTitle: "تحويل الصورة إلى رابط",
+                imgNoFile: "لم يتم تحديد أي صورة",
+                imgApiKeyLbl: "مفتاح API (ضعه مرة واحدة):",
+                imgGetApiLink: "من أين أحصل على المفتاح؟",
+                imgSelectLbl: "انقر لاختيار الصورة",
+                imgDirectLinkLbl: "رابط الصورة المباشر:",
+                imgCopyBtn: "نسخ الرابط",
                 feat6: "إصلاح محاذاة RTL والأقواس دون تعديل أي شيء آخر بالملف.",
                 feat7: "تحويل ملفات الصور PGS (.sup) إلى نصوص بتقنية OCR الذكية.",
                 feat8: "تنظيف المؤثرات الصوتية مثل [music] و (screaming) تلقائياً من الترجمة.",
@@ -1675,6 +1740,15 @@ html[lang="en"] .site-features-box {
                 feat2: "Real-time video subtitle sync and live interactive preview.",
                 feat3: "Smart AI translation import, format cleaning, and batch search & replace.",
                 feat4: "Batch conversion and multi-file time shifting capabilities.",
+                feat5: "Direct image to permanent, non-expiring link conversion.",
+                imgToLinkBtn: "Image to Link",
+                imgModalTitle: "Convert Image to Link",
+                imgNoFile: "No image selected",
+                imgApiKeyLbl: "API Key (Enter once):",
+                imgGetApiLink: "Where to get key?",
+                imgSelectLbl: "Click to select image",
+                imgDirectLinkLbl: "Direct Image Link:",
+                imgCopyBtn: "Copy Link",
                 feat6: "Fix RTL text & bracket alignment without touching other file data.",
                 feat7: "Convert Blu-ray PGS (.sup) subtitle images to text with smart OCR.",
                 feat8: "Automatically clean SDH sound descriptors like [music] and (screaming).",
@@ -2292,6 +2366,96 @@ function setPgsLanguage(code, name) {
     document.getElementById('pgsLangSelect').value = code;
     document.getElementById('pgsCurrentLangText').innerText = name;
     document.getElementById('pgsLangMenu').classList.remove('show');
+}
+
+function openImgUploaderModal() {
+    document.getElementById('img-upload-modal').style.display = 'flex';
+    document.getElementById('imgResultBox').style.display = 'none';
+    document.getElementById('imgUploadLoader').style.display = 'none';
+    document.getElementById('imageFileInput').value = '';
+    document.getElementById('imgNameDisplay').innerText = (i18n[currentLang] && i18n[currentLang]['imgNoFile']) ? i18n[currentLang]['imgNoFile'] : 'No image selected';
+
+    const savedKey = localStorage.getItem('user_imgbb_key') || '';
+    document.getElementById('imgbbApiKeyInput').value = savedKey;
+}
+
+function saveImgbbKey(input) {
+    const key = input.value.trim();
+    localStorage.setItem('user_imgbb_key', key);
+    const activeUser = localStorage.getItem('kf_active_username');
+    if (activeUser) {
+        localStorage.setItem('kf_imgbb_user_' + activeUser, key);
+    }
+}
+
+async function uploadDirectImage(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const loader = document.getElementById('imgUploadLoader');
+    const resultBox = document.getElementById('imgResultBox');
+
+    const key = localStorage.getItem('user_imgbb_key') || (document.getElementById('imgbbApiKeyInput') ? document.getElementById('imgbbApiKeyInput').value.trim() : '');
+    if (!key) {
+        showToast('تکایە سەرەتا کلیلی API لە سەرەوە دابنێ!', 'error');
+        const keyInput = document.getElementById('imgbbApiKeyInput');
+        if (keyInput) keyInput.focus();
+        return;
+    }
+
+    document.getElementById('imgNameDisplay').innerText = file.name;
+    loader.style.display = 'block';
+    loader.innerText = 'خەریکی بارکردنی وێنەکەیە، تکایە کەمێک بوەستە...';
+    loader.style.color = 'var(--primary)';
+    resultBox.style.display = 'none';
+
+    const reader = new FileReader();
+    reader.onload = async function() {
+        try {
+            const base64Data = reader.result.split(',')[1];
+            const formData = new FormData();
+            formData.append('image', base64Data);
+
+            const response = await fetch('https://api.imgbb.com/1/upload?key=' + key, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data && data.data && (data.data.url || data.data.display_url)) {
+                const directUrl = data.data.url || data.data.display_url;
+                document.getElementById('generatedImgUrl').value = directUrl;
+                resultBox.style.display = 'block';
+                loader.style.display = 'none';
+                showToast('لینکی ڕاستەوخۆ و هەمیشەیی وێنەکە ئامادەیە!', 'success');
+            } else {
+                throw new Error(data.error ? data.error.message : 'Upload failed');
+            }
+        } catch (e) {
+            loader.style.display = 'none';
+            showToast('کێشەیەک ڕوویدا لە بارکردن، تکایە کلیلەکەت یان ئینتەرنێت بپشکنە!', 'error');
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+function copyDirectImgLink() {
+    const input = document.getElementById('generatedImgUrl');
+    if (!input || !input.value) return;
+
+    input.focus();
+    input.select();
+    input.setSelectionRange(0, 99999);
+
+    let success = false;
+    try {
+        success = document.execCommand('copy');
+    } catch (e) {}
+
+    if (!success && navigator.clipboard) {
+        navigator.clipboard.writeText(input.value);
+    }
+
+    showToast('لینکی وێنەکە بە سەرکەوتوویی کۆپیکرا!', 'success');
 }
 
 // ١. کردنەوە و بەڕێوەبردنی مۆداڵە نوێیەکان
