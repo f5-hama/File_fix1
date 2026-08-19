@@ -2953,9 +2953,9 @@ async function startPgsConversion() {
     if (pgsTesseractWorker) {
         try { await pgsTesseractWorker.terminate(); } catch(e){}
         pgsTesseractWorker = null;
-    }
+      }
+   }
 }
-
 
 function openRtlFixModal() {
     document.getElementById('rtl-fix-modal').style.display = 'flex';
