@@ -7,20 +7,15 @@ const ASSETS_TO_CACHE = [
     GH_PATH + '/',
     GH_PATH + '/index.html',
     GH_PATH + '/fonts.css',
-    GH_PATH + '/KurdForest.ttf'
+    GH_PATH + '/KurdForest.ttf',
+    GH_PATH + '/sw.js'
 ];
 
-// 1. Install Event - پاشەکەوتکردنی پارێزراو
+// 1. Install Event - پاشەکەوتکردنی فایلەکان
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(async (cache) => {
-            for (const asset of ASSETS_TO_CACHE) {
-                try {
-                    await cache.add(asset);
-                } catch (err) {
-                    console.warn('نەتوانرا فایل پاشەکەوت بکرێت:', asset);
-                }
-            }
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(ASSETS_TO_CACHE);
         })
     );
     self.skipWaiting();
@@ -42,7 +37,7 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// 3. Fetch Event - کارکردنی تەواو بەبێ ئینتەرنێت
+// 3. Fetch Event - کردنەوەی ئۆفلاین
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
@@ -60,7 +55,7 @@ self.addEventListener('fetch', (event) => {
                 }
                 return networkResponse;
             }).catch(() => {
-                // کاتێک بەبێ ئینتەرنێتیت ڕاستەوخۆ ماڵپەڕەکە بکاتەوە
+                // کاتێک بێ ئینتەرنێتیت خۆکارانە فایلی index.html دەکاتەوە
                 if (event.request.mode === 'navigate') {
                     return caches.match(GH_PATH + '/index.html') || caches.match(GH_PATH + '/');
                 }
