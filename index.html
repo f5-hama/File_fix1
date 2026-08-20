@@ -1546,13 +1546,7 @@ html[lang="en"] .site-features-box {
                 msgAccSuccess: "بە سەرکەوتوویی چوویتە ناو هەژمارەکەت و ڕێکخستنەکانت بارکران!",
                 msgAccLogout: "لە هەژمار دەرچوویت!",
                 accountUserLbl: "ناوی بەکارهێنەر:",
-                accountUserPlh: "ناوی بەکارهێنەر...",
-                accountPassLbl: "تێپەڕوشە / نهێنیکۆد:",
-                accountPassPlh: "تێپەڕوشە...",
-                accExportBtn: "کۆپی کۆدی پاشەکەوت",
-                accImportPlh: "کۆدی پاشەکەوت لێرە دابنێ...",
-                accImportBtn: "هێنانەوە",
-                accImportLbl: "گواستنەوە لە مۆبایلێکی ترەوە:",
+                accountUserPlh: "ناوی بەکارهێنەر...", 
                 msgBackupCopied: "کۆدی پاشەکەوت کۆپیکرا بۆ کلیپبۆرد!",
                 msgRestoreSuccess: "تەواوی مێژوو و ڕێکخستنەکان بە سەرکەوتوویی گەڕێنرانەوە!",
                 msgInvalidBackup: "کۆدەکە هەڵەیە یان نادروستە!",
@@ -1643,12 +1637,6 @@ html[lang="en"] .site-features-box {
                 msgAccLogout: "تم تسجيل الخروج من الحساب!",
                 accountUserLbl: "اسم المستخدم:",
                 accountUserPlh: "اسم المستخدم...",
-                accountPassLbl: "كلمة المرور / الرمز السري:",
-                accountPassPlh: "كلمة المرور...",
-                accExportBtn: "نسخ كود النسخ الاحتياطي",
-                accImportPlh: "الصق كود النسخ الاحتياطي هنا...",
-                accImportBtn: "استعادة",
-                accImportLbl: "النقل من هاتف آخر:",
                 msgBackupCopied: "تم نسخ كود النسخ الاحتياطي!",
                 msgRestoreSuccess: "تمت استعادة السجل والإعدادات بنجاح!",
                 msgInvalidBackup: "كود النسخ الاحتياطي غير صالح!",
@@ -1737,12 +1725,6 @@ html[lang="en"] .site-features-box {
                 msgAccLogout: "Logged out from account!",
                 accountUserLbl: "Username:",
                 accountUserPlh: "Username...",
-                accountPassLbl: "Password / PIN:",
-                accountPassPlh: "Password...",
-                accExportBtn: "Copy Backup Code",
-                accImportPlh: "Paste backup code here...",
-                accImportBtn: "Restore",
-                accImportLbl: "Transfer from another device:",
                 msgBackupCopied: "Backup code copied to clipboard!",
                 msgRestoreSuccess: "Data and settings restored successfully!",
                 msgInvalidBackup: "Invalid backup code!",
@@ -1913,121 +1895,105 @@ function clearAllHistory() {
         }
 
         function changeLanguage(lang) {
-            currentLang = lang; 
-            const isEn = (lang === 'en');
-            
-            const htmlTag = document.getElementById('html-tag');
-            htmlTag.setAttribute('lang', lang);
-            htmlTag.setAttribute('dir', 'rtl');
-            document.body.setAttribute('dir', 'rtl');
-            document.title = i18n[lang]['pageTitle'];
-            
-            document.querySelectorAll('.current-lang-text').forEach(e => { 
-                e.innerText = isEn ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی'); 
-            });
-            
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[lang] && i18n[lang][key]) { 
-                    if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { 
-                        el.placeholder = i18n[lang][key]; 
-                    } else { 
-                        el.innerHTML = i18n[lang][key]; 
-                    }
-                }
-            });
-
-            document.querySelectorAll('[data-i18n-title]').forEach(el => {
-                const key = el.getAttribute('data-i18n-title');
-                if (i18n[lang] && i18n[lang][key]) {
-                    el.setAttribute('title', i18n[lang][key]);
-                }
-            });
-
-            // نوێکردنەوەی ناوی زمانی هەڵبژێردراوی PGS بەپێی زمانی ماڵپەڕ
-            const pgsSelectEl = document.getElementById('pgsLangSelect');
-            const pgsTextEl = document.getElementById('pgsCurrentLangText');
-            if (pgsSelectEl && pgsTextEl) {
-                const langMap = {
-                    'eng': 'pgsLangEng', 'ara': 'pgsLangAra', 'fas': 'pgsLangFas',
-                    'fra': 'pgsLangFra', 'deu': 'pgsLangDeu', 'spa': 'pgsLangSpa', 'jpn': 'pgsLangJpn'
-                };
-                const key = langMap[pgsSelectEl.value];
-                if (key && i18n[lang] && i18n[lang][key]) {
-                    pgsTextEl.innerText = i18n[lang][key];
-                }
+    currentLang = lang; 
+    const isEn = (lang === 'en');
+    
+    const htmlTag = document.getElementById('html-tag');
+    if (htmlTag) {
+        htmlTag.setAttribute('lang', lang);
+        htmlTag.setAttribute('dir', 'rtl');
+    }
+    document.body.setAttribute('dir', 'rtl');
+    document.title = (i18n[lang] && i18n[lang]['pageTitle']) ? i18n[lang]['pageTitle'] : 'دەستکاریکەری ژێرنووس';
+    
+    document.querySelectorAll('.current-lang-text').forEach(e => { 
+        e.innerText = isEn ? 'English' : (lang === 'ar' ? 'العربية' : 'کوردی'); 
+    });
+    
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[lang] && i18n[lang][key]) { 
+            if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { 
+                el.placeholder = i18n[lang][key]; 
+            } else { 
+                el.innerHTML = i18n[lang][key]; 
             }
-
-            const welcomeEl = document.getElementById('welcome-msg');
-            if(localStorage.getItem('kf_user') && welcomeEl) {
-                welcomeEl.innerText = i18n[currentLang]['welcomeText'];
-            }
-            
-            ['boxOriginal', 'boxKurdish'].forEach(id => {
-                const box = document.getElementById(id);
-                if (box && !box.classList.contains('has-file')) {
-                    const disp = box.querySelector('.file-name-display');
-                    if (disp) disp.innerText = i18n[currentLang]['clickSelect'];
-                }
-            });
-
-            document.querySelectorAll('.custom-select-menu').forEach(m => m.classList.remove('show'));
         }
+    });
 
-        function checkLogin() {
-            const user = localStorage.getItem('kf_user');
-            if(user) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('setup-screen').style.display = 'flex';
-                document.getElementById('welcome-msg').innerText = i18n[currentLang]['welcomeText'] || "بەخێربێیت!";
-                if(localStorage.getItem('kf_autosave_session')) {
-                    document.getElementById('resume-modal').style.display = 'flex';
-                }
-            } else {
-                document.getElementById('login-screen').style.display = 'flex';
-                document.getElementById('setup-screen').style.display = 'none';
-            }
-            // هەمیشە دۆخی تاریک بە شێوازی سەد لە سەد
-            document.body.classList.add('dark-theme');
-            document.documentElement.classList.add('dark-theme');
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        if (i18n[lang] && i18n[lang][key]) {
+            el.setAttribute('title', i18n[lang][key]);
         }
-        
-        function performLogin() { localStorage.setItem('kf_user', 'true'); checkLogin(); }
-        // ١. دوگمەی دەرچوون لەناو مۆداڵی ئەکاونت
-function accountLogout() {
-    localStorage.removeItem('kf_active_username');
-    localStorage.removeItem('kf_user');
+    });
 
-    // گەڕاندنەوەی دەقی دوگمەی سەرەوە بۆ وشەی "هەژمار"
-    const accBtnText = (i18n[currentLang] && i18n[currentLang]['accountBtn']) ? i18n[currentLang]['accountBtn'] : 'هەژمار';
-    const displayEl = document.getElementById('loginAccountNameDisplay');
-    if (displayEl) displayEl.innerText = accBtnText;
+    // هێنانەوەی ناوی جیمەیڵ ئەگەر هەبێت تا نەگۆڕێت بە وشەی 'هەژمار'
+    const activeUser = localStorage.getItem('kf_active_username');
+    const nameDisplay = document.getElementById('loginAccountNameDisplay');
+    if (activeUser && nameDisplay) {
+        nameDisplay.innerText = activeUser.split('@')[0];
+    }
 
-    // گەڕاندنەوەی ڕەنگی بنەڕەتی
-    applyCustomTheme('forest');
-
-    // داخستنی مۆداڵەکە و گەڕانەوە بۆ شاشەی چوونەژوورەوە
-    document.getElementById('account-modal').style.display = 'none';
-    checkLogin();
-
-    showToast(i18n[currentLang]['msgAccLogout'] || 'لە هەژمار دەرچوویت!', 'warning');
+    document.querySelectorAll('.custom-select-menu').forEach(m => m.classList.remove('show'));
 }
 
-// ٢. دوگمەی چوونەدەرەوەی مێنیوی سەرەوە
+        function checkLogin() {
+    const user = localStorage.getItem('kf_user');
+    const activeUser = localStorage.getItem('kf_active_username');
+
+    const loginScreen = document.getElementById('login-screen');
+    const setupScreen = document.getElementById('setup-screen');
+
+    if (!loginScreen || !setupScreen) return;
+
+    // نوێکردنەوەی ناوی جیمەیڵ لەسەر دوگمەکە ئەگەر هەژمار هەبێت
+    const nameDisplay = document.getElementById('loginAccountNameDisplay');
+    if (nameDisplay) {
+        if (activeUser) {
+            nameDisplay.innerText = activeUser.split('@')[0];
+        } else {
+            const accBtnText = (i18n[currentLang] && i18n[currentLang]['accountBtn']) ? i18n[currentLang]['accountBtn'] : 'هەژمار';
+            nameDisplay.innerText = accBtnText;
+        }
+    }
+
+    // ئەگەر چووبێتە ژوورەوە
+    if (user === 'true') {
+        loginScreen.style.display = 'none';
+        setupScreen.style.display = 'flex';
+
+        const welcomeEl = document.getElementById('welcome-msg');
+        if (welcomeEl) {
+            welcomeEl.innerText = (i18n[currentLang] && i18n[currentLang]['welcomeText']) ? i18n[currentLang]['welcomeText'] : "بەخێربێیت!";
+        }
+
+        if (localStorage.getItem('kf_autosave_session')) {
+            const resumeModal = document.getElementById('resume-modal');
+            if (resumeModal) resumeModal.style.display = 'flex';
+        }
+    } else {
+        // شاشەی سەرەتا (جیمەیڵ پارێزراو دەبێت ئەگەر هەبێت)
+        loginScreen.style.display = 'flex';
+        setupScreen.style.display = 'none';
+    }
+
+    document.body.classList.add('dark-theme');
+    document.documentElement.classList.add('dark-theme');
+}
+
+function performLogin() {
+    localStorage.setItem('kf_user', 'true');
+    checkLogin();
+}
+
+// دوگمەی چوونەدەرەوەی مێنیوی سەرەوە (تەنها دەچێتە دەرەوە بۆ شاشەی سەرەتا، بەڵام جیمەیڵ ناسڕێتەوە)
 function logout() {
     localStorage.removeItem('kf_user');
-    localStorage.removeItem('kf_active_username');
 
-    // گەڕاندنەوەی ناوی دوگمەی هەژمار
-    const accBtnText = (i18n[currentLang] && i18n[currentLang]['accountBtn']) ? i18n[currentLang]['accountBtn'] : 'هەژمار';
-    const displayEl = document.getElementById('loginAccountNameDisplay');
-    if (displayEl) displayEl.innerText = accBtnText;
-
-    // داخستنی مێنیوەکە
     const menu = document.getElementById('setupMenuDropdown');
     if (menu) menu.classList.remove('show');
 
-    // گەڕانەوە بۆ شاشەی سەرەتا
     checkLogin();
 }
 // ڕێکخستنی ٦ ڕەنگە ناوازەکە بە شریتی ئاسۆیی
@@ -2164,12 +2130,11 @@ function verifyGmailOTP() {
     }
 
     const name = currentPendingEmail;
+    // پاشەکەوتکردنی هەمیشەیی لە وێبگەڕ
+    localStorage.setItem('kf_user', 'true');
     localStorage.setItem('kf_saved_user', name);
     localStorage.setItem('kf_active_username', name);
 
-    // پیشاندانی بەشی سەرەتای جیمەیڵ وەک ناوی بەکارهێنەر
-    document.getElementById('loginAccountNameDisplay').innerText = name.split('@')[0];
-    
     // ١. بەستنەوە و هێنانەوەی ڕەنگی هەڵبژێردراوی ئەم جیمەیڵە
     const userTheme = localStorage.getItem('kf_theme_user_' + name);
     if (userTheme) {
@@ -2187,7 +2152,7 @@ function verifyGmailOTP() {
         if (keyInput) keyInput.value = userApiKey;
     }
 
-    // شاردنەوەی پەنجەرەکە و پاککردنەوە
+    // شاردنەوەی پەنجەرەکە
     document.getElementById('account-modal').style.display = 'none';
     document.getElementById('otpVerifySection').style.display = 'none';
     document.getElementById('accEmailInput').disabled = false;
@@ -2195,17 +2160,38 @@ function verifyGmailOTP() {
     document.getElementById('accOtpInput').value = '';
     generatedOTP = null;
 
+    // ڕاستەوخۆ دەتباتە شاشەی سێتەپ
+    checkLogin();
+
     showToast(i18n[currentLang]['msgAccSuccess'] || 'بە سەرکەوتوویی چوویتە ژوورەوە!', 'success');
 }
 
-// بارکردنی دەستبەجێ لە کاتی کردنەوەی ماڵپەڕ
+// فەنکشنی تایبەتی دەرچوون لە ئەکاونت (تەنها لێرە جیمەیڵەکە بە تەواوی دەسڕێتەوە)
+function accountLogout() {
+    localStorage.removeItem('kf_active_username');
+    localStorage.removeItem('kf_user');
+
+    const accBtnText = (i18n[currentLang] && i18n[currentLang]['accountBtn']) ? i18n[currentLang]['accountBtn'] : 'هەژمار';
+    const displayEl = document.getElementById('loginAccountNameDisplay');
+    if (displayEl) displayEl.innerText = accBtnText;
+
+    applyCustomTheme('forest');
+    document.getElementById('account-modal').style.display = 'none';
+    checkLogin();
+
+    showToast(i18n[currentLang]['msgAccLogout'] || 'لە هەژمار دەرچوویت!', 'warning');
+}
+
+// فەنکشنی بارکردنی سەرەتای ماڵپەڕ
 window.onload = () => { 
     checkLogin(); 
     changeLanguage('ckb'); 
     
     const activeUser = localStorage.getItem('kf_active_username');
     if (activeUser) {
-        document.getElementById('loginAccountNameDisplay').innerText = activeUser;
+        const nameDisplay = document.getElementById('loginAccountNameDisplay');
+        if (nameDisplay) nameDisplay.innerText = activeUser.split('@')[0];
+        
         const userTheme = localStorage.getItem('kf_theme_user_' + activeUser);
         if (userTheme) applyCustomTheme(userTheme);
         else applyCustomTheme(localStorage.getItem('kf_selected_theme') || 'forest');
