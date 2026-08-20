@@ -2130,12 +2130,11 @@ function verifyGmailOTP() {
     }
 
     const name = currentPendingEmail;
-    // پاشەکەوتکردنی هەمیشەیی لە وێبگەڕ
     localStorage.setItem('kf_user', 'true');
     localStorage.setItem('kf_saved_user', name);
     localStorage.setItem('kf_active_username', name);
 
-    // ١. بەستنەوە و هێنانەوەی ڕەنگی هەڵبژێردراوی ئەم جیمەیڵە
+    // هێنانەوەی ڕەنگ
     const userTheme = localStorage.getItem('kf_theme_user_' + name);
     if (userTheme) {
         applyCustomTheme(userTheme);
@@ -2144,15 +2143,35 @@ function verifyGmailOTP() {
         localStorage.setItem('kf_theme_user_' + name, currentTheme);
     }
 
-    // ٢. بەستنەوە و هێنانەوەی کلیلی APIی وێنەی ئەم جیمەیڵە
+    // هێنانەوەی API وێنە
     const userApiKey = localStorage.getItem('kf_imgbb_user_' + name);
     if (userApiKey) {
         localStorage.setItem('user_imgbb_key', userApiKey);
         const keyInput = document.getElementById('imgbbApiKeyInput');
         if (keyInput) keyInput.value = userApiKey;
+    } else {
+        const guestKey = localStorage.getItem('user_imgbb_key');
+        if (guestKey) {
+            localStorage.setItem('kf_imgbb_user_' + name, guestKey);
+        }
     }
 
-    // شاردنەوەی پەنجەرەکە
+    // گواستنەوەی مێژوو بۆ سەر ئەم هەژمارە
+    try {
+        const guestHistory = JSON.parse(localStorage.getItem('kf_edit_history')) || [];
+        if (guestHistory.length > 0) {
+            let userHistory = JSON.parse(localStorage.getItem('kf_history_user_' + name)) || [];
+            guestHistory.forEach(gh => {
+                if (!userHistory.some(uh => uh.fileName === gh.fileName)) {
+                    userHistory.push(gh);
+                }
+            });
+            if (userHistory.length > 20) userHistory = userHistory.slice(0, 20);
+            localStorage.setItem('kf_history_user_' + name, JSON.stringify(userHistory));
+            localStorage.removeItem('kf_edit_history');
+        }
+    } catch(e) {}
+
     document.getElementById('account-modal').style.display = 'none';
     document.getElementById('otpVerifySection').style.display = 'none';
     document.getElementById('accEmailInput').disabled = false;
@@ -2160,16 +2179,17 @@ function verifyGmailOTP() {
     document.getElementById('accOtpInput').value = '';
     generatedOTP = null;
 
-    // ڕاستەوخۆ دەتباتە شاشەی سێتەپ
     checkLogin();
-
     showToast(i18n[currentLang]['msgAccSuccess'] || 'بە سەرکەوتوویی چوویتە ژوورەوە!', 'success');
 }
 
-// فەنکشنی تایبەتی دەرچوون لە ئەکاونت (تەنها لێرە جیمەیڵەکە بە تەواوی دەسڕێتەوە)
 function accountLogout() {
     localStorage.removeItem('kf_active_username');
     localStorage.removeItem('kf_user');
+    localStorage.removeItem('user_imgbb_key');
+
+    const keyInput = document.getElementById('imgbbApiKeyInput');
+    if (keyInput) keyInput.value = '';
 
     const accBtnText = (i18n[currentLang] && i18n[currentLang]['accountBtn']) ? i18n[currentLang]['accountBtn'] : 'هەژمار';
     const displayEl = document.getElementById('loginAccountNameDisplay');
@@ -2182,7 +2202,6 @@ function accountLogout() {
     showToast(i18n[currentLang]['msgAccLogout'] || 'لە هەژمار دەرچوویت!', 'warning');
 }
 
-// فەنکشنی بارکردنی سەرەتای ماڵپەڕ
 window.onload = () => { 
     checkLogin(); 
     changeLanguage('ckb'); 
@@ -2195,6 +2214,13 @@ window.onload = () => {
         const userTheme = localStorage.getItem('kf_theme_user_' + activeUser);
         if (userTheme) applyCustomTheme(userTheme);
         else applyCustomTheme(localStorage.getItem('kf_selected_theme') || 'forest');
+
+        const userApiKey = localStorage.getItem('kf_imgbb_user_' + activeUser);
+        if (userApiKey) {
+            localStorage.setItem('user_imgbb_key', userApiKey);
+            const keyInput = document.getElementById('imgbbApiKeyInput');
+            if (keyInput) keyInput.value = userApiKey;
+        }
     } else {
         applyCustomTheme(localStorage.getItem('kf_selected_theme') || 'forest');
     }
@@ -2401,8 +2427,11 @@ function openImgUploaderModal() {
     document.getElementById('imageFileInput').value = '';
     document.getElementById('imgNameDisplay').innerText = (i18n[currentLang] && i18n[currentLang]['imgNoFile']) ? i18n[currentLang]['imgNoFile'] : 'No image selected';
 
-    const savedKey = localStorage.getItem('user_imgbb_key') || '';
-    document.getElementById('imgbbApiKeyInput').value = savedKey;
+    const activeUser = localStorage.getItem('kf_active_username');
+    const savedKey = (activeUser ? localStorage.getItem('kf_imgbb_user_' + activeUser) : null) || localStorage.getItem('user_imgbb_key') || '';
+    
+    const keyInput = document.getElementById('imgbbApiKeyInput');
+    if (keyInput) keyInput.value = savedKey;
 }
 
 function saveImgbbKey(input) {
