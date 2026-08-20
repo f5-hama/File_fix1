@@ -2137,6 +2137,40 @@ async function sendGmailOTP() {
     }
 }
 
+async function sendGmailOTP() {
+    const emailInput = document.getElementById('accEmailInput');
+    const email = emailInput.value.trim().toLowerCase(); // ڕێکخستنی هەموو پیتەکان بۆ بچووک
+
+    if (!email || !email.includes('@')) {
+        showToast(i18n[currentLang]['msgInvalidEmail'] || 'تکایە ئیمەیڵێکی دروست بنووسە!', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('btnSendOtp');
+    btn.disabled = true;
+    btn.innerText = i18n[currentLang]['msgSendingOtp'] || 'خەریکی ناردنە...';
+
+    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+    currentPendingEmail = email;
+
+    const templateParams = {
+        to_email: email,
+        passcode: generatedOTP
+    };
+
+    try {
+        await emailjs.send('service_5f3opfc', 'template_rbyrcch', templateParams);
+        showToast(i18n[currentLang]['msgOtpSent'] || 'کۆدی پشتڕاستکردنەوە نێردرا بۆ جیمەیڵەکەت!', 'success');
+        document.getElementById('otpVerifySection').style.display = 'flex';
+        emailInput.disabled = true;
+    } catch (error) {
+        showToast(i18n[currentLang]['msgOtpError'] || 'نەتوانرا ئیمەیڵ بنێردرێت!', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerText = i18n[currentLang]['accResendBtn'] || 'ناردنەوە';
+    }
+}
+
 function verifyGmailOTP() {
     const userOtp = document.getElementById('accOtpInput').value.trim();
 
@@ -2145,12 +2179,14 @@ function verifyGmailOTP() {
         return;
     }
 
-    const name = currentPendingEmail;
+    const name = currentPendingEmail.trim().toLowerCase();
+    
+    // چەسپاندنی هەژمار
     localStorage.setItem('kf_user', 'true');
     localStorage.setItem('kf_saved_user', name);
     localStorage.setItem('kf_active_username', name);
 
-    // هێنانەوەی ڕەنگ
+    // ١. هێنانەوەی ڕەنگی هەڵبژێردراوی ئەم هەژمارە
     const userTheme = localStorage.getItem('kf_theme_user_' + name);
     if (userTheme) {
         applyCustomTheme(userTheme);
@@ -2159,7 +2195,7 @@ function verifyGmailOTP() {
         localStorage.setItem('kf_theme_user_' + name, currentTheme);
     }
 
-    // هێنانەوەی API وێنە
+    // ٢. هێنانەوەی کلیلی API وێنە
     const userApiKey = localStorage.getItem('kf_imgbb_user_' + name);
     if (userApiKey) {
         localStorage.setItem('user_imgbb_key', userApiKey);
@@ -2172,11 +2208,11 @@ function verifyGmailOTP() {
         }
     }
 
-    // گواستنەوەی مێژوو بۆ سەر ئەم هەژمارە
+    // ٣. هێنانەوە و یەکخستنی مێژووی کارەکان
     try {
         const guestHistory = JSON.parse(localStorage.getItem('kf_edit_history')) || [];
+        let userHistory = JSON.parse(localStorage.getItem('kf_history_user_' + name)) || [];
         if (guestHistory.length > 0) {
-            let userHistory = JSON.parse(localStorage.getItem('kf_history_user_' + name)) || [];
             guestHistory.forEach(gh => {
                 if (!userHistory.some(uh => uh.fileName === gh.fileName)) {
                     userHistory.push(gh);
@@ -2222,7 +2258,7 @@ window.onload = () => {
     checkLogin(); 
     changeLanguage('ckb'); 
     
-    const activeUser = localStorage.getItem('kf_active_username');
+    const activeUser = (localStorage.getItem('kf_active_username') || '').toLowerCase();
     if (activeUser) {
         const nameDisplay = document.getElementById('loginAccountNameDisplay');
         if (nameDisplay) nameDisplay.innerText = activeUser.split('@')[0];
