@@ -3853,9 +3853,11 @@ async function pasteFromClipboard() {
         function processAIPaste() {
             let txt = document.getElementById('ai-paste-area').value; 
             let m;
-            let regex = /\[(\d+)\]\s*([\s\S]*?)(?=\n\s*\[\d+\]|$)/g;
+            // ئەم کۆدە ڕێگری دەکات لە قووتدانی دێڕەکانی تر و هەموو خانەیەک ڕێک لە شوێنی خۆی دادەنێت تەنانەت ئەگەر بەتاڵیش بێت
+            let regex = /(?:^|\n)\s*\[(\d+)\][ \t]*([\s\S]*?)(?=(?:\r?\n\s*\[\d+\]|$))/g;
             while((m = regex.exec(txt)) !== null) {
-                let card = document.querySelector(`.subtitle-card[data-index="${parseInt(m[1])-1}"]`);
+                let index = parseInt(m[1], 10) - 1;
+                let card = document.querySelector(`.subtitle-card[data-index="${index}"]`);
                 if(card) {
                     const ta = card.querySelector('textarea');
                     ta.value = m[2].trim();
