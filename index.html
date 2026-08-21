@@ -1542,6 +1542,10 @@ html[lang="en"] .site-features-box {
 
         const i18n = {
             ckb: {
+                msgErrorPrefix: "هەڵە: ",
+                pgsReadError: "کێشەیەک ڕوویدا لە خوێندنەوەی فایلەکان!",
+                pgsNoSubtitles: "هیچ وێنەیەکی ژێرنووس لەم فایلەدا نەدۆزرایەوە!",
+                msgResumeError: "کێشەیەک ڕوویدا لە گەڕاندنەوەی کارەکە!",
                 imgNeedKey: "تکایە سەرەتا کلیلی API لە سەرەوە دابنێ!",
                 imgUploading: "خەریکی بارکردنی وێنەکەیە، تکایە کەمێک بوەستە...",
                 imgSuccess: "لینکی ڕاستەوخۆ و هەمیشەیی وێنەکە ئامادەیە!",
@@ -1643,6 +1647,10 @@ html[lang="en"] .site-features-box {
                 linesText: "دێڕ"
             },
             ar: {
+                msgErrorPrefix: "خطأ: ",
+                pgsReadError: "حدث خطأ أثناء قراءة الملفات!",
+                pgsNoSubtitles: "لم يتم العثور على أي ترجمة صورية في هذا الملف!",
+                msgResumeError: "حدث خطأ أثناء استعادة الجلسة السابقة!",
                 imgNeedKey: "يرجى إدخال مفتاح API في الأعلى أولاً!",
                 imgUploading: "جاري رفع الصورة، يرجى الانتظار...",
                 imgSuccess: "رابط الصورة المباشر والدائم جاهز!",
@@ -1742,6 +1750,10 @@ html[lang="en"] .site-features-box {
                 linesText: "سطر"
             },
             en: {
+                msgErrorPrefix: "Error: ",
+                pgsReadError: "An error occurred while reading the files!",
+                pgsNoSubtitles: "No subtitle images found in this file!",
+                msgResumeError: "Error restoring previous session!",
                 imgNeedKey: "Please enter your API Key at the top first!",
                 imgUploading: "Uploading image, please wait...",
                 imgSuccess: "Direct permanent image link is ready!",
@@ -2997,7 +3009,11 @@ async function startPgsConversion() {
             const buffer = await file.arrayBuffer();
             const subtitles = parseSupFile(buffer);
 
-            if (!subtitles || subtitles.length === 0) continue;
+            if (!subtitles || subtitles.length === 0) {
+                const noSubsText = (i18n[currentLang] && i18n[currentLang]['pgsNoSubtitles']) || 'هیچ وێنەیەکی ژێرنووس لەم فایلەدا نەدۆزرایەوە!';
+                showToast(`${file.name}: ${noSubsText}`, 'warning');
+                continue;
+            }
 
             const recognizedResults = [];
 
@@ -3077,8 +3093,10 @@ async function startPgsConversion() {
         document.getElementById('pgs-modal').style.display = 'none';
 
     } catch (err) {
-        statusText.innerText = 'کێشەیەک ڕوویدا لە خوێندنەوەی فایلەکان!';
-        showToast('هەڵە: ' + err.message, 'error');
+        const errPrefix = (i18n[currentLang] && i18n[currentLang]['msgErrorPrefix']) || 'هەڵە: ';
+        const errStatus = (i18n[currentLang] && i18n[currentLang]['pgsReadError']) || 'کێشەیەک ڕوویدا لە خوێندنەوەی فایلەکان!';
+        statusText.innerText = errStatus;
+        showToast(errPrefix + err.message, 'error');
     } finally {
         btnStart.disabled = false;
         if (pgsTesseractWorker) {
@@ -3630,7 +3648,8 @@ if (/\\an[789]|\\a[567]/i.test(textStr)) {
                 document.getElementById('resume-modal').style.display = 'none';
             } catch(e) { 
                 clearSession(); 
-                showToast("Error restoring session", "error"); 
+                const resumeErrMsg = (i18n[currentLang] && i18n[currentLang]['msgResumeError']) || "Error restoring session";
+                showToast(resumeErrMsg, "error"); 
             }
         }
 
