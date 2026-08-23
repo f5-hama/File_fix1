@@ -3350,7 +3350,7 @@ function processAssStyleLine(line) {
     if (parts.length > 16) parts[16] = '0.6';       // Stroke = 0.6
     if (parts.length > 17) parts[17] = '0.5';       // Shadow = 0.5
     if (parts.length > 18 && isTop) parts[18] = '8'; // جێگیرکردنی Alignment لەسەر 8 بۆ سەرەوە
-    if (parts.length > 21) parts[21] = isTop ? '20' : '20'; // بەرزی 20 بۆ سەرەوە، 20 بۆ خوارەوە
+    if (parts.length > 21) parts[21] = isTop ? '23' : '23; // بەرزی 23 بۆ سەرەوە و بەرزی 23 بۆ خوارەوە
 
     return 'Style: ' + parts.join(',');
 }
