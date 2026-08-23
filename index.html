@@ -2624,64 +2624,109 @@ function openShortcutsModal() {
 }
 
 // بزوێنەری پێشکەوتوو بۆ پاککردنەوەی دەنگەکان (SDH) بە هەموو زمانەکان
-function cleanSdhLinesArray(lines) {
-    const soundKeywords = /sighs?|gasping|gasps?|screams?|screaming|groans?|groaning|chuckles?|whispering|whispers?|crying|cries|applause|laughter|coughs?|coughing|clears throat|panting|grunts?|grunting|shouts?|shouting|snickers?|giggles?|snorts?|sobbing|thud|footsteps?|creaking|rustling|door opens?|door closes?|thunder|wind|barks?|growls?|buzzing|sirens?|beeping|beep|engine revs?|cheering|yelling|clatter|inaudible|muffled|static|humming|splash|dripping|gunshot|bullet|explosion|boom|bang|chime|music|song|theme|tune|melody|lyrics|singing|audio|sound effect|sfx|on radio|on tv|over phone|over pa|off-screen|breaking news|speaking [a-z]+|in [a-z]+|موسيقى|ضحك|صراخ|تنهد|تصفيق|همس|بكاء|موسيقى تصويرية|مؤثرات|هتاف|نباح|انفجار|إطلاق نار|مۆسیقا|هاوار|پێکەنین|گریان|هەناسەبڕکێ|چەپڵە|تەقینەوە/i;
+// ١. فەنکشنی پشکنینی ئەوەی ئایا دێڕەکە هیچ قسە و دەقێکی بەسوودی تێدایە یان تەنها هێمایە
+function hasMeaningfulText(str) {
+    if (!str) return false;
+    let s = str.replace(/\{[^}]*\}/g, '') // سڕینەوەی تاگی ASS
+               .replace(/<[^>]*>/g, '')   // سڕینەوەی تاگی HTML
+               .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF\u00A0\u0640]/g, '') // سڕینەوەی پیتە شاراوەکانی RTL
+               .replace(/[؟?!\.,،؛;:_\-–—•/\\|~*^%&$@#"'«»“”‘’‹›\(\)\[\]\{\}\s]/g, ''); // سڕینەوەی هەموو جۆرە هێما و کەوانەکان
+    // ئەگەر هیچ پیت یان ژمارەیەکی تێدا نەمابێت، بە بەتاڵ هەژماری دەکات
+    return /[\p{L}\p{N}]/u.test(s);
+}
 
-    let cleaned = lines.map(line => {
-        let l = line.trim();
-        if (!l) return '';
+// ٢. بزوێنەری سەرەکی بۆ سڕینەوەی هەموو دەنگە کوردی و ئینگلیزییەکان و هێما زیادەکان
+function cleanSdhText(text, format = 'srt') {
+    if (!text) return '';
 
-        // سڕینەوەی ناوی بێژەر لە سەرەتا
-        l = l.replace(/^(\{\\[^}]+\})?\s*([-–—•]\s*)?[\(\[][A-Za-z0-9\u0600-\u06FF\s.,_&/'"-]+[\)\]]\s*(?=[A-Za-z0-9\u0600-\u06FF"'«»])/i, (m, tag, dash) => (tag || '') + (dash || ''));
-        l = l.replace(/^(\{\\[^}]+\})?\s*([-–—•]\s*)?[A-Z0-9\u0600-\u06FF\s.,_&/'"-]+:\s*(?=[A-Za-z0-9\u0600-\u06FF"'«»])/i, (m, tag, dash) => (tag || '') + (dash || ''));
+    let lines = (format === 'ass') ? text.split(/\\[Nn]/) : text.split('\n');
+    let cleanedLines = [];
 
-        // دەنگ لەناو چوارگۆشە [...]
+    for (let rawLine of lines) {
+        let l = rawLine.trim();
+        if (!l) continue;
+
+        // پاراستنی تاگەکانی ASS لە سەرەتای دێڕ
+        let assTags = '';
+        if (format === 'ass') {
+            let tagMatch = l.match(/^(\{[^}]+\})+/);
+            if (tagMatch) {
+                assTags = tagMatch[0];
+                l = l.substring(assTags.length).trim();
+            }
+        }
+
+        // سڕینەوەی ناوی بێژەر لە سەرەتا (وەک: "ئەحمەد: سڵاو" یان "[بێژەر]: سڵاو")
+        l = l.replace(/^(\{\\[^}]+\})?\s*([-–—•]\s*)?[\(\[][\p{L}\p{N}\s.,_&/'"-]+[\)\]]\s*:\s*/iu, '$1$2');
+        l = l.replace(/^(\{\\[^}]+\})?\s*([-–—•]\s*)?[\p{L}\p{N}\s_&'"]{1,25}:\s*(?=[\p{L}\p{N}"'«»])/iu, '$1$2');
+
+        // سڕینەوەی هەموو دەنگەکان لەناو چوارگۆشە [...] (تەنها تابلۆ و نیشانە نەبێت)
         l = l.replace(/\[([^\]]+)\]/g, (match, inside) => {
-            const inner = inside.trim();
-            if (soundKeywords.test(inner)) return '';
-            if (/^(sign|text|note|title|notice|chapter|episode)\b/i.test(inner)) return match;
-            if (/\b(later|morning|evening|night|afternoon|ago|meanwhile|\d{4})\b/i.test(inner)) return match;
-            if (/['"«»]/.test(inner)) return match;
+            let inner = inside.trim();
+            if (/^(sign|title|note|notice|chapter|episode|part|tablo|تابلۆ|تێبینی|نووسین|ناونیشان|بەشی)\b/i.test(inner)) {
+                return match;
+            }
             return '';
         });
 
-        // دەنگ لەناو کەوانە (...)
+        // سڕینەوەی دەنگەکان لەناو کەوانە (...)
         l = l.replace(/\(([^)]+)\)/g, (match, inside) => {
-            const inner = inside.trim();
+            let inner = inside.trim();
+            const soundKeywords = /sighs?|gasping|gasps?|screams?|screaming|groans?|groaning|chuckles?|whispering|whispers?|crying|cries|applause|laughter|coughs?|coughing|clears throat|panting|grunts?|grunting|shouts?|shouting|snickers?|giggles?|snorts?|sobbing|thud|footsteps?|creaking|rustling|door|thunder|wind|barks?|growls?|buzzing|sirens?|beeping|beep|engine|cheering|yelling|clatter|inaudible|muffled|static|humming|splash|dripping|gunshot|bullet|explosion|boom|bang|chime|music|song|theme|tune|melody|lyrics|singing|audio|sound|sfx|radio|tv|phone|pa|off-screen|speaking|موسيقى|ضحك|صراخ|تنهد|تصفيق|همس|بكاء|مؤثرات|هتاف|نباح|انفجار|إطلاق|صوت|نغمة|مۆسیقا|هاوار|پێکەنین|گریان|هەناسە|چەپڵە|تەقینەوە|چرپە|کۆکە|پژمین|گۆرانی|موزیک|دەنگ|زەنگ|تەلەفۆن|ئاواز|فیکە|تەقە/i;
             if (soundKeywords.test(inner)) return '';
-            if (/['"«»]/.test(inner) || /^(sign|text|note|title|notice|chapter|episode|part)\b/i.test(inner)) return match;
-            if (/\b(later|morning|evening|night|afternoon|ago|meanwhile|yesterday|tomorrow|hours|days|years?|b\.?c|a\.?d|\d{4})\b/i.test(inner)) return match;
+            if (/^(sign|title|note|tablo|تابلۆ|تێبینی|نووسین)\b/i.test(inner)) return match;
+            if (/\b(\d{4}|yesterday|tomorrow|دوێنێ|بەیانی)\b/i.test(inner)) return match;
+            if (/['"«»]/.test(inner)) return match;
+            if (!/[\p{L}\p{N}]/u.test(inner)) return '';
             return match;
         });
 
-        // سڕینەوەی دەنگەکانی ناو ئەستێرە و تێڵدا (*...* و ~...~)
+        // سڕینەوەی دەنگ لەناو ئەستێرە و تێڵدا (*دەنگ* و ~دەنگ~)
         l = l.replace(/\*[^*]+\*/g, '');
         l = l.replace(/~[^~]+~/g, '');
 
-        // سڕینەوەی هێماکانی مۆسیقا
+        // سڕینەوەی هێماکانی مۆسیقا (♪ ♫ #)
         l = l.replace(/[♪♫♩♬♯♭#][^♪♫♩♬♯♭#]*[♪♫♩♬♯♭#]/g, '');
         l = l.replace(/[♪♫♩♬♯♭]/g, '');
 
-        // سڕینەوەی تاگی بەتاڵی HTML
-        l = l.replace(/<([a-z]+)[^>]*>\s*<\/\1>/gi, '');
+        // سڕینەوەی تاگی بەتاڵی HTML وەک <i></i>
+        l = l.replace(/<([a-z0-9]+)[^>]*>\s*<\/\1>/gi, '');
 
-        l = l.trim();
-        if (/^(?:\{\\[^}]+\}|[-–—•\s,.:])+$/.test(l)) l = '';
-        return l;
-    }).filter(l => l.length > 0);
+        // سڕینەوەی پیتە شاراوەکانی فۆرماتی RTL
+        l = l.replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF\u00A0\u0640]/g, '');
 
-    if (cleaned.length === 1) {
-        cleaned[0] = cleaned[0].replace(/^(\{\\[^}]+\})?\s*[-–—•]\s*/, (m, tag) => (tag ? tag + ' ' : '')).trim();
+        // ئەگەر دێڕەکە تەنها هێمای وەک ؟ ! ... - ، بوو، دەیسڕێتەوە
+        if (!hasMeaningfulText(l)) {
+            continue;
+        }
+
+        // گەڕاندنەوەی تاگی ASS ئەگەر قسەی تێدا مابوو
+        if (assTags && format === 'ass') {
+            l = assTags + l;
+        }
+
+        cleanedLines.push(l.trim());
     }
 
-    return cleaned;
+    // لابردنی داش (-) ئەگەر تەنها یەک دێڕ مابووەوە
+    if (cleanedLines.length === 1) {
+        cleanedLines[0] = cleanedLines[0].replace(/^(\{\\[^}]+\})?\s*[-–—•]\s*/, '$1').trim();
+    }
+
+    return (format === 'ass') ? cleanedLines.join('\\N') : cleanedLines.join('\n');
 }
 
-// جێبەجێکردنی پاککردنەوە و ڕیزکردنەوەی ژمارەکان لە ١ەوە بەبێ بازدان لەگەڵ بۆشایی کۆتایی
+// بۆ گونجاندن لەگەڵ بەشەکانی تری ماڵپەڕەکەت
+function cleanSdhLinesArray(lines) {
+    let res = cleanSdhText(lines.join('\n'), 'srt');
+    return res ? res.split('\n') : [];
+}
+
+// ٣. جێبەجێکردنی پاککردنەوەی تەواوی فایلەکان و نوێکردنەوەی ژمارەی دێڕەکان لە 1ـەوە
 async function executeSdhCleaner() {
-    const files = document.getElementById('sdhFileInput').files;
-    if (!files.length) {
-        // پەیامی هەڵە بەپێی زمانی ماڵپەڕ
+    const fileInput = document.getElementById('sdhFileInput');
+    const files = fileInput ? fileInput.files : [];
+    if (!files || files.length === 0) {
         const errorMsg = (i18n[currentLang] && i18n[currentLang].msgSelectBatch) 
             ? i18n[currentLang].msgSelectBatch 
             : 'تکایە فایل هەڵبژێرە!';
@@ -2691,24 +2736,37 @@ async function executeSdhCleaner() {
     document.getElementById('sdh-modal').style.display = 'none';
 
     for (let f of files) {
-        const content = await f.text();
+        const rawContent = await f.text();
+        const content = rawContent.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
         const lower = f.name.toLowerCase();
         let finalCleaned = '';
 
         if (lower.endsWith('.ass')) {
-            const lines = content.split(/\r?\n/);
-            finalCleaned = lines.map(line => {
+            const lines = content.split('\n');
+            let validAssLines = [];
+
+            for (let line of lines) {
                 if (line.startsWith('Dialogue:')) {
-                    return line.replace(/(Dialogue:[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,)(.*)/, (m, p, t) => {
-                        let subLines = t.split('\\N');
-                        let res = cleanSdhLinesArray(subLines);
-                        return p + (res.join('\\N') || '...');
-                    });
+                    let match = line.match(/^(Dialogue:\s*[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,)(.*)$/);
+                    if (match) {
+                        let prefix = match[1];
+                        let rawText = match[2];
+                        let cleanedText = cleanSdhText(rawText, 'ass');
+                        
+                        // تەنها ئەگەر قسەی تێدابێت دەیهێڵێتەوە، ئەگەر دەنگ یان تەنها هێما بووبێت بەتەواوی دەیسڕێتەوە
+                        if (cleanedText && hasMeaningfulText(cleanedText)) {
+                            validAssLines.push(prefix + cleanedText);
+                        }
+                    }
+                } else {
+                    validAssLines.push(line);
                 }
-                return line;
-            }).join('\n') + '\n';
+            }
+            finalCleaned = validAssLines.join('\n') + '\n';
         } else {
-            const blocks = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split(/\n\s*\n/);
+            // SRT یان VTT
+            const isVtt = lower.endsWith('.vtt');
+            const blocks = content.split(/\n\s*\n+/);
             let validBlocks = [];
             let srtCounter = 1;
 
@@ -2716,30 +2774,31 @@ async function executeSdhCleaner() {
                 let lines = b.trim().split('\n');
                 let timeIdx = lines.findIndex(x => x.includes('-->'));
                 if (timeIdx !== -1) {
-                    let timeLine = lines[timeIdx];
+                    let timeLine = lines[timeIdx].trim();
                     let textLines = lines.slice(timeIdx + 1);
-                    let res = cleanSdhLinesArray(textLines);
+                    let cleanedText = cleanSdhText(textLines.join('\n'), 'srt');
                     
-                    if (res.length > 0) {
-                        if (lower.endsWith('.vtt')) {
-                            validBlocks.push(`${timeLine}\n${res.join('\n')}`);
+                    // ئەگەر دێڕەکە قسەی تێدابوو دەیهێڵێتەوە و ژمارەکەی لە ١ەوە بەڕیز دادەنێت
+                    if (cleanedText && hasMeaningfulText(cleanedText)) {
+                        if (isVtt) {
+                            validBlocks.push(`${timeLine}\n${cleanedText}`);
                         } else {
-                            validBlocks.push(`${srtCounter++}\n${timeLine}\n${res.join('\n')}`);
+                            validBlocks.push(`${srtCounter++}\n${timeLine}\n${cleanedText}`);
                         }
                     }
-                } else if (b.startsWith('WEBVTT') || b.startsWith('NOTE') || b.startsWith('STYLE')) {
-                    validBlocks.push(b);
+                } else if (isVtt && (b.startsWith('WEBVTT') || b.startsWith('NOTE') || b.startsWith('STYLE'))) {
+                    validBlocks.push(b.trim());
                 }
             }
             
-            finalCleaned = validBlocks.join('\n\n') + '\n\n';
+            finalCleaned = (isVtt ? '' : '') + validBlocks.join('\n\n') + '\n\n';
         }
 
-        triggerDownload(finalCleaned, f.name.replace(/\.[^/.]+$/, "") + "_SDH_Cleaned." + f.name.split('.').pop());
-        await new Promise(r => setTimeout(r, 500));
+        const outName = f.name.replace(/\.[^/.]+$/, "") + "_SDH_Cleaned." + f.name.split('.').pop();
+        triggerDownload(finalCleaned, outName);
+        await new Promise(r => setTimeout(r, 600));
     }
     
-    // پەیامی سەرکەوتن بەپێی زمانی ماڵپەڕ
     const successMsg = (i18n[currentLang] && i18n[currentLang].msgSdhDone) 
         ? i18n[currentLang].msgSdhDone 
         : 'دەنگەکان پاککرانەوە و ژمارەی دێڕەکانیش ڕێکخرانەوە!';
