@@ -3935,7 +3935,9 @@ async function pasteFromClipboard() {
                 if (!orig) return;
 
                 let kt = card.querySelector('textarea').value;
-                let textToUse = (kt && kt.trim() !== "") ? kt : orig.text;
+let isTranslated = (kt && kt.trim() !== "");
+let textToUse = isTranslated ? kt : (orig.rawText || orig.text);
+
                 
                 if (isAssFormat) {
                     textToUse = textToUse.replace(/<i>/gi, '{\\i1}').replace(/<\/i>/gi, '{\\i0}')
@@ -3955,17 +3957,22 @@ async function pasteFromClipboard() {
                     return line;
                 });
                 
-                let ol = orig.parsedLines || [];
-                let fp = []; 
-                for(let j = 0; j < lines.length; j++) {
-                    let lineText = lines[j];
-                    let origTag = (ol[j] && ol[j].tags) ? ol[j].tags : (j === 0 && ol[0] && ol[0].tags ? ol[0].tags : '');
-                    if (origTag && !lineText.startsWith('{')) {
-                        fp.push(origTag + lineText);
-                    } else {
-                        fp.push(lineText);
-                    }
-                }
+                let fp = [];
+if (isTranslated) {
+    let ol = orig.parsedLines || [];
+    for(let j = 0; j < lines.length; j++) {
+        let lineText = lines[j];
+        let origTag = (ol[j] && ol[j].tags) ? ol[j].tags : (j === 0 && ol[0] && ol[0].tags ? ol[0].tags : '');
+        if (origTag && !lineText.startsWith('{')) {
+            fp.push(origTag + lineText);
+        } else {
+            fp.push(lineText);
+        }
+    }
+} else {
+    fp = lines;
+}
+
                 
                 if (isAssFormat) { 
                     let dialogueText = fp.join('\\N');
