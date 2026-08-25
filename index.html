@@ -3129,7 +3129,7 @@ async function startPgsConversion() {
                     finalOutput += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${item.text}\n\n`;
                 });
             } else if (targetFormat === 'ass') {
-                finalOutput = `[Script Info]\nTitle: Converted from SUP\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\nStyle: Italic,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,-1,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                finalOutput = `[Script Info]\nTitle: Converted from SUP\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,KurdForest,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\nStyle: Italic,KurdForest,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,-1,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
                 recognizedResults.forEach(item => {
                     finalOutput += `Dialogue: 0,${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},Default,,0,0,0,,${item.text.replace(/\n/g, '\\N')}\n`;
                 });
@@ -3327,69 +3327,10 @@ async function executeRtlFix() {
         
 // ١. ڕێکخستنی ستایلەکانی ASS بۆ سەرەوە (Top = 10) و خوارەوە (Main = 20)
 function processAssStyleLine(line) {
-    if (!line || typeof line !== 'string') return line;
-    let cleanLine = line.trim();
-    if (!cleanLine.startsWith('Style:')) return line;
-
-    let content = cleanLine.substring(6).trim();
-    let parts = content.split(',').map(p => p.trim());
-    if (parts.length < 18) return line;
-
-    let styleName = parts[0];
-
-    // پاراستنی تەکنیک و تابلۆکان
-    const isTech = /sign|title|ep_|show_|op|ed|song|insert|credit|staff|karaoke|logo|preview|sponsor/i.test(styleName);
-    if (isTech) return line;
-
-    // پشکنینی قسەی سەرەوە (وەک Main - Top، Italics - Top، یان ئەلیگنمێنت 8)
-    const alignVal = parts[18] || '2';
-    const isTop = /top|سەرەوە/i.test(styleName) || alignVal === '8' || alignVal === '7' || alignVal === '9';
-
-    parts[2] = '26';                                // قەبارەی فۆنت = 26
-    if (parts.length > 15) parts[15] = '1';         // BorderStyle = 1
-    if (parts.length > 16) parts[16] = '0.6';       // Stroke = 0.6
-    if (parts.length > 17) parts[17] = '0.5';       // Shadow = 0.5
-    if (parts.length > 18 && isTop) parts[18] = '8'; // جێگیرکردنی Alignment لەسەر 8 بۆ سەرەوە
-    if (parts.length > 21) parts[21] = isTop ? '23' : '23'; // بەرزی 23 بۆ سەرەوە و بەرزی 23 بۆ خوارەوە
-
-    return 'Style: ' + parts.join(',');
+    // تەنها هێڵەکە دەگەڕێنێتەوە بەبێ هیچ دەستکارییەک
+    return line;
 }
 
-// ٢. چاککردنی تاگەکانی ناو خودی دێڕی قسەکان
-function processAssSmartSubtitle(rawText, styleName) {
-    if (!rawText) return rawText;
-
-    const isTech = /\\p[1-9]|\\clip|\\iclip|\\org/i.test(rawText) || 
-                   /sign|title|ep_|show_|op|ed|song|insert|credit|staff|karaoke|logo|sponsor/i.test(styleName || '');
-    if (isTech) return rawText;
-
-    let text = rawText;
-
-    // ڕێکخستنی Stroke و Shadow بۆ 0.6 و 0.5 لەناو دێڕەکانیش
-    text = text.replace(/\\bord[0-9.]+/gi, '\\bord0.6')
-               .replace(/\\shad[0-9.]+/gi, '\\shad0.5');
-
-    // ئەگەر قسەی سەرەوە بێت و تاگی نەبێت
-    if (/\\an[789]|\\a[567]/i.test(text) && !text.includes('\\bord0.6')) {
-        text = text.replace(/^\{/, '{\\bord0.6\\shad0.5');
-        if (!text.startsWith('{')) text = '{\\bord0.6\\shad0.5}' + text;
-    }
-
-    // جێگیرکردنی RTL بە شێوازی فەرمیی Re:Zero
-    if (/[\u0600-\u06FF\u0750-\u077F]/.test(text)) {
-        let clean = text.replace(/[\u200F\u202B]/g, '');
-        const leadingTagsMatch = clean.match(/^(\{[^}]*\})+/);
-        if (leadingTagsMatch) {
-            const tags = leadingTagsMatch[0];
-            const rest = clean.substring(tags.length);
-            text = tags + '\u202B' + rest;
-        } else {
-            text = '\u202B' + clean;
-        }
-    }
-
-    return text;
-}
 
         function cleanSubtitleTags(text) {
             if (!text) return "";
@@ -3450,7 +3391,7 @@ function processAssSmartSubtitle(rawText, styleName) {
                         header = assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
                     } else {
                         // کاتێک فایلی تر (وەک SRT/VTT) دەکرێتە ASS: تەنها ستایلی Default زیاد دەکرێت
-                        header = `[Script Info]\nTitle: Converted Subtitle\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Adobe Arabic,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                        header = `[Script Info]\nTitle: Converted Subtitle\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,KurdForest,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
                     }
                     
                     finalContent = header;
@@ -3471,10 +3412,6 @@ function processAssSmartSubtitle(rawText, styleName) {
                         let dMarginL = (item.assMeta && item.assMeta.marginL) ? item.assMeta.marginL : '0';
                         let dMarginR = (item.assMeta && item.assMeta.marginR) ? item.assMeta.marginR : '0';
                         let dMarginV = (item.assMeta && item.assMeta.marginV) ? item.assMeta.marginV : '0';
-// ئەگەر دێڕەکە تاگی {\an8}ی تێدابوو، بەرزییەکەی لە سەرەوە دەبێتە 20
-if (/\\an[789]|\\a[567]/i.test(textStr)) {
-    dMarginV = '20';
-}
                         let dEffect = (item.assMeta && item.assMeta.effect) ? item.assMeta.effect : '';
                         
                         finalContent += `Dialogue: ${dLayer},${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},${dStyle},${dName},${dMarginL},${dMarginR},${dMarginV},${dEffect},${lines.join('\\N')}\n`; 
@@ -4034,10 +3971,6 @@ async function pasteFromClipboard() {
                     let dialogueText = fp.join('\\N');
                     let meta = orig.assMeta || { layer: '0', style: 'Default', name: '', marginL: '0', marginR: '0', marginV: '0', effect: '' };
                     let finalMarginV = meta.marginV;
-// ئەگەر دێڕەکە تاگی {\an8}ی تێدابوو بەرزییەکەی لە سەرەوە دەبێتە 20
-if (/\\an[789]|\\a[567]/i.test(dialogueText)) {
-    finalMarginV = '20';
-}
                     let linePrefix = `Dialogue: ${meta.layer},${formatTimeASS(orig.startSec)},${formatTimeASS(orig.endSec)},${meta.style},${meta.name},${meta.marginL},${meta.marginR},${finalMarginV},${meta.effect},`;
                     final += linePrefix + dialogueText + '\n'; 
                 } 
