@@ -14,6 +14,25 @@
 
 <!-- بارکردنی دەستبەجێی ڕەنگی هەڵبژێردراو پێش کردنەوەی شاشە تا ڕەنگی سەوز دەرنەکەوێت -->
     <script>
+    
+    function deleteSubtitleLine(index) {
+    // ١. وەرگرتنی هەموو دەقەکانی وەرگێڕان پێش سڕینەوە
+    let currentTexts = Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value);
+
+    // ٢. سڕینەوە لە دەقی سەرەکی و وەرگێڕان
+    originalData.splice(index, 1);
+    currentTexts.splice(index, 1);
+
+    // ٣. دروستکردنەوەی کارتەکان بەبێ سڕینەوەی مێژووی Undo
+    buildEditorUI(currentTexts, false);
+
+    // ٤. تۆمارکردنی ئەم دۆخە نوێیە لە مێژووی کارەکان
+    historyStack.push(getCurrentSnapshot());
+    if (historyStack.length > 30) historyStack.shift();
+    redoStack = [];
+    saveSession();
+}
+    
         (function() {
             const palettes = {
                 forest: { primary: '#8EB69B', hover: '#7ca188', glow: 'rgba(142, 182, 155, 0.35)' },
@@ -434,6 +453,25 @@
         .subtitle-kurd textarea:focus { border-color: var(--primary); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         .play-sub-btn:hover { transform: scale(1.1); }
+        
+        .delete-sub-btn { 
+    background: var(--bg-color); 
+    border: 1px solid rgba(239, 68, 68, 0.4); 
+    color: #ef4444; 
+    border-radius: 50%; 
+    width: 24px; 
+    height: 24px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+}
+.delete-sub-btn:hover { 
+    background: rgba(239, 68, 68, 0.15); 
+    border-color: #ef4444; 
+    transform: scale(1.1); 
+}
 
         .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 12px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); background: rgba(14, 18, 22, 0.96) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid #20262e !important; z-index: 100; border-radius: 14px 14px 0 0; transition: transform 0.22s ease, opacity 0.22s ease; }
         .btn-outline { background: rgba(255, 255, 255, 0.05) !important; color: var(--primary) !important; border: 1.5px solid var(--primary) !important; }
@@ -3716,93 +3754,110 @@ function processAssStyleLine(line) {
             buildEditorUI(state);
         }
 
-        function buildEditorUI(kurdishState = []) {
-            let html = '';
-            for(let i=0; i<originalData.length; i++) {
-                let orig = originalData[i]; 
-                let kText = kurdishState[i] || '';
-                html += `<div class="subtitle-card" data-index="${i}">
-                    <div class="subtitle-header">
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <div class="subtitle-line-num">#${i+1}</div>
-                            <button class="play-sub-btn" onclick="seekToSubtitle(${i})" title="Play"><svg style="width:13px;height:13px;" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-                        </div>
-                        <div class="subtitle-time">${orig.time}</div>
-                    </div>
-                    <div class="subtitle-orig" dir="auto">${orig.text.replace(/\n/g, '<br>')}</div>
-                    <div class="subtitle-kurd"><textarea dir="auto">${kText}</textarea></div>
-                </div>`;
-            }
-            document.getElementById('subtitles-container').innerHTML = html;
-            
-            document.getElementById('setup-screen').style.display = 'none';
-            document.getElementById('editor-screen').style.display = 'block';
-            
-            if (document.documentElement.classList.contains('dark-theme')) {
-                document.body.className = 'editor-bg dark-theme';
-            } else {
-                document.body.className = 'editor-bg';
-            }
-            
-            isEditing = true; 
-            historyStack = [getCurrentState()]; 
+        function buildEditorUI(kurdishState = [], resetHistory = true) {
+    let html = '';
+    for(let i=0; i<originalData.length; i++) {
+        let orig = originalData[i]; 
+        let kText = kurdishState[i] || '';
+        html += `<div class="subtitle-card" data-index="${i}">
+            <div class="subtitle-header">
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <div class="subtitle-line-num">#${i+1}</div>
+                    <button class="play-sub-btn" onclick="seekToSubtitle(${i})" title="Play">
+                        <svg style="width:13px;height:13px;" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button class="delete-sub-btn" onclick="deleteSubtitleLine(${i})" title="سڕینەوە">
+                        <svg style="width:13px;height:13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="subtitle-time">${orig.time}</div>
+            </div>
+            <div class="subtitle-orig" dir="auto">${orig.text.replace(/\n/g, '<br>')}</div>
+            <div class="subtitle-kurd"><textarea dir="auto">${kText}</textarea></div>
+        </div>`;
+    }
+    document.getElementById('subtitles-container').innerHTML = html;
+    
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('editor-screen').style.display = 'block';
+    
+    if (document.documentElement.classList.contains('dark-theme')) {
+        document.body.className = 'editor-bg dark-theme';
+    } else {
+        document.body.className = 'editor-bg';
+    }
+    
+    isEditing = true; 
+    
+    // ئەگەر دەستپێکی یەکەمجار بێت مێژوو سفر دەکاتەوە
+    if (resetHistory) {
+        historyStack = [getCurrentSnapshot()]; 
+        redoStack = [];
+    }
+    
+    updateProgress();
+    
+    document.getElementById('add-video-btn').style.display = 'flex';
+    document.getElementById('remove-video-btn').style.display = 'none';
+    
+    document.getElementById('subtitles-container').addEventListener('input', e => {
+        if(e.target.tagName === 'TEXTAREA') {
+            e.target.style.height = 'auto'; 
+            e.target.style.height = e.target.scrollHeight + 'px';
             updateProgress();
-            history.pushState({page: 'editor'}, '', '#editor');
-            
-            document.getElementById('add-video-btn').style.display = 'flex';
-            document.getElementById('remove-video-btn').style.display = 'none';
-            
-            document.getElementById('subtitles-container').addEventListener('input', e => {
-                if(e.target.tagName === 'TEXTAREA') {
-                    e.target.style.height = 'auto'; 
-                    e.target.style.height = e.target.scrollHeight + 'px';
-                    updateProgress();
-                    clearTimeout(window.typingTimer);
-                    window.typingTimer = setTimeout(() => {
-                        let state = getCurrentState();
-                        if(JSON.stringify(historyStack[historyStack.length-1]) !== JSON.stringify(state)) {
-                            historyStack.push(state);
-                            if(historyStack.length > 30) historyStack.shift();
-                            redoStack = [];
-                            saveSession(); 
-                        }
-                    }, 800);
+            clearTimeout(window.typingTimer);
+            window.typingTimer = setTimeout(() => {
+                let snap = getCurrentSnapshot();
+                let last = historyStack[historyStack.length - 1];
+                if (!last || JSON.stringify(last.kurdishState) !== JSON.stringify(snap.kurdishState)) {
+                    historyStack.push(snap);
+                    if(historyStack.length > 30) historyStack.shift();
+                    redoStack = [];
+                    saveSession(); 
                 }
-            });
-            saveSession(); 
+            }, 800);
         }
+    });
+    saveSession(); 
+}
 
-        function getCurrentState() { 
-            return Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value); 
-        }
+        // وەرگرتنی وێنەیەکی تەواو لە فایلی سەرەکی و وەرگێڕان پێکەوە
+function getCurrentSnapshot() {
+    return {
+        originalData: JSON.parse(JSON.stringify(originalData)),
+        kurdishState: Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value)
+    };
+}
 
-        function undo() { 
-            if(historyStack.length > 1) { 
-                redoStack.push(historyStack.pop()); 
-                restoreState(historyStack[historyStack.length-1]); 
-                saveSession(); 
-            } 
-        }
+function undo() { 
+    if (historyStack.length > 1) { 
+        redoStack.push(historyStack.pop()); 
+        let previous = historyStack[historyStack.length - 1]; 
+        restoreSnapshot(previous); 
+        saveSession(); 
+    } 
+}
 
-        function redo() { 
-            if(redoStack.length > 0) { 
-                let s = redoStack.pop(); 
-                historyStack.push(s); 
-                restoreState(s); 
-                saveSession(); 
-            } 
-        }
+function redo() { 
+    if (redoStack.length > 0) { 
+        let next = redoStack.pop(); 
+        historyStack.push(next); 
+        restoreSnapshot(next); 
+        saveSession(); 
+    } 
+}
 
-        function restoreState(s) { 
-            document.querySelectorAll('.subtitle-kurd textarea').forEach((t, i) => { 
-                if(s[i] !== undefined) {
-                    t.value = s[i]; 
-                    t.style.height = 'auto'; 
-                    t.style.height = t.scrollHeight + 'px';
-                }
-            }); 
-            updateProgress();
-        }
+function getCurrentState() { 
+    return Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value); 
+}
+
+function restoreSnapshot(snapshot) { 
+    if (!snapshot) return;
+    originalData = JSON.parse(JSON.stringify(snapshot.originalData));
+    buildEditorUI(snapshot.kurdishState, false);
+}
 
         function updateProgress() {
             let tas = document.querySelectorAll('.subtitle-kurd textarea');
