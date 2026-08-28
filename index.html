@@ -406,24 +406,6 @@
         .search-btn.danger { color: #ef4444; border-color: #fca5a5; }
         .close-search-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
 
-        #video-container { 
-            display: none; 
-            width: 100%; 
-            margin: 0 0 10px 0; 
-            background: #000; 
-            border-radius: 14px; 
-            overflow: hidden; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3); 
-            border: 1.5px solid var(--primary); 
-            position: -webkit-sticky;
-            position: sticky;
-            top: 4px;
-            z-index: 90;
-        }
-
-        #preview-video { width: 100%; max-height: 160px; display: block; object-fit: contain; background: #000; }
-        #video-subtitle-overlay { position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; font-size: 14px; font-weight: bold; pointer-events: none; padding: 0 5%; line-height: 1.4; }
-
         .subtitle-card { background: var(--card-bg); border-radius: 14px; padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: all 0.2s ease; }
         .subtitle-card.active-sub { border-color: var(--primary) !important; box-shadow: 0 0 0 2px var(--primary-glow) !important; }
         .subtitle-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 6px 10px; border-radius: 8px; margin-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
@@ -504,39 +486,6 @@
             transform: translateY(120%);
             opacity: 0;
             pointer-events: none;
-        }
-
-        #scroll-to-top-btn {
-            position: fixed;
-            bottom: calc(80px + env(safe-area-inset-bottom));
-            left: 16px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--card-bg);
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transform: translateY(25px) scale(0.8);
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        #scroll-to-top-btn.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: auto;
-        }
-        #scroll-to-top-btn:active {
-            transform: scale(0.9);
-        }
-        body.keyboard-open #scroll-to-top-btn {
-            display: none !important;
         }
 
         .history-list {
@@ -706,17 +655,6 @@
             flex-shrink: 0;
             margin-top: 2px;
         }
-/* چارەسەری بنەڕەتی بۆ هەموو هێماکان ( ! ، ؟ : ... کەوانەکان ) لە ئینگلیزیدا */
-html[lang="en"] [data-i18n],
-html[lang="en"] #welcome-msg,
-html[lang="en"] span,
-html[lang="en"] p,
-html[lang="en"] label,
-html[lang="en"] h2,
-html[lang="en"] h3,
-html[lang="en"] .file-name-display {
-    unicode-bidi: plaintext !important;
-}
 
         /* ستایلی سەرەوە و مێنیوی سێتەپ */
         .setup-header {
@@ -779,23 +717,6 @@ html[lang="en"] .file-name-display {
             #preview-video { max-height: 320px; }
             #scroll-to-top-btn { bottom: 90px; left: calc(50% - 460px); }
         }
-        /* ڕێکخستنی شوێنی ئایکۆن و هێماکان بە تەواوی بۆ زمانی ئینگلیزی */
-html[lang="en"] .btn,
-html[lang="en"] .menu-btn-item,
-html[lang="en"] .site-features-box li,
-html[lang="en"] .site-features-title,
-html[lang="en"] .top-btn,
-html[lang="en"] .back-btn,
-html[lang="en"] .custom-select-btn {
-    direction: ltr;
-    flex-direction: row;
-    text-align: left;
-}
-
-html[lang="en"] .site-features-box {
-    direction: ltr;
-    text-align: left;
-}
 /* ستایلی چوارگۆشەی قەوسی ڕەنگەکان */
 .theme-grid {
     display: grid;
@@ -1849,13 +1770,6 @@ html[lang="en"] .site-features-box {
         </div>
     </div>
 
-    <!-- دوگمەی سەهم بۆ سەرکەوتن -->
-    <button id="scroll-to-top-btn" onclick="scrollToTop()" title="گەڕانەوە بۆ سەرەوە">
-        <svg style="width:22px;height:22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-        </svg>
-    </button>
-
     <div id="ai-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <h3 class="custom-modal-title" data-i18n="aiTitle">دانانی وەرگێڕانی AI</h3>
@@ -2139,30 +2053,6 @@ html[lang="en"] .site-features-box {
                 pgsFileLabel: "فایلی",
                 pgsLinePrefix: "دێڕی #",
                 pgsParsing: "خەریکی شی کردنەوەی وێنەکانی SUPە...",
-                accEmailLbl: "ئیمەیڵ:",
-                accSendCodeBtn: "ناردنی کۆد",
-                accResendBtn: "ناردنەوە",
-                accOtpLbl: "کۆدی پشتڕاستکردنەوە (٦ ژمارە):",
-                accVerifyBtn: "پشتڕاستکردنەوە و چوونەژوورەوە",
-                msgInvalidEmail: "تکایە ئیمەیڵێکی دروست بنووسە!",
-                msgSendingOtp: "خەریکی ناردنە...",
-                msgOtpSent: "کۆدی پشتڕاستکردنەوە نێردرا بۆ جیمەیڵەکەت!",
-                msgOtpError: "نەتوانرا ئیمەیڵ بنێردرێت! تکایە کلیلەکانت بپشکنە.",
-                msgWrongOtp: "کۆدەکە هەڵەیە! تکایە دووبارە پشکنینی بۆ بکە.",
-                accountBtn: "هەژمار",
-                accountTitle: "هەژماری وەرگێڕ",
-                accountLoggedAs: "چوویتەتەژوورەوە بە ناوی:",
-                accountLogoutBtn: "دەرچوون لە هەژمار",
-                accountSaveBtn: "چوونەژوورەوە / پاشەکەوتکردن",
-                msgAccEnterCreds: "تکایە ناوی بەکارهێنەر و تێپەڕوشە بنووسە!",
-                msgAccWrongPass: "تێپەڕوشەکە هەڵەیە!",
-                msgAccSuccess: "بە سەرکەوتوویی چوویتە ناو هەژمارەکەت و ڕێکخستنەکانت بارکران!",
-                msgAccLogout: "لە هەژمار دەرچوویت!",
-                accountUserLbl: "ناوی بەکارهێنەر:",
-                accountUserPlh: "ناوی بەکارهێنەر...", 
-                msgBackupCopied: "کۆدی پاشەکەوت کۆپیکرا بۆ کلیپبۆرد!",
-                msgRestoreSuccess: "تەواوی مێژوو و ڕێکخستنەکان بە سەرکەوتوویی گەڕێنرانەوە!",
-                msgInvalidBackup: "کۆدەکە هەڵەیە یان نادروستە!",
                 rtlFixBtn: "چاککردنی RTL",
                 pgsBtn: "گۆڕینی PGS (.sup)",
                 pgsTitle: "گۆڕینی فایلی PGS (.sup) بۆ دەق",
@@ -2182,7 +2072,7 @@ html[lang="en"] .site-features-box {
                 rtlFixDesc: "فایلەکان هەڵبژێرە بۆ ڕێکخستنی کەوانە و هێماکان بەبێ دەستکاری هیچ شتێکی تری فایلەکە.",
                 rtlFixSelectLbl: "فایلەکان هەڵبژێرە (SRT, ASS, VTT):",
                 rtlFixApplyBtn: "چاککردن و داگرتن",
-                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", logoutBtn: "چوونەدەرەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", videoBtn: "ڤیدیۆ", removeVideoBtn: "لابردنی ڤیدیۆ", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!", scrollToTop: "گەڕانەوە بۆ سەرەوە",
+                pageTitle: "دەستکاریکەری ژێرنووس", loginTitle: "چوونەژوورەوەی وەرگێڕ", appDesc: "ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.", loginBtn: "چوونەژوورەوە", installApp: "دابەزاندنی ئەپ", origFileLbl: "فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)", clickSelect: "کرتە بکە بۆ هەڵبژاردن", transFileLbl: "فایلی وەرگێڕدراو (ئارەزوومەندانە)", startBtn: "دەستپێکردن", batchBtn: "گۆڕینی فایل", historyBtn: "مێژووی کارەکان", historyTitle: "مێژووی ژێرنووسە دەستکاریکراوەکان", clearAllBtn: "سڕینەوەی هەمووی", restoreBtn: "کردنەوە", deleteBtn: "سڕینەوە", historyWarning: "ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت!", historyEmpty: "هیچ فایلێک لە مێژوودا نییە", batchTitle: "کارکردن بە کۆمەڵ لەسەر چەند فایلێک", batchDesc: "دەتوانیت چەندین فایل پێکەوە هەڵبژێریت، کاتەکانیان بگۆڕیت یان فۆرماتەکەیان بگۆڕیت.", batchSelectLbl: "فایلەکان هەڵبژێرە:", batchNoFile: "هیچ فایلێک دیاری نەکراوە", batchFilesSelected: "فایل دیاریکراون", batchTimeLbl: "پێشخستن/دواخستنی کات (بە چرکە):", tagOptionLbl: "پاککردنەوەی تاگەکانی شێواز و فۆرمات:", tagKeep: "وەک خۆی", tagClean: "پاککردنەوە", batchFmtLbl: "فۆرماتی دەرچوون:", applyBtn: "جێبەجێکردن", closeBtn: "داخستن", editorTitle: "دەستکاریکردنی ژێرنووس", backBtn: "گەڕانەوە", undoBtn: "پاشگەزبوونەوە", redoBtn: "چوونەپێش", searchNavBtn: "گەڕان", searchLbl: "گەڕان و گۆڕین", searchPlh: "گەڕان بەدوای...", replacePlh: "گۆڕین بە...", replaceBtn: "گۆڕین", replaceAllBtn: "هەمووی بگۆڕە", aiBtn: "دانانی وەرگێڕان", dirBtn: "ئاڕاستەی نووسین", saveBtn: "سەیڤکردن و داگرتن", aiTitle: "دانانی وەرگێڕانی AI", aiCopy: "کۆپی ئەسڵی", aiPaste: "پەیست بکە", resumeTitle: "دەتەوێت بەردەوام بیت؟", resumeDesc: "پێدەچێت پێشتر کارێکت تەواو نەکردبێت، دەتەوێت لەو شوێنەی پێشتر وەستایت بەردەوام بیت؟", resumeBtn: "بەردەوامبوون", startNewBtn: "دەستپێکردنەوە", backTitle: "ئایا دڵنیایت؟", confirmBack: "ئایا دڵنیایت دەتەوێت بگەڕێیتەوە؟ کارەکانت سەیڤ نابن گەر داونلۆدت نەکردبێت.", yesLeave: "بەڵێ، دەرچوون", cancelBtn: "پاشگەزبوونەوە", developerInfo: "گەشەپێدەر: <strong>محمد عبدالقادر</strong>", welcomeText: "بەخێربێیت!",
                 msgSelectOrig: "تکایە فایلی ئەسڵی هەڵبژێرە!", msgSelectBatch: "تکایە فایل هەڵبژێرە!", msgDone: "پڕۆسەکە بە سەرکەوتوویی تەواو بوو!", msgCopied: "کۆپیکرا بۆ کلیپبۆرد!", msgNotFound: "هیچ ئەنجامێک نەدۆزرایەوە!", msgInstallMenu: "دەتوانیت لە ڕێگەی مێنۆی وێبگەڕەکەتەوە دایبەزێنیت",
                 msgPasteSuccess: "بە سەرکەوتوویی پەیست کرا!",
                 msgPasteManual: "دەست لەناو بۆکسەکە دابگرە بۆ پەیستکردن!",
@@ -2227,212 +2117,6 @@ html[lang="en"] .site-features-box {
                 scSearch: "گەڕان و گۆڕین",
                 langLabel: "زمان",
                 linesText: "دێڕ"
-            },
-            ar: {
-                msgErrorPrefix: "خطأ: ",
-                pgsReadError: "حدث خطأ أثناء قراءة الملفات!",
-                pgsNoSubtitles: "لم يتم العثور على أي ترجمة صورية في هذا الملف!",
-                msgResumeError: "حدث خطأ أثناء استعادة الجلسة السابقة!",
-                imgNeedKey: "يرجى إدخال مفتاح API في الأعلى أولاً!",
-                imgUploading: "جاري رفع الصورة، يرجى الانتظار...",
-                imgSuccess: "رابط الصورة المباشر والدائم جاهز!",
-                imgUploadError: "حدث خطأ أثناء الرفع، يرجى التحقق من المفتاح أو الاتصال!",
-                imgCopiedSuccess: "تم نسخ رابط الصورة بنجاح!",
-                pgsOcrNotLoaded: "لم يتم تحميل مكتبة OCR، يرجى التحقق من الإنترنت!",
-                pgsAllDoneText: "اكتملت جميع الملفات بنجاح!",
-                pgsCancelled: "تم إلغاء العملية.",
-                pgsFileLabel: "ملف",
-                pgsLinePrefix: "السطر #",
-                pgsParsing: "جاري استخراج صور الترجمة...",
-                accEmailLbl: "البريد الإلكتروني:",
-                accSendCodeBtn: "إرسال الرمز",
-                accResendBtn: "إعادة الإرسال",
-                accOtpLbl: "رمز التحقق (٦ أرقام):",
-                accVerifyBtn: "التحقق وتسجيل الدخول",
-                msgInvalidEmail: "الرجاء إدخال بريد إلكتروني صالح!",
-                msgSendingOtp: "جاري الإرسال...",
-                msgOtpSent: "تم إرسال رمز التحقق إلى بريدك الإلكتروني!",
-                msgOtpError: "تعذر إرسال البريد! يرجى التحقق من المفاتيح.",
-                msgWrongOtp: "الرمز غير صحيح! يرجى التأكد والمحاولة مرة أخرى.",
-                accountBtn: "الحساب",
-                accountTitle: "حساب المترجم",
-                accountLoggedAs: "تم تسجيل الدخول باسم:",
-                accountLogoutBtn: "تسجيل الخروج من الحساب",
-                accountSaveBtn: "دخول / حفظ الإعدادات",
-                msgAccEnterCreds: "الرجاء إدخال اسم المستخدم وكلمة المرور!",
-                msgAccWrongPass: "كلمة المرور غير صحيحة!",
-                msgAccSuccess: "تم تسجيل الدخول بنجاح وتحميل الإعدادات!",
-                msgAccLogout: "تم تسجيل الخروج من الحساب!",
-                accountUserLbl: "اسم المستخدم:",
-                accountUserPlh: "اسم المستخدم...",
-                msgBackupCopied: "تم نسخ كود النسخ الاحتياطي!",
-                msgRestoreSuccess: "تمت استعادة السجل والإعدادات بنجاح!",
-                msgInvalidBackup: "كود النسخ الاحتياطي غير صالح!",
-                rtlFixBtn: "إصلاح محاذاة RTL",
-                pgsBtn: "تحويل PGS (.sup)",
-                pgsTitle: "تحويل ملفات PGS (.sup) إلى نصوص",
-                pgsDesc: "تحويل ترجمات بلوراي الصورية إلى نصوص بدقة عالية مع الحفاظ على التوقيت.",
-                pgsSelectLbl: "اختر ملف PGS (.sup):",
-                pgsLangLbl: "لغة الصورة:",
-                pgsCancelBtn: "إلغاء العملية",
-                pgsLoadingData: "جاري تحميل بيانات اللغة...",
-                pgsLangEng: "الإنجليزية",
-                pgsLangAra: "العربية",
-                pgsLangFas: "الكردية / الفارسية",
-                pgsLangFra: "الفرنسية",
-                pgsLangDeu: "الألمانية",
-                pgsLangSpa: "الإسبانية",
-                pgsLangJpn: "اليابانية",
-                rtlFixTitle: "إصلاح اتجاه الترجمة (RTL Fix)",
-                rtlFixDesc: "اختر الملفات لإصلاح الأقواس وعلامات الترقيم دون تعديل أي شيء آخر في الملف.",
-                rtlFixSelectLbl: "اختر ملفات الترجمة (SRT, ASS, VTT):",
-                rtlFixApplyBtn: "إصلاح وتنزيل",
-                pageTitle: "محرر الترجمة", loginTitle: "تسجيل دخول المترجم", appDesc: "هذا الموقع مخصص لترجمة وتعديل ملفات الترجمة.", loginBtn: "تسجيل الدخول", logoutBtn: "تسجيل الخروج", installApp: "تثبيت التطبيق", origFileLbl: "الملف الأصلي (SRT / ASS / VTT)", clickSelect: "انقر للاختيار", transFileLbl: "ملف الترجمة (اختياري)", startBtn: "البدء", batchBtn: "تحويل الملفات", historyBtn: "سجل الملفات", historyTitle: "سجل الترجمات المعدلة", clearAllBtn: "مسح الكل", restoreBtn: "فتح", deleteBtn: "حذف", historyWarning: "تنبيه: سجل الملفات قارب على الامتلاء!", historyEmpty: "لا توجد ملفات في السجل", batchTitle: "العمل على ملفات متعددة", batchDesc: "يمكنك تحديد عدة ملفات لتغيير أوقاتها أو صيغها معاً.", batchSelectLbl: "اختر الملفات:", batchNoFile: "لم يتم تحديد أي ملف", batchFilesSelected: "ملفات محددة", batchTimeLbl: "تقديم/تأخير الوقت (بالثواني):", tagOptionLbl: "تنظيف وسوم التنسيق:", tagKeep: "كما هو", tagClean: "تنظيف", batchFmtLbl: "صيغة الإخراج:", applyBtn: "تطبيق", closeBtn: "إغلاق", editorTitle: "تعديل الترجمة", backBtn: "رجوع", undoBtn: "تراجع", redoBtn: "إعادة", videoBtn: "فيديو", removeVideoBtn: "إزالة الفيديو", searchNavBtn: "بحث", searchLbl: "بحث واستبدال", searchPlh: "ابحث عن...", replacePlh: "استبدل بـ...", replaceBtn: "استبدال", replaceAllBtn: "استبدال الكل", aiBtn: "إدراج الترجمة", dirBtn: "اتجاه الكتابة", saveBtn: "حفظ وتنزيل", aiTitle: "إدراج ترجمة AI", aiCopy: "نسخ الأصل", aiPaste: "لصق", resumeTitle: "هل تريد الاستمرار؟", resumeDesc: "يبدو أن لديك جلسة غير مكتملة، هل تريد الاستمرار؟", resumeBtn: "الاستمرار", startNewBtn: "البدء من جديد", backTitle: "هل أنت متأكد؟", confirmBack: "هل أنت متأكد من الرجوع؟ لن يتم حفظ التعديلات غير المنزلة.", yesLeave: "نعم، خروج", cancelBtn: "إلغاء", developerInfo: "المطور: <strong>محمد عبدالقادر</strong>", welcomeText: "مرحباً بك!", scrollToTop: "العودة للأعلى",
-                msgSelectOrig: "الرجاء تحديد الملف الأصلي!", msgSelectBatch: "الرجاء تحديد ملف!", msgDone: "اكتملت العملية بنجاح!", msgCopied: "تم النسخ إلى الحافظة!", msgNotFound: "لم يتم العثور على نتائج!", msgInstallMenu: "يمكنك التثبيت من قائمة المتصفح", installModalTitle: "تثبيت التطبيق", installModalDesc: "هل تريد تثبيت هذا الموقع كتطبيق على جهازك للعمل بدون إنترنت؟", installConfirmBtn: "تثبيت", batchDownloadTitle: "تنزيل الملفات", batchDownloadDesc: "سيطلب المتصفح الإذن لتنزيل عدة ملفات. يرجى النقر على سماح للمتابعة.", batchDownloadBtn: "بدء التنزيل",
-                msgPasteSuccess: "تم اللصق بنجاح!",
-                msgPasteManual: "المس الحقل مطولاً للصق النص يدويًا!",
-                toastDirRTL: "الاتجاه: من اليمين لليسار (RTL)", toastDirLTR: "الاتجاه: من اليسار لليمين (LTR)", toastDirAuto: "الاتجاه: تلقائي (Auto)",
-                featuresHead: "مميزات الموقع",
-                feat1: "دعم كامل لملفات SRT و ASS و VTT دون أخطاء في التوقيت.",
-                feat2: "معاينة مباشرة للترجمة على الفيديو مع مزامنة دقيقة.",
-                feat3: "إدراج ذكي لترجمات الذكاء الاصطناعي مع البحث والاستبدال.",
-                feat4: "تحويل التوقيت والصيغ لعدة ملفات معاً دفعة واحدة.",
-                feat5: "تحويل مباشر للصور إلى روابط دائمة وغير منتهية الصلاحية.",
-                imgToLinkBtn: "تحويل الصورة لرابط",
-                imgModalTitle: "تحويل الصورة إلى رابط",
-                imgNoFile: "لم يتم تحديد أي صورة",
-                imgApiKeyLbl: "مفتاح API (ضعه مرة واحدة):",
-                imgGetApiLink: "من أين أحصل على المفتاح؟",
-                imgSelectLbl: "انقر لاختيار الصورة",
-                imgDirectLinkLbl: "رابط الصورة المباشر:",
-                imgCopyBtn: "نسخ الرابط",
-                feat6: "إصلاح محاذاة RTL والأقواس دون تعديل أي شيء آخر بالملف.",
-                feat7: "تحويل ملفات الصور PGS (.sup) إلى نصوص بتقنية OCR الذكية.",
-                feat8: "تنظيف المؤثرات الصوتية مثل [music] و (screaming) تلقائياً من الترجمة.",
-                pgsReadingLine: "جاري قراءة السطر #",
-                sdhBtn: "تنظيف الأصوات (SDH)",
-                themeTitle: "اختيار لون المظهر",
-                themeForest: "الغابة",
-                themeOcean: "محيطي",
-                themePurple: "أرجواني ملكي",
-                themeRose: "وردي نيون",
-                themeAmber: "ذهبي",
-                themeEmerald: "زمردي",
-                sdhTitle: "تنظيف المؤثرات الصوتية (SDH)",
-                sdhDesc: "حذف جميع المؤثرات الصوتية مثل [موسيقى] و (صراخ) تلقائياً دون التأثير على التوقيت.",
-                shortcutsBtn: "اختصارات لوحة المفاتيح",
-                shortcutsTitle: "اختصارات لوحة المفاتيح",
-                msgSdhDone: "تم تنظيف المؤثرات الصوتية وترتيب الأسطر بنجاح!",
-                scPlayPause: "تشغيل/إيقاف الفيديو",
-                scSeek: "تقديم/تأخير الفيديو (ثانيتان)",
-                scNextLine: "الانتقال للسطر التالي",
-                scSave: "حفظ وتنزيل الملف",
-                scSearch: "بحث واستبدال",
-                langLabel: "اللغة",
-                linesText: "سطر"
-            },
-            en: {
-                msgErrorPrefix: "Error: ",
-                pgsReadError: "An error occurred while reading the files!",
-                pgsNoSubtitles: "No subtitle images found in this file!",
-                msgResumeError: "Error restoring previous session!",
-                imgNeedKey: "Please enter your API Key at the top first!",
-                imgUploading: "Uploading image, please wait...",
-                imgSuccess: "Direct permanent image link is ready!",
-                imgUploadError: "Upload failed, please check your key or internet connection!",
-                imgCopiedSuccess: "Image link copied successfully!",
-                pgsOcrNotLoaded: "OCR library failed to load, please check your internet!",
-                pgsAllDoneText: "All files completed successfully!",
-                pgsCancelled: "Process cancelled.",
-                pgsFileLabel: "File",
-                pgsLinePrefix: "Line #",
-                pgsParsing: "Parsing SUP images...",
-                accEmailLbl: "Email:",
-                accSendCodeBtn: "Send Code",
-                accResendBtn: "Resend",
-                accOtpLbl: "Verification Code (6 digits):",
-                accVerifyBtn: "Verify & Login",
-                msgInvalidEmail: "Please enter a valid email address!",
-                msgSendingOtp: "Sending...",
-                msgOtpSent: "Verification code sent to your email!",
-                msgOtpError: "Failed to send email! Please check your keys.",
-                msgWrongOtp: "Incorrect code! Please verify and try again.",
-                accountBtn: "Account",
-                accountTitle: "Translator Account",
-                accountLoggedAs: "Logged in as:",
-                accountLogoutBtn: "Log out",
-                accountSaveBtn: "Login / Save",
-                msgAccEnterCreds: "Please enter username and password!",
-                msgAccWrongPass: "Incorrect password!",
-                msgAccSuccess: "Logged in successfully and settings loaded!",
-                msgAccLogout: "Logged out from account!",
-                accountUserLbl: "Username:",
-                accountUserPlh: "Username...",
-                msgBackupCopied: "Backup code copied to clipboard!",
-                msgRestoreSuccess: "Data and settings restored successfully!",
-                msgInvalidBackup: "Invalid backup code!",
-                rtlFixBtn: "RTL Fix",
-                pgsBtn: "PGS (.sup) to Text",
-                pgsTitle: "Convert PGS (.sup) to Subtitles",
-                pgsDesc: "Extract Blu-ray SUP subtitle images into editable text using smart OCR with perfect timing.",
-                pgsSelectLbl: "Select PGS (.sup) File:",
-                pgsLangLbl: "Image Language:",
-                pgsCancelBtn: "Cancel Process",
-                pgsLoadingData: "Loading Language Data...",
-                pgsLangEng: "English",
-                pgsLangAra: "Arabic",
-                pgsLangFas: "Kurdish / Persian",
-                pgsLangFra: "French",
-                pgsLangDeu: "German",
-                pgsLangSpa: "Spanish",
-                pgsLangJpn: "Japanese",
-                rtlFixTitle: "Subtitle RTL Fixer",
-                rtlFixDesc: "Select subtitle files to fix punctuation and bracket alignment without altering any other file data.",
-                rtlFixSelectLbl: "Select Files (SRT, ASS, VTT):",
-                rtlFixApplyBtn: "Fix & Download",
-                pageTitle: "Subtitle Editor", loginTitle: "Translator Login", appDesc: "This tool is designed for translating and fine-tuning video subtitles.", loginBtn: "Login", logoutBtn: "Logout", installApp: "Install App", origFileLbl: "Original Subtitle (SRT / ASS / VTT)", clickSelect: "Click to select file", transFileLbl: "Translated Subtitle (Optional)", startBtn: "Start Editing", batchBtn: "Convert & Batch", historyBtn: "History", historyTitle: "Edited Subtitles History", clearAllBtn: "Clear All", restoreBtn: "Open", deleteBtn: "Delete", historyWarning: "Warning: History is almost full!", historyEmpty: "No files saved in history", batchTitle: "Batch Subtitle Processing", batchDesc: "Select multiple files to adjust timing offsets or convert formats.", batchSelectLbl: "Select Files:", batchNoFile: "No files selected", batchFilesSelected: "files selected", batchTimeLbl: "Time Shift (seconds):", tagOptionLbl: "Formatting Tags:", tagKeep: "Keep Tags", tagClean: "Clean Tags", batchFmtLbl: "Output Format:", applyBtn: "Apply & Process", closeBtn: "Close", editorTitle: "Subtitle Editor", backBtn: "Back", undoBtn: "Undo", redoBtn: "Redo", videoBtn: "Video", removeVideoBtn: "Remove Video", searchNavBtn: "Search", searchLbl: "Search & Replace", searchPlh: "Search for...", replacePlh: "Replace with...", replaceBtn: "Replace", replaceAllBtn: "Replace All", aiBtn: "Import AI", dirBtn: "Text Direction", saveBtn: "Save & Download", aiTitle: "Insert AI Translation", aiCopy: "Copy Original", aiPaste: "Paste", resumeTitle: "Resume Previous Session?", resumeDesc: "An unfinished editing session was found. Would you like to resume?", resumeBtn: "Resume", startNewBtn: "Start Fresh", backTitle: "Are you sure?", confirmBack: "Are you sure you want to go back? Unsaved changes will be lost.", yesLeave: "Yes, Leave", cancelBtn: "Cancel", developerInfo: "Developer: <strong>Mohammed Abdulqader</strong>", welcomeText: "Welcome!", scrollToTop: "Scroll to Top",
-                msgSelectOrig: "Please select the original subtitle file!", msgSelectBatch: "Please select a file!", msgDone: "Process completed successfully!", msgCopied: "Copied to clipboard!", msgNotFound: "No matching results found!", msgInstallMenu: "You can install this app directly from your browser menu", installModalTitle: "Install App", installModalDesc: "Would you like to install this application on your device for offline use?", installConfirmBtn: "Install", batchDownloadTitle: "Download Multiple Files", batchDownloadDesc: "Your browser requires permission to download multiple files. Please click allow.", batchDownloadBtn: "Start Download",
-                msgPasteSuccess: "Pasted successfully!",
-                msgPasteManual: "Tap and hold inside the box to paste manually!",
-                toastDirRTL: "Direction: Right to Left (RTL)", toastDirLTR: "Direction: Left to Right (LTR)", toastDirAuto: "Direction: Auto",
-                featuresHead: "Website Features",
-                feat1: "Full support for SRT, ASS, and VTT subtitles with intact timing.",
-                feat2: "Real-time video subtitle sync and live interactive preview.",
-                feat3: "Smart AI translation import, format cleaning, and batch search & replace.",
-                feat4: "Batch conversion and multi-file time shifting capabilities.",
-                feat5: "Direct image to permanent, non-expiring link conversion.",
-                imgToLinkBtn: "Image to Link",
-                imgModalTitle: "Convert Image to Link",
-                imgNoFile: "No image selected",
-                imgApiKeyLbl: "API Key (Enter once):",
-                imgGetApiLink: "Where to get key?",
-                imgSelectLbl: "Click to select image",
-                imgDirectLinkLbl: "Direct Image Link:",
-                imgCopyBtn: "Copy Link",
-                feat6: "Fix RTL text & bracket alignment without touching other file data.",
-                feat7: "Convert Blu-ray PGS (.sup) subtitle images to text with smart OCR.",
-                feat8: "Automatically clean SDH sound descriptors like [music] and (screaming).",
-                pgsReadingLine: "Reading line #",
-                sdhBtn: "SDH Audio Cleaner",
-                themeTitle: "Choose UI Theme Color",
-                themeForest: "Forest",
-                themeOcean: "Ocean Blue",
-                themePurple: "Royal Purple",
-                themeRose: "Neon Rose",
-                themeAmber: "Amber Gold",
-                themeEmerald: "Emerald",
-                sdhTitle: "SDH / Hearing Impaired Cleaner",
-                sdhDesc: "Automatically removes sound descriptors like [music] and (screaming) without affecting timing.",
-                shortcutsBtn: "Keyboard Shortcuts",
-                shortcutsTitle: "Keyboard Shortcuts",
-                msgSdhDone: "Audio descriptors cleaned and lines re-sequenced successfully!",
-                scPlayPause: "Play / Pause Video",
-                scSeek: "Seek Video (±2s)",
-                scNextLine: "Next Subtitle Line",
-                scSave: "Save & Download",
-                scSearch: "Search & Replace",
-                langLabel: "Language",
-                linesText: "lines"
             }
         };
 
@@ -2453,20 +2137,95 @@ function getHistoryKey() {
 
 function getHistory() {
     try {
-        return JSON.parse(localStorage.getItem('kf_edit_history')) || [];
-    } catch(e) { return []; }
+        const data = JSON.parse(localStorage.getItem('kf_edit_history'));
+        return Array.isArray(data) ? data : [];
+    } catch(e) {
+        return [];
+    }
 }
 
 function saveToHistory(item) {
+    if (!item || !item.fileName) return;
     let hist = getHistory();
-    hist = hist.filter(h => h.fileName !== item.fileName);
+    hist = hist.filter(h => h && h.fileName !== item.fileName);
     hist.unshift(item);
-    if (hist.length > 20) hist.pop();
+    if (hist.length > 20) hist = hist.slice(0, 20);
     localStorage.setItem('kf_edit_history', JSON.stringify(hist));
 
     if (hist.length >= 15 && hist.length <= 20) {
         showToast("ئاگاداربە: بەشی مێژوو خەریکە پڕ دەبێت! (" + hist.length + "/20)", "warning");
     }
+}
+
+// فەنکشنی کردنەوەی پەنجەرەی مێژوو
+function openHistoryModal() {
+    const container = document.getElementById('historyListContainer');
+    const countText = document.getElementById('history-count-text');
+    const hist = getHistory();
+    
+    if (countText) {
+        countText.innerText = `${hist.length} / 20`;
+    }
+
+    const lineLabel = (i18n[currentLang] && i18n[currentLang]['linesText']) ? i18n[currentLang]['linesText'] : 'دێڕ';
+    const emptyMsg = (i18n[currentLang] && i18n[currentLang]['historyEmpty']) ? i18n[currentLang]['historyEmpty'] : 'هیچ فایلێک لە مێژوودا نییە';
+    const restoreMsg = (i18n[currentLang] && i18n[currentLang]['restoreBtn']) ? i18n[currentLang]['restoreBtn'] : 'کردنەوە';
+
+    if (!container) return;
+
+    if (hist.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 25px; color: var(--text-muted); font-size: 13px;">${emptyMsg}</div>`;
+    } else {
+        container.innerHTML = hist.map((h) => {
+            const name = h.fileName || 'بێ ناو';
+            const date = h.date || '';
+            const count = h.count || 0;
+            const format = (h.format || 'SRT').toUpperCase();
+            const id = h.id || '';
+            return `
+                <div class="history-item" style="display:flex; justify-content:space-between; align-items:center; padding:10px; margin-bottom:6px; border-radius:10px; background:rgba(18,23,29,0.8); border:1px solid var(--border-color);">
+                    <div class="history-info" style="overflow:hidden; text-align:start;">
+                        <div class="history-name" style="font-size:12.5px; font-weight:bold; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</div>
+                        <div class="history-meta" style="font-size:10.5px; color:var(--text-muted); margin-top:2px;"><span>${date}</span> | <span>${count} ${lineLabel}</span> | <span>${format}</span></div>
+                    </div>
+                    <div style="display:flex; gap: 6px; flex-shrink:0; margin-inline-start:8px;">
+                        <button type="button" class="btn" style="padding: 5px 9px; font-size: 11px; width:auto;" onclick="restoreFromHistory('${id}')">${restoreMsg}</button>
+                        <button type="button" class="btn btn-outline" style="padding: 5px 8px; font-size: 11px; width:auto; color:#ef4444; border-color:#ef4444;" onclick="deleteHistoryItem('${id}')">✕</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    const modal = document.getElementById('history-modal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function restoreFromHistory(id) {
+    const hist = getHistory();
+    const item = hist.find(h => h && h.id === id);
+    if (item) {
+        originalData = item.originalData || [];
+        currentFileName = item.fileName || 'Subtitle';
+        isAssFormat = item.isAssFormat || false;
+        isVttFormat = item.isVttFormat || false;
+        assHeaderLines = item.assHeaderLines || [];
+        const modal = document.getElementById('history-modal');
+        if (modal) modal.style.display = 'none';
+        buildEditorUI(item.savedState || []);
+    }
+}
+
+function deleteHistoryItem(id) {
+    let hist = getHistory();
+    hist = hist.filter(h => h && h.id !== id);
+    localStorage.setItem('kf_edit_history', JSON.stringify(hist));
+    openHistoryModal();
+}
+
+function clearAllHistory() {
+    localStorage.removeItem('kf_edit_history');
+    openHistoryModal();
 }
 
 // پەڕەی سەرەکی
@@ -2567,19 +2326,6 @@ window.onload = () => {
         keyInput.value = savedKey;
     }
 };
-
-        function toggleLangMenu(btn) { 
-            const menu = btn.nextElementSibling;
-            const isOpen = menu.classList.contains('show');
-            document.querySelectorAll('.custom-select-menu').forEach(m => m.classList.remove('show'));
-            if (!isOpen) menu.classList.add('show');
-        }
-        
-        document.addEventListener('click', e => { 
-            if(!e.target.closest('.custom-select-wrapper')) {
-                document.querySelectorAll('.custom-select-menu').forEach(m => m.classList.remove('show')); 
-            }
-        });
 
         function toggleClearBtn(input, boxId) {
             const box = document.getElementById(boxId);
@@ -4671,13 +4417,6 @@ async function pasteFromClipboard() {
                 window.addEventListener('mousemove', onMove);
                 window.addEventListener('mouseup', onEnd, { once: true });
             });
-        }
-
-        function scrollToTop() {
-            const container = document.getElementById('subtitles-container');
-            if (container) {
-                container.scrollTo({ top: 0, behavior: 'smooth' });
-            }
         }
 
         window.addEventListener('load', setupFastScrubber);
