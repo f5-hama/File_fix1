@@ -920,7 +920,7 @@ html[lang="en"] .site-features-box {
     transform: scale(1.1);
 }
 
-/* ئۆڤەرلەیسی ڤیدیۆ - دابەزاندنی نوسینەکە بۆ شوێنی گونجاوی خوارەوە */
+/* ئۆڤەرلەیسی ڤیدیۆ بە بۆشایی گونجاو لەسەرووی شریتی کۆنتڕۆڵ */
 #video-subtitle-overlay {
     position: absolute !important;
     top: 0 !important;
@@ -930,17 +930,18 @@ html[lang="en"] .site-features-box {
     pointer-events: none !important;
     display: grid !important;
     grid-template-rows: auto 1fr auto !important;
-    padding: 10px 12px 16px 12px !important; /* دابەزاندنی نوسین بۆ خوارەوە */
+    padding: 10px 12px 16px 12px !important;
     box-sizing: border-box !important;
     z-index: 15 !important;
 }
 
-/* قەبارەی ڕێک و جوانکراوی ژێرنووس */
+/* ستایلی فۆنت لەگەڵ دەرکەوتنی تەواوی Bold و Italic لەسەر ڤیدیۆ */
 .sub-rendered-line {
     font-family: 'KurdForest', Tahoma, Arial, sans-serif !important;
-    font-size: 13px !important; /* بچووککردنەوەی سایزی فۆنت */
-    line-height: 1.35;
-    margin: 1px 0;
+    font-size: 13px !important;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 2px 0;
     -webkit-text-stroke: 0 !important;
     text-shadow: 
         -1px -1px 0 #000,  
@@ -949,6 +950,15 @@ html[lang="en"] .site-features-box {
          1px  1px 0 #000,
          0px  1px 2px rgba(0,0,0,0.85);
     filter: none !important;
+}
+.sub-rendered-line b {
+    font-weight: 900 !important;
+}
+.sub-rendered-line i {
+    font-style: italic !important;
+}
+.sub-rendered-line u {
+    text-decoration: underline !important;
 }
 
 /* ستایلی پلەیەرە تایبەتەکە بە ئاڕاستەی ڕاستی LTR */
@@ -1050,31 +1060,144 @@ html[lang="en"] .site-features-box {
     margin-inline-start: 4px;
 }
 
-/* سەهم/شریتی دەستەڕاست بۆ جووڵاندنی خێرای پەڕەکە */
-#fast-scrub-track {
-    position: fixed;
-    top: 90px;
-    right: 4px;
-    bottom: 30px;
-    width: 20px;
-    display: none;
+/* چوارچێوەی ڕێک و هاوسەنگ لە ناوەڕاست */
+.subtitles-scroll-frame {
+    position: relative;
+    width: 100%;
+    margin: 6px 0 14px 0 !important;
+    box-sizing: border-box;
+}
+#subtitles-container {
+    width: 100% !important;
+    max-height: calc(100dvh - 360px) !important;
+    min-height: 270px;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 18px 10px 10px !important; /* هاوسەنگکردنی بۆشایی چەپ و ڕاست */
+    border: 1.5px solid var(--border-color);
+    border-radius: 16px;
+    background: rgba(10, 13, 17, 0.75);
+    box-sizing: border-box;
+}
+.subtitle-card {
+    width: 100% !important;
+    margin: 0 0 10px 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* ستایلی پەنجەرەی هەڵگرتنی ڕەنگ بە دەستلێدان لەسەر ڤیدیۆ */
+.v-picker-canvas-box {
+    position: relative;
+    width: 100%;
+    max-height: 230px;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    border: 1.5px solid var(--border-color);
     touch-action: none;
+    cursor: crosshair;
+}
+.v-picker-canvas-box canvas {
+    width: 100%;
+    max-height: 230px;
+    object-fit: contain;
+    display: block;
+}
+.v-color-preview-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+}
+
+/* شاشەی جێگیری زوومکەری ٢ هێندە لە سەرەوە */
+.v-zoom-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 10px;
+    background: rgba(142, 182, 155, 0.08);
+    border: 1px solid var(--border-color);
+    padding: 10px 14px;
+    border-radius: 14px;
+}
+.v-zoom-window {
+    position: relative;
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    border: 3.5px solid var(--primary);
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+}
+.v-zoom-window canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+/* خاڵی نیشانەی ناوەڕاستی شاشەی زوومەکە */
+.v-zoom-window::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border: 1.5px solid #ffffff;
+    background: #ef4444;
+    box-shadow: 0 0 2px #000;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+/* خاڵی شوێنی پەنجە لەسەر وێنەکە */
+.v-touch-ring {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px #000, 0 0 8px var(--primary);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    display: none;
+    z-index: 20;
+}
+
+/* سەهمی تایبەت و ڕێکخراو بەپێی پەنجەی بەکارهێنەر */
+#fast-scrub-track {
+    position: absolute !important;
+    top: 12px;
+    right: 4px;
+    bottom: 12px;
+    width: 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 50;
+    touch-action: none;
+    cursor: pointer;
 }
 #fast-scrub-thumb {
     width: 6px;
-    height: 48px;
+    height: 38px;
     border-radius: 999px;
     background: var(--primary);
     box-shadow: 0 0 10px var(--primary-glow);
-    cursor: pointer;
-    transition: width 0.15s, transform 0.15s;
+    cursor: grab;
+    transition: width 0.15s;
 }
-#fast-scrub-track:active #fast-scrub-thumb {
+#fast-scrub-thumb:active {
     width: 10px;
-    transform: scale(1.1);
+    cursor: grabbing;
 }
 
 /* ستایلی بەشی تەکنیکە نوێیەکان لەناو مۆداڵ */
@@ -1711,7 +1834,13 @@ html[lang="en"] .site-features-box {
                 </div>
              </div>
         
-        <div id="subtitles-container"></div>
+        <!-- چوارچێوەی تایبەت بە دێڕەکان لەگەڵ سەهمی دەستەڕاست -->
+        <div class="subtitles-scroll-frame">
+            <div id="subtitles-container"></div>
+            <div id="fast-scrub-track">
+                <div id="fast-scrub-thumb"></div>
+            </div>
+        </div>
         
         <div class="action-bar">
             <button class="btn btn-outline" onclick="document.getElementById('ai-modal').style.display='flex'"><span>دانانی وەرگێڕان</span></button>
@@ -1742,10 +1871,6 @@ html[lang="en"] .site-features-box {
         </div>
     </div>
     
-    <!-- سەهمی خێرای دەستەڕاست -->
-    <div id="fast-scrub-track">
-        <div id="fast-scrub-thumb"></div>
-    </div>
 
     <!-- مۆداڵی پێشکەوتووی تەکنیک، فەید و پالتەی ڕەنگەکان -->
     <div id="sub-style-modal" class="custom-modal-overlay">
@@ -1852,6 +1977,38 @@ html[lang="en"] .site-features-box {
             <div class="custom-modal-actions">
                 <button class="btn" onclick="applySubStyleToLine()">جێبەجێکردن</button>
                 <button class="btn btn-outline" onclick="closeSubStyleModal()">داخستن</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- مۆداڵی وەرگرتنی ڕەنگ لەگەڵ شاشەی جێگیری زوومی ٢ هێندە لە سەرەوە -->
+    <div id="video-color-picker-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content" style="max-width: 420px;">
+            <h3 style="margin: 0 0 8px 0; color: var(--primary); font-size: 15px;">هەڵگرتنی ڕەنگ لەسەر ڤیدیۆ</h3>
+
+            <!-- ١. شاشەی جێگیری سەرەوە بۆ پیشاندانی زوومی ٢ هێندە و ڕەنگەکە -->
+            <div class="v-zoom-header-bar">
+                <div class="v-zoom-window" id="vZoomWindow">
+                    <canvas id="vLoupeCanvas" width="86" height="86"></canvas>
+                </div>
+                <div style="text-align: start;">
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">ڕەنگی خاڵەکە:</div>
+                    <div id="vSampledColorHexText" style="font-size: 16px; font-weight: bold; color: var(--primary); direction: ltr;">#FFFFFF</div>
+                    <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 4px;">قەبارەی ئاسایی (1x)</div>
+                </div>
+            </div>
+
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0 0 8px 0;">لە خوارەوە دەست لەسەر وێنەکە دابنێ و بیجوڵێنە:</p>
+
+            <!-- ٢. وێنەی ڤیدیۆ بۆ دەستلێدان -->
+            <div class="v-picker-canvas-box" id="vPickerCanvasBox">
+                <canvas id="vPickerCanvas"></canvas>
+                <div class="v-touch-ring" id="vTouchPoint"></div>
+            </div>
+
+            <div class="custom-modal-actions" style="margin-top: 12px;">
+                <button type="button" class="btn" onclick="confirmVideoCanvasColor()">هەڵبژاردن و دانان</button>
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('video-color-picker-modal').style.display='none'">پاشگەزبوونەوە</button>
             </div>
         </div>
     </div>
@@ -4015,19 +4172,95 @@ async function pasteFromClipboard() {
             if (box) box.style.opacity = enabled ? '1' : '0.5';
         }
 
-        async function pickColorFromScreen() {
-            if (!window.EyeDropper) {
-                showToast("وێبگەڕەکەت پشتگیری ناکات، تکایە ڕەنگەکە لە پالتەکە هەڵبژێرە", "warning");
+        let tempSampledVideoHex = "#FFFFFF";
+
+        // کردنەوەی وێنەی هەمان چرکەی ڤیدیۆ بۆ هەڵبژاردنی ڕەنگ بە دەست
+        function pickColorFromScreen() {
+            const video = document.getElementById('preview-video');
+            if (!video || !video.videoWidth) {
+                showToast("تکایە سەرەتا ڤیدیۆیەک لێبدە بۆ وەرگرتنی ڕەنگ!", "warning");
                 return;
             }
-            try {
-                const eyeDropper = new EyeDropper();
-                const result = await eyeDropper.open();
-                if (result && result.sRGBHex) {
-                    setCustomPaletteColor(result.sRGBHex.toUpperCase(), null);
-                    showToast("ڕەنگەکە لە شاشەوە وەرگیرا!", "success");
+
+            const modal = document.getElementById('video-color-picker-modal');
+            const canvas = document.getElementById('vPickerCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            modal.style.display = 'flex';
+            setupCanvasColorTouch(canvas, ctx);
+        }
+
+// زوومی ٢ هێندەی جێگیر لە سەرەوە بەپێی دەستلێدانی خوارەوە
+        function setupCanvasColorTouch(canvas, ctx) {
+            const loupeCanvas = document.getElementById('vLoupeCanvas');
+            const loupeCtx = loupeCanvas ? loupeCanvas.getContext('2d') : null;
+            const touchPoint = document.getElementById('vTouchPoint');
+            const zoomWindow = document.getElementById('vZoomWindow');
+
+            function sampleAtPoint(e) {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
+                const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
+
+                const displayX = clientX - rect.left;
+                const displayY = clientY - rect.top;
+
+                // ١. نیشاندانی خاڵەکە لەسەر وێنەی خوارەوە ڕێک لەژێر پەنجەت
+                if (touchPoint) {
+                    touchPoint.style.display = 'block';
+                    touchPoint.style.left = `${displayX}px`;
+                    touchPoint.style.top = `${displayY}px`;
                 }
-            } catch (e) {}
+
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+
+                const x = Math.max(0, Math.min(canvas.width - 1, Math.floor(displayX * scaleX)));
+                const y = Math.max(0, Math.min(canvas.height - 1, Math.floor(displayY * scaleY)));
+
+                // ٢. زوومکردنەوەی ٢ هێندە (2x) لەناو شاشەی جێگیری سەرەوە
+                if (loupeCtx) {
+                    loupeCtx.imageSmoothingEnabled = false;
+                    loupeCtx.clearRect(0, 0, 86, 86);
+                    const cropSize = 86; // دەبێتە ١ ئێکس (1x - قەبارەی تەواو سروشتی و ئاسایی)
+                    loupeCtx.drawImage(
+                        canvas,
+                        x - cropSize / 2, y - cropSize / 2, cropSize, cropSize,
+                        0, 0, 86, 86
+                    );
+                }
+
+                // ٣. خوێندنەوەی ڕەنگ و گۆڕینی چێوەی شاشەی سەرەوە
+                try {
+                    const pixel = ctx.getImageData(x, y, 1, 1).data;
+                    tempSampledVideoHex = "#" + ((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1).toUpperCase();
+                    
+                    if (zoomWindow) zoomWindow.style.borderColor = tempSampledVideoHex;
+                    document.getElementById('vSampledColorHexText').innerText = tempSampledVideoHex;
+                } catch(err) {}
+            }
+
+            canvas.onmousedown = (e) => {
+                sampleAtPoint(e);
+                canvas.onmousemove = sampleAtPoint;
+                window.onmouseup = () => { canvas.onmousemove = null; window.onmouseup = null; };
+            };
+
+            canvas.ontouchstart = (e) => {
+                sampleAtPoint(e);
+                canvas.ontouchmove = sampleAtPoint;
+            };
+        }
+
+        // دانانی ڕەنگە هەڵبژێردراوەکە لەسەر دەقەکە
+        function confirmVideoCanvasColor() {
+            setCustomPaletteColor(tempSampledVideoHex, null);
+            document.getElementById('video-color-picker-modal').style.display = 'none';
+            showToast("ڕەنگەکە بە سەرکەوتوویی لە ڤیدیۆ وەرگیرا!", "success");
         }
 
         function openSubStyleModal(index) {
@@ -4288,7 +4521,7 @@ async function pasteFromClipboard() {
             clearTimeout(playerControlsTimer);
         }
 
-        // بزوێنەری نیشاندانی ژێرنووسی فرە-دێڕ لەسەر ڤیدیۆ بە هەموو شوێنەکان
+// بزوێنەری نیشاندانی ژێرنووسی فرە-دێڕ لەگەڵ دەرکەوتنی تەواوی Bold و Italic لەسەر شاشە
         function setupVideoSync() {
             const video = document.getElementById('preview-video');
             const overlay = document.getElementById('video-subtitle-overlay');
@@ -4323,16 +4556,24 @@ async function pasteFromClipboard() {
                     let mAlign = str.match(/\\an(\d)/);
                     if (mAlign) align = mAlign[1];
 
-                    // خوێندنەوە و نیشاندانی ڕەنگە جیاوازەکان بۆ هەر بەشێک لەسەر ڤیدیۆ
                     let formatted = str;
                     
-                    // گۆڕینی کۆدی ASS وەک {\c&H00FFFF&} بۆ ڕەنگی ڕاستەقینە لەسەر شاشە
+                    // ١. گۆڕینی کۆدی ڕەنگ
                     formatted = formatted.replace(/\{\\c&H([0-9a-fA-F]{6})&\}(.*?)(?=\{\\c|$)/g, (match, bgr, content) => {
                         let hex = `#${bgr.substring(4,6)}${bgr.substring(2,4)}${bgr.substring(0,2)}`;
                         return `<span style="color: ${hex};">${content}</span>`;
                     });
 
-                    // پاککردنەوەی تاگەکانی تر و هێشتنەوەی دێڕەکان
+                    // ٢. گۆڕینی تاگی Bold (\b1) بۆ دەرکەوتنی لەسەر شاشە
+                    formatted = formatted.replace(/\{\\b1\}/g, '<b>').replace(/\{\\b0\}/g, '</b>');
+                    
+                    // ٣. گۆڕینی تاگی Italic (\i1) بۆ دەرکەوتنی لەسەر شاشە
+                    formatted = formatted.replace(/\{\\i1\}/g, '<i>').replace(/\{\\i0\}/g, '</i>');
+
+                    // ٤. گۆڕینی تاگی Underline (\u1)
+                    formatted = formatted.replace(/\{\\u1\}/g, '<u>').replace(/\{\\u0\}/g, '</u>');
+
+                    // ٥. پاککردنەوەی تاگەکانی تر
                     formatted = formatted.replace(/\{[^}]+\}/g, '')
                                          .replace(/\\N/g, '<br>')
                                          .replace(/\n/g, '<br>');
@@ -4364,39 +4605,82 @@ async function pasteFromClipboard() {
             };
         }
 
-        // کارپێکردنی سەهمی دەستەڕاست بۆ جووڵاندنی پەڕەکە بە پەنجە
-        window.addEventListener('load', () => {
+        // کۆنتڕۆڵی نەرم و وردی سەهمەکە بەپێی پەنجە لەناو چوارچێوەی دێڕەکان
+        function setupFastScrubber() {
+            const container = document.getElementById('subtitles-container');
             const track = document.getElementById('fast-scrub-track');
             const thumb = document.getElementById('fast-scrub-thumb');
-            if (!track || !thumb) return;
+            if (!container || !track || !thumb) return;
 
             function updateThumb() {
-                if (!isEditing) { track.style.display = 'none'; return; }
+                const scrollRange = container.scrollHeight - container.clientHeight;
+                if (scrollRange <= 0) {
+                    track.style.display = 'none';
+                    return;
+                }
                 track.style.display = 'flex';
-                const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-                if (totalHeight <= 0) return;
-                const progress = window.scrollY / totalHeight;
+                const progress = container.scrollTop / scrollRange;
                 const trackHeight = track.clientHeight - thumb.clientHeight;
                 thumb.style.transform = `translateY(${progress * trackHeight}px)`;
+
+                // دوگمەی سەرکەوتن بۆ سەرەوە
+                const topBtn = document.getElementById('scroll-to-top-btn');
+                if (topBtn) {
+                    if (container.scrollTop > 150) topBtn.classList.add('visible');
+                    else topBtn.classList.remove('visible');
+                }
             }
 
-            window.addEventListener('scroll', updateThumb, { passive: true });
+            container.addEventListener('scroll', updateThumb, { passive: true });
 
             function handleScrub(e) {
                 e.preventDefault();
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
                 const rect = track.getBoundingClientRect();
-                let pos = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
-                const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-                window.scrollTo({ top: pos * totalHeight, behavior: 'auto' });
+                let pos = (clientY - rect.top) / rect.height;
+                pos = Math.max(0, Math.min(1, pos));
+                const scrollRange = container.scrollHeight - container.clientHeight;
+                container.scrollTop = pos * scrollRange;
+                updateThumb();
             }
 
+            let isDragging = false;
+
             track.addEventListener('touchstart', (e) => {
+                isDragging = true;
                 handleScrub(e);
-                window.addEventListener('touchmove', handleScrub, { passive: false });
-                window.addEventListener('touchend', () => window.removeEventListener('touchmove', handleScrub), { once: true });
+                const onMove = (ev) => { if (isDragging) handleScrub(ev); };
+                const onEnd = () => {
+                    isDragging = false;
+                    window.removeEventListener('touchmove', onMove);
+                    window.removeEventListener('touchend', onEnd);
+                };
+                window.addEventListener('touchmove', onMove, { passive: false });
+                window.addEventListener('touchend', onEnd, { once: true });
             }, { passive: false });
-        });
+
+            track.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                handleScrub(e);
+                const onMove = (ev) => { if (isDragging) handleScrub(ev); };
+                const onEnd = () => {
+                    isDragging = false;
+                    window.removeEventListener('mousemove', onMove);
+                    window.removeEventListener('mouseup', onEnd);
+                };
+                window.addEventListener('mousemove', onMove);
+                window.addEventListener('mouseup', onEnd, { once: true });
+            });
+        }
+
+        function scrollToTop() {
+            const container = document.getElementById('subtitles-container');
+            if (container) {
+                container.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        window.addEventListener('load', setupFastScrubber);
     </script>
 </body>
 </html>
