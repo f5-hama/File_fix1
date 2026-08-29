@@ -4418,6 +4418,64 @@ async function pasteFromClipboard() {
                 window.addEventListener('mouseup', onEnd, { once: true });
             });
         }
+        function downloadEditedFile() {
+    if (!isEditing || originalData.length === 0) {
+        showToast("هیچ فایلێک نییە بۆ داگرتن!", "warning");
+        return;
+    }
+
+    const textareas = document.querySelectorAll('.subtitle-kurd textarea');
+    let finalContent = "";
+    const targetFormat = isAssFormat ? 'ass' : (isVttFormat ? 'vtt' : 'srt');
+
+    if (targetFormat === 'srt') {
+        originalData.forEach((item, idx) => {
+            let userText = textareas[idx] ? textareas[idx].value.trim() : "";
+            let lines = userText !== "" ? userText : (item.rawText || item.text);
+            finalContent += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${lines}\n\n`;
+        });
+    } else if (targetFormat === 'vtt') {
+        finalContent = "WEBVTT\n\n";
+        originalData.forEach((item, idx) => {
+            let userText = textareas[idx] ? textareas[idx].value.trim() : "";
+            let lines = userText !== "" ? userText : (item.rawText || item.text);
+            finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${lines}\n\n`;
+        });
+    } else if (targetFormat === 'ass') {
+        let header = assHeaderLines.length > 0 
+            ? assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n' 
+            : "[Script Info]\nTitle: Edited Subtitle\nScriptType: v4.00+\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,1,0,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n";
+        
+        finalContent = header;
+        originalData.forEach((item, idx) => {
+            let userText = textareas[idx] ? textareas[idx].value.trim() : "";
+            let lines = userText !== "" ? userText : (item.rawText || item.text);
+            
+            // گۆڕینی ئینتەر بۆ تاگی \N تایبەت بە ASS
+            lines = lines.replace(/\n/g, '\\N');
+
+            let dStyle = (item.assMeta && item.assMeta.style) ? item.assMeta.style : 'Default';
+            let dLayer = (item.assMeta && item.assMeta.layer) ? item.assMeta.layer : '0';
+            let dName = (item.assMeta && item.assMeta.name) ? item.assMeta.name : '';
+            let dMarginL = (item.assMeta && item.assMeta.marginL) ? item.assMeta.marginL : '0';
+            let dMarginR = (item.assMeta && item.assMeta.marginR) ? item.assMeta.marginR : '0';
+            let dMarginV = (item.assMeta && item.assMeta.marginV) ? item.assMeta.marginV : '0';
+            let dEffect = (item.assMeta && item.assMeta.effect) ? item.assMeta.effect : '';
+            
+            finalContent += `Dialogue: ${dLayer},${formatTimeASS(item.startSec)},${formatTimeASS(item.endSec)},${dStyle},${dName},${dMarginL},${dMarginR},${dMarginV},${dEffect},${lines}\n`;
+        });
+    }
+
+    let newFileName = currentFileName.replace(/\.[^/.]+$/, "") + "_Edited." + targetFormat;
+    triggerDownload(finalContent.trim() + '\n\n', newFileName);
+    
+    if (i18n[currentLang] && i18n[currentLang]['msgDone']) {
+        showToast(i18n[currentLang]['msgDone'], "success");
+    } else {
+        showToast("فایلەکە بە سەرکەوتوویی سەیڤ کرا!", "success");
+    }
+}
+
 
         window.addEventListener('load', setupFastScrubber);
     </script>
