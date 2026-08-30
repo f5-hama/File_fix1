@@ -1929,18 +1929,36 @@
         </div>
     </div>
    
-<!-- پەنجەرەی ٤٠ خانەی شوێنی شاشە لەسەر ڤیدیۆ -->
+<!-- پەنجەرەی دیاریکردنی شوێن بە مەگنەتیک و هێڵی ڕێنمایی ناوەڕاست -->
 <div id="grid40-modal" class="custom-modal-overlay">
-    <div class="custom-modal-content" style="max-width: 460px; padding: 14px;">
-        <h3 style="color:var(--primary); margin:0 0 8px 0; font-size:14px;">خانەی شوێنی دێڕ هەڵبژێرە (1 تا 40):</h3>
+    <div class="custom-modal-content" style="max-width: 440px; padding: 14px;">
+        <h3 style="color:var(--primary); margin:0 0 8px 0; font-size:14px;">شوێنی دەقەکە بە دەست لەسەر شاشە ڕابکێشە:</h3>
         
-        <!-- وێنەی ڤیدیۆ لە ژێرەوە و ٤٠ خانە شەفافەکە لەسەری -->
-        <div style="position: relative; width: 100%; max-height: 240px; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border-color); display: flex; align-items: center; justify-content: center;">
-            <canvas id="grid40Canvas" style="width: 100%; max-height: 240px; display: block; object-fit: contain;"></canvas>
-            <div id="grid40Container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(5, 1fr); direction: ltr;"></div>
+        <!-- بەشی قەبارە و نیشاندانی شوێن -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(142, 182, 155, 0.08); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;">
+                <span>قەبارەی فۆنت:</span>
+                <input type="number" id="vDragFontSizeInput" value="22" min="1" max="500" class="tech-input" style="width: 55px;" oninput="updateLiveDragFontSize(this.value)">
+            </div>
+            <div id="vDragCoordDisplay" style="font-size: 11px; font-weight: bold; color: var(--primary); direction: ltr;">X: 0, Y: 0</div>
+        </div>
+
+        <!-- شاشەی ڤیدیۆ بە هێڵی مەگنەتیکی ناوەڕاست -->
+        <div id="vDragScreenBox" style="position: relative; width: 100%; max-height: 230px; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border-color); display: flex; align-items: center; justify-content: center; touch-action: none; user-select: none;">
+            <canvas id="grid40Canvas" style="width: 100%; max-height: 230px; display: block; object-fit: contain; pointer-events: none;"></canvas>
+            
+            <!-- هێڵی مەگنەتیکی ستوونی ناوەڕاست -->
+            <div id="vSnapGuideV" style="display: none; position: absolute; top: 0; bottom: 0; left: 50%; width: 1.5px; background: var(--primary); box-shadow: 0 0 8px var(--primary); z-index: 15; pointer-events: none;"></div>
+            
+            <!-- هێڵی مەگنەتیکی ئاسۆیی ناوەڕاست -->
+            <div id="vSnapGuideH" style="display: none; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: var(--primary); box-shadow: 0 0 8px var(--primary); z-index: 15; pointer-events: none;"></div>
+
+            <!-- دەقی ڕاکێشراو -->
+            <div id="vDraggableSubText" style="position: absolute; color: #FFFFFF; font-family: 'Speda Bold', 'KurdForest', Tahoma, sans-serif; font-weight: bold; white-space: nowrap !important; width: max-content !important; max-width: 95% !important; word-break: keep-all !important; direction: rtl; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 4px rgba(0,0,0,0.8); cursor: grab; padding: 2px 6px; border: 1.5px dashed var(--primary); border-radius: 4px; background: rgba(0,0,0,0.35); transform: translate(-50%, -50%); z-index: 25;">دەق</div>
         </div>
 
         <div class="custom-modal-actions" style="margin-top:10px;">
+            <button class="btn" onclick="confirmDraggablePosition()">دانان و جێبەجێکردن</button>
             <button class="btn btn-outline" onclick="document.getElementById('grid40-modal').style.display='none'">داخستن</button>
         </div>
     </div>
@@ -4248,73 +4266,250 @@ function insertSymbolToText(sym) {
 }
 
 // ٤٠ خانەکە بە مەودای زۆر سەلامەت بۆ ناوەوەی شاشە
+let currentDragAssX = 960;
+let currentDragAssY = 950;
+let currentDragResX = 1920;
+let currentDragResY = 1080;
+
+// دەرهێنانی ١٠٠٪ ڕاستی ڕێزۆلوشنی فایلی ژێرنووسەکە
+function getActiveScriptResolution() {
+    let resX = 0, resY = 0;
+    
+    // ١. لە سەردێڕی فایلی ژێرنووس دەگەڕێت
+    if (typeof assHeaderLines !== 'undefined' && assHeaderLines.length > 0) {
+        let text = assHeaderLines.join('\n');
+        let yM = text.match(/PlayResY:\s*(\d+)/i);
+        let xM = text.match(/PlayResX:\s*(\d+)/i);
+        if (yM) resY = parseInt(yM[1], 10);
+        if (xM) resX = parseInt(xM[1], 10);
+    }
+
+    // ٢. ئەگەر لە ژێرنووس نەبوو، لە ڕێزۆلوشنی خودی ڤیدیۆکە وەری دەگرێت
+    const video = document.getElementById('preview-video');
+    if ((!resX || !resY) && video && video.videoWidth && video.videoHeight) {
+        resX = video.videoWidth;
+        resY = video.videoHeight;
+    }
+
+    // ٣. دۆخی بنەڕەتی
+    if (!resY && !resX) { resX = 1920; resY = 1080; }
+    else if (!resX && resY) { resX = Math.round(resY * (16 / 9)); }
+    else if (!resY && resX) { resY = Math.round(resX * (9 / 16)); }
+    
+    return { resX, resY };
+}
+
+// دۆزینەوەی قەبارەی ڕاستەقینەی فایلی ئەسڵی بۆ هەر دێڕێک
+function getSubtitleLineFontSize(index, rawText) {
+    // ١. ئەگەر لەناو خودی دێڕەکە تاگی \fs هەبوو
+    let fsM = rawText ? rawText.match(/\\fs(\d+(?:\.\d+)?)/) : null;
+    if (fsM) return Math.round(parseFloat(fsM[1]));
+
+    // ٢. ئەگەر لە ستایلی فایلی ئەسڵی دیاری کرابوو
+    if (typeof originalData !== 'undefined' && originalData[index] && originalData[index].assMeta) {
+        let styleName = (originalData[index].assMeta.style || '').trim().toLowerCase();
+        if (typeof assHeaderLines !== 'undefined') {
+            for (let line of assHeaderLines) {
+                let tr = line.trim();
+                if (tr.startsWith('Style:')) {
+                    let parts = tr.split(',');
+                    let sName = parts[0].replace('Style:', '').trim().toLowerCase();
+                    if (sName === styleName && parts.length >= 3) {
+                        let styleFs = parseInt(parts[2].trim(), 10);
+                        if (styleFs > 0) return styleFs;
+                    }
+                }
+            }
+        }
+    }
+
+    // ٣. ئەگەر نەدۆزرایەوە بەپێی ڕێزۆلوشن قەبارەی ئەسڵی دیاری دەکات
+    const res = getActiveScriptResolution();
+    return res.resY <= 400 ? 22 : (res.resY <= 720 ? 45 : 67);
+}
+
 function openGrid40Modal() {
     const video = document.getElementById('preview-video');
     const canvas = document.getElementById('grid40Canvas');
-    const cont = document.getElementById('grid40Container');
-    
+    const dragBox = document.getElementById('vDragScreenBox');
+    const dragText = document.getElementById('vDraggableSubText');
+    const modalTa = document.getElementById('modalSubtitleLiveText');
+    const fsInput = document.getElementById('vDragFontSizeInput');
+
+    const res = getActiveScriptResolution();
+    currentDragResX = res.resX;
+    currentDragResY = res.resY;
+
+    // وێنەی ڤیدیۆ
     if (canvas && video && video.videoWidth) {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     } else if (canvas) {
-        canvas.width = 1920;
-        canvas.height = 1080;
+        canvas.width = currentDragResX;
+        canvas.height = currentDragResY;
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#0f1318';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    if (!cont) return;
-    cont.innerHTML = '';
-    const cols = 8, rows = 5;
-    
-    const minX = 180, maxX = 1740;
-    const minY = 100, maxY = 980;
-    const stepX = (maxX - minX) / (cols - 1);
-    const stepY = (maxY - minY) / (rows - 1);
-    
-    let count = 1;
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            let posX = Math.round(minX + (c * stepX));
-            let posY = Math.round(minY + (r * stepY));
-            let num = count++;
-            cont.innerHTML += `
-                <button type="button" onclick="applyPosToSub(${posX}, ${posY})" style="background: rgba(0,0,0,0.4); border: 1px dashed rgba(255,255,255,0.3); color: #ffffff; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; text-shadow: 0 0 3px #000; transition: background 0.15s;" onmouseover="this.style.background='var(--primary-glow)'" onmouseout="this.style.background='rgba(0,0,0,0.4)'">
-                    ${num}
-                </button>`;
-        }
+    let rawText = modalTa ? modalTa.value : 'دەقی ژێرنووس';
+    let cleanText = rawText.replace(/\{[^}]+\}/g, '').replace(/[♪\|]/g, '').trim();
+    cleanText = cleanText.replace(/\\N/g, '<br>').replace(/\n/g, '<br>');
+    dragText.innerHTML = cleanText || 'دەقی ژێرنووس';
+
+    // وەرگرتنی ڕاستەوخۆی قەبارەی فایلی ئەسڵی خۆی بۆ ئەم دێڕە
+    let curFs = getSubtitleLineFontSize(currentStylingIndex, rawText);
+    if (fsInput) fsInput.value = curFs;
+
+    // شوێنی دێڕ
+    let posM = rawText.match(/\\pos\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)/);
+    if (posM) {
+        currentDragAssX = parseInt(posM[1], 10);
+        currentDragAssY = parseInt(posM[2], 10);
+    } else {
+        currentDragAssX = Math.round(currentDragResX / 2);
+        currentDragAssY = Math.round(currentDragResY * 0.88);
     }
-    const gridModal = document.getElementById('grid40-modal');
-    if (gridModal) gridModal.style.display = 'flex';
+
+    document.getElementById('grid40-modal').style.display = 'flex';
+
+    setTimeout(() => {
+        updateLiveDragFontSize(curFs);
+        setDragElementPosition(currentDragAssX, currentDragAssY);
+        setupDragTouchEngine(dragBox, dragText);
+    }, 50);
 }
 
-function applyPosToSub(x, y) {
+// گۆڕینی قەبارە بەبێ هیچ سنووردارکردنێک (لە ١ تا ٥٠٠)
+function updateLiveDragFontSize(val) {
+    const dragText = document.getElementById('vDraggableSubText');
+    const canvas = document.getElementById('grid40Canvas');
+    if (!dragText || !canvas) return;
+
+    let fs = parseFloat(val);
+    if (isNaN(fs) || fs <= 0) return;
+
+    let scaleRatio = canvas.clientHeight / currentDragResY;
+    let cssFs = (fs * scaleRatio).toFixed(2);
+    dragText.style.fontSize = cssFs + 'px';
+}
+
+function setDragElementPosition(assX, assY) {
+    const dragText = document.getElementById('vDraggableSubText');
+    const display = document.getElementById('vDragCoordDisplay');
+    if (!dragText) return;
+
+    let leftPct = (assX / currentDragResX) * 100;
+    let topPct = (assY / currentDragResY) * 100;
+
+    dragText.style.left = leftPct + '%';
+    dragText.style.top = topPct + '%';
+
+    if (display) display.innerText = `X: ${assX}, Y: ${assY} [${currentDragResX}×${currentDragResY}]`;
+}
+
+function setupDragTouchEngine(box, textEl) {
+    const guideV = document.getElementById('vSnapGuideV');
+    const guideH = document.getElementById('vSnapGuideH');
+
+    function handleMove(e) {
+        e.preventDefault();
+        const rect = box.getBoundingClientRect();
+        const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
+        const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
+
+        let relX = clientX - rect.left;
+        let relY = clientY - rect.top;
+
+        let halfW = textEl.offsetWidth / 2;
+        let halfH = textEl.offsetHeight / 2;
+
+        let clampedX = Math.max(halfW, Math.min(rect.width - halfW, relX));
+        let clampedY = Math.max(halfH, Math.min(rect.height - halfH, relY));
+
+        const snapThreshold = 12;
+        const midX = rect.width / 2;
+        const midY = rect.height / 2;
+
+        if (Math.abs(clampedX - midX) < snapThreshold) {
+            clampedX = midX;
+            if (guideV) guideV.style.display = 'block';
+        } else {
+            if (guideV) guideV.style.display = 'none';
+        }
+
+        if (Math.abs(clampedY - midY) < snapThreshold) {
+            clampedY = midY;
+            if (guideH) guideH.style.display = 'block';
+        } else {
+            if (guideH) guideH.style.display = 'none';
+        }
+
+        currentDragAssX = Math.round((clampedX / rect.width) * currentDragResX);
+        currentDragAssY = Math.round((clampedY / rect.height) * currentDragResY);
+
+        setDragElementPosition(currentDragAssX, currentDragAssY);
+    }
+
+    function handleEnd() {
+        if (guideV) guideV.style.display = 'none';
+        if (guideH) guideH.style.display = 'none';
+        box.onmousemove = null;
+        window.onmouseup = null;
+    }
+
+    box.onmousedown = (e) => {
+        handleMove(e);
+        box.onmousemove = handleMove;
+        window.onmouseup = handleEnd;
+    };
+
+    box.ontouchstart = (e) => {
+        handleMove(e);
+        box.ontouchmove = handleMove;
+    };
+
+    box.ontouchend = handleEnd;
+    box.ontouchcancel = handleEnd;
+}
+
+function confirmDraggablePosition() {
     const modalTa = document.getElementById('modalSubtitleLiveText');
-    let newText = '';
-    
+    const fsInput = document.getElementById('vDragFontSizeInput');
+    const techFsInput = document.getElementById('techFontSizeVal');
+
+    let chosenFs = fsInput ? parseInt(fsInput.value, 10) : 0;
+    if (techFsInput && chosenFs) techFsInput.value = chosenFs;
+
     if (modalTa) {
-        let val = modalTa.value.replace(/\{\\pos\([^)]+\)\}/g, '').replace(/\{\\an\d\}/g, '');
-        newText = `{\\pos(${x},${y})}` + val;
-        modalTa.value = newText;
+        let val = modalTa.value;
+        val = val.replace(/\{\\pos\([^)]+\)\}/g, '').replace(/\{\\an\d\}/g, '');
+        
+        if (chosenFs) {
+            val = val.replace(/\\fs\d+/g, '');
+            val = `{\\pos(${currentDragAssX},${currentDragAssY})\\fs${chosenFs}}` + val;
+        } else {
+            val = `{\\pos(${currentDragAssX},${currentDragAssY})}` + val;
+        }
+        val = val.replace(/\{\}/g, '');
+        modalTa.value = val;
     }
 
     if (currentStylingIndex !== -1) {
         const card = document.querySelector(`.subtitle-card[data-index="${currentStylingIndex}"]`);
         if (card) {
             const ta = card.querySelector('textarea');
-            if (ta && newText) {
-                ta.value = newText;
+            if (ta && modalTa) {
+                ta.value = modalTa.value;
                 saveSession();
             }
         }
     }
 
-    const gridModal = document.getElementById('grid40-modal');
-    if (gridModal) gridModal.style.display = 'none';
-    showToast(`شوێنی دێڕ گۆڕدرا بۆ خانەی X:${x} , Y:${y}`, "success");
+    document.getElementById('grid40-modal').style.display = 'none';
+    showToast(`شوێن و قەبارە دانرا: X:${currentDragAssX}, Y:${currentDragAssY}`, "success");
 }
 
 // هەڵگرتنی ڕەنگ لەسەر ڤیدیۆ
