@@ -267,8 +267,7 @@
             animation: slideUpFade 0.35s ease-out; 
             position: relative; 
         }
-        #login-screen { display: flex; } 
-        #setup-screen { display: none; }
+        #setup-screen { display: flex; }
         
         .input-field { 
             width: 100%; 
@@ -1161,71 +1160,9 @@
 </head>
 <body class="startup-bg">
 
-    <!-- ١. شاشەی چوونەژوورەوە لەگەڵ هەژمار و شریتی ئاسۆیی ڕەنگەکان -->
-    <div id="login-screen" class="glass-card">
-
-        <h2 style="text-align: center; margin: 4px 0; font-size: 19px; color: var(--text-main);">
-            <span data-i18n="loginTitle">چوونەژوورەوەی وەرگێڕ</span>
-        </h2>
-        <p style="text-align:center; font-size:13px; color:var(--text-muted); margin: 0; line-height: 1.5;" data-i18n="appDesc">ئەم ماڵپەڕە تایبەتە بە وەرگێڕان و دەستکاریکردنی ژێرنووسی ڤیدیۆ.</p>
-        
-        <button class="btn" style="margin-top: 6px;" onclick="performLogin()"><span data-i18n="loginBtn">چوونەژوورەوە</span></button>
-
-        <div class="site-features-box">
-            <div class="site-features-title">
-                <svg style="width:17px;height:17px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
-                <span data-i18n="featuresHead">تایبەتمەندییەکانی ماڵپەڕ</span>
-            </div>
-            <ul>
-                <li>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span data-i18n="feat1">پشتیوانی تەواوی فۆرماتەکانی SRT، ASS و VTT بەبێ تێکچوونی کات.</span>
-                </li>
-                <li>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    <span data-i18n="feat2">پێشبینینی ڕاستەوخۆی ژێرنووس لەسەر ڤیدیۆ بە هاوکاتکردنی ورد.</span>
-                </li>
-                <li>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    <span data-i18n="feat3">گونجاندنی خێرا بۆ وەرگێڕانی زیرەکی دەستکرد (AI) و گەڕان و گۆڕین.</span>
-                </li>
-                <li>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                    <span data-i18n="feat4">گۆڕینی کات و فۆرماتی چەندین فایل پێکەوە بە کۆمەڵ (Batch).</span>
-                </li>
-                <li>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    <span data-i18n="feat5">گۆڕینی ڕاستەوخۆی وێنە بۆ لینکی هەمیشەیی بەبێ بەسەرچوون.</span>
-                </li>
-                <li>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-                    <span data-i18n="feat6">چاککردنی ئاڕاستەی RTL و هێماکان بەبێ دەستکاری هیچ شتێکی تر.</span>
-                </li>
-                <li>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                    <span data-i18n="feat7">گۆڕینی فایلی وێنەیی PGS (.sup) بۆ دەق بە تەکنەلۆژیای زیرەکی OCR.</span>
-                </li>
-                <li>
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                    <span data-i18n="feat8">پاککردنەوەی دەنگە زیادەکانی وەک [music] و (screaming) لە ژێرنووس.</span>
-                </li>
-            </ul>
-        </div>
-
-        <!-- شریتی ئاسۆیی ٦ ڕەنگە تایبەتەکە لە خوارەوە -->
-        <div class="theme-horizontal-bar">
-            <div class="theme-mini-box" id="theme-mini-forest" onclick="applyCustomTheme('forest')" title="دارستان" style="background: linear-gradient(135deg, #a8d5b8, #7ca188);"></div>
-            <div class="theme-mini-box" id="theme-mini-ocean" onclick="applyCustomTheme('ocean')" title="زەریایی" style="background: linear-gradient(135deg, #38bdf8, #0284c7);"></div>
-            <div class="theme-mini-box" id="theme-mini-purple" onclick="applyCustomTheme('purple')" title="مۆری شاهانە" style="background: linear-gradient(135deg, #c084fc, #9333ea);"></div>
-            <div class="theme-mini-box" id="theme-mini-rose" onclick="applyCustomTheme('rose')" title="گوڵەباخی" style="background: linear-gradient(135deg, #fb7185, #e11d48);"></div>
-            <div class="theme-mini-box" id="theme-mini-amber" onclick="applyCustomTheme('amber')" title="زێڕین" style="background: linear-gradient(135deg, #fbbf24, #d97706);"></div>
-            <div class="theme-mini-box" id="theme-mini-emerald" onclick="applyCustomTheme('emerald')" title="زمڕوت" style="background: linear-gradient(135deg, #34d399, #059669);"></div>
-        </div>
-    </div>
-
-    <!-- ٢. شاشەی دەستپێک و سێتەپ -->
+    <!-- شاشەی دەستپێک و سێتەپ بە تەواوی لە ناوەڕاست -->
     <div id="setup-screen" class="glass-card">
-        <div class="setup-header" style="display: flex; align-items: center; justify-content: space-between; position: relative; width: 100%;">
+        <div class="setup-header">
             <div style="position: relative;">
                 <button class="top-btn" onclick="toggleSetupMenu(event)">
                     <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -1246,9 +1183,9 @@
                         <span>گۆڕینی PGS (.sup)</span>
                     </button>
                     <button class="menu-btn-item" onclick="openMergeModal(); toggleSetupMenu();">
-    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 00-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
-    <span>تێکەڵکردنی دوو فایل</span>
-</button>
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 00-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                        <span>تێکەڵکردنی دوو فایل</span>
+                    </button>
                     <button class="menu-btn-item" onclick="openSdhModal(); toggleSetupMenu();">
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                         <span>پاککردنەوەی دەنگەکان (SDH)</span>
@@ -1268,11 +1205,6 @@
                     <button id="install-app-btn" class="menu-btn-item" onclick="installApp(); toggleSetupMenu();">
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         <span>دابەزاندنی ئەپ</span>
-                    </button>
-                    <div style="height:1px; background:var(--border-color); margin:4px 0;"></div>
-                    <button class="menu-btn-item" style="color: #ef4444;" onclick="logout()">
-                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                        <span>چوونەدەرەوە</span>
                     </button>
                 </div>
             </div>
@@ -1302,6 +1234,16 @@
         </button>
 
         <div style="text-align: center; margin-top: 4px; font-size: 12px; color: var(--text-muted);">گەشەپێدەر: <strong>محمد عبدالقادر</strong></div>
+
+        <!-- شریتی ٦ ڕەنگەکە ڕێک لەناو خودی کارتەکە لە خوارەوە -->
+        <div class="theme-horizontal-bar" style="margin-top: 8px;">
+            <div class="theme-mini-box" id="theme-mini-forest" onclick="applyCustomTheme('forest')" title="دارستان" style="background: linear-gradient(135deg, #a8d5b8, #7ca188);"></div>
+            <div class="theme-mini-box" id="theme-mini-ocean" onclick="applyCustomTheme('ocean')" title="زەریایی" style="background: linear-gradient(135deg, #38bdf8, #0284c7);"></div>
+            <div class="theme-mini-box" id="theme-mini-purple" onclick="applyCustomTheme('purple')" title="مۆری شاهانە" style="background: linear-gradient(135deg, #c084fc, #9333ea);"></div>
+            <div class="theme-mini-box" id="theme-mini-rose" onclick="applyCustomTheme('rose')" title="گوڵەباخی" style="background: linear-gradient(135deg, #fb7185, #e11d48);"></div>
+            <div class="theme-mini-box" id="theme-mini-amber" onclick="applyCustomTheme('amber')" title="زێڕین" style="background: linear-gradient(135deg, #fbbf24, #d97706);"></div>
+            <div class="theme-mini-box" id="theme-mini-emerald" onclick="applyCustomTheme('emerald')" title="زمڕوت" style="background: linear-gradient(135deg, #34d399, #059669);"></div>
+        </div>
     </div>
     
     <!-- مۆداڵی گۆڕینی وێنە بۆ لینک بە هەموو زمانەکان -->
@@ -1394,50 +1336,6 @@
             <div class="custom-modal-actions">
                 <button class="btn" onclick="document.getElementById('back-confirm-modal').style.display='none'" data-i18n="cancelBtn">پاشگەزبوونەوە</button>
                 <button class="btn btn-outline" onclick="executeGoBack()" style="color: var(--text-muted); border-color: var(--text-muted);" data-i18n="yesLeave">بەڵێ، دەرچوون</button>
-            </div>
-        </div>
-    </div>
-    
-     <!-- مۆداڵی ڕەنگەکان: بە دەستلێدان لە هەر ڕەنگێک خۆی ڕاستەوخۆ دەگۆڕێت و دادەخرێت -->
-    <div id="theme-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 380px;">
-            <h3 class="custom-modal-title" data-i18n="themeTitle" style="color: var(--primary); margin: 0 0 10px 0;">هەڵبژاردنی ڕەنگی ڕووکار</h3>
-            
-            <div class="theme-grid">
-                <!-- ١. دارستان -->
-                <div class="theme-card" onclick="applyCustomTheme('forest')">
-                    <div class="theme-box-shape" style="background: linear-gradient(135deg, #a8d5b8, #7ca188);"></div>
-                    <span class="theme-name" data-i18n="themeForest">دارستان</span>
-                </div>
-                <!-- ٢. شینی زەریایی -->
-                <div class="theme-card" onclick="applyCustomTheme('ocean')">
-                    <div class="theme-box-shape" style="background: linear-gradient(135deg, #38bdf8, #0284c7);"></div>
-                    <span class="theme-name" data-i18n="themeOcean">زەریایی</span>
-                </div>
-                <!-- ٣. مۆری شاهانە -->
-                <div class="theme-card" onclick="applyCustomTheme('purple')">
-                    <div class="theme-box-shape" style="background: linear-gradient(135deg, #c084fc, #9333ea);"></div>
-                    <span class="theme-name" data-i18n="themePurple">مۆری شاهانە</span>
-                </div>
-                <!-- ٤. گوڵەباخی -->
-                <div class="theme-card" onclick="applyCustomTheme('rose')">
-                    <div class="theme-box-shape" style="background: linear-gradient(135deg, #fb7185, #e11d48);"></div>
-                    <span class="theme-name" data-i18n="themeRose">گوڵەباخی</span>
-                </div>
-                <!-- ٥. زێڕین -->
-                <div class="theme-card" onclick="applyCustomTheme('amber')">
-                    <div class="theme-box-shape" style="background: linear-gradient(135deg, #fbbf24, #d97706);"></div>
-                    <span class="theme-name" data-i18n="themeAmber">زێڕین</span>
-                </div>
-                <!-- ٦. زمڕوتی نێئۆن -->
-                <div class="theme-card" onclick="applyCustomTheme('emerald')">
-                    <div class="theme-box-shape" style="background: linear-gradient(135deg, #34d399, #059669);"></div>
-                    <span class="theme-name" data-i18n="themeEmerald">زمڕوت</span>
-                </div>
-            </div>
-
-            <div class="custom-modal-actions">
-                <button class="btn btn-outline" style="width: 100%;" onclick="document.getElementById('theme-modal').style.display='none'" data-i18n="closeBtn">داخستن</button>
             </div>
         </div>
     </div>
@@ -2357,42 +2255,20 @@ function clearAllHistory() {
     openHistoryModal();
 }
 
-// پەڕەی سەرەکی
-function checkLogin() {
-    const loginScreen = document.getElementById('login-screen');
+// دەستپێکردنی ڕاستەوخۆی ماڵپەڕ
+function initApp() {
     const setupScreen = document.getElementById('setup-screen');
-    const isLogged = localStorage.getItem('kf_user') === 'true';
+    if (setupScreen) setupScreen.style.display = 'flex';
 
-    if (isLogged) {
-        if (loginScreen) loginScreen.style.display = 'none';
-        if (setupScreen) setupScreen.style.display = 'flex';
-
-        if (localStorage.getItem('kf_autosave_session')) {
-            const resumeModal = document.getElementById('resume-modal');
-            if (resumeModal) resumeModal.style.display = 'flex';
-        }
-    } else {
-        if (loginScreen) loginScreen.style.display = 'flex';
-        if (setupScreen) setupScreen.style.display = 'none';
+    if (localStorage.getItem('kf_autosave_session')) {
+        const resumeModal = document.getElementById('resume-modal');
+        if (resumeModal) resumeModal.style.display = 'flex';
     }
 
     document.body.classList.add('dark-theme');
     document.documentElement.classList.add('dark-theme');
 }
 
-function performLogin() {
-    localStorage.setItem('kf_user', 'true');
-    checkLogin();
-}
-
-function logout() {
-    localStorage.removeItem('kf_user');
-    const menu = document.getElementById('setupMenuDropdown');
-    if (menu) menu.classList.remove('show');
-    checkLogin();
-}
-
-// ٦ ڕەنگە سەرەکییەکەی ماڵپەڕ
 const appThemePalettes = {
     forest: { primary: '#8EB69B', hover: '#7ca188', glow: 'rgba(142, 182, 155, 0.35)' },
     ocean: { primary: '#38bdf8', hover: '#0284c7', glow: 'rgba(56, 189, 248, 0.35)' },
@@ -2402,7 +2278,6 @@ const appThemePalettes = {
     emerald: { primary: '#34d399', hover: '#059669', glow: 'rgba(52, 211, 153, 0.35)' }
 };
 
-// گۆڕینی ڕەنگ و پاشەکەوتکردنی ڕاستەوخۆ لەناو میمۆری وێبگەڕ
 function applyCustomTheme(themeKey) {
     const pal = appThemePalettes[themeKey] || appThemePalettes.forest;
     
@@ -2438,22 +2313,17 @@ function applyCustomTheme(themeKey) {
     `;
 
     localStorage.setItem('kf_selected_theme', themeKey);
-
     document.querySelectorAll('.theme-mini-box').forEach(b => b.classList.remove('active'));
     const activeBox = document.getElementById('theme-mini-' + themeKey);
     if (activeBox) activeBox.classList.add('active');
 }
 
-// بارکردنی خۆکارانەی هەموو شتێک لە کاتی کردنەوەی ماڵپەڕ
 window.onload = () => { 
-    checkLogin(); 
+    initApp(); 
     applyCustomTheme(localStorage.getItem('kf_selected_theme') || 'forest');
-    
     const savedKey = localStorage.getItem('user_imgbb_key');
     const keyInput = document.getElementById('imgbbApiKeyInput');
-    if (savedKey && keyInput) {
-        keyInput.value = savedKey;
-    }
+    if (savedKey && keyInput) keyInput.value = savedKey;
 };
 
         function toggleClearBtn(input, boxId) {
