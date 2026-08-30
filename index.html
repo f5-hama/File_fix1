@@ -3911,7 +3911,20 @@ function setShadowColor(hex, el) {
     }
 }
 
-// کاتێک کرتە لە "ڕەنگ نەگۆڕێت" دەکرێت: هەموو کۆدەکانی ڕەنگ (\c, \3c, \4c) دەسڕێتەوە و دەقەکە دەبێتەوە وەک ئەسڵی خۆی
+// گۆڕینی ڕەنگی پیتەکان بۆ شێوازی فەرمی BGR
+function hexToAssBgr(hex) {
+    let r = hex.substring(1, 3);
+    let g = hex.substring(3, 5);
+    let b = hex.substring(5, 7);
+    return (b + g + r).toUpperCase();
+}
+
+function bgrToHex(bgr) {
+    if (!bgr || bgr.length < 6) return '#FFFFFF';
+    return `#${bgr.substring(4,6)}${bgr.substring(2,4)}${bgr.substring(0,2)}`;
+}
+
+// ١. پالتەی خوارەوە: ڕەنگی دەقەکە دەگۆڕێت و نیشانەکان بە ڕەنگی خۆیان دەهێڵێتەوە
 function setCustomPaletteColor(hex, btnEl) {
     const valInput = document.getElementById('selectedSubColorVal');
     if (valInput) valInput.value = hex;
@@ -3919,44 +3932,52 @@ function setCustomPaletteColor(hex, btnEl) {
     const textDisplay = document.getElementById('selectedColorCodeText');
     const modalTa = document.getElementById('modalSubtitleLiveText');
 
-    document.querySelectorAll('.custom-palette-grid .palette-btn').forEach(b => b.classList.remove('active'));
-    if (btnEl && btnEl.classList.contains('palette-btn')) btnEl.classList.add('active');
+    document.querySelectorAll('#sub-style-modal .custom-palette-grid .palette-btn').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+
+    if (!modalTa) return;
 
     if (hex === 'KEEP') {
-        if (textDisplay) textDisplay.innerText = "وەک خۆی (سڕینەوەی ڕەنگەکان)";
-        if (modalTa) {
-            // پاککردنەوەی هەموو جۆرە تاگێکی ڕەنگی سەرەکی، چێوە، سێبەر و تاگی دووبارە
-            modalTa.value = modalTa.value
-                .replace(/\\c&H[0-9A-Fa-f]+&/g, '')
-                .replace(/\\3c&H[0-9A-Fa-f]+&/g, '')
-                .replace(/\\4c&H[0-9A-Fa-f]+&/g, '')
-                .replace(/\{\}/g, '')
-                .trim();
-        }
-        showToast("هەموو کۆدەکانی ڕەنگ لە دەقەکە سڕدرانەوە!", "info");
+        if (textDisplay) textDisplay.innerText = "وەک خۆی";
+        modalTa.value = modalTa.value.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '').replace(/\{\}/g, '').trim();
+        showToast("کۆدی ڕەنگەکان سڕدرانەوە!", "info");
         return;
     }
 
     if (textDisplay) textDisplay.innerText = hex;
 
-    if (modalTa) {
-        let r = hex.substring(1, 3);
-        let g = hex.substring(3, 5);
-        let b = hex.substring(5, 7);
-        let assBgr = (b + g + r).toUpperCase();
-        let colorTag = `{\\c&H${assBgr}&}`;
+    let fullVal = modalTa.value.trim();
+    let textTag = `{\\c&H${hexToAssBgr(hex)}&}`;
 
-        const start = modalTa.selectionStart;
-        const end = modalTa.selectionEnd;
-        const fullVal = modalTa.value;
+    // پشکنینی نیشانەی گۆرانی یان تابلۆ
+    let hasMusic = fullVal.includes('♪');
+    let hasSign = fullVal.includes('|');
 
-        if (start !== end) {
-            modalTa.value = fullVal.substring(0, start) + colorTag + fullVal.substring(start, end) + `{\\c&HFFFFFF&}` + fullVal.substring(end);
-        } else {
-            let clean = fullVal.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '');
-            modalTa.value = colorTag + clean;
+    if (hasMusic || hasSign) {
+        let sym = hasMusic ? '♪' : '|';
+        
+        // دەرهێنانی ڕەنگی نیشانە
+        let symColorMatch = fullVal.match(new RegExp(`\\{\\\\c&H([0-9A-Fa-f]{6})&\\}\\s*\\${sym}`));
+        let symTag = symColorMatch ? `{\\c&H${symColorMatch[1]}&}` : '';
+        if (!symTag) {
+            let curSymHex = (document.getElementById('symbolColorChoice') && document.getElementById('symbolColorChoice').value) || currentChosenSymbolColor || '#FFF200';
+            symTag = `{\\c&H${hexToAssBgr(curSymHex)}&}`;
         }
+
+        // پاککردنەوەی دەقی ناوەڕاست لە هەموو تاگێکی ڕەنگی کۆن
+        let clean = fullVal.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '')
+                           .replace(/[♪\|]/g, '')
+                           .replace(/\{\}/g, '')
+                           .trim();
+
+        modalTa.value = `${symTag}${sym}${textTag} ${clean} ${symTag}${sym}{\\c&HFFFFFF&}`;
+    } else {
+        // بۆ دێڕی ئاسایی: تاگی ڕەنگی پێشوو لادەبات و ڕەنگە نوێیەکە دادەنێت
+        let clean = fullVal.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '').replace(/\{\}/g, '').trim();
+        modalTa.value = `${textTag}${clean}`;
     }
+
+    showToast("ڕەنگی نووسینەکە گۆڕدرا!", "success");
 }
 
 function saveCurrentToMyColors() {
@@ -4074,7 +4095,6 @@ function openSubStyleModal(index) {
 }
 
 function applySubStyleToLine() {
-    // دۆزینەوەی دێڕی کارپێکراو
     if (currentStylingIndex === -1) {
         const numEl = document.getElementById('styleModalLineNum');
         if (numEl && numEl.innerText.includes('#')) {
@@ -4092,7 +4112,6 @@ function applySubStyleToLine() {
     let rawVal = modalTa ? modalTa.value.trim() : ta.value.trim();
 
     const alignEl = document.getElementById('selectedAlignVal');
-    const colorEl = document.getElementById('selectedSubColorVal');
     const chkFade = document.getElementById('chkEnableFade');
     const inEl = document.getElementById('fadeInMs');
     const outEl = document.getElementById('fadeOutMs');
@@ -4103,7 +4122,6 @@ function applySubStyleToLine() {
     const fsInput = document.getElementById('techFontSizeVal');
 
     let align = alignEl ? alignEl.value : '2';
-    let chosenColor = colorEl ? colorEl.value : 'KEEP';
     let isFade = chkFade ? chkFade.checked : false;
     let fadeIn = (inEl && parseInt(inEl.value, 10)) || 300;
     let fadeOut = (outEl && parseInt(outEl.value, 10)) || 300;
@@ -4113,32 +4131,24 @@ function applySubStyleToLine() {
     let bordVal = bordInput ? bordInput.value.trim() : '';
     let fsVal = fsInput ? fsInput.value.trim() : '';
 
-    // دۆزینەوەی پۆزیشن ئەگەر پێشتر دیاری کرابێت
     let posMatch = rawVal.match(/\\pos\([^)]+\)/);
     let existingPos = posMatch ? posMatch[0] : '';
 
-    // پاککردنەوەی بنەڕەتی لە هەموو تاگە کۆن و تێکەڵەکان بۆ ئەوەی دووبارە نەبنەوە
+    // پاراستنی تاگەکانی ڕەنگ لە ناو خودی دەق
     let cleanText = rawVal;
-    cleanText = cleanText.replace(/^(\{[^}]*\})+/g, (match) => {
-        let m = match;
-        m = m.replace(/\\pos\([^)]+\)/g, '')
-             .replace(/\\an\d/g, '')
-             .replace(/\\fad\(\d+,\s*\d+\)/g, '')
-             .replace(/\\b[01]/g, '')
-             .replace(/\\i[01]/g, '')
-             .replace(/\\blur[\d\.]+/g, '')
-             .replace(/\\bord[\d\.]+/g, '')
-             .replace(/\\fs\d+/g, '')
-             .replace(/\\3c&H[0-9A-Fa-f]+&/g, '')
-             .replace(/\\4c&H[0-9A-Fa-f]+&/g, '');
-        
-        if (chosenColor !== 'KEEP') {
-            m = m.replace(/\\c&H[0-9A-Fa-f]+&/g, '');
-        }
-        return m.replace(/\{\}/g, '');
-    }).trim();
+    cleanText = cleanText.replace(/\{\\pos\([^)]+\)\}/g, '')
+                         .replace(/\{\\an\d\}/g, '')
+                         .replace(/\\fad\(\d+,\s*\d+\)/g, '')
+                         .replace(/\\b[01]/g, '')
+                         .replace(/\\i[01]/g, '')
+                         .replace(/\\blur[\d\.]+/g, '')
+                         .replace(/\\bord[\d\.]+/g, '')
+                         .replace(/\\fs\d+/g, '')
+                         .replace(/\\3c&H[0-9A-Fa-f]+&/g, '')
+                         .replace(/\\4c&H[0-9A-Fa-f]+&/g, '')
+                         .replace(/\{\}/g, '')
+                         .trim();
 
-    // کۆکردنەوەی هەموو تەکنیکە نوێیەکان لەناو تەنها یەک کەوانەی {...}ی خاوێن
     let tags = '';
     if (existingPos) {
         tags += existingPos;
@@ -4165,21 +4175,12 @@ function applySubStyleToLine() {
         tags += `\\4c&H${bgr.toUpperCase()}&`;
     }
 
-    if (chosenColor !== 'KEEP') {
-        let r = chosenColor.substring(1, 3);
-        let g = chosenColor.substring(3, 5);
-        let b = chosenColor.substring(5, 7);
-        let assBgr = (b + g + r).toUpperCase();
-        tags += `\\c&H${assBgr}&`;
-    }
-
     let finalText = cleanText;
     if (tags) {
         finalText = `{${tags}}` + finalText;
     }
     finalText = finalText.replace(/\{\}/g, '').trim();
 
-    // ناردنی دەقەکە بۆ کارتی سەرەکی و تۆمارکردنی
     ta.value = finalText;
     ta.style.height = 'auto';
     ta.style.height = ta.scrollHeight + 'px';
@@ -4191,7 +4192,6 @@ function applySubStyleToLine() {
     }
     saveSession();
 
-    // داخستنی پەنجەرەکە
     const modal = document.getElementById('sub-style-modal');
     if (modal) modal.style.display = 'none';
 
@@ -4200,7 +4200,7 @@ function applySubStyleToLine() {
 
 let currentChosenSymbolColor = '#FFF200';
 
-// کاتێک دەست لە هەر ڕەنگێک دەدەیت: ڕاستەوخۆ ڕەنگی نیشانەکان لەناو دەق دەگۆڕێت
+// ٢. پالتەی سەرەوە: تەنها ڕەنگی نیشانەکان دەگۆڕێت
 function setSymbolColor(hex, el) {
     currentChosenSymbolColor = hex;
     const input = document.getElementById('symbolColorChoice');
@@ -4212,59 +4212,44 @@ function setSymbolColor(hex, el) {
     }
 
     const modalTa = document.getElementById('modalSubtitleLiveText');
-    if (modalTa && modalTa.value) {
-        let val = modalTa.value;
-        if (val.includes('♪') || val.includes('|')) {
-            let r = hex.substring(1, 3);
-            let g = hex.substring(3, 5);
-            let b = hex.substring(5, 7);
-            let assColor = (b + g + r).toUpperCase();
+    if (!modalTa || !modalTa.value) return;
 
-            // نوێکردنەوەی دەستبەجێی ڕەنگی هەموو نیشانەکانی ناو دەق چ لە سەرەتا بێت یان لەسەر وشەیەک
-            val = val.replace(/\{\\c&H[0-9A-Fa-f]+&\}([♪\|])\{\\c&HFFFFFF&\}/g, `{\\c&H${assColor}&}$1{\\c&HFFFFFF&}`);
-            modalTa.value = val;
-        }
+    let fullVal = modalTa.value.trim();
+    let hasMusic = fullVal.includes('♪');
+    let hasSign = fullVal.includes('|');
+
+    if (hasMusic || hasSign) {
+        let sym = hasMusic ? '♪' : '|';
+        let symTag = `{\\c&H${hexToAssBgr(hex)}&}`;
+        
+        // دەرهێنانی ڕەنگی دەق
+        let textMatch = fullVal.match(new RegExp(`\\${sym}\\s*\\{\\\\c&H([0-9A-Fa-f]{6})&\\}`));
+        let textTag = textMatch ? `{\\c&H${textMatch[1]}&}` : '';
+
+        let clean = fullVal.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '').replace(/[♪\|]/g, '').trim();
+
+        modalTa.value = `${symTag}${sym}${textTag} ${clean} ${symTag}${sym}{\\c&HFFFFFF&}`;
+        showToast("ڕەنگی نیشانەکە گۆڕدرا!", "success");
     }
 }
 
-// دانانی نیشانە: هەم بۆ وشەی دیاریکراو بە دەست، هەم بۆ هەموو دێڕەکە
+// ٣. دوگمەی گۆرانی یان تابلۆ
 function insertSymbolToText(sym) {
     const modalTa = document.getElementById('modalSubtitleLiveText');
     if (!modalTa) return;
-    let fullVal = modalTa.value;
-    if (!fullVal && modalTa.value.trim() === '') return;
+    let fullVal = modalTa.value.trim();
+    if (!fullVal) return;
 
-    let hex = (document.getElementById('symbolColorChoice') && document.getElementById('symbolColorChoice').value) || currentChosenSymbolColor;
-    let r = hex.substring(1, 3);
-    let g = hex.substring(3, 5);
-    let b = hex.substring(5, 7);
-    let assColor = (b + g + r).toUpperCase();
+    let symHex = (document.getElementById('symbolColorChoice') && document.getElementById('symbolColorChoice').value) || currentChosenSymbolColor || '#FFF200';
+    let symTag = `{\\c&H${hexToAssBgr(symHex)}&}`;
 
-    const start = modalTa.selectionStart;
-    const end = modalTa.selectionEnd;
+    let textHex = (document.getElementById('selectedSubColorVal') && document.getElementById('selectedSubColorVal').value);
+    let textTag = (textHex && textHex !== 'KEEP') ? `{\\c&H${hexToAssBgr(textHex)}&}` : '';
 
-    // ١. کاتێک بەشێک یان وشەیەک لە دەقەکە بە دەست دیاری کراوە
-    if (start !== end) {
-        let selected = fullVal.substring(start, end).trim();
-        // خاوێنکردنەوەی نیشانەی کۆن لەسەر ئەو وشەیە
-        selected = selected.replace(/\{\\c&H[0-9A-Fa-f]+&\}[♪\|]\{\\c&HFFFFFF&\}\s*/g, '')
-                           .replace(/\s*\{\\c&H[0-9A-Fa-f]+&\}[♪\|]\{\\c&HFFFFFF&\}/g, '')
-                           .replace(/^[♪\|\s]+|[♪\|\s]+$/g, '')
-                           .trim();
+    let clean = fullVal.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '').replace(/[♪\|]/g, '').trim();
 
-        let wrapped = `{\\c&H${assColor}&}${sym}{\\c&HFFFFFF&} ${selected} {\\c&H${assColor}&}${sym}{\\c&HFFFFFF&}`;
-        modalTa.value = fullVal.substring(0, start) + wrapped + fullVal.substring(end);
-        showToast(`نیشانەی ${sym} خرایە سەر وشە دیاریکراوەکە!`, "success");
-    } else {
-        // ٢. ئەگەر هیچ وشەیەک دیاری نەکرابێت، دەچێتە سەرەتا و کۆتایی هەموو دێڕەکە
-        let clean = fullVal.replace(/\{\\c&H[0-9A-Fa-f]+&\}[♪\|]\{\\c&HFFFFFF&\}\s*/g, '')
-                           .replace(/\s*\{\\c&H[0-9A-Fa-f]+&\}[♪\|]\{\\c&HFFFFFF&\}/g, '')
-                           .replace(/^[♪\|\s]+|[♪\|\s]+$/g, '')
-                           .trim();
-
-        modalTa.value = `{\\c&H${assColor}&}${sym}{\\c&HFFFFFF&} ${clean} {\\c&H${assColor}&}${sym}{\\c&HFFFFFF&}`;
-        showToast(`نیشانەی ${sym} دانرا!`, "success");
-    }
+    modalTa.value = `${symTag}${sym}${textTag} ${clean} ${symTag}${sym}{\\c&HFFFFFF&}`;
+    showToast(`نیشانەی ${sym} دانرا!`, "success");
 }
 
 // ٤٠ خانەکە بە مەودای زۆر سەلامەت بۆ ناوەوەی شاشە
@@ -4570,7 +4555,6 @@ function confirmVideoCanvasColor() {
                 activeSubs.forEach(sub => {
                     let str = sub.text;
                     
-                    // ١. پۆزیشن (Pos)
                     let posM = str.match(/\\pos\((\d+),\s*(\d+)\)/);
                     let isPos = !!posM;
                     let posX = posM ? parseFloat(posM[1]) : 0;
@@ -4586,7 +4570,6 @@ function confirmVideoCanvasColor() {
                     let fsM = str.match(/\\fs(\d+)/);
                     let fsCss = fsM ? `font-size: ${Math.round(parseFloat(fsM[1]) * 0.55)}px !important;` : '';
 
-                    // کاڵبوونەوە (\fad)
                     let fadM = str.match(/\\fad\((\d+),\s*(\d+)\)/);
                     let opacityCss = 'opacity: 1;';
                     if (fadM) {
@@ -4606,17 +4589,17 @@ function confirmVideoCanvasColor() {
                     let bWidth = bordM ? parseFloat(bordM[1]) : 1.2;
 
                     let c3M = str.match(/\\3c&H([0-9a-fA-F]{6})&/);
-                    let strokeHex = c3M ? `#${c3M[1].substring(4,6)}${c3M[1].substring(2,4)}${c3M[1].substring(0,2)}` : '#000000';
+                    let strokeHex = c3M ? bgrToHex(c3M[1]) : '#000000';
 
                     let c4M = str.match(/\\4c&H([0-9a-fA-F]{6})&/);
-                    let shadowHex = c4M ? `#${c4M[1].substring(4,6)}${c4M[1].substring(2,4)}${c4M[1].substring(0,2)}` : 'rgba(0,0,0,0.85)';
+                    let shadowHex = c4M ? bgrToHex(c4M[1]) : 'rgba(0,0,0,0.85)';
 
                     let textShadowCss = `text-shadow: -${bWidth}px -${bWidth}px 0 ${strokeHex}, ${bWidth}px -${bWidth}px 0 ${strokeHex}, -${bWidth}px ${bWidth}px 0 ${strokeHex}, ${bWidth}px ${bWidth}px 0 ${strokeHex}, 0px 2px 4px ${shadowHex};`;
 
+                    // گۆڕینی هەموو تاگەکانی ڕەنگ بۆ ڕەنگی ڕاستەقینەی سەر شاشە
                     let formatted = str;
-                    formatted = formatted.replace(/\{\\c&H([0-9a-fA-F]{6})&\}(.*?)(?=\{\\c|$)/g, (match, bgr, content) => {
-                        let hex = `#${bgr.substring(4,6)}${bgr.substring(2,4)}${bgr.substring(0,2)}`;
-                        return `<span style="color: ${hex};">${content}</span>`;
+                    formatted = formatted.replace(/\{\\c&H([0-9a-fA-F]{6})&\}/gi, (match, bgr) => {
+                        return `<span style="color: ${bgrToHex(bgr)};">`;
                     });
 
                     formatted = formatted.replace(/\{\\b1\}/g, '<b>').replace(/\{\\b0\}/g, '</b>')
@@ -4626,7 +4609,12 @@ function confirmVideoCanvasColor() {
                                          .replace(/\\N/g, '<br>')
                                          .replace(/\n/g, '<br>');
 
-                    // چارەسەری یەک دێڕی و ڕێگری لە لەتبوونی پیتەکان
+                    // داخستنی تاگە سپانەکان بۆ پاراستنی ڕەنگەکان
+                    let openSpans = (formatted.match(/<span/g) || []).length;
+                    for (let s = 0; s < openSpans; s++) {
+                        formatted += '</span>';
+                    }
+
                     if (isPos) {
                         let leftPct = Math.max(3, Math.min(97, (posX / 1920) * 100));
                         let topPct = Math.max(3, Math.min(97, (posY / 1080) * 100));
