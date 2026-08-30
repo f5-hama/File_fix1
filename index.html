@@ -16,22 +16,22 @@
     <script>
     
     function deleteSubtitleLine(index) {
-    // ١. وەرگرتنی هەموو دەقەکانی وەرگێڕان پێش سڕینەوە
-    let currentTexts = Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value);
+        // ١. وەرگرتنی هەموو دەقەکانی وەرگێڕان پێش سڕینەوە
+        let currentTexts = Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value);
 
-    // ٢. سڕینەوە لە دەقی سەرەکی و وەرگێڕان
-    originalData.splice(index, 1);
-    currentTexts.splice(index, 1);
+        // ٢. سڕینەوە لە دەقی سەرەکی و وەرگێڕان
+        originalData.splice(index, 1);
+        currentTexts.splice(index, 1);
 
-    // ٣. دروستکردنەوەی کارتەکان بەبێ سڕینەوەی مێژووی Undo
-    buildEditorUI(currentTexts, false);
+        // ٣. دروستکردنەوەی کارتەکان
+        buildEditorUI(currentTexts, false);
 
-    // ٤. تۆمارکردنی ئەم دۆخە نوێیە لە مێژووی کارەکان
-    historyStack.push(getCurrentSnapshot());
-    if (historyStack.length > 30) historyStack.shift();
-    redoStack = [];
-    saveSession();
-}
+        // ٤. تۆمارکردنی ئەم دۆخە نوێیە لە مێژوو
+        historyStack.push(getCurrentSnapshot());
+        if (historyStack.length > 40) historyStack.shift();
+        redoStack = [];
+        saveSession();
+    }
     
         (function() {
             const palettes = {
@@ -1245,6 +1245,10 @@
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         <span>گۆڕینی PGS (.sup)</span>
                     </button>
+                    <button class="menu-btn-item" onclick="openMergeModal(); toggleSetupMenu();">
+    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 00-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+    <span>تێکەڵکردنی دوو فایل</span>
+</button>
                     <button class="menu-btn-item" onclick="openSdhModal(); toggleSetupMenu();">
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                         <span>پاککردنەوەی دەنگەکان (SDH)</span>
@@ -1558,6 +1562,33 @@
             </div>
         </div>
     </div>
+    
+    <!-- مۆداڵی تێکەڵکردنی دوو فایل -->
+<div id="merge-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content" style="max-width: 440px; text-align:start;">
+        <h3 style="color:var(--primary); text-align:center; font-size:15px; margin-top:0;">تێکەڵکردنی دوو فایل و گواستنەوەی ستایل</h3>
+        
+        <div class="file-box" style="margin-bottom:8px; padding:10px;">
+            <label style="font-size:12px;">١. فایلی سەرەکی (بنچینە):</label>
+            <input type="file" id="mergeBaseFile" accept=".ass">
+        </div>
+        
+        <div class="file-box" style="margin-bottom:8px; padding:10px;">
+            <label style="font-size:12px;">٢. فایلی دووەم (کە دەق و ستایلەکەی دەگوازرێتەوە):</label>
+            <input type="file" id="mergeSourceFile" accept=".ass">
+        </div>
+
+        <div style="margin-bottom:10px; margin-top:6px;">
+            <label style="font-size:12px; font-weight:bold; color:var(--primary); display:block; margin-bottom:4px;">گۆڕینی ناوی فۆنتەکانی فایلی سەرەکی بۆ:</label>
+            <input type="text" id="mergeNewFontName" placeholder="ناوی فۆنت، بۆ نموونە Speda Bold..." class="input-field" style="padding:7px; font-size:12px;">
+        </div>
+
+        <div class="custom-modal-actions">
+            <button class="btn" onclick="executeMergeAss()">تێکەڵکردن و داگرتن</button>
+            <button class="btn btn-outline" onclick="document.getElementById('merge-modal').style.display='none'">داخستن</button>
+        </div>
+    </div>
+</div>
 
      <!-- مۆداڵی چاککردنی RTL بەبێ دەستکاری هیچ شتێکی تر -->
     <div id="rtl-fix-modal" class="custom-modal-overlay">
@@ -1676,7 +1707,8 @@
                         <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                         <span>فایل لە ئامێرەکەت</span>
                     </button>
-                    <input type="file" id="nativeVideoFileInput" accept="video/*" style="display: none;" onchange="handleNativeVideoUpload(this)">
+                    <input type="file" id="nativeVideoFileInput" accept="video/mp4, video/webm, video/ogg, video/mpeg, .mpg, .mpeg, .m2v, video/*" style="display: none;" onchange="handleNativeVideoUpload(this)">
+
                     
                     <button type="button" class="btn btn-outline" style="flex: 1; padding: 10px 8px; font-size: 12px;" onclick="toggleVideoUrlInput()">
                         <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
@@ -1786,12 +1818,12 @@
     </div>
     
 
-    <!-- مۆداڵی پێشکەوتووی تەکنیک، فەید و پالتەی ڕەنگەکان -->
+    <!-- مۆداڵی تەکنیک و ستایل بە دیزاینی تەواو هاوسەنگ بۆ مۆبایل -->
     <div id="sub-style-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content" style="max-width: 400px; max-height: 90vh; overflow-y: auto;">
-            <h3 style="margin: 0 0 10px 0; color: var(--primary); font-size: 16px;">تەکنیک و دیزاینی دێڕی <span id="styleModalLineNum">#</span></h3>
+        <div class="custom-modal-content" style="max-width: 390px; width: 100%; max-height: 90vh; overflow-y: auto; overflow-x: hidden; padding: 14px; box-sizing: border-box;">
+            <h3 style="margin: 0 0 10px 0; color: var(--primary); font-size: 15px;">تەکنیک و دیزاینی دێڕی <span id="styleModalLineNum">#</span></h3>
             
-            <!-- ١. شوێنی دێڕ لەسەر شاشە (Alignment) -->
+            <!-- ١. شوێنی دێڕ لەسەر شاشە -->
             <div style="margin-bottom: 10px;">
                 <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);">شوێنی دێڕ لەسەر شاشە:</label>
                 <div class="pos-grid">
@@ -1805,10 +1837,18 @@
                     <button type="button" class="pos-btn active" onclick="selectAlignment('2')">خوارەوە ناوەڕاست</button>
                     <button type="button" class="pos-btn" onclick="selectAlignment('3')">خوارەوە ڕاست</button>
                 </div>
+                <button type="button" class="btn btn-outline" style="padding: 7px 10px; font-size: 11.5px; margin-top: 8px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="openGrid40Modal()">
+                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
+                        <circle cx="12" cy="12" r="3" stroke-width="2"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v3m0 14v3M2 12h3m14 0h3"></path>
+                    </svg>
+                    <span>دیاریکردنی وردی شوێن بە ٤٠ خانەی شاشە (١-٤٠)</span>
+                </button>
                 <input type="hidden" id="selectedAlignVal" value="2">
             </div>
 
-            <!-- ٢. تەکنیکی Fade In و Fade Out بە کاتی دڵخواز -->
+            <!-- ٢. Fade In و Fade Out -->
             <div style="margin-bottom: 10px; background: rgba(142, 182, 155, 0.08); border-radius: 10px; padding: 8px 10px; border: 1px solid var(--border-color); text-align: start;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);">تەکنیکی کاڵبوونەوە (Fade In / Out):</label>
@@ -1828,45 +1868,101 @@
                 </div>
             </div>
 
-            <!-- ٣. تەکنیکەکانی تری فۆنت و شێواز (Bold, Italic, Blur, Outline) -->
+            <!-- ٣. نۆتەی گۆرانی و تابلۆ -->
             <div style="margin-bottom: 10px; background: rgba(142, 182, 155, 0.08); border-radius: 10px; padding: 8px 10px; border: 1px solid var(--border-color);">
-                <div class="tech-row">
+                <div style="font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 6px; text-align: start;">نیشانەی گۆرانی یان تابلۆ بۆ دەق:</div>
+                
+                <div class="tech-row" style="margin-bottom: 6px;">
+                    <button type="button" class="tech-toggle-btn" onclick="insertSymbolToText('♪')">♪ گۆرانی ♪</button>
+                    <button type="button" class="tech-toggle-btn" onclick="insertSymbolToText('|')">| تابلۆ |</button>
+                </div>
+
+                <div style="text-align: start;">
+                    <span style="font-size: 10.5px; color: var(--text-muted); display: block; margin-bottom: 4px;">ڕەنگی نیشانەکە:</span>
+                    <div style="display: flex; gap: 5px; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div class="palette-btn active" style="width:20px; height:20px; border-radius:4px; background:#FFF200;" onclick="setSymbolColor('#FFF200', this)" title="زەرد"></div>
+                        <div class="palette-btn" style="width:20px; height:20px; border-radius:4px; background:#FFD700;" onclick="setSymbolColor('#FFD700', this)" title="زێڕین"></div>
+                        <div class="palette-btn" style="width:20px; height:20px; border-radius:4px; background:#00F0FF;" onclick="setSymbolColor('#00F0FF', this)" title="شین"></div>
+                        <div class="palette-btn" style="width:20px; height:20px; border-radius:4px; background:#39FF14;" onclick="setSymbolColor('#39FF14', this)" title="سەوز"></div>
+                        <div class="palette-btn" style="width:20px; height:20px; border-radius:4px; background:#FFFFFF;" onclick="setSymbolColor('#FFFFFF', this)" title="سپی"></div>
+                        <div class="palette-btn" style="width:20px; height:20px; border-radius:4px; background:#FF3131;" onclick="setSymbolColor('#FF3131', this)" title="سوور"></div>
+                        <div class="palette-btn" style="width:20px; height:20px; border-radius:4px; background:#FF77A9;" onclick="setSymbolColor('#FF77A9', this)" title="پەمەیی"></div>
+                        <div class="palette-btn" style="width:20px; height:20px; border-radius:4px; background:#BF55EC;" onclick="setSymbolColor('#BF55EC', this)" title="مۆر"></div>
+                        <div class="palette-btn" style="width:20px; height:20px; border-radius:4px; background:#FFA500;" onclick="setSymbolColor('#FFA500', this)" title="پرتەقاڵی"></div>
+                    </div>
+                </div>
+                <input type="hidden" id="symbolColorChoice" value="#FFF200">
+            </div>
+
+            <!-- ٤. Bold، Italic، Blur، Outline و Shadow -->
+            <div style="margin-bottom: 10px; background: rgba(142, 182, 155, 0.08); border-radius: 10px; padding: 8px 10px; border: 1px solid var(--border-color);">
+                <div class="tech-row" style="margin-bottom: 6px;">
                     <button type="button" class="tech-toggle-btn" id="btnTechBold" onclick="this.classList.toggle('active')"><b>Bold</b> (ئەستوور)</button>
                     <button type="button" class="tech-toggle-btn" id="btnTechItalic" onclick="this.classList.toggle('active')"><i>Italic</i> (لار)</button>
                 </div>
-                <div class="tech-row" style="margin-bottom: 0;">
+                <div class="tech-row" style="margin-bottom: 6px;">
                     <div style="display:flex; align-items:center; gap:4px; font-size:11px;">
-                        <span>تەڵخی (Blur):</span>
-                        <input type="number" id="techBlurVal" placeholder="0" min="0" max="10" step="0.5" class="tech-input">
+                        <span>تەڵخی:</span>
+                        <input type="number" id="techBlurVal" placeholder="0" min="0" max="10" step="0.5" class="tech-input" style="width:50px;">
                     </div>
                     <div style="display:flex; align-items:center; gap:4px; font-size:11px;">
                         <span>Outline:</span>
-                        <input type="number" id="techOutlineVal" placeholder="0" min="0" max="10" step="0.5" class="tech-input">
+                        <input type="number" id="techOutlineVal" placeholder="0" min="0" max="10" step="0.5" class="tech-input" style="width:50px;">
+                    </div>
+                    <div style="display:flex; align-items:center; gap:4px; font-size:11px;">
+                        <span>قەبارە:</span>
+                        <input type="number" id="techFontSizeVal" placeholder="0" min="10" max="150" class="tech-input" style="width:50px;">
+                    </div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 6px 8px; border: 1px solid var(--border-color); display:flex; flex-direction:column; gap:6px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 10.5px; color: var(--text-muted);">ڕەنگی Outline:</span>
+                        <div style="display: flex; gap: 4px;">
+                            <div class="palette-btn active" style="width:19px; height:19px; border-radius:4px; background:#000000; border:1px solid #555;" onclick="setStrokeColor('#000000', this)" title="ڕەش"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFFFFF;" onclick="setStrokeColor('#FFFFFF', this)" title="سپی"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFF200;" onclick="setStrokeColor('#FFF200', this)" title="زەرد"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FF3131;" onclick="setStrokeColor('#FF3131', this)" title="سوور"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#00F0FF;" onclick="setStrokeColor('#00F0FF', this)" title="شین"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#39FF14;" onclick="setStrokeColor('#39FF14', this)" title="سەوز"></div>
+                        </div>
+                        <input type="hidden" id="strokeColorPicker" value="#000000">
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 10.5px; color: var(--text-muted);">ڕەنگی Shadow:</span>
+                        <div style="display: flex; gap: 4px;">
+                            <div class="palette-btn active" style="width:19px; height:19px; border-radius:4px; background:#000000; border:1px solid #555;" onclick="setShadowColor('#000000', this)" title="ڕەش"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFFFFF;" onclick="setShadowColor('#FFFFFF', this)" title="سپی"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#333333;" onclick="setShadowColor('#333333', this)" title="تێر"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFF200;" onclick="setShadowColor('#FFF200', this)" title="زەرد"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FF3131;" onclick="setShadowColor('#FF3131', this)" title="سوور"></div>
+                            <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#00F0FF;" onclick="setShadowColor('#00F0FF', this)" title="شین"></div>
+                        </div>
+                        <input type="hidden" id="shadowColorPicker" value="#000000">
                     </div>
                 </div>
             </div>
 
-            <!-- 👈 پیشاندانی دەقەکە بۆ دیاریکردن و ڕەنگکردنی بەشێکی دێڕەکە 👇 -->
+            <!-- ٥. پیشاندانی دەقەکە -->
             <div style="margin-bottom: 10px; text-align: start;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                    <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);">دەقی دێڕەکە (بەشێک دیاری بکە بۆ ڕەنگکردن):</label>
-                </div>
-                <textarea id="modalSubtitleLiveText" style="width: 100%; min-height: 52px; max-height: 85px; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-main); font-size: 13px; line-height: 1.4; resize: vertical; outline: none; direction: auto; text-align: start;"></textarea>
+                <label style="font-size: 11px; font-weight: bold; color: var(--primary); display:block; margin-bottom: 4px;">دەقی دێڕەکە (دەتوانیت وشەیەک دیاری بکەیت):</label>
+                <textarea id="modalSubtitleLiveText" style="width: 100%; min-height: 50px; max-height: 80px; padding: 7px 9px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-main); font-size: 12.5px; line-height: 1.4; resize: vertical; outline: none; direction: auto; text-align: start; box-sizing: border-box;"></textarea>
             </div>
 
-            <!-- ٤. پالتەی ڕەنگەکان -->
-            <div style="margin-bottom: 12px; background: rgba(142, 182, 155, 0.08); border-radius: 10px; padding: 10px; border: 1px solid var(--border-color);">
+            <!-- ٦. پالتەی سەرەکی ڕەنگەکان -->
+            <div style="margin-bottom: 10px; background: rgba(142, 182, 155, 0.08); border-radius: 10px; padding: 8px 10px; border: 1px solid var(--border-color);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <label style="font-size: 11.5px; font-weight: bold; color: var(--primary);">ڕەنگی نووسین:</label>
-                    <span id="selectedColorCodeText" style="font-size: 11px; color: var(--text-muted); direction: ltr; font-weight: bold;">وەک خۆی (نەگۆڕدراو)</span>
+                    <label style="font-size: 11px; font-weight: bold; color: var(--primary);">ڕەنگی نووسین:</label>
+                    <span id="selectedColorCodeText" style="font-size: 10.5px; color: var(--text-muted); direction: ltr; font-weight: bold;">وەک خۆی</span>
                 </div>
 
-                <div class="custom-palette-grid">
+                <div class="custom-palette-grid" style="margin-bottom: 8px;">
                     <button type="button" class="palette-btn" style="background:#FFFFFF;" onclick="setCustomPaletteColor('#FFFFFF', this)" title="سپی"></button>
-                    <button type="button" class="palette-btn" style="background:#FFF200;" onclick="setCustomPaletteColor('#FFF200', this)" title="زەردی ژێرنووس"></button>
+                    <button type="button" class="palette-btn" style="background:#FFF200;" onclick="setCustomPaletteColor('#FFF200', this)" title="زەرد"></button>
                     <button type="button" class="palette-btn" style="background:#FFD700;" onclick="setCustomPaletteColor('#FFD700', this)" title="زێڕین"></button>
-                    <button type="button" class="palette-btn" style="background:#00F0FF;" onclick="setCustomPaletteColor('#00F0FF', this)" title="شینی ئاسمانی"></button>
-                    <button type="button" class="palette-btn" style="background:#39FF14;" onclick="setCustomPaletteColor('#39FF14', this)" title="سەوزی نێئۆن"></button>
+                    <button type="button" class="palette-btn" style="background:#00F0FF;" onclick="setCustomPaletteColor('#00F0FF', this)" title="شین"></button>
+                    <button type="button" class="palette-btn" style="background:#39FF14;" onclick="setCustomPaletteColor('#39FF14', this)" title="سەوز"></button>
                     <button type="button" class="palette-btn" style="background:#FF3131;" onclick="setCustomPaletteColor('#FF3131', this)" title="سوور"></button>
                     <button type="button" class="palette-btn" style="background:#FF77A9;" onclick="setCustomPaletteColor('#FF77A9', this)" title="پەمەیی"></button>
                     <button type="button" class="palette-btn" style="background:#BF55EC;" onclick="setCustomPaletteColor('#BF55EC', this)" title="مۆر"></button>
@@ -1876,27 +1972,58 @@
                     <button type="button" class="palette-btn" style="background:#333333;" onclick="setCustomPaletteColor('#333333', this)" title="ڕەشی تێر"></button>
                 </div>
 
-                <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 6px;">
-                    <button type="button" class="btn btn-outline" style="flex: 1; padding: 6px 8px; font-size: 11px;" onclick="pickColorFromScreen()">
-                        <svg class="icon" style="width:13px;height:13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                        <span>لە ڤیدیۆ وەرگرە</span>
+                <div class="custom-palette-grid" id="myCustomColorGrid" style="margin-bottom: 6px;"></div>
+
+                <!-- ٤ دوگمەی کردارەکان بە تۆڕی ٢ بە ٢ی زۆر ڕێک و هاوسەنگ -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; box-sizing: border-box;">
+                    <button type="button" class="btn btn-outline" style="padding: 6px 4px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 4px;" onclick="saveCurrentToMyColors()">
+                        <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span>سەیڤکردنی ڕەنگ</span>
                     </button>
-                    <button type="button" class="btn btn-outline" style="flex: 1; padding: 6px 8px; font-size: 11px;" onclick="setCustomPaletteColor('KEEP', this)">
+
+                    <button type="button" class="btn btn-outline" style="padding: 6px 4px; font-size: 11px; color: #ef4444; border-color: rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; gap: 4px;" onclick="clearMySavedColors()">
+                        <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        <span>سڕینەوەی ڕەنگ</span>
+                    </button>
+
+                    <button type="button" class="btn btn-outline" style="padding: 6px 4px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 4px;" onclick="pickColorFromScreen()">
+                        <svg class="icon" style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                        <span>لە ڤیدیۆ وەربگرە</span>
+                    </button>
+
+                    <button type="button" class="btn btn-outline" style="padding: 6px 4px; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 4px;" onclick="setCustomPaletteColor('KEEP', this)">
+                        <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         <span>ڕەنگ نەگۆڕێت</span>
                     </button>
                 </div>
                 <input type="hidden" id="selectedSubColorVal" value="KEEP">
             </div>
 
-            <div class="custom-modal-actions">
+            <!-- دوگمەکانی جێبەجێکردن و داخستن لە خوارەوە -->
+            <div class="custom-modal-actions" style="margin-top: 10px;">
                 <button class="btn" onclick="applySubStyleToLine()">جێبەجێکردن</button>
                 <button class="btn btn-outline" onclick="closeSubStyleModal()">داخستن</button>
             </div>
         </div>
     </div>
-    
-    <!-- مۆداڵی وەرگرتنی ڕەنگ لەگەڵ شاشەی جێگیری زوومی ٢ هێندە لە سەرەوە -->
-    <div id="video-color-picker-modal" class="custom-modal-overlay">
+   
+<!-- پەنجەرەی ٤٠ خانەی شوێنی شاشە لەسەر ڤیدیۆ -->
+<div id="grid40-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content" style="max-width: 460px; padding: 14px;">
+        <h3 style="color:var(--primary); margin:0 0 8px 0; font-size:14px;">خانەی شوێنی دێڕ هەڵبژێرە (1 تا 40):</h3>
+        
+        <!-- وێنەی ڤیدیۆ لە ژێرەوە و ٤٠ خانە شەفافەکە لەسەری -->
+        <div style="position: relative; width: 100%; max-height: 240px; background: #000; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border-color); display: flex; align-items: center; justify-content: center;">
+            <canvas id="grid40Canvas" style="width: 100%; max-height: 240px; display: block; object-fit: contain;"></canvas>
+            <div id="grid40Container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(5, 1fr); direction: ltr;"></div>
+        </div>
+
+        <div class="custom-modal-actions" style="margin-top:10px;">
+            <button class="btn btn-outline" onclick="document.getElementById('grid40-modal').style.display='none'">داخستن</button>
+        </div>
+    </div>
+</div>
+    <div id="video-color-picker-modal" class="custom-modal-overlay" style="z-index: 3500 !important;">
         <div class="custom-modal-content" style="max-width: 420px;">
             <h3 style="margin: 0 0 8px 0; color: var(--primary); font-size: 15px;">هەڵگرتنی ڕەنگ لەسەر ڤیدیۆ</h3>
 
@@ -1977,10 +2104,12 @@
 
         window.addEventListener('scroll', () => {
             const btn = document.getElementById('scroll-to-top-btn');
-            if (isEditing && window.scrollY > 150) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
+            if (btn) {
+                if (isEditing && window.scrollY > 150) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
             }
         }, { passive: true });
 
@@ -3691,7 +3820,8 @@ function processAssStyleLine(line) {
             buildEditorUI(state);
         }
 
-        function buildEditorUI(kurdishState = [], resetHistory = true) {
+        // لە جێگەی فەنکشنەکانی پێشووی undo, redo, buildEditorUI ئەم کۆدە دابنێ:
+function buildEditorUI(kurdishState = [], resetHistory = true) {
     let html = '';
     for(let i = 0; i < originalData.length; i++) {
         let orig = originalData[i]; 
@@ -3715,33 +3845,33 @@ function processAssStyleLine(line) {
                 <div class="subtitle-time">${orig.time}</div>
             </div>
             <div class="subtitle-orig" dir="auto">${orig.text.replace(/\n/g, '<br>')}</div>
-            <div class="subtitle-kurd"><textarea dir="auto">${kText}</textarea></div>
+            <div class="subtitle-kurd"><textarea dir="auto" oninput="onUserType()">${kText}</textarea></div>
         </div>`;
     }
     document.getElementById('subtitles-container').innerHTML = html;
-    
     document.getElementById('setup-screen').style.display = 'none';
     document.getElementById('editor-screen').style.display = 'block';
-    
     document.body.className = document.documentElement.classList.contains('dark-theme') ? 'editor-bg dark-theme' : 'editor-bg';
-    
     isEditing = true; 
     
     if (resetHistory) {
         historyStack = [getCurrentSnapshot()]; 
         redoStack = [];
     }
-    
     updateProgress();
     saveSession(); 
 }
 
-        // وەرگرتنی وێنەیەکی تەواو لە فایلی سەرەکی و وەرگێڕان پێکەوە
-function getCurrentSnapshot() {
-    return {
-        originalData: JSON.parse(JSON.stringify(originalData)),
-        kurdishState: Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value)
-    };
+let typingTimer = null;
+function onUserType() {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => {
+        historyStack.push(getCurrentSnapshot());
+        if (historyStack.length > 40) historyStack.shift();
+        redoStack = [];
+        saveSession();
+        updateProgress();
+    }, 400);
 }
 
 function undo() { 
@@ -3760,6 +3890,14 @@ function redo() {
         restoreSnapshot(next); 
         saveSession(); 
     } 
+}
+
+        // وەرگرتنی وێنەیەکی تەواو لە فایلی سەرەکی و وەرگێڕان پێکەوە
+function getCurrentSnapshot() {
+    return {
+        originalData: JSON.parse(JSON.stringify(originalData)),
+        kurdishState: Array.from(document.querySelectorAll('.subtitle-kurd textarea')).map(t => t.value)
+    };
 }
 
 function getCurrentState() { 
@@ -3859,283 +3997,512 @@ async function pasteFromClipboard() {
         let currentStylingIndex = -1;
         let playerControlsTimer = null;
 
-        function setCustomPaletteColor(hex, btnEl) {
-            document.getElementById('selectedSubColorVal').value = hex;
-            const textDisplay = document.getElementById('selectedColorCodeText');
-            if (textDisplay) {
-                textDisplay.innerText = (hex === 'KEEP') ? "وەک خۆی (نەگۆڕدراو)" : hex;
-            }
-            document.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
-            if (btnEl && btnEl.classList.contains('palette-btn')) {
-                btnEl.classList.add('active');
-            }
+        // ====== بەشی تەواو و بێ هەڵەی تەکنیک و ستایل ======
 
-            // ئەگەر بەشێکی دەق لەناو بۆکسەکە بە دەست دیاریکرابێت (Selected Text)، تەنها ئەو بەشە ڕەنگ دەکات
-            const modalTa = document.getElementById('modalSubtitleLiveText');
-            if (modalTa && hex !== 'KEEP') {
-                const start = modalTa.selectionStart;
-                const end = modalTa.selectionEnd;
-                const fullVal = modalTa.value;
+function setStrokeColor(hex, el) {
+    const input = document.getElementById('strokeColorPicker');
+    if (input) input.value = hex;
+    if (el && el.parentElement) {
+        el.parentElement.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+}
 
-                if (start !== end) {
-                    let r = hex.substring(1, 3);
-                    let g = hex.substring(3, 5);
-                    let b = hex.substring(5, 7);
-                    let assBgr = (b + g + r).toUpperCase();
-                    let colorTag = `{\\c&H${assBgr}&}`;
+function setShadowColor(hex, el) {
+    const input = document.getElementById('shadowColorPicker');
+    if (input) input.value = hex;
+    if (el && el.parentElement) {
+        el.parentElement.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+}
 
-                    const selectedPart = fullVal.substring(start, end);
-                    // ڕەنگ دەخاتە پێش وشەکە و لە دوای وشەکەش دەیکاتەوە بە سپی ئاسایی
-                    const newText = fullVal.substring(0, start) + colorTag + selectedPart + `{\\c&HFFFFFF&}` + fullVal.substring(end);
-                    modalTa.value = newText;
-                    showToast("تەنها ئەو وشەیە ڕەنگ کرا!", "success");
-                }
-            }
+// کاتێک کرتە لە "ڕەنگ نەگۆڕێت" دەکرێت: هەموو کۆدەکانی ڕەنگ (\c, \3c, \4c) دەسڕێتەوە و دەقەکە دەبێتەوە وەک ئەسڵی خۆی
+function setCustomPaletteColor(hex, btnEl) {
+    const valInput = document.getElementById('selectedSubColorVal');
+    if (valInput) valInput.value = hex;
+    
+    const textDisplay = document.getElementById('selectedColorCodeText');
+    const modalTa = document.getElementById('modalSubtitleLiveText');
+
+    document.querySelectorAll('.custom-palette-grid .palette-btn').forEach(b => b.classList.remove('active'));
+    if (btnEl && btnEl.classList.contains('palette-btn')) btnEl.classList.add('active');
+
+    if (hex === 'KEEP') {
+        if (textDisplay) textDisplay.innerText = "وەک خۆی (سڕینەوەی ڕەنگەکان)";
+        if (modalTa) {
+            // پاککردنەوەی هەموو جۆرە تاگێکی ڕەنگی سەرەکی، چێوە، سێبەر و تاگی دووبارە
+            modalTa.value = modalTa.value
+                .replace(/\\c&H[0-9A-Fa-f]+&/g, '')
+                .replace(/\\3c&H[0-9A-Fa-f]+&/g, '')
+                .replace(/\\4c&H[0-9A-Fa-f]+&/g, '')
+                .replace(/\{\}/g, '')
+                .trim();
         }
+        showToast("هەموو کۆدەکانی ڕەنگ لە دەقەکە سڕدرانەوە!", "info");
+        return;
+    }
 
-        function selectAlignment(val) {
-            const input = document.getElementById('selectedAlignVal');
-            if (input) input.value = val;
-            document.querySelectorAll('.pos-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${val}'`)) {
-                    btn.classList.add('active');
-                }
-            });
+    if (textDisplay) textDisplay.innerText = hex;
+
+    if (modalTa) {
+        let r = hex.substring(1, 3);
+        let g = hex.substring(3, 5);
+        let b = hex.substring(5, 7);
+        let assBgr = (b + g + r).toUpperCase();
+        let colorTag = `{\\c&H${assBgr}&}`;
+
+        const start = modalTa.selectionStart;
+        const end = modalTa.selectionEnd;
+        const fullVal = modalTa.value;
+
+        if (start !== end) {
+            modalTa.value = fullVal.substring(0, start) + colorTag + fullVal.substring(start, end) + `{\\c&HFFFFFF&}` + fullVal.substring(end);
+        } else {
+            let clean = fullVal.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '');
+            modalTa.value = colorTag + clean;
         }
+    }
+}
 
-        function closeSubStyleModal() {
-            const modal = document.getElementById('sub-style-modal');
-            if (modal) modal.style.display = 'none';
+function saveCurrentToMyColors() {
+    let hex = document.getElementById('selectedSubColorVal') ? document.getElementById('selectedSubColorVal').value : '';
+    if (!hex || hex === 'KEEP') {
+        showToast("تکایە سەرەتا ڕەنگێک لە پالتەکە هەڵبژێرە!", "warning");
+        return;
+    }
+    let saved = JSON.parse(localStorage.getItem('my_sub_colors') || '[]');
+    if (!saved.includes(hex)) {
+        saved.push(hex);
+        localStorage.setItem('my_sub_colors', JSON.stringify(saved));
+        showMySavedColors();
+        showToast("ڕەنگەکە سەیڤ کرا!", "success");
+    }
+}
+
+function clearMySavedColors() {
+    localStorage.removeItem('my_sub_colors');
+    showMySavedColors();
+    showToast("ڕەنگە سەیڤکراوەکان سڕدرانەوە!", "info");
+}
+
+function showMySavedColors() {
+    const box = document.getElementById('myCustomColorGrid');
+    if (!box) return;
+    let saved = JSON.parse(localStorage.getItem('my_sub_colors') || '[]');
+    box.innerHTML = saved.map(c => `<button type="button" class="palette-btn" style="background:${c};" onclick="setCustomPaletteColor('${c}', this)"></button>`).join('');
+}
+
+function selectAlignment(val) {
+    const input = document.getElementById('selectedAlignVal');
+    if (input) input.value = val;
+    document.querySelectorAll('.pos-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${val}'`)) {
+            btn.classList.add('active');
         }
+    });
+}
 
-        function toggleFadeInputs(enabled) {
-            const inEl = document.getElementById('fadeInMs');
-            const outEl = document.getElementById('fadeOutMs');
-            const box = document.getElementById('fadeInputsBox');
-            if (inEl) inEl.disabled = !enabled;
-            if (outEl) outEl.disabled = !enabled;
-            if (box) box.style.opacity = enabled ? '1' : '0.5';
+function closeSubStyleModal() {
+    const modal = document.getElementById('sub-style-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function toggleFadeInputs(enabled) {
+    const inEl = document.getElementById('fadeInMs');
+    const outEl = document.getElementById('fadeOutMs');
+    const box = document.getElementById('fadeInputsBox');
+    if (inEl) inEl.disabled = !enabled;
+    if (outEl) outEl.disabled = !enabled;
+    if (box) box.style.opacity = enabled ? '1' : '0.5';
+}
+
+function openSubStyleModal(index) {
+    currentStylingIndex = index;
+    const numEl = document.getElementById('styleModalLineNum');
+    if (numEl) numEl.innerText = '#' + (index + 1);
+    
+    const card = document.querySelector(`.subtitle-card[data-index="${index}"]`);
+    const ta = card ? card.querySelector('textarea') : null;
+    let text = ta ? ta.value : ((originalData[index] && originalData[index].rawText) || (originalData[index] && originalData[index].text) || '');
+
+    const modalTa = document.getElementById('modalSubtitleLiveText');
+    if (modalTa) {
+        modalTa.value = text;
+    }
+
+    let alignMatch = text.match(/\\an(\d)/);
+    selectAlignment(alignMatch ? alignMatch[1] : '2');
+
+    const chkFade = document.getElementById('chkEnableFade');
+    const inEl = document.getElementById('fadeInMs');
+    const outEl = document.getElementById('fadeOutMs');
+    let fadMatch = text.match(/\\fad\((\d+),\s*(\d+)\)/);
+    if (fadMatch) {
+        if (chkFade) chkFade.checked = true;
+        if (inEl) inEl.value = fadMatch[1];
+        if (outEl) outEl.value = fadMatch[2];
+        toggleFadeInputs(true);
+    } else {
+        if (chkFade) chkFade.checked = false;
+        if (inEl) inEl.value = '300';
+        if (outEl) outEl.value = '300';
+        toggleFadeInputs(false);
+    }
+
+    const boldBtn = document.getElementById('btnTechBold');
+    const italicBtn = document.getElementById('btnTechItalic');
+    if (boldBtn) boldBtn.classList.toggle('active', /\\b1\b/.test(text));
+    if (italicBtn) italicBtn.classList.toggle('active', /\\i1\b/.test(text));
+
+    const blurInput = document.getElementById('techBlurVal');
+    const bordInput = document.getElementById('techOutlineVal');
+    const fsInput = document.getElementById('techFontSizeVal');
+    
+    let blurMatch = text.match(/\\blur([\d\.]+)/);
+    if (blurInput) blurInput.value = blurMatch ? blurMatch[1] : '';
+    let bordMatch = text.match(/\\bord([\d\.]+)/);
+    if (bordInput) bordInput.value = bordMatch ? bordMatch[1] : '';
+    let fsMatch = text.match(/\\fs(\d+)/);
+    if (fsInput) fsInput.value = fsMatch ? fsMatch[1] : '';
+
+    const valInput = document.getElementById('selectedSubColorVal');
+    if (valInput) valInput.value = 'KEEP';
+    const textDisplay = document.getElementById('selectedColorCodeText');
+    if (textDisplay) textDisplay.innerText = 'وەک خۆی';
+    document.querySelectorAll('.custom-palette-grid .palette-btn').forEach(b => b.classList.remove('active'));
+    
+    showMySavedColors();
+
+    const modal = document.getElementById('sub-style-modal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function applySubStyleToLine() {
+    // دۆزینەوەی دێڕی کارپێکراو
+    if (currentStylingIndex === -1) {
+        const numEl = document.getElementById('styleModalLineNum');
+        if (numEl && numEl.innerText.includes('#')) {
+            currentStylingIndex = parseInt(numEl.innerText.replace('#', '').trim(), 10) - 1;
         }
+    }
+    if (currentStylingIndex === -1) return;
 
-        let tempSampledVideoHex = "#FFFFFF";
+    const card = document.querySelector(`.subtitle-card[data-index="${currentStylingIndex}"]`);
+    if (!card) return;
+    const ta = card.querySelector('textarea');
+    if (!ta) return;
 
-        // کردنەوەی وێنەی هەمان چرکەی ڤیدیۆ بۆ هەڵبژاردنی ڕەنگ بە دەست
-        function pickColorFromScreen() {
-            const video = document.getElementById('preview-video');
-            if (!video || !video.videoWidth) {
-                showToast("تکایە سەرەتا ڤیدیۆیەک لێبدە بۆ وەرگرتنی ڕەنگ!", "warning");
-                return;
-            }
+    const modalTa = document.getElementById('modalSubtitleLiveText');
+    let rawVal = modalTa ? modalTa.value.trim() : ta.value.trim();
 
-            const modal = document.getElementById('video-color-picker-modal');
-            const canvas = document.getElementById('vPickerCanvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const alignEl = document.getElementById('selectedAlignVal');
+    const colorEl = document.getElementById('selectedSubColorVal');
+    const chkFade = document.getElementById('chkEnableFade');
+    const inEl = document.getElementById('fadeInMs');
+    const outEl = document.getElementById('fadeOutMs');
+    const boldBtn = document.getElementById('btnTechBold');
+    const italicBtn = document.getElementById('btnTechItalic');
+    const blurInput = document.getElementById('techBlurVal');
+    const bordInput = document.getElementById('techOutlineVal');
+    const fsInput = document.getElementById('techFontSizeVal');
 
-            modal.style.display = 'flex';
-            setupCanvasColorTouch(canvas, ctx);
+    let align = alignEl ? alignEl.value : '2';
+    let chosenColor = colorEl ? colorEl.value : 'KEEP';
+    let isFade = chkFade ? chkFade.checked : false;
+    let fadeIn = (inEl && parseInt(inEl.value, 10)) || 300;
+    let fadeOut = (outEl && parseInt(outEl.value, 10)) || 300;
+    let isBold = boldBtn ? boldBtn.classList.contains('active') : false;
+    let isItalic = italicBtn ? italicBtn.classList.contains('active') : false;
+    let blurVal = blurInput ? blurInput.value.trim() : '';
+    let bordVal = bordInput ? bordInput.value.trim() : '';
+    let fsVal = fsInput ? fsInput.value.trim() : '';
+
+    // دۆزینەوەی پۆزیشن ئەگەر پێشتر دیاری کرابێت
+    let posMatch = rawVal.match(/\\pos\([^)]+\)/);
+    let existingPos = posMatch ? posMatch[0] : '';
+
+    // پاککردنەوەی بنەڕەتی لە هەموو تاگە کۆن و تێکەڵەکان بۆ ئەوەی دووبارە نەبنەوە
+    let cleanText = rawVal;
+    cleanText = cleanText.replace(/^(\{[^}]*\})+/g, (match) => {
+        let m = match;
+        m = m.replace(/\\pos\([^)]+\)/g, '')
+             .replace(/\\an\d/g, '')
+             .replace(/\\fad\(\d+,\s*\d+\)/g, '')
+             .replace(/\\b[01]/g, '')
+             .replace(/\\i[01]/g, '')
+             .replace(/\\blur[\d\.]+/g, '')
+             .replace(/\\bord[\d\.]+/g, '')
+             .replace(/\\fs\d+/g, '')
+             .replace(/\\3c&H[0-9A-Fa-f]+&/g, '')
+             .replace(/\\4c&H[0-9A-Fa-f]+&/g, '');
+        
+        if (chosenColor !== 'KEEP') {
+            m = m.replace(/\\c&H[0-9A-Fa-f]+&/g, '');
         }
+        return m.replace(/\{\}/g, '');
+    }).trim();
 
-// زوومی ٢ هێندەی جێگیر لە سەرەوە بەپێی دەستلێدانی خوارەوە
-        function setupCanvasColorTouch(canvas, ctx) {
-            const loupeCanvas = document.getElementById('vLoupeCanvas');
-            const loupeCtx = loupeCanvas ? loupeCanvas.getContext('2d') : null;
-            const touchPoint = document.getElementById('vTouchPoint');
-            const zoomWindow = document.getElementById('vZoomWindow');
+    // کۆکردنەوەی هەموو تەکنیکە نوێیەکان لەناو تەنها یەک کەوانەی {...}ی خاوێن
+    let tags = '';
+    if (existingPos) {
+        tags += existingPos;
+    } else if (align && align !== '2') {
+        tags += `\\an${align}`;
+    }
 
-            function sampleAtPoint(e) {
-                e.preventDefault();
-                const rect = canvas.getBoundingClientRect();
-                const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
-                const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
+    if (isFade) tags += `\\fad(${fadeIn},${fadeOut})`;
+    if (isBold) tags += `\\b1`;
+    if (isItalic) tags += `\\i1`;
+    if (blurVal !== '') tags += `\\blur${blurVal}`;
+    if (bordVal !== '') tags += `\\bord${bordVal}`;
+    if (fsVal !== '') tags += `\\fs${fsVal}`;
 
-                const displayX = clientX - rect.left;
-                const displayY = clientY - rect.top;
+    let strokeCol = document.getElementById('strokeColorPicker') ? document.getElementById('strokeColorPicker').value : '#000000';
+    let shadowCol = document.getElementById('shadowColorPicker') ? document.getElementById('shadowColorPicker').value : '#000000';
 
-                // ١. نیشاندانی خاڵەکە لەسەر وێنەی خوارەوە ڕێک لەژێر پەنجەت
-                if (touchPoint) {
-                    touchPoint.style.display = 'block';
-                    touchPoint.style.left = `${displayX}px`;
-                    touchPoint.style.top = `${displayY}px`;
-                }
+    if (strokeCol && strokeCol !== '#000000') {
+        let bgr = strokeCol.substring(5,7) + strokeCol.substring(3,5) + strokeCol.substring(1,3);
+        tags += `\\3c&H${bgr.toUpperCase()}&`;
+    }
+    if (shadowCol && shadowCol !== '#000000') {
+        let bgr = shadowCol.substring(5,7) + shadowCol.substring(3,5) + shadowCol.substring(1,3);
+        tags += `\\4c&H${bgr.toUpperCase()}&`;
+    }
 
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
+    if (chosenColor !== 'KEEP') {
+        let r = chosenColor.substring(1, 3);
+        let g = chosenColor.substring(3, 5);
+        let b = chosenColor.substring(5, 7);
+        let assBgr = (b + g + r).toUpperCase();
+        tags += `\\c&H${assBgr}&`;
+    }
 
-                const x = Math.max(0, Math.min(canvas.width - 1, Math.floor(displayX * scaleX)));
-                const y = Math.max(0, Math.min(canvas.height - 1, Math.floor(displayY * scaleY)));
+    let finalText = cleanText;
+    if (tags) {
+        finalText = `{${tags}}` + finalText;
+    }
+    finalText = finalText.replace(/\{\}/g, '').trim();
 
-                // ٢. زوومکردنەوەی ٢ هێندە (2x) لەناو شاشەی جێگیری سەرەوە
-                if (loupeCtx) {
-                    loupeCtx.imageSmoothingEnabled = false;
-                    loupeCtx.clearRect(0, 0, 86, 86);
-                    const cropSize = 86; // دەبێتە ١ ئێکس (1x - قەبارەی تەواو سروشتی و ئاسایی)
-                    loupeCtx.drawImage(
-                        canvas,
-                        x - cropSize / 2, y - cropSize / 2, cropSize, cropSize,
-                        0, 0, 86, 86
-                    );
-                }
+    // ناردنی دەقەکە بۆ کارتی سەرەکی و تۆمارکردنی
+    ta.value = finalText;
+    ta.style.height = 'auto';
+    ta.style.height = ta.scrollHeight + 'px';
 
-                // ٣. خوێندنەوەی ڕەنگ و گۆڕینی چێوەی شاشەی سەرەوە
-                try {
-                    const pixel = ctx.getImageData(x, y, 1, 1).data;
-                    tempSampledVideoHex = "#" + ((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1).toUpperCase();
-                    
-                    if (zoomWindow) zoomWindow.style.borderColor = tempSampledVideoHex;
-                    document.getElementById('vSampledColorHexText').innerText = tempSampledVideoHex;
-                } catch(err) {}
-            }
+    if (typeof historyStack !== 'undefined') {
+        historyStack.push(getCurrentSnapshot());
+        if (historyStack.length > 40) historyStack.shift();
+        redoStack = [];
+    }
+    saveSession();
 
-            canvas.onmousedown = (e) => {
-                sampleAtPoint(e);
-                canvas.onmousemove = sampleAtPoint;
-                window.onmouseup = () => { canvas.onmousemove = null; window.onmouseup = null; };
-            };
+    // داخستنی پەنجەرەکە
+    const modal = document.getElementById('sub-style-modal');
+    if (modal) modal.style.display = 'none';
 
-            canvas.ontouchstart = (e) => {
-                sampleAtPoint(e);
-                canvas.ontouchmove = sampleAtPoint;
-            };
+    showToast("تەکنیکەکان جێبەجێکران!", "success");
+}
+
+let currentChosenSymbolColor = '#FFF200';
+
+// کاتێک دەست لە هەر ڕەنگێک دەدەیت: ئەگەر دەقەکە پێشتر گۆرانی یان تابلۆی تێدابوو، ڕاستەوخۆ ڕەنگەکەی نوێ دەکاتەوە
+function setSymbolColor(hex, el) {
+    currentChosenSymbolColor = hex;
+    const input = document.getElementById('symbolColorChoice');
+    if (input) input.value = hex;
+    
+    if (el && el.parentElement) {
+        el.parentElement.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    const modalTa = document.getElementById('modalSubtitleLiveText');
+    if (modalTa && modalTa.value) {
+        let val = modalTa.value;
+        let hasMusic = val.includes('♪');
+        let hasSign = val.includes('|');
+
+        if (hasMusic || hasSign) {
+            let sym = hasMusic ? '♪' : '|';
+            let r = hex.substring(1, 3);
+            let g = hex.substring(3, 5);
+            let b = hex.substring(5, 7);
+            let assColor = (b + g + r).toUpperCase();
+
+            // پاککردنەوەی نیشانە و تاگی ڕەنگی کۆن
+            let clean = val.replace(/\{\\c&H[0-9A-Fa-f]+&\}[♪\|]\{\\c&HFFFFFF&\}\s*/g, '')
+                           .replace(/\s*\{\\c&H[0-9A-Fa-f]+&\}[♪\|]\{\\c&HFFFFFF&\}/g, '')
+                           .replace(/^[♪\|\s]+|[♪\|\s]+$/g, '')
+                           .trim();
+
+            modalTa.value = `{\\c&H${assColor}&}${sym}{\\c&HFFFFFF&} ${clean} {\\c&H${assColor}&}${sym}{\\c&HFFFFFF&}`;
         }
+    }
+}
 
-        // دانانی ڕەنگە هەڵبژێردراوەکە لەسەر دەقەکە
-        function confirmVideoCanvasColor() {
-            setCustomPaletteColor(tempSampledVideoHex, null);
-            document.getElementById('video-color-picker-modal').style.display = 'none';
-            showToast("ڕەنگەکە بە سەرکەوتوویی لە ڤیدیۆ وەرگیرا!", "success");
+function insertSymbolToText(sym) {
+    const modalTa = document.getElementById('modalSubtitleLiveText');
+    if (!modalTa) return;
+    let val = modalTa.value.trim();
+    if (!val) return;
+
+    let hex = (document.getElementById('symbolColorChoice') && document.getElementById('symbolColorChoice').value) || currentChosenSymbolColor;
+    let r = hex.substring(1, 3);
+    let g = hex.substring(3, 5);
+    let b = hex.substring(5, 7);
+    let assColor = (b + g + r).toUpperCase();
+
+    // خاوێنکردنەوەی هەموو نیشانە و تاگی کۆن
+    let clean = val.replace(/\{\\c&H[0-9A-Fa-f]+&\}[♪\|]\{\\c&HFFFFFF&\}\s*/g, '')
+                   .replace(/\s*\{\\c&H[0-9A-Fa-f]+&\}[♪\|]\{\\c&HFFFFFF&\}/g, '')
+                   .replace(/^[♪\|\s]+|[♪\|\s]+$/g, '')
+                   .trim();
+
+    modalTa.value = `{\\c&H${assColor}&}${sym}{\\c&HFFFFFF&} ${clean} {\\c&H${assColor}&}${sym}{\\c&HFFFFFF&}`;
+    showToast(`نیشانەی ${sym} دانرا!`, "success");
+}
+
+// ٤٠ خانەکە بە مەودای زۆر سەلامەت بۆ ناوەوەی شاشە
+function openGrid40Modal() {
+    const video = document.getElementById('preview-video');
+    const canvas = document.getElementById('grid40Canvas');
+    const cont = document.getElementById('grid40Container');
+    
+    if (canvas && video && video.videoWidth) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    } else if (canvas) {
+        canvas.width = 1920;
+        canvas.height = 1080;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#0f1318';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (!cont) return;
+    cont.innerHTML = '';
+    const cols = 8, rows = 5;
+    
+    const minX = 180, maxX = 1740;
+    const minY = 100, maxY = 980;
+    const stepX = (maxX - minX) / (cols - 1);
+    const stepY = (maxY - minY) / (rows - 1);
+    
+    let count = 1;
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            let posX = Math.round(minX + (c * stepX));
+            let posY = Math.round(minY + (r * stepY));
+            let num = count++;
+            cont.innerHTML += `
+                <button type="button" onclick="applyPosToSub(${posX}, ${posY})" style="background: rgba(0,0,0,0.4); border: 1px dashed rgba(255,255,255,0.3); color: #ffffff; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; text-shadow: 0 0 3px #000; transition: background 0.15s;" onmouseover="this.style.background='var(--primary-glow)'" onmouseout="this.style.background='rgba(0,0,0,0.4)'">
+                    ${num}
+                </button>`;
         }
+    }
+    const gridModal = document.getElementById('grid40-modal');
+    if (gridModal) gridModal.style.display = 'flex';
+}
 
-        function openSubStyleModal(index) {
-            currentStylingIndex = index;
-            const numEl = document.getElementById('styleModalLineNum');
-            if (numEl) numEl.innerText = '#' + (index + 1);
-            
-            const card = document.querySelector(`.subtitle-card[data-index="${index}"]`);
-            const ta = card ? card.querySelector('textarea') : null;
-            let text = ta ? ta.value : ((originalData[index] && originalData[index].rawText) || (originalData[index] && originalData[index].text) || '');
+function applyPosToSub(x, y) {
+    const modalTa = document.getElementById('modalSubtitleLiveText');
+    let newText = '';
+    
+    if (modalTa) {
+        let val = modalTa.value.replace(/\{\\pos\([^)]+\)\}/g, '').replace(/\{\\an\d\}/g, '');
+        newText = `{\\pos(${x},${y})}` + val;
+        modalTa.value = newText;
+    }
 
-            // بارکردنی دەقەکە لەناو بۆکسی مۆداڵ بۆ دەستکاریکردنی وشەکان
-            const modalTa = document.getElementById('modalSubtitleLiveText');
-            if (modalTa) {
-                modalTa.value = text;
-            }
-
-            // ١. خوێندنەوەی شوێن (\an)
-            let alignMatch = text.match(/\\an(\d)/);
-            selectAlignment(alignMatch ? alignMatch[1] : '2');
-
-            // ٢. خوێندنەوەی Fade (\fad)
-            const chkFade = document.getElementById('chkEnableFade');
-            const inEl = document.getElementById('fadeInMs');
-            const outEl = document.getElementById('fadeOutMs');
-            let fadMatch = text.match(/\\fad\((\d+),\s*(\d+)\)/);
-            if (fadMatch) {
-                if (chkFade) chkFade.checked = true;
-                if (inEl) inEl.value = fadMatch[1];
-                if (outEl) outEl.value = fadMatch[2];
-                toggleFadeInputs(true);
-            } else {
-                if (chkFade) chkFade.checked = false;
-                if (inEl) inEl.value = '300';
-                if (outEl) outEl.value = '300';
-                toggleFadeInputs(false);
-            }
-
-            // ٣. Bold و Italic
-            const boldBtn = document.getElementById('btnTechBold');
-            const italicBtn = document.getElementById('btnTechItalic');
-            if (boldBtn) boldBtn.classList.toggle('active', /\\b1\b/.test(text));
-            if (italicBtn) italicBtn.classList.toggle('active', /\\i1\b/.test(text));
-
-            // ٤. Blur و Outline
-            const blurInput = document.getElementById('techBlurVal');
-            const bordInput = document.getElementById('techOutlineVal');
-            let blurMatch = text.match(/\\blur([\d\.]+)/);
-            if (blurInput) blurInput.value = blurMatch ? blurMatch[1] : '';
-            let bordMatch = text.match(/\\bord([\d\.]+)/);
-            if (bordInput) bordInput.value = bordMatch ? bordMatch[1] : '';
-
-            // ٥. ڕەنگ
-            setCustomPaletteColor('KEEP', null);
-
-            // کردنەوەی مۆداڵ
-            const modal = document.getElementById('sub-style-modal');
-            if (modal) modal.style.display = 'flex';
-        }
-
-        function applySubStyleToLine() {
-            if (currentStylingIndex === -1) return;
-            const card = document.querySelector(`.subtitle-card[data-index="${currentStylingIndex}"]`);
-            if (!card) return;
+    if (currentStylingIndex !== -1) {
+        const card = document.querySelector(`.subtitle-card[data-index="${currentStylingIndex}"]`);
+        if (card) {
             const ta = card.querySelector('textarea');
-            if (!ta) return;
-
-            const modalTa = document.getElementById('modalSubtitleLiveText');
-            let text = modalTa ? modalTa.value.trim() : ta.value.trim();
-            if (!text && originalData[currentStylingIndex]) {
-                text = originalData[currentStylingIndex].rawText || originalData[currentStylingIndex].text || '';
+            if (ta && newText) {
+                ta.value = newText;
+                saveSession();
             }
-
-            const alignEl = document.getElementById('selectedAlignVal');
-            const colorEl = document.getElementById('selectedSubColorVal');
-            const chkFade = document.getElementById('chkEnableFade');
-            const inEl = document.getElementById('fadeInMs');
-            const outEl = document.getElementById('fadeOutMs');
-            const boldBtn = document.getElementById('btnTechBold');
-            const italicBtn = document.getElementById('btnTechItalic');
-            const blurInput = document.getElementById('techBlurVal');
-            const bordInput = document.getElementById('techOutlineVal');
-
-            let align = alignEl ? alignEl.value : '2';
-            let chosenColor = colorEl ? colorEl.value : 'KEEP';
-            let isFade = chkFade ? chkFade.checked : false;
-            let fadeIn = (inEl && parseInt(inEl.value, 10)) || 300;
-            let fadeOut = (outEl && parseInt(outEl.value, 10)) || 300;
-            let isBold = boldBtn ? boldBtn.classList.contains('active') : false;
-            let isItalic = italicBtn ? italicBtn.classList.contains('active') : false;
-            let blurVal = blurInput ? blurInput.value.trim() : '';
-            let bordVal = bordInput ? bordInput.value.trim() : '';
-
-            // پاککردنەوەی تاگە سەرەکییەکان لە سەرەتای دێڕ تا دووبارە نەبنەوە
-            text = text.replace(/\{\\an\d\}/g, '')
-                       .replace(/\\fad\(\d+,\s*\d+\)/g, '')
-                       .replace(/\\b[01]/g, '')
-                       .replace(/\\i[01]/g, '')
-                       .replace(/\\blur[\d\.]+/g, '')
-                       .replace(/\\bord[\d\.]+/g, '');
-
-            // دروستکردنی تاگە گشتییەکان
-            let newTags = '';
-            if (align !== '2') newTags += `\\an${align}`;
-            if (isFade) newTags += `\\fad(${fadeIn},${fadeOut})`;
-            if (isBold) newTags += `\\b1`;
-            if (isItalic) newTags += `\\i1`;
-            if (blurVal !== '') newTags += `\\blur${blurVal}`;
-            if (bordVal !== '') newTags += `\\bord${bordVal}`;
-
-            // ئەگەر هیچ وشەیەک دیاری نەکرابوو و ڕەنگێکی گشتی هەڵبژێردرا
-            if (chosenColor !== 'KEEP' && !text.includes('{\\c&H')) {
-                let r = chosenColor.substring(1, 3);
-                let g = chosenColor.substring(3, 5);
-                let b = chosenColor.substring(5, 7);
-                let assBgr = (b + g + r).toUpperCase();
-                newTags += `\\c&H${assBgr}&`;
-            }
-
-            if (newTags) {
-                text = `{${newTags}}` + text;
-            }
-            text = text.replace(/\{\}/g, '');
-
-            ta.value = text;
-            closeSubStyleModal();
-            saveSession();
-            showToast("تەکنیک و ڕەنگەکان جێبەجێکران!", "success");
         }
+    }
+
+    const gridModal = document.getElementById('grid40-modal');
+    if (gridModal) gridModal.style.display = 'none';
+    showToast(`شوێنی دێڕ گۆڕدرا بۆ خانەی X:${x} , Y:${y}`, "success");
+}
+
+// هەڵگرتنی ڕەنگ لەسەر ڤیدیۆ
+function pickColorFromScreen() {
+    const video = document.getElementById('preview-video');
+    if (!video || !video.videoWidth) {
+        showToast("تکایە سەرەتا ڤیدیۆ لێبدە!", "warning");
+        return;
+    }
+
+    const modal = document.getElementById('video-color-picker-modal');
+    const canvas = document.getElementById('vPickerCanvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    modal.style.display = 'flex';
+    setupCanvasColorTouch(canvas, ctx);
+}
+
+function setupCanvasColorTouch(canvas, ctx) {
+    const loupeCanvas = document.getElementById('vLoupeCanvas');
+    const loupeCtx = loupeCanvas ? loupeCanvas.getContext('2d') : null;
+    const touchPoint = document.getElementById('vTouchPoint');
+    const zoomWindow = document.getElementById('vZoomWindow');
+
+    function sampleAtPoint(e) {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
+        const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
+
+        const displayX = clientX - rect.left;
+        const displayY = clientY - rect.top;
+
+        if (touchPoint) {
+            touchPoint.style.display = 'block';
+            touchPoint.style.left = `${displayX}px`;
+            touchPoint.style.top = `${displayY}px`;
+        }
+
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        const x = Math.max(0, Math.min(canvas.width - 1, Math.floor(displayX * scaleX)));
+        const y = Math.max(0, Math.min(canvas.height - 1, Math.floor(displayY * scaleY)));
+
+        if (loupeCtx) {
+            loupeCtx.imageSmoothingEnabled = false;
+            loupeCtx.clearRect(0, 0, 86, 86);
+            const cropSize = 86;
+            loupeCtx.drawImage(canvas, x - cropSize / 2, y - cropSize / 2, cropSize, cropSize, 0, 0, 86, 86);
+        }
+
+        try {
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            tempSampledVideoHex = "#" + ((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1).toUpperCase();
+            if (zoomWindow) zoomWindow.style.borderColor = tempSampledVideoHex;
+            document.getElementById('vSampledColorHexText').innerText = tempSampledVideoHex;
+        } catch(err) {}
+    }
+
+    canvas.onmousedown = (e) => { sampleAtPoint(e); canvas.onmousemove = sampleAtPoint; window.onmouseup = () => { canvas.onmousemove = null; }; };
+    canvas.ontouchstart = (e) => { sampleAtPoint(e); canvas.ontouchmove = sampleAtPoint; };
+}
+
+function confirmVideoCanvasColor() {
+    setCustomPaletteColor(tempSampledVideoHex, null);
+    document.getElementById('video-color-picker-modal').style.display = 'none';
+    showToast("ڕەنگەکە لە ڤیدیۆ وەرگیرا!", "success");
+}
 
         function toggleVideoUrlInput() {
             const box = document.getElementById('video-url-box');
@@ -4267,7 +4634,7 @@ async function pasteFromClipboard() {
             clearTimeout(playerControlsTimer);
         }
 
-// بزوێنەری نیشاندانی ژێرنووسی فرە-دێڕ لەگەڵ دەرکەوتنی تەواوی Bold و Italic لەسەر شاشە
+// بزوێنەری پێشکەوتووی نیشاندانی ژێرنووس بە پاراستنی تەواوی وشەکان لە شکاندن
         function setupVideoSync() {
             const video = document.getElementById('preview-video');
             const overlay = document.getElementById('video-subtitle-overlay');
@@ -4282,7 +4649,7 @@ async function pasteFromClipboard() {
                         const card = document.querySelector(`.subtitle-card[data-index="${i}"]`);
                         let userText = card ? card.querySelector('textarea').value : '';
                         let finalText = userText.trim() !== '' ? userText : (originalData[i].rawText || originalData[i].text);
-                        activeSubs.push({ index: i, text: finalText });
+                        activeSubs.push({ index: i, text: finalText, startSec: originalData[i].startSec, endSec: originalData[i].endSec });
                     }
                 }
 
@@ -4294,51 +4661,99 @@ async function pasteFromClipboard() {
                     });
                 }
 
-                let topHtml = '', midHtml = '', botHtml = '';
+                let topHtml = '', midHtml = '', botHtml = '', posHtml = '';
 
                 activeSubs.forEach(sub => {
                     let str = sub.text;
+                    
+                    // ١. پۆزیشن (Pos)
+                    let posM = str.match(/\\pos\((\d+),\s*(\d+)\)/);
+                    let isPos = !!posM;
+                    let posX = posM ? parseFloat(posM[1]) : 0;
+                    let posY = posM ? parseFloat(posM[2]) : 0;
+
                     let align = '2';
                     let mAlign = str.match(/\\an(\d)/);
                     if (mAlign) align = mAlign[1];
 
+                    let blurM = str.match(/\\blur([\d\.]+)/);
+                    let blurCss = blurM ? `filter: blur(${blurM[1]}px);` : '';
+
+                    let fsM = str.match(/\\fs(\d+)/);
+                    let fsCss = fsM ? `font-size: ${Math.round(parseFloat(fsM[1]) * 0.55)}px !important;` : '';
+
+                    // کاڵبوونەوە (\fad)
+                    let fadM = str.match(/\\fad\((\d+),\s*(\d+)\)/);
+                    let opacityCss = 'opacity: 1;';
+                    if (fadM) {
+                        let fInSec = parseFloat(fadM[1]) / 1000;
+                        let fOutSec = parseFloat(fadM[2]) / 1000;
+                        let elapsed = ct - sub.startSec;
+                        let remaining = sub.endSec - ct;
+
+                        if (fInSec > 0 && elapsed < fInSec) {
+                            opacityCss = `opacity: ${(elapsed / fInSec).toFixed(2)};`;
+                        } else if (fOutSec > 0 && remaining < fOutSec) {
+                            opacityCss = `opacity: ${(remaining / fOutSec).toFixed(2)};`;
+                        }
+                    }
+
+                    let bordM = str.match(/\\bord([\d\.]+)/);
+                    let bWidth = bordM ? parseFloat(bordM[1]) : 1.2;
+
+                    let c3M = str.match(/\\3c&H([0-9a-fA-F]{6})&/);
+                    let strokeHex = c3M ? `#${c3M[1].substring(4,6)}${c3M[1].substring(2,4)}${c3M[1].substring(0,2)}` : '#000000';
+
+                    let c4M = str.match(/\\4c&H([0-9a-fA-F]{6})&/);
+                    let shadowHex = c4M ? `#${c4M[1].substring(4,6)}${c4M[1].substring(2,4)}${c4M[1].substring(0,2)}` : 'rgba(0,0,0,0.85)';
+
+                    let textShadowCss = `text-shadow: -${bWidth}px -${bWidth}px 0 ${strokeHex}, ${bWidth}px -${bWidth}px 0 ${strokeHex}, -${bWidth}px ${bWidth}px 0 ${strokeHex}, ${bWidth}px ${bWidth}px 0 ${strokeHex}, 0px 2px 4px ${shadowHex};`;
+
                     let formatted = str;
-                    
-                    // ١. گۆڕینی کۆدی ڕەنگ
                     formatted = formatted.replace(/\{\\c&H([0-9a-fA-F]{6})&\}(.*?)(?=\{\\c|$)/g, (match, bgr, content) => {
                         let hex = `#${bgr.substring(4,6)}${bgr.substring(2,4)}${bgr.substring(0,2)}`;
                         return `<span style="color: ${hex};">${content}</span>`;
                     });
 
-                    // ٢. گۆڕینی تاگی Bold (\b1) بۆ دەرکەوتنی لەسەر شاشە
-                    formatted = formatted.replace(/\{\\b1\}/g, '<b>').replace(/\{\\b0\}/g, '</b>');
-                    
-                    // ٣. گۆڕینی تاگی Italic (\i1) بۆ دەرکەوتنی لەسەر شاشە
-                    formatted = formatted.replace(/\{\\i1\}/g, '<i>').replace(/\{\\i0\}/g, '</i>');
-
-                    // ٤. گۆڕینی تاگی Underline (\u1)
-                    formatted = formatted.replace(/\{\\u1\}/g, '<u>').replace(/\{\\u0\}/g, '</u>');
-
-                    // ٥. پاککردنەوەی تاگەکانی تر
-                    formatted = formatted.replace(/\{[^}]+\}/g, '')
+                    formatted = formatted.replace(/\{\\b1\}/g, '<b>').replace(/\{\\b0\}/g, '</b>')
+                                         .replace(/\{\\i1\}/g, '<i>').replace(/\{\\i0\}/g, '</i>')
+                                         .replace(/\{\\u1\}/g, '<u>').replace(/\{\\u0\}/g, '</u>')
+                                         .replace(/\{[^}]+\}/g, '')
                                          .replace(/\\N/g, '<br>')
                                          .replace(/\n/g, '<br>');
 
-                    let textAlign = 'center';
-                    if (['1', '4', '7'].includes(align)) textAlign = 'left';
-                    if (['3', '6', '9'].includes(align)) textAlign = 'right';
+                    // چارەسەری یەک دێڕی و ڕێگری لە لەتبوونی پیتەکان
+                    if (isPos) {
+                        let leftPct = Math.max(3, Math.min(97, (posX / 1920) * 100));
+                        let topPct = Math.max(3, Math.min(97, (posY / 1080) * 100));
 
-                    let lineMarkup = `<div class="sub-rendered-line" style="color: #FFFFFF; text-align: ${textAlign};">${formatted}</div>`;
+                        let posStyle = '';
+                        if (leftPct >= 50) {
+                            let rightPct = (100 - leftPct).toFixed(2);
+                            posStyle = `right: ${rightPct}%; left: auto; transform: translateY(-50%); text-align: right;`;
+                        } else {
+                            posStyle = `left: ${leftPct.toFixed(2)}%; right: auto; transform: translateY(-50%); text-align: left;`;
+                        }
 
-                    if (['7', '8', '9'].includes(align)) topHtml += lineMarkup;
-                    else if (['4', '5', '6'].includes(align)) midHtml += lineMarkup;
-                    else botHtml += lineMarkup;
+                        posHtml += `<div class="sub-rendered-line" style="position: absolute; ${posStyle} top: ${topPct}%; width: max-content; max-width: 90%; white-space: nowrap; word-break: keep-all; color: #FFFFFF; direction: rtl; ${blurCss} ${fsCss} ${opacityCss} ${textShadowCss}">${formatted}</div>`;
+                    } else {
+                        let textAlign = 'center';
+                        if (['1', '4', '7'].includes(align)) textAlign = 'left';
+                        if (['3', '6', '9'].includes(align)) textAlign = 'right';
+
+                        let lineMarkup = `<div class="sub-rendered-line" style="color: #FFFFFF; text-align: ${textAlign}; width: max-content; max-width: 92%; margin: 0 auto; white-space: normal; word-break: keep-all; direction: rtl; ${blurCss} ${fsCss} ${opacityCss} ${textShadowCss}">${formatted}</div>`;
+
+                        if (['7', '8', '9'].includes(align)) topHtml += lineMarkup;
+                        else if (['4', '5', '6'].includes(align)) midHtml += lineMarkup;
+                        else botHtml += lineMarkup;
+                    }
                 });
 
                 overlay.innerHTML = `
                     <div class="sub-zone top">${topHtml}</div>
                     <div class="sub-zone mid">${midHtml}</div>
                     <div class="sub-zone bot">${botHtml}</div>
+                    ${posHtml}
                 `;
 
                 if (video.duration) {
@@ -4442,11 +4857,31 @@ async function pasteFromClipboard() {
             finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${lines}\n\n`;
         });
     } else if (targetFormat === 'ass') {
-        let header = assHeaderLines.length > 0 
-            ? assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n' 
-            : "[Script Info]\nTitle: Edited Subtitle\nScriptType: v4.00+\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,1,0,2,10,10,10,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n";
+        let titleName = currentFileName ? currentFileName.replace(/\.[^/.]+$/, "") : "Subtitle";
         
-        finalContent = header;
+        let header = `[Script Info]
+Title: ${titleName}
+ScriptType: v4.00+
+WrapStyle: 0
+PlayResX: 1920
+PlayResY: 1080
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Speda Bold,67,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1.5,2,2,10,10,75,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+`;
+        
+        if (isAssFormat && assHeaderLines.length > 0) {
+            let cleanHeader = assHeaderLines.filter(l => !l.trim().startsWith('[Events]') && !l.trim().startsWith('Format: Layer')).join('\n');
+            finalContent = cleanHeader.trim() + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
+        } else {
+            finalContent = header;
+        }
+        
         originalData.forEach((item, idx) => {
             let userText = textareas[idx] ? textareas[idx].value.trim() : "";
             let lines = userText !== "" ? userText : (item.rawText || item.text);
@@ -4476,8 +4911,73 @@ async function pasteFromClipboard() {
     }
 }
 
-
         window.addEventListener('load', setupFastScrubber);
+        
+        // ====== فەنکشنەکانی تێکەڵکردنی دوو فایل ======
+function openMergeModal() {
+    document.getElementById('merge-modal').style.display = 'flex';
+}
+
+async function executeMergeAss() {
+    const baseF = document.getElementById('mergeBaseFile').files[0];
+    const srcF = document.getElementById('mergeSourceFile').files[0];
+    const newFont = document.getElementById('mergeNewFontName').value.trim();
+
+    if (!baseF || !srcF) return showToast("تکایە هەردوو فایلەکە هەڵبژێرە!", "error");
+
+    const baseText = await baseF.text();
+    const srcText = await srcF.text();
+
+    let baseStyles = [], baseDialogues = [], baseHeader = [];
+    let srcStyles = [], srcDialogues = [];
+
+    // ١. خوێندنەوەی فایلی سەرەکی و خاوێنکردنەوەی
+    let inBaseEvents = false;
+    baseText.split(/\r?\n/).forEach(line => {
+        let tr = line.trim();
+        if (tr.startsWith('[Events]')) inBaseEvents = true;
+        if (tr.startsWith('Style:')) {
+            if (newFont) {
+                let parts = tr.split(',');
+                parts[1] = newFont;
+                tr = parts.join(',');
+            }
+            baseStyles.push(tr);
+        } else if (tr.startsWith('Dialogue:')) {
+            baseDialogues.push(tr);
+        } else if (!inBaseEvents) {
+            // تەنها ئەو دێڕانە دەهێڵێتەوە کە ستایل نین
+            if (!tr.startsWith('Style:')) {
+                baseHeader.push(tr);
+            }
+        }
+    });
+
+    // ٢. خوێندنەوەی فایلی دووەم
+    srcText.split(/\r?\n/).forEach(line => {
+        let tr = line.trim();
+        if (tr.startsWith('Style:')) srcStyles.push(tr);
+        if (tr.startsWith('Dialogue:')) srcDialogues.push(tr);
+    });
+
+    // ٣. ڕێکخستنی ستایل و دیالۆگەکان
+    let cleanStyles = [...baseStyles, ...srcStyles].filter(s => s.length > 0);
+    let cleanDialogues = [...srcDialogues, ...baseDialogues].filter(d => d.length > 0);
+
+    // ٤. سڕینەوەی هەموو بۆشاییە زیادەکانی کۆتایی سەردێڕ (پێش ستایل)
+    while (baseHeader.length > 0 && baseHeader[baseHeader.length - 1] === '') {
+        baseHeader.pop();
+    }
+
+    // ٥. کۆکردنەوەی تەواوی فایل بەبێ هیچ بۆشاییەکی هەڵە
+    let finalFile = baseHeader.join('\n') + '\n' +
+                    cleanStyles.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n' +
+                    cleanDialogues.join('\n') + '\n';
+
+    triggerDownload(finalFile, baseF.name.replace('.ass', '') + '_Merged.ass');
+    document.getElementById('merge-modal').style.display = 'none';
+    showToast("فایلەکان بە سەرکەوتوویی تێکەڵ کران!", "success");
+}
     </script>
 </body>
 </html>
