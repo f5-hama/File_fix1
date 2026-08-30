@@ -3282,12 +3282,7 @@ async function executeRtlFix() {
                 display.innerText = `${input.files.length} ${i18n[currentLang]['batchFilesSelected']}`; 
                 display.style.color = "var(--success)";
                 
-                const hasVtt = Array.from(input.files).some(f => f.name.toLowerCase().endsWith('.vtt'));
-                if (hasVtt) {
-                    shiftInput.value = "0.1";
-                } else {
-                    shiftInput.value = "";
-                }
+                shiftInput.value = "";
             } else { 
                 display.innerText = i18n[currentLang]['batchNoFile']; 
                 display.style.color = "var(--text-muted)"; 
@@ -3357,7 +3352,7 @@ function processAssStyleLine(line) {
                 const text = await file.text();
                 let parsed = isOrigAss ? parseASSContent(text, true) : (isOrigVtt ? parseVTTContent(text) : parseSRTContent(text));
 
-                let timeShift = hasExplicitShift ? baseTimeShift : (isOrigVtt ? 0.1 : 0);
+                let timeShift = baseTimeShift;
 
                 if (timeShift !== 0) {
                     parsed.forEach(item => { 
