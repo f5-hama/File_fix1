@@ -151,8 +151,11 @@ function deleteEmptySubtitleLines() {
 
         * { 
             box-sizing: border-box; 
-            font-family: inherit; 
             -webkit-tap-highlight-color: transparent; 
+        }
+
+        html, body, #setup-screen, #editor-screen, .glass-card, .btn, .custom-modal-content, .top-nav, .top-tools, .action-bar, .subtitle-card, input, textarea, button, select {
+            font-family: 'KurdForest', Tahoma, Arial, sans-serif !important;
         }
 
         html, body {
@@ -167,7 +170,6 @@ function deleteEmptySubtitleLines() {
         }
 
         body {
-            font-family: 'KurdForest', Tahoma, Arial, sans-serif;
             padding: 12px;
             touch-action: manipulation;
         }
@@ -884,38 +886,20 @@ function deleteEmptySubtitleLines() {
     width: 100% !important;
     height: 100% !important;
     pointer-events: none !important;
-    display: grid !important;
-    grid-template-rows: auto 1fr auto !important;
-    padding: 10px 12px 16px 12px !important;
-    box-sizing: border-box !important;
+    overflow: hidden !important;
     z-index: 15 !important;
 }
 
-/* ستایلی فۆنت لەگەڵ دەرکەوتنی تەواوی Bold و Italic لەسەر ڤیدیۆ */
 .sub-rendered-line {
-    font-family: 'KurdForest', Tahoma, Arial, sans-serif !important;
-    font-size: 13px !important;
-    font-weight: 500;
     line-height: 1.4;
-    margin: 2px 0;
-    -webkit-text-stroke: 0 !important;
-    text-shadow: 
-        -1px -1px 0 #000,  
-         1px -1px 0 #000,
-        -1px  1px 0 #000,
-         1px  1px 0 #000,
-         0px  1px 2px rgba(0,0,0,0.85);
-    filter: none !important;
+    margin: 0;
+    -webkit-text-stroke: 0;
+    filter: none;
+    box-sizing: border-box;
 }
-.sub-rendered-line b {
-    font-weight: 900 !important;
-}
-.sub-rendered-line i {
-    font-style: italic !important;
-}
-.sub-rendered-line u {
-    text-decoration: underline !important;
-}
+.sub-rendered-line b { font-weight: 900 !important; }
+.sub-rendered-line i { font-style: italic !important; }
+.sub-rendered-line u { text-decoration: underline !important; }
 
 /* ستایلی پلەیەرە تایبەتەکە بە ئاڕاستەی ڕاستی LTR */
 .custom-player-container {
@@ -1257,7 +1241,7 @@ function deleteEmptySubtitleLines() {
             <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
             <label>فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)</label>
             <div class="file-name-display">کرتە بکە بۆ هەڵبژاردن</div>
-            <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxOriginal')">
+            <input type="file" id="fileOriginal" accept="*/*" onclick="this.value=null" onchange="toggleClearBtn(this, 'boxOriginal')">
         </div>
         
         <div class="file-box" id="boxKurdish">
@@ -1265,7 +1249,7 @@ function deleteEmptySubtitleLines() {
             <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
             <label>فایلی وەرگێڕدراو (ئارەزوومەندانە)</label>
             <div class="file-name-display">کرتە بکە بۆ هەڵبژاردن</div>
-            <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt" onchange="toggleClearBtn(this, 'boxKurdish')">
+            <input type="file" id="fileKurdish" accept="*/*" onclick="this.value=null" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
         <button class="btn" style="padding: 13px; margin-top: 4px;" onclick="startEditing()">
@@ -1533,26 +1517,6 @@ function deleteEmptySubtitleLines() {
             </div>
         </div>
     </div>
-    
-    <!-- مۆداڵی چاککردنی لکانی پیتەکان و بۆشاییەکان -->
-    <div id="font-fix-modal" class="custom-modal-overlay">
-        <div class="custom-modal-content">
-            <h3 class="custom-modal-title" style="color: var(--primary);">چاککردنی لکانی پیت و بۆشاییەکان</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">پیتە دابڕاوەکان و بۆشاییە زیادەکان چاک دەکات بەبێ ئەوەی هیچ تەکنیک، تابلۆ، یان کاتێک تێکبدات.</p>
-            
-            <div class="file-box" id="boxFontFix" style="margin-bottom: 14px; padding: 14px;">
-                <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
-                <label>فایلەکان هەڵبژێرە (SRT, ASS, VTT):</label>
-                <div class="file-name-display" id="fontFixCountDisplay">هیچ فایلێک دیاری نەکراوە</div>
-                <input type="file" id="fontFixFileInput" accept=".srt,.ass,.vtt,.txt" multiple onchange="updateFontFixCount(this)">
-            </div>
-
-            <div class="custom-modal-actions">
-                <button class="btn" onclick="executeFontFix()">چاککردن و داگرتن</button>
-                <button class="btn btn-outline" onclick="document.getElementById('font-fix-modal').style.display='none'">داخستن</button>
-            </div>
-        </div>
-    </div>
 
      <!-- مۆداڵی چاککردنی RTL بەبێ دەستکاری هیچ شتێکی تر -->
     <div id="rtl-fix-modal" class="custom-modal-overlay">
@@ -1573,6 +1537,8 @@ function deleteEmptySubtitleLines() {
             </div>
         </div>
     </div>
+    
+    
     
     <div id="converter-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
@@ -1627,10 +1593,12 @@ function deleteEmptySubtitleLines() {
             </div>
             
             <div class="top-tools">
-                <button class="top-btn" onclick="undo()" id="btn-undo" title="پاشگەزبوونەوە" data-i18n-title="undoBtn">
+                
+
+                <button class="top-btn" onclick="undo()" id="btn-undo" title="پاشگەزبوونەوە">
                     <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                 </button>
-                <button class="top-btn" onclick="redo()" id="btn-redo" title="چوونەپێش" data-i18n-title="redoBtn">
+                <button class="top-btn" onclick="redo()" id="btn-redo" title="چوونەپێش">
                     <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"></path></svg>
                 </button>
                 <button class="top-btn danger-tool" onclick="deleteEmptySubtitleLines()" title="سڕینەوەی دێڕە بەتاڵەکان">
@@ -1639,11 +1607,15 @@ function deleteEmptySubtitleLines() {
                     </svg>
                 </button>
                 
-                
                 <div class="tool-divider"></div>
                 
-                <button class="top-btn primary-tool" onclick="toggleSearchBar()" title="گەڕان" data-i18n-title="searchNavBtn">
+                <button class="top-btn primary-tool" onclick="toggleSearchBar()" title="گەڕان">
                     <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
+
+                <!-- دوگمەی لابردنی ڤیدیۆ لە سەرەوە -->
+                <button class="top-btn danger-tool" id="btn-remove-video-top" onclick="resetVideoPlayer()" title="لابردنی ڤیدیۆ" style="display: none;">
+                    <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
         </div>
@@ -1676,7 +1648,7 @@ function deleteEmptySubtitleLines() {
                         <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                         <span>فایل لە ئامێرەکەت</span>
                     </button>
-                    <input type="file" id="nativeVideoFileInput" accept="video/mp4, video/webm, video/ogg, video/mpeg, .mpg, .mpeg, .m2v, video/*" style="display: none;" onchange="handleNativeVideoUpload(this)">
+                    <input type="file" id="nativeVideoFileInput" accept="video/*,.mkv,.mp4,.webm,*/*" style="display: none;" onchange="handleNativeVideoUpload(this)">
 
                     
                     <button type="button" class="btn btn-outline" style="flex: 1; padding: 10px 8px; font-size: 12px;" onclick="toggleVideoUrlInput()">
@@ -1699,8 +1671,7 @@ function deleteEmptySubtitleLines() {
                 
                 <div id="video-subtitle-overlay"></div>
                 
-                <!-- دوگمەی دەرچوون لە ڤیدیۆ -->
-                <button type="button" onclick="event.stopPropagation(); resetVideoPlayer();" title="لابردنی ڤیدیۆ" style="position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.65); color: #ef4444; border: 1px solid rgba(239,68,68,0.35); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 35;">✕</button>
+                
 
                 <!-- شریتی کۆنتڕۆڵی مۆدێرن و ڕێکخراو -->
                 <div id="customPlayerControls" class="custom-player-controls" onclick="event.stopPropagation();">
@@ -4830,174 +4801,341 @@ function confirmVideoCanvasColor() {
         }
 
         function playVideoSource(src) {
-            const video = document.getElementById('preview-video');
-            video.src = src;
-            video.load();
-            document.getElementById('video-source-selector').style.display = 'none';
-            document.getElementById('video-player-wrapper').style.display = 'block';
+    const video = document.getElementById('preview-video');
+    video.src = src;
+    video.load();
+    document.getElementById('video-source-selector').style.display = 'none';
+    document.getElementById('video-player-wrapper').style.display = 'block';
 
-            video.onplay = () => {
-                document.getElementById('iconCustomPlay').style.display = 'none';
-                document.getElementById('iconCustomPause').style.display = 'block';
-                resetControlsHideTimer();
-            };
+    // نیشاندانی دەستبەجێی دوگمەی لابردنی ڤیدیۆ لە سەرەوە
+    const topCloseBtn = document.getElementById('btn-remove-video-top');
+    if (topCloseBtn) topCloseBtn.style.display = 'flex';
 
-            video.onpause = () => {
-                document.getElementById('iconCustomPlay').style.display = 'block';
-                document.getElementById('iconCustomPause').style.display = 'none';
-                document.getElementById('customPlayerControls').classList.remove('hide');
-                clearTimeout(playerControlsTimer);
-            };
+    video.onplay = () => {
+        document.getElementById('iconCustomPlay').style.display = 'none';
+        document.getElementById('iconCustomPause').style.display = 'block';
+        resetControlsHideTimer();
+    };
 
-            setupVideoSync();
+    video.onpause = () => {
+        document.getElementById('iconCustomPlay').style.display = 'block';
+        document.getElementById('iconCustomPause').style.display = 'none';
+        document.getElementById('customPlayerControls').classList.remove('hide');
+        clearTimeout(playerControlsTimer);
+    };
+
+    setupVideoSync();
+}
+
+function resetVideoPlayer() {
+    const video = document.getElementById('preview-video');
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    document.getElementById('video-player-wrapper').style.display = 'none';
+    document.getElementById('video-source-selector').style.display = 'flex';
+    document.getElementById('nativeVideoFileInput').value = '';
+    document.getElementById('videoDirectUrlInput').value = '';
+    
+    // شاردنەوەی دوگمەی لابردنی ڤیدیۆ
+    const topCloseBtn = document.getElementById('btn-remove-video-top');
+    if (topCloseBtn) topCloseBtn.style.display = 'none';
+
+    clearTimeout(playerControlsTimer);
+}
+
+// وەرگێڕی ڕەنگەکانی فایلی ئەسڵی ASS
+function parseAssColor(str, defaultHex) {
+    if (!str) return defaultHex || '#FFFFFF';
+    try {
+        var clean = str.toString().trim().replace(/&H/gi, '').replace(/&/g, '');
+        if (!clean) return defaultHex || '#FFFFFF';
+        if (/^-?\d+$/.test(clean)) {
+            var n = (parseInt(clean, 10) >>> 0).toString(16);
+            clean = n.padStart(6, '0');
         }
+        while (clean.length < 6) clean = '0' + clean;
+        var b = clean.substring(clean.length - 6, clean.length - 4);
+        var g = clean.substring(clean.length - 4, clean.length - 2);
+        var r = clean.substring(clean.length - 2);
+        return '#' + r + g + b;
+    } catch(e) {
+        return defaultHex || '#FFFFFF';
+    }
+}
 
-        function resetVideoPlayer() {
-            const video = document.getElementById('preview-video');
-            video.pause();
-            video.removeAttribute('src');
-            video.load();
-            document.getElementById('video-player-wrapper').style.display = 'none';
-            document.getElementById('video-source-selector').style.display = 'flex';
-            document.getElementById('nativeVideoFileInput').value = '';
-            document.getElementById('videoDirectUrlInput').value = '';
-            clearTimeout(playerControlsTimer);
+// شیکەرەوەی دەق و تاگەکانی ناو دێڕ بەبێ کێشە
+function parseAssLineToHtml(rawText, defColor, isBold, isItalic, defFs) {
+    if (!rawText) return '';
+    var curColor = defColor || '#FFFFFF';
+    var curBold = !!isBold;
+    var curItalic = !!isItalic;
+    var html = '';
+    
+    // سڕینەوەی کۆدی وێنەکێشانی ئەنیمەیشن بەبێ لەکارکەوتن
+    var textOnly = rawText.replace(/\{\\p[1-9]\}[^\}]*(\{\\p0\}|$)/gi, '');
+    var parts = textOnly.split(/(\{[\s\S]*?\})/g);
+
+    for (var i = 0; i < parts.length; i++) {
+        var part = parts[i];
+        if (!part) continue;
+        if (part.charAt(0) === '{' && part.charAt(part.length - 1) === '}') {
+            var cM = part.match(/\\(?:c|1c)&?H?([0-9a-fA-F]+)&?/i);
+            if (cM) curColor = parseAssColor(cM[1], defColor);
+            
+            if (/\\b1\b/i.test(part)) curBold = true;
+            if (/\\b0\b/i.test(part)) curBold = false;
+            if (/\\i1\b/i.test(part)) curItalic = true;
+            if (/\\i0\b/i.test(part)) curItalic = false;
+            
+            if (/\\r/i.test(part)) { 
+                curColor = defColor || '#FFFFFF'; 
+                curBold = !!isBold; 
+                curItalic = !!isItalic; 
+            }
+        } else {
+            var cleanChunk = part.replace(/\\N/gi, '<br>').replace(/\\n/gi, '<br>').replace(/\\h/gi, '&nbsp;');
+            var w = curBold ? 'font-weight:bold;' : 'font-weight:normal;';
+            var f = curItalic ? 'font-style:italic;' : 'font-style:normal;';
+            html += '<span style="color:' + curColor + ' !important; ' + w + ' ' + f + '">' + cleanChunk + '</span>';
         }
+    }
+    return html || rawText;
+}
 
-// بزوێنەری پێشکەوتووی نیشاندانی ژێرنووس بە پاراستنی تەواوی وشەکان لە شکاندن
-        function setupVideoSync() {
-            const video = document.getElementById('preview-video');
-            const overlay = document.getElementById('video-subtitle-overlay');
-            if (!video || !overlay) return;
+// پێوانی شوێنی ڕاستەقینەی ڤیدیۆ بە سەلامەتی
+function getVideoRenderBox(video, container) {
+    var cW = (container && container.clientWidth) ? container.clientWidth : 360;
+    var cH = (container && container.clientHeight) ? container.clientHeight : 220;
+    var vW = (video && video.videoWidth) ? video.videoWidth : 1920;
+    var vH = (video && video.videoHeight) ? video.videoHeight : 1080;
+    
+    var videoRatio = vW / vH;
+    var containerRatio = cW / cH;
+    
+    var rW = cW, rH = cH, oX = 0, oY = 0;
+    if (containerRatio > videoRatio) {
+        rH = cH;
+        rW = rH * videoRatio;
+        oX = (cW - rW) / 2;
+    } else {
+        rW = cW;
+        rH = rW / videoRatio;
+        oY = (cH - rH) / 2;
+    }
+    return { width: Math.max(100, rW), height: Math.max(80, rH), left: Math.max(0, oX), top: Math.max(0, oY) };
+}
 
-            video.ontimeupdate = () => {
-                let ct = video.currentTime;
-                let activeSubs = [];
+// بزوێنەری نیشاندانی ژێرنووس
+function setupVideoSync() {
+    var video = document.getElementById('preview-video');
+    var overlay = document.getElementById('video-subtitle-overlay');
+    var playerWrapper = document.getElementById('video-player-wrapper');
+    if (!video || !overlay || !playerWrapper) return;
 
-                for (let i = 0; i < originalData.length; i++) {
-                    if (ct >= originalData[i].startSec && ct <= originalData[i].endSec) {
-                        const card = document.querySelector(`.subtitle-card[data-index="${i}"]`);
-                        let userText = card ? card.querySelector('textarea').value : '';
-                        let finalText = userText.trim() !== '' ? userText : (originalData[i].rawText || originalData[i].text);
-                        activeSubs.push({ index: i, text: finalText, startSec: originalData[i].startSec, endSec: originalData[i].endSec });
-                    }
+    var stylesMap = {};
+    var styleFormatKeys = ["name","fontname","fontsize","primarycolour","secondarycolour","outlinecolour","backcolour","bold","italic","underline","strikeout","scalex","scaley","spacing","angle","borderstyle","outline","shadow","alignment","marginl","marginr","marginv","encoding"];
+
+    if (typeof assHeaderLines !== 'undefined' && assHeaderLines.length > 0) {
+        assHeaderLines.forEach(function(line) {
+            var tr = line.trim();
+            if (tr.startsWith('Format:') && tr.toLowerCase().includes('primarycolour')) {
+                styleFormatKeys = tr.replace(/^Format:\s*/i, '').split(',').map(function(k){ return k.trim().toLowerCase(); });
+            } else if (tr.startsWith('Style:')) {
+                var vals = tr.replace(/^Style:\s*/i, '').split(',');
+                var sObj = {};
+                for (var idx = 0; idx < vals.length; idx++) {
+                    var key = styleFormatKeys[idx] || ('col' + idx);
+                    sObj[key] = vals[idx] ? vals[idx].trim() : '';
                 }
+                var sName = (sObj.name || 'default').toLowerCase();
+                
+                stylesMap[sName] = {
+                    fontname: sObj.fontname || 'Speda Bold',
+                    fontsize: parseFloat(sObj.fontsize) || 45,
+                    primaryColor: parseAssColor(sObj.primarycolour, '#FFFFFF'),
+                    outlineColor: parseAssColor(sObj.outlinecolour, '#000000'),
+                    shadowColor: parseAssColor(sObj.backcolour, '#000000'),
+                    bold: sObj.bold === '-1' || sObj.bold === '1',
+                    italic: sObj.italic === '-1' || sObj.italic === '1',
+                    outline: parseFloat(sObj.outline) || 1.5,
+                    shadow: parseFloat(sObj.shadow) || 1.0,
+                    alignment: sObj.alignment || '2',
+                    marginL: parseFloat(sObj.marginl) || 10,
+                    marginR: parseFloat(sObj.marginr) || 10,
+                    marginV: parseFloat(sObj.marginv) || 18
+                };
+            }
+        });
+    }
 
-                document.querySelectorAll('.active-sub').forEach(el => el.classList.remove('active-sub'));
-                if (activeSubs.length > 0) {
-                    activeSubs.forEach(s => {
-                        let c = document.querySelector(`.subtitle-card[data-index="${s.index}"]`);
-                        if (c) c.classList.add('active-sub');
+    video.ontimeupdate = function() {
+        try {
+            var ct = video.currentTime;
+            var activeSubs = [];
+            for (var i = 0; i < originalData.length; i++) {
+                if (ct >= originalData[i].startSec && ct <= originalData[i].endSec) {
+                    var card = document.querySelector('.subtitle-card[data-index="' + i + '"]');
+                    var userText = card ? card.querySelector('textarea').value : '';
+                    var finalText = userText.trim() !== '' ? userText : (originalData[i].rawText || originalData[i].text);
+                    activeSubs.push({
+                        index: i,
+                        text: finalText,
+                        startSec: originalData[i].startSec,
+                        endSec: originalData[i].endSec,
+                        duration: originalData[i].endSec - originalData[i].startSec,
+                        styleName: (originalData[i].assMeta && originalData[i].assMeta.style) ? originalData[i].assMeta.style.toLowerCase() : 'default'
                     });
                 }
+            }
 
-                let topHtml = '', midHtml = '', botHtml = '', posHtml = '';
+            document.querySelectorAll('.active-sub').forEach(function(el) { el.classList.remove('active-sub'); });
+            activeSubs.forEach(function(s) {
+                var c = document.querySelector('.subtitle-card[data-index="' + s.index + '"]');
+                if (c) c.classList.add('active-sub');
+            });
 
-                activeSubs.forEach(sub => {
-                    let str = sub.text;
-                    
-                    let posM = str.match(/\\pos\((\d+),\s*(\d+)\)/);
-                    let isPos = !!posM;
-                    let posX = posM ? parseFloat(posM[1]) : 0;
-                    let posY = posM ? parseFloat(posM[2]) : 0;
+            var res = getActiveScriptResolution();
+            var fileResX = res.resX || 1920;
+            var fileResY = res.resY || 1080;
+            var vBox = getVideoRenderBox(video, playerWrapper);
+            
+            var scaleX = vBox.width / fileResX;
+            var scaleY = vBox.height / fileResY;
+            var scaleFont = Math.max(0.2, scaleY);
 
-                    let align = '2';
-                    let mAlign = str.match(/\\an(\d)/);
-                    if (mAlign) align = mAlign[1];
+            var renderedElementsHtml = '';
+            activeSubs.forEach(function(sub) {
+                var str = sub.text;
+                var elapsed = ct - sub.startSec;
+                var style = stylesMap[sub.styleName] || stylesMap['default'] || {
+                    fontname: 'Speda Bold', fontsize: 45, primaryColor: '#FFFFFF', outlineColor: '#000000', shadowColor: '#000000',
+                    bold: false, italic: false, outline: 1.5, shadow: 1.0, alignment: '2', marginL: 10, marginR: 10, marginV: 18
+                };
 
-                    let blurM = str.match(/\\blur([\d\.]+)/);
-                    let blurCss = blurM ? `filter: blur(${blurM[1]}px);` : '';
+                // قەبارەی فۆنت (بە قەبارەیەکی ڕوون کە لە مۆبایلیش زۆر دیار بێت)
+                var fsVal = style.fontsize;
+                var fsM = str.match(/\\fs(\d+(?:\.\d+)?)/i);
+                if (fsM) fsVal = parseFloat(fsM[1]);
+                var renderedFs = Math.max(12, Math.round(fsVal * scaleFont));
 
-                    let fsM = str.match(/\\fs(\d+)/);
-                    let fsCss = fsM ? `font-size: ${Math.round(parseFloat(fsM[1]) * 0.55)}px !important;` : '';
+                // ناوی فۆنت
+                var fontName = style.fontname;
+                var fnM = str.match(/\\fn([^\}\\]+)/i);
+                if (fnM) fontName = fnM[1].trim();
 
-                    let fadM = str.match(/\\fad\((\d+),\s*(\d+)\)/);
-                    let opacityCss = 'opacity: 1;';
-                    if (fadM) {
-                        let fInSec = parseFloat(fadM[1]) / 1000;
-                        let fOutSec = parseFloat(fadM[2]) / 1000;
-                        let elapsed = ct - sub.startSec;
-                        let remaining = sub.endSec - ct;
+                // شوێن
+                var posX = 0, posY = 0, isPos = false;
+                var moveM = str.match(/\\move\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)(?:,\s*(\d+)\s*,\s*(\d+))?\s*\)/i);
+                var posM = str.match(/\\pos\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*\)/i);
 
-                        if (fInSec > 0 && elapsed < fInSec) {
-                            opacityCss = `opacity: ${(elapsed / fInSec).toFixed(2)};`;
-                        } else if (fOutSec > 0 && remaining < fOutSec) {
-                            opacityCss = `opacity: ${(remaining / fOutSec).toFixed(2)};`;
-                        }
-                    }
-
-                    let bordM = str.match(/\\bord([\d\.]+)/);
-                    let bWidth = bordM ? parseFloat(bordM[1]) : 1.2;
-
-                    let c3M = str.match(/\\3c&H([0-9a-fA-F]{6})&/);
-                    let strokeHex = c3M ? bgrToHex(c3M[1]) : '#000000';
-
-                    let c4M = str.match(/\\4c&H([0-9a-fA-F]{6})&/);
-                    let shadowHex = c4M ? bgrToHex(c4M[1]) : 'rgba(0,0,0,0.85)';
-
-                    let textShadowCss = `text-shadow: -${bWidth}px -${bWidth}px 0 ${strokeHex}, ${bWidth}px -${bWidth}px 0 ${strokeHex}, -${bWidth}px ${bWidth}px 0 ${strokeHex}, ${bWidth}px ${bWidth}px 0 ${strokeHex}, 0px 2px 4px ${shadowHex};`;
-
-                    // گۆڕینی هەموو تاگەکانی ڕەنگ بۆ ڕەنگی ڕاستەقینەی سەر شاشە
-                    let formatted = str;
-                    formatted = formatted.replace(/\{\\c&H([0-9a-fA-F]{6})&\}/gi, (match, bgr) => {
-                        return `<span style="color: ${bgrToHex(bgr)};">`;
-                    });
-
-                    formatted = formatted.replace(/\{\\b1\}/g, '<b>').replace(/\{\\b0\}/g, '</b>')
-                                         .replace(/\{\\i1\}/g, '<i>').replace(/\{\\i0\}/g, '</i>')
-                                         .replace(/\{\\u1\}/g, '<u>').replace(/\{\\u0\}/g, '</u>')
-                                         .replace(/\{[^}]+\}/g, '')
-                                         .replace(/\\N/g, '<br>')
-                                         .replace(/\n/g, '<br>');
-
-                    // داخستنی تاگە سپانەکان بۆ پاراستنی ڕەنگەکان
-                    let openSpans = (formatted.match(/<span/g) || []).length;
-                    for (let s = 0; s < openSpans; s++) {
-                        formatted += '</span>';
-                    }
-
-                    if (isPos) {
-                        let leftPct = Math.max(3, Math.min(97, (posX / 1920) * 100));
-                        let topPct = Math.max(3, Math.min(97, (posY / 1080) * 100));
-
-                        let posStyle = '';
-                        if (leftPct >= 50) {
-                            let rightPct = (100 - leftPct).toFixed(2);
-                            posStyle = `right: ${rightPct}%; left: auto; transform: translateY(-50%); text-align: right;`;
-                        } else {
-                            posStyle = `left: ${leftPct.toFixed(2)}%; right: auto; transform: translateY(-50%); text-align: left;`;
-                        }
-
-                        posHtml += `<div class="sub-rendered-line" style="position: absolute; ${posStyle} top: ${topPct}%; width: max-content; max-width: 90%; white-space: nowrap; word-break: keep-all; color: #FFFFFF; direction: rtl; ${blurCss} ${fsCss} ${opacityCss} ${textShadowCss}">${formatted}</div>`;
-                    } else {
-                        let textAlign = 'center';
-                        if (['1', '4', '7'].includes(align)) textAlign = 'left';
-                        if (['3', '6', '9'].includes(align)) textAlign = 'right';
-
-                        let lineMarkup = `<div class="sub-rendered-line" style="color: #FFFFFF; text-align: ${textAlign}; width: max-content; max-width: 92%; margin: 0 auto; white-space: normal; word-break: keep-all; direction: rtl; ${blurCss} ${fsCss} ${opacityCss} ${textShadowCss}">${formatted}</div>`;
-
-                        if (['7', '8', '9'].includes(align)) topHtml += lineMarkup;
-                        else if (['4', '5', '6'].includes(align)) midHtml += lineMarkup;
-                        else botHtml += lineMarkup;
-                    }
-                });
-
-                overlay.innerHTML = `
-                    <div class="sub-zone top">${topHtml}</div>
-                    <div class="sub-zone mid">${midHtml}</div>
-                    <div class="sub-zone bot">${botHtml}</div>
-                    ${posHtml}
-                `;
-
-                if (video.duration) {
-                    const pct = (video.currentTime / video.duration) * 100;
-                    const fill = document.getElementById('customProgressFill');
-                    if (fill) fill.style.width = pct + '%';
-                    const timeText = document.getElementById('customTimeText');
-                    if (timeText) timeText.innerText = `${formatPlayerTime(video.currentTime)} / ${formatPlayerTime(video.duration)}`;
+                if (moveM) {
+                    isPos = true;
+                    var x1 = parseFloat(moveM[1]), y1 = parseFloat(moveM[2]);
+                    var x2 = parseFloat(moveM[3]), y2 = parseFloat(moveM[4]);
+                    var t1 = moveM[5] ? parseFloat(moveM[5]) / 1000 : 0;
+                    var t2 = moveM[6] ? parseFloat(moveM[6]) / 1000 : sub.duration;
+                    var progress = (t2 > t1) ? Math.max(0, Math.min(1, (elapsed - t1) / (t2 - t1))) : 1;
+                    posX = vBox.left + (x1 + (x2 - x1) * progress) * scaleX;
+                    posY = vBox.top + (y1 + (y2 - y1) * progress) * scaleY;
+                } else if (posM) {
+                    isPos = true;
+                    var rawX = parseFloat(posM[1]), rawY = parseFloat(posM[2]);
+                    if (!posM[1].includes('.') && Math.abs(rawX) >= 10000) rawX /= 1000;
+                    if (!posM[2].includes('.') && Math.abs(rawY) >= 10000) rawY /= 1000;
+                    posX = vBox.left + (rawX * scaleX);
+                    posY = vBox.top + (rawY * scaleY);
                 }
-            };
+
+                var align = style.alignment;
+                var anM = str.match(/\\an(\d)/i);
+                if (anM) align = anM[1];
+
+                // ستڕۆک
+                var bordW = (style.outline || 1.5) * scaleFont;
+                var bordM = str.match(/\\bord([\d\.]+)/i);
+                if (bordM) bordW = parseFloat(bordM[1]) * scaleFont;
+
+                var strokeHex = style.outlineColor || '#000000';
+                var c3M = str.match(/\\3c&?H?([0-9a-fA-F]+)&?/i);
+                if (c3M) strokeHex = parseAssColor(c3M[1], strokeHex);
+
+                // سێبەر
+                var shadW = (style.shadow || 1.0) * scaleFont;
+                var shadM = str.match(/\\shad([\d\.]+)/i);
+                if (shadM) shadW = parseFloat(shadM[1]) * scaleFont;
+
+                var shadowHex = style.shadowColor || '#000000';
+                var c4M = str.match(/\\4c&?H?([0-9a-fA-F]+)&?/i);
+                if (c4M) shadowHex = parseAssColor(c4M[1], shadowHex);
+
+                var b = Math.max(0.8, bordW);
+                var d = (b * 0.707).toFixed(1);
+                var bFixed = b.toFixed(1);
+                
+                var textShadowList = [
+                    bFixed + 'px 0 0 ' + strokeHex,
+                    '-' + bFixed + 'px 0 0 ' + strokeHex,
+                    '0 ' + bFixed + 'px 0 ' + strokeHex,
+                    '0 -' + bFixed + 'px 0 ' + strokeHex,
+                    d + 'px ' + d + 'px 0 ' + strokeHex,
+                    '-' + d + 'px ' + d + 'px 0 ' + strokeHex,
+                    d + 'px -' + d + 'px 0 ' + strokeHex,
+                    '-' + d + 'px -' + d + 'px 0 ' + strokeHex
+                ];
+
+                if (shadW > 0) {
+                    var sX = (shadW + (b * 0.5)).toFixed(1);
+                    var sY = (shadW + (b * 0.5)).toFixed(1);
+                    textShadowList.push(sX + 'px ' + sY + 'px 0px ' + shadowHex);
+                }
+
+                var shadowCss = 'text-shadow: ' + textShadowList.join(', ') + ';';
+                var formattedHtml = parseAssLineToHtml(str, style.primaryColor, style.bold, style.italic, renderedFs);
+
+                var posCss = '';
+                if (isPos) {
+                    var transX = '-50%', transY = '-50%';
+                    if (['1','4','7'].includes(align)) transX = '0%';
+                    if (['3','6','9'].includes(align)) transX = '-100%';
+                    if (['7','8','9'].includes(align)) transY = '0%';
+                    if (['1','2','3'].includes(align)) transY = '-100%';
+                    posCss = 'position: absolute; left: ' + posX.toFixed(1) + 'px; top: ' + posY.toFixed(1) + 'px; transform: translate(' + transX + ', ' + transY + ');';
+                } else {
+                    var marginL = vBox.left + ((style.marginL || 10) * scaleX);
+                    var marginR = (playerWrapper.clientWidth - (vBox.left + vBox.width)) + ((style.marginR || 10) * scaleX);
+                    var marginV = (playerWrapper.clientHeight - (vBox.top + vBox.height)) + ((style.marginV || 18) * scaleY);
+                    var marginVTop = vBox.top + ((style.marginV || 18) * scaleY);
+
+                    if (align === '7') posCss = 'position: absolute; top: ' + marginVTop.toFixed(1) + 'px; left: ' + marginL.toFixed(1) + 'px; text-align: left;';
+                    else if (align === '8') posCss = 'position: absolute; top: ' + marginVTop.toFixed(1) + 'px; left: 50%; transform: translateX(-50%); text-align: center;';
+                    else if (align === '9') posCss = 'position: absolute; top: ' + marginVTop.toFixed(1) + 'px; right: ' + marginR.toFixed(1) + 'px; text-align: right;';
+                    else if (align === '4') posCss = 'position: absolute; top: 50%; left: ' + marginL.toFixed(1) + 'px; transform: translateY(-50%); text-align: left;';
+                    else if (align === '5') posCss = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;';
+                    else if (align === '6') posCss = 'position: absolute; top: 50%; right: ' + marginR.toFixed(1) + 'px; transform: translateY(-50%); text-align: right;';
+                    else if (align === '1') posCss = 'position: absolute; bottom: ' + marginV.toFixed(1) + 'px; left: ' + marginL.toFixed(1) + 'px; text-align: left;';
+                    else if (align === '3') posCss = 'position: absolute; bottom: ' + marginV.toFixed(1) + 'px; right: ' + marginR.toFixed(1) + 'px; text-align: right;';
+                    else posCss = 'position: absolute; bottom: ' + marginV.toFixed(1) + 'px; left: 50%; transform: translateX(-50%); text-align: center;';
+                }
+
+                renderedElementsHtml += '<div class="sub-rendered-line" style="' + posCss + ' font-size: ' + renderedFs + 'px !important; font-family: \'' + fontName + '\', \'Speda Bold\', Tahoma, sans-serif !important; white-space: nowrap; word-break: keep-all; direction: rtl; ' + shadowCss + '">' +
+                    formattedHtml +
+                    '</div>';
+            });
+
+            overlay.innerHTML = renderedElementsHtml;
+            if (video.duration) {
+                var pct = (video.currentTime / video.duration) * 100;
+                var fill = document.getElementById('customProgressFill');
+                if (fill) fill.style.width = pct + '%';
+                var timeText = document.getElementById('customTimeText');
+                if (timeText) timeText.innerText = formatPlayerTime(video.currentTime) + ' / ' + formatPlayerTime(video.duration);
+            }
+        } catch(err) {
+            console.error("Subtitle render error:", err);
         }
+    };
+}
 
         // کۆنتڕۆڵی نەرم و وردی سەهمەکە بەپێی پەنجە لەناو چوارچێوەی دێڕەکان
         function setupFastScrubber() {
@@ -5270,7 +5408,7 @@ function deleteMergeBaseStyle(name) {
 async function executeMergeAss() {
     const baseF = document.getElementById('mergeBaseFile').files[0];
     const srcF = document.getElementById('mergeSourceFile').files[0];
-    const newFont = document.getElementById('mergeNewFontName') ? document.getElementById('mergeNewFontName').value.trim() : '';
+    const newFont = document.getElementById('mergeNewFontName') ? document.getElementById('mergeNewFontName').value.trim() : 'Speda Bold';
 
     if (!baseF) return showToast("تکایە سەرەتا فایلی سەرەکی هەڵبژێرە!", "error");
 
@@ -5291,33 +5429,44 @@ async function executeMergeAss() {
     const baseRes = getResolution(baseText);
     const srcRes = srcText ? getResolution(srcText) : baseRes;
 
+    // پرێسێتی قسەکردن بەپێی ڕێزۆلوشن
     function getSpedaPreset(resY) {
-        if (resY >= 900) return { size: 67, marginV: 75, shadow: "2.0", outline: "1.5" };
-        if (resY >= 600) return { size: 45, marginV: 50, shadow: "1.3", outline: "1.0" };
-        if (resY >= 400) return { size: 30, marginV: 33, shadow: "0.9", outline: "0.7" };
-        return { size: 22, marginV: 25, shadow: "0.7", outline: "0.5" };
+        if (resY >= 900) return { size: 67, marginV: 75, shadow: "2.0", outline: "1.5" }; // 1080p
+        if (resY >= 600) return { size: 45, marginV: 50, shadow: "1.3", outline: "1.0" }; // 720p
+        if (resY >= 400) return { size: 30, marginV: 33, shadow: "0.9", outline: "0.7" }; // 480p
+        return { size: 22, marginV: 25, shadow: "0.7", outline: "0.5" };                   // 360p
     }
 
-    function isStrictlyTechnicalStyle(styleName) {
+    // جیاکردنەوەی ستایلەکانی قسەکردن لە تابلۆ و تەکنیک
+    function isDialogueStyle(styleName) {
         let lower = styleName.toLowerCase().trim();
-        if (/^(default|main|alt|dialogue|narrator|the narrator|narration|flashback|italics|top|overlap|thought|internal|secondary|sub|kurdish|english)/i.test(lower)) {
-            return false;
+        if (lower === 'op-elbaph' || lower.startsWith('op-elbaph')) return true;
+        if (/^(default|main|alt|dialogue|narrator|the narrator|narration|flashback|italics|italic|top|overlap|thought|internal|secondary|sub|kurdish|english|speech|normal|high)/i.test(lower)) {
+            return true;
         }
-        if (/^op[-_]/i.test(lower) && !/^op[-_]?(song|karaoke|theme)/i.test(lower)) {
-            return false;
+        if (/^op[-_]/i.test(lower) && !/^op[-_]?(song|karaoke|theme|music)/i.test(lower)) {
+            return true;
         }
-        const exactTech = [
-            'logo', 'logo-kurdforest', 'tablo', 'sign', 'signs', 'title', 'credit', 'credits',
-            'top-credits', 'staff', 'sponsor', 'fx', 'box', 'screen', 'karaoke', 'song',
-            'insert', 'opening', 'ending', 'op_song', 'ed_song', 'تابلۆ', 'لۆگۆ', 'تێبینی'
-        ];
-        return exactTech.some(k => lower === k || lower.startsWith(k + '-') || lower.startsWith(k + '_') || lower.endsWith('-' + k) || lower.endsWith('_' + k));
+        return false;
     }
 
     function makeShadowSolid(colorStr) {
         if (!colorStr) return '&H00000000';
-        let clean = colorStr.replace(/&$/, '');
-        return clean.replace(/&H[0-9A-Fa-f]{2}([0-9A-Fa-f]{6})/i, '&H00$1');
+        let clean = colorStr.trim().replace(/&$/, '');
+        if (/^&H[0-9A-Fa-f]{8}$/i.test(clean)) return '&H00' + clean.substring(4);
+        if (/^&H[0-9A-Fa-f]{6}$/i.test(clean)) return '&H00' + clean.substring(2);
+        return '&H00000000';
+    }
+
+    function fixOversizedPos(text) {
+        if (!text) return '';
+        return text.replace(/\\pos\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*\)/g, (match, pX, pY) => {
+            let x = parseFloat(pX);
+            let y = parseFloat(pY);
+            if (!pX.includes('.') && Math.abs(x) >= 10000) x = x / 1000;
+            if (!pY.includes('.') && Math.abs(y) >= 10000) y = y / 1000;
+            return `\\pos(${Math.round(x)},${Math.round(y)})`;
+        });
     }
 
     function cleanHarmfulTags(text) {
@@ -5325,7 +5474,7 @@ async function executeMergeAss() {
         let s = text;
         s = s.replace(/\{\\be[0-9\.]+\}/gi, '');
         s = s.replace(/\\be[0-9\.]+/gi, '');
-        s = s.replace(/[\u202A-\u202E\u200E\u200F]/g, '');
+        s = fixOversizedPos(s);
         s = s.replace(/\{\}/g, '');
         return s;
     }
@@ -5333,7 +5482,6 @@ async function executeMergeAss() {
     const scaleX = baseRes.x / srcRes.x;
     const scaleY = baseRes.y / srcRes.y;
     const needsRescale = srcText ? (Math.abs(scaleX - 1) > 0.01 || Math.abs(scaleY - 1) > 0.01) : false;
-    const isSpeda = newFont.toLowerCase().includes('speda');
 
     let baseStyles = [], baseDialogues = [], baseHeader = [];
     let srcStyles = [], srcDialogues = [];
@@ -5346,47 +5494,54 @@ async function executeMergeAss() {
             let parts = tr.split(',');
             if (parts.length >= 23) {
                 let styleName = parts[0].replace('Style:', '').trim();
-                
-                if (mergeDeletedStyles.has(styleName.toLowerCase())) {
-                    return;
-                }
+                if (mergeDeletedStyles.has(styleName.toLowerCase())) return;
 
                 parts[6] = makeShadowSolid(parts[6]);
 
-                if (!isStrictlyTechnicalStyle(styleName)) {
+                if (isDialogueStyle(styleName)) {
                     if (newFont) parts[1] = newFont;
-                    if (isSpeda || newFont) {
-                        const preset = getSpedaPreset(baseRes.y);
-                        parts[2] = preset.size;
-                        parts[11] = '100';
-                        parts[12] = '100';
-                        parts[13] = '0';
-                        parts[16] = preset.outline;
-                        parts[17] = preset.shadow;
-                        parts[21] = preset.marginV;
-                        parts[22] = '1';
-                    }
+                    const preset = getSpedaPreset(baseRes.y);
+                    parts[2] = preset.size;
+                    parts[11] = '100';
+                    parts[12] = '100';
+                    parts[13] = '0';
+                    parts[16] = preset.outline;
+                    parts[17] = preset.shadow;
+                    parts[21] = preset.marginV;
+                    parts[22] = '1';
+                } else {
+                    // تابلۆ و تەکنیک: ناوی فۆنت دەگۆڕێت و قەبارە لە 0.88 دەدرێت، هەموو شادۆ و چێوەکان پارێزراو دەبن
+                    if (newFont) parts[1] = newFont;
+                    let originalSize = parseFloat(parts[2]) || 20;
+                    parts[2] = Math.max(1, Math.round(originalSize * 0.88));
                 }
                 tr = parts.join(',');
             }
             baseStyles.push(tr);
         } else if (tr.startsWith('Dialogue:') || tr.startsWith('Comment:')) {
             let m = tr.match(/^(?:Dialogue|Comment):\s*[^,]*,[^,]*,[^,]*,([^,]+),/i);
-            if (m && mergeDeletedStyles.has(m[1].trim().toLowerCase())) {
-                return;
-            }
+            if (m && mergeDeletedStyles.has(m[1].trim().toLowerCase())) return;
 
             tr = cleanHarmfulTags(tr);
+            if (newFont) tr = tr.replace(/\\fn([^\}\\]+)/gi, `\\fn${newFont}`);
 
-            // تەنها ناوی فۆنت لە دوای \fn دەگۆڕێت بەبێ دەستکاریکردنی سایز (\fs) یان تاگەکانی تر
-            if (newFont) {
-                tr = tr.replace(/\\fn([^\}\\]+)/gi, `\\fn${newFont}`);
+            let commaCount = 0, splitIdx = -1;
+            for (let c = 0; c < tr.length; c++) {
+                if (tr[c] === ',') {
+                    commaCount++;
+                    if (commaCount === 9) { splitIdx = c; break; }
+                }
             }
+            if (splitIdx !== -1) {
+                let prefix = tr.substring(0, splitIdx + 1);
+                let textBody = tr.substring(splitIdx + 1);
+                let fixedText = textBody.split('\\N').map(t => applyPureRtlFixToLine(t)).join('\\N');
+                tr = prefix + fixedText;
+            }
+
             baseDialogues.push(tr);
         } else if (!inBaseEvents) {
-            if (!tr.startsWith('Style:')) {
-                baseHeader.push(tr);
-            }
+            if (!tr.startsWith('Style:')) baseHeader.push(tr);
         }
     });
 
@@ -5416,15 +5571,30 @@ async function executeMergeAss() {
                     tr = tr.replace(/\\bord(\d+(?:\.\d+)?)/g, (m, v) => `\\bord${(parseFloat(v) * scaleY).toFixed(1)}`);
                     tr = tr.replace(/\\shad(\d+(?:\.\d+)?)/g, (m, v) => `\\shad${(parseFloat(v) * scaleY).toFixed(1)}`);
                     tr = tr.replace(/\\fsp(\d+(?:\.\d+)?)/g, (m, v) => `\\fsp${(parseFloat(v) * scaleX).toFixed(1)}`);
-                    tr = tr.replace(/\\pos\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)/g, (m, x, y) => `\\pos(${Math.round(parseFloat(x) * scaleX)},${Math.round(parseFloat(y) * scaleY)})`);
-                    tr = tr.replace(/\\org\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)/g, (m, x, y) => `\\org(${Math.round(parseFloat(x) * scaleX)},${Math.round(parseFloat(y) * scaleY)})`);
-                    tr = tr.replace(/\\move\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)([^)]*)\)/g, (m, x1, y1, x2, y2, rest) => {
+                    tr = tr.replace(/\\pos\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*\)/g, (m, x, y) => `\\pos(${Math.round(parseFloat(x) * scaleX)},${Math.round(parseFloat(y) * scaleY)})`);
+                    tr = tr.replace(/\\org\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*\)/g, (m, x, y) => `\\org(${Math.round(parseFloat(x) * scaleX)},${Math.round(parseFloat(y) * scaleY)})`);
+                    tr = tr.replace(/\\move\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)([^)]*)\)/g, (m, x1, y1, x2, y2, rest) => {
                         return `\\move(${Math.round(parseFloat(x1) * scaleX)},${Math.round(parseFloat(y1) * scaleY)},${Math.round(parseFloat(x2) * scaleX)},${Math.round(parseFloat(y2) * scaleY)}${rest})`;
                     });
-                    tr = tr.replace(/\\(i?clip)\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)/g, (m, type, x1, y1, x2, y2) => {
+                    tr = tr.replace(/\\(i?clip)\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*\)/g, (m, type, x1, y1, x2, y2) => {
                         return `\\${type}(${Math.round(parseFloat(x1) * scaleX)},${Math.round(parseFloat(y1) * scaleY)},${Math.round(parseFloat(x2) * scaleX)},${Math.round(parseFloat(y2) * scaleY)})`;
                     });
                 }
+
+                let commaCount = 0, splitIdx = -1;
+                for (let c = 0; c < tr.length; c++) {
+                    if (tr[c] === ',') {
+                        commaCount++;
+                        if (commaCount === 9) { splitIdx = c; break; }
+                    }
+                }
+                if (splitIdx !== -1) {
+                    let prefix = tr.substring(0, splitIdx + 1);
+                    let textBody = tr.substring(splitIdx + 1);
+                    let fixedText = textBody.split('\\N').map(t => applyPureRtlFixToLine(t)).join('\\N');
+                    tr = prefix + fixedText;
+                }
+
                 srcDialogues.push(tr);
             }
         });
@@ -5459,132 +5629,17 @@ async function executeMergeAss() {
         baseHeader.pop();
     }
 
-    let finalFile = baseHeader.join('\n') + '\n' +
+    let finalFile = "\uFEFF" + baseHeader.join('\n') + '\n' +
                     cleanStyles.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n' +
                     cleanDialogues.join('\n') + '\n';
 
-    let outFileName = srcF ? baseF.name.replace('.ass', '') + '_Merged.ass' : baseF.name.replace('.ass', '') + '_Processed.ass';
+    let outFileName = srcF ? baseF.name.replace(/\.[^/.]+$/, "") + '_Merged.ass' : baseF.name.replace(/\.[^/.]+$/, "") + '_Processed.ass';
     triggerDownload(finalFile, outFileName);
     document.getElementById('merge-modal').style.display = 'none';
 
     let purgeNotice = removedStylesCount > 0 ? ` (${removedStylesCount} ستایلی بەکارنەهاتوو سڕدرانەوە)` : '';
     let successWord = srcF ? "فایلەکان تێکەڵ کران" : "فایلەکە بە سەرکەوتوویی ڕێکخرا";
     showToast(`${successWord}${purgeNotice}!`, "success");
-}
-// فەنکشنەکانی چاککردنی لکانی پیتەکان
-function openFontFixModal() {
-    const modal = document.getElementById('font-fix-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        const fileInp = document.getElementById('fontFixFileInput');
-        if (fileInp) fileInp.value = '';
-        const display = document.getElementById('fontFixCountDisplay');
-        if (display) {
-            display.innerText = 'هیچ فایلێک دیاری نەکراوە';
-            display.style.color = 'var(--text-muted)';
-        }
-    }
-}
-
-function updateFontFixCount(input) {
-    const display = document.getElementById('fontFixCountDisplay');
-    if (!display) return;
-    if (input.files && input.files.length > 0) {
-        display.innerText = `${input.files.length} فایل دیاریکراون`;
-        display.style.color = "var(--success)";
-    } else {
-        display.innerText = 'هیچ فایلێک دیاری نەکراوە';
-        display.style.color = "var(--text-muted)";
-    }
-}
-
-function repairKurdishTextOnly(str) {
-    if (!str) return '';
-    return str.replace(/(\{[^}]*\}|<[^>]*>|[^\{\}<]+)/g, (segment) => {
-        if (segment.startsWith('{') && segment.endsWith('}')) {
-            return segment.replace(/\\fsp[\d\.\-]+/g, '');
-        }
-        if (segment.startsWith('<') && segment.endsWith('>')) {
-            return segment;
-        }
-
-        let text = segment;
-        text = text.replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF\u00A0\u0640]/g, '');
-        text = text.replace(/\s*\\N\s*/g, '\\N');
-        text = text.replace(/[ \t]{2,}/g, ' ');
-        text = text.replace(/\s+([،؟!.,:؛])/g, '$1');
-        return text;
-    });
-}
-
-async function executeFontFix() {
-    const fileInput = document.getElementById('fontFixFileInput');
-    const files = fileInput ? fileInput.files : [];
-    if (!files || files.length === 0) {
-        showToast("تکایە سەرەتا فایل هەڵبژێرە!", "error");
-        return;
-    }
-
-    const modal = document.getElementById('font-fix-modal');
-    if (modal) modal.style.display = 'none';
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const rawContent = await file.text();
-        const lowerName = file.name.toLowerCase();
-        let fixedContent = '';
-
-        if (lowerName.endsWith('.ass') || rawContent.includes('[Events]') || rawContent.includes('[Script Info]')) {
-            const lines = rawContent.split(/\r?\n/);
-            fixedContent = lines.map(line => {
-                let tr = line.trim();
-                if (tr.startsWith('Style:')) {
-                    let parts = tr.split(',');
-                    if (parts.length >= 23) {
-                        parts[11] = '100'; // ScaleX
-                        parts[12] = '100'; // ScaleY
-                        parts[13] = '0';   // Spacing
-                        parts[22] = '1';   // Encoding
-                        return parts.join(',');
-                    }
-                } else if (tr.startsWith('Dialogue:') || tr.startsWith('Comment:')) {
-                    let commaCount = 0;
-                    let splitIdx = -1;
-                    for (let c = 0; c < line.length; c++) {
-                        if (line[c] === ',') {
-                            commaCount++;
-                            if (commaCount === 9) {
-                                splitIdx = c;
-                                break;
-                            }
-                        }
-                    }
-                    if (splitIdx !== -1) {
-                        let prefix = line.substring(0, splitIdx + 1);
-                        let textBody = line.substring(splitIdx + 1);
-                        let fixedText = repairKurdishTextOnly(textBody);
-                        return prefix + fixedText;
-                    }
-                }
-                return line;
-            }).join('\n');
-        } else {
-            const lines = rawContent.split(/\r?\n/);
-            fixedContent = lines.map(line => {
-                let trimmed = line.trim();
-                if (!trimmed || /^\d+$/.test(trimmed) || trimmed.includes('-->') || trimmed.startsWith('WEBVTT') || trimmed.startsWith('NOTE')) {
-                    return line;
-                }
-                return repairKurdishTextOnly(line);
-            }).join('\n');
-        }
-
-        const newFileName = file.name.replace(/\.[^/.]+$/, "") + "_LettersFixed." + file.name.split('.').pop();
-        triggerDownload(fixedContent, newFileName);
-        await new Promise(r => setTimeout(r, 600));
-    }
-
-    showToast("پیت و بۆشاییەکان بە سەرکەوتوویی چاککران!", "success");
 }
     </script>
 </body>
