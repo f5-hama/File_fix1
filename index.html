@@ -1497,7 +1497,13 @@ function deleteEmptySubtitleLines() {
 
             <!-- بەشی نیشاندانی ستایلەکانی فایلی سەرەکی بۆ سڕینەوە لەگەڵ دیالۆگەکانیان -->
             <div id="mergeStylesContainer" style="display:none; margin-bottom:10px; background:rgba(0,0,0,0.3); padding:8px; border-radius:10px; border:1px solid var(--border-color);">
-                <div style="font-size:11px; font-weight:bold; color:var(--primary); margin-bottom:6px;">ستایلەکانی فایلی سەرەکی (دەتوانیت هەر ستایلێک بسڕیتەوە لەگەڵ دیالۆگەکانی):</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
+                    <span style="font-size:11px; font-weight:bold; color:var(--primary);">ستایلەکانی فایلی سەرەکی:</span>
+                    <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:10.5px; width:auto; color:#ef4444; border-color:rgba(239,68,68,0.4); display:flex; align-items:center; gap:4px;" onclick="deleteEmptyMergeStyles()">
+                        <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        <span>سڕینەوەی ستایلە بەتاڵەکان</span>
+                    </button>
+                </div>
                 <div id="mergeStylesList" style="max-height:140px; overflow-y:auto; padding-inline-end:4px;"></div>
             </div>
             
@@ -5403,6 +5409,46 @@ function deleteMergeBaseStyle(name) {
     mergeDeletedStyles.add(name.toLowerCase());
     renderMergeStylesList();
     showToast(`ستایلی ${name} لەگەڵ هەموو دیالۆگەکانی سڕدرانەوە!`, "info");
+}
+
+// فەنکشنی سڕینەوەی هەموو ئەو ستایلانەی کە ٠ دێڕن (بەتاڵن) بە یەک کلیک
+function deleteEmptyMergeStyles() {
+    if (!mergeBaseRawText) return;
+    let styleCounts = {};
+    let styleNames = [];
+
+    let lines = mergeBaseRawText.split(/\r?\n/);
+    lines.forEach(l => {
+        let tr = l.trim();
+        if (tr.startsWith('Style:')) {
+            let parts = tr.split(',');
+            let sName = parts[0].replace('Style:', '').trim();
+            styleNames.push(sName);
+            if (!styleCounts[sName.toLowerCase()]) styleCounts[sName.toLowerCase()] = 0;
+        } else if (tr.startsWith('Dialogue:') || tr.startsWith('Comment:')) {
+            let m = tr.match(/^(?:Dialogue|Comment):\s*[^,]*,[^,]*,[^,]*,([^,]+),/i);
+            if (m) {
+                let s = m[1].trim().toLowerCase();
+                styleCounts[s] = (styleCounts[s] || 0) + 1;
+            }
+        }
+    });
+
+    let deletedCount = 0;
+    styleNames.forEach(name => {
+        let count = styleCounts[name.toLowerCase()] || 0;
+        if (count === 0 && !mergeDeletedStyles.has(name.toLowerCase())) {
+            mergeDeletedStyles.add(name.toLowerCase());
+            deletedCount++;
+        }
+    });
+
+    if (deletedCount > 0) {
+        renderMergeStylesList();
+        showToast(`${deletedCount} ستایلی بەتاڵ (٠ دێڕ) بە سەرکەوتوویی سڕدرانەوە!`, "success");
+    } else {
+        showToast("هیچ ستایلێکی بەتاڵ (٠ دێڕ) لەم فایلەدا نییە!", "info");
+    }
 }
 
 async function executeMergeAss() {
