@@ -1523,6 +1523,26 @@ function deleteEmptySubtitleLines() {
             </div>
         </div>
     </div>
+    
+    <!-- مۆداڵی چاککردنی لکانی پیتەکان -->
+    <div id="font-fix-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3 class="custom-modal-title">چاککردنی لکانی پیتەکان</h3>
+            <p style="font-size: 12.5px; color:var(--text-muted); margin-bottom:12px; line-height: 1.5;">فایلەکان هەڵبژێرە بۆ چاککردنی پیتە دابڕاو و لکاوەکان و فۆنتە تێکچووەکان بە شێوازی فەرمی.</p>
+            
+            <div class="file-box" style="margin-bottom: 14px; padding: 16px;">
+                <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></div>
+                <label>فایلەکان هەڵبژێرە (SRT, ASS, VTT):</label>
+                <div class="file-name-display" id="fontFixCountDisplay">هیچ فایلێک دیاری نەکراوە</div>
+                <input type="file" id="fontFixFileInput" accept=".srt,.ass,.vtt,.txt" multiple onchange="updateFontFixCount(this)">
+            </div>
+            
+            <div class="custom-modal-actions">
+                <button class="btn" onclick="executeFontFix()">چاککردن و داگرتن</button>
+                <button class="btn btn-outline" onclick="document.getElementById('font-fix-modal').style.display='none'">داخستن</button>
+            </div>
+        </div>
+    </div>
 
      <!-- مۆداڵی چاککردنی RTL بەبێ دەستکاری هیچ شتێکی تر -->
     <div id="rtl-fix-modal" class="custom-modal-overlay">
@@ -3233,6 +3253,96 @@ async function startPgsConversion() {
             pgsTesseractWorker = null;
         }
     }
+}
+
+// فەنکشنەکانی چاککردنی لکانی پیتەکان و فۆنتەکان
+function openFontFixModal() {
+    document.getElementById('font-fix-modal').style.display = 'flex';
+    document.getElementById('fontFixFileInput').value = '';
+    document.getElementById('fontFixCountDisplay').innerText = 'هیچ فایلێک دیاری نەکراوە';
+    document.getElementById('fontFixCountDisplay').style.color = "var(--text-muted)";
+}
+
+function updateFontFixCount(input) {
+    const display = document.getElementById('fontFixCountDisplay');
+    if (input.files && input.files.length > 0) {
+        display.innerText = `${input.files.length} فایل دیاریکراون`;
+        display.style.color = "var(--success)";
+    } else {
+        display.innerText = 'هیچ فایلێک دیاری نەکراوە';
+        display.style.color = "var(--text-muted)";
+    }
+}
+
+// بزوێنەری چاککردنی پیتە دابڕاو و ناڕێکەکان بۆ شێوازی فەرمیی کوردی
+function fixKurdishLigaturesAndForms(text) {
+    if (!text) return text;
+    // ١. گۆڕینی فۆڕمە دابڕاوەکان (Presentation Forms) بۆ پیتی ڕاستەقینەی لکاو
+    var normalized = text.normalize('NFKC');
+    
+    // ٢. چاککردنی پیتی ی، ک، و سڕینەوەی هێما شاراوە تێکدەرەکان
+    normalized = normalized
+        .replace(/ك/g, 'ک')
+        .replace(/ي/g, 'ی')
+        .replace(/ى/g, 'ی')
+        .replace(/[\u200B\uFEFF]/g, '') // سڕینەوەی بۆشاییە شاراوەکان کە پیت دەپچڕێنن
+        .replace(/\u0640+/g, '');       // سڕینەوەی درێژکەرەوەی زیادە (ـ)
+
+    return normalized;
+}
+
+// جێبەجێکردنی چاککردنەکە لەسەر هەموو فایلەکان بە کۆمەڵ
+async function executeFontFix() {
+    const files = document.getElementById('fontFixFileInput').files;
+    if (!files || files.length === 0) {
+        showToast('تکایە سەرەتا فایل هەڵبژێرە!', 'error');
+        return;
+    }
+
+    document.getElementById('font-fix-modal').style.display = 'none';
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const rawContent = await file.text();
+        const lowerName = file.name.toLowerCase();
+        let fixedContent = '';
+
+        if (lowerName.endsWith('.ass')) {
+            const lines = rawContent.split(/\r?\n/);
+            fixedContent = lines.map(line => {
+                if (line.startsWith('Dialogue:') || line.startsWith('Comment:')) {
+                    let commaCount = 0, splitIdx = -1;
+                    for (let c = 0; c < line.length; c++) {
+                        if (line[c] === ',') {
+                            commaCount++;
+                            if (commaCount === 9) { splitIdx = c; break; }
+                        }
+                    }
+                    if (splitIdx !== -1) {
+                        const prefix = line.substring(0, splitIdx + 1);
+                        const textBody = line.substring(splitIdx + 1);
+                        return prefix + fixKurdishLigaturesAndForms(textBody);
+                    }
+                }
+                return line;
+            }).join('\n');
+        } else {
+            const lines = rawContent.split(/\r?\n/);
+            fixedContent = lines.map(line => {
+                const trimmed = line.trim();
+                if (!trimmed || /^\d+$/.test(trimmed) || trimmed.includes('-->') || trimmed.startsWith('WEBVTT') || trimmed.startsWith('NOTE')) {
+                    return line;
+                }
+                return fixKurdishLigaturesAndForms(line);
+            }).join('\n');
+        }
+
+        const newFileName = file.name.replace(/\.[^/.]+$/, "") + "_FontFixed." + file.name.split('.').pop();
+        triggerDownload(fixedContent, newFileName);
+        await new Promise(r => setTimeout(r, 600));
+    }
+
+    showToast('لکانی پیتەکان بە سەرکەوتوویی چاککران و داگیران!', 'success');
 }
 
 function openRtlFixModal() {
