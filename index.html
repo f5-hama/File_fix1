@@ -1533,6 +1533,26 @@ function deleteEmptySubtitleLines() {
             </div>
         </div>
     </div>
+    
+    <!-- مۆداڵی چاککردنی لکانی پیتەکان و بۆشاییەکان -->
+    <div id="font-fix-modal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3 class="custom-modal-title" style="color: var(--primary);">چاککردنی لکانی پیت و بۆشاییەکان</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5;">پیتە دابڕاوەکان و بۆشاییە زیادەکان چاک دەکات بەبێ ئەوەی هیچ تەکنیک، تابلۆ، یان کاتێک تێکبدات.</p>
+            
+            <div class="file-box" id="boxFontFix" style="margin-bottom: 14px; padding: 14px;">
+                <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+                <label>فایلەکان هەڵبژێرە (SRT, ASS, VTT):</label>
+                <div class="file-name-display" id="fontFixCountDisplay">هیچ فایلێک دیاری نەکراوە</div>
+                <input type="file" id="fontFixFileInput" accept=".srt,.ass,.vtt,.txt" multiple onchange="updateFontFixCount(this)">
+            </div>
+
+            <div class="custom-modal-actions">
+                <button class="btn" onclick="executeFontFix()">چاککردن و داگرتن</button>
+                <button class="btn btn-outline" onclick="document.getElementById('font-fix-modal').style.display='none'">داخستن</button>
+            </div>
+        </div>
+    </div>
 
      <!-- مۆداڵی چاککردنی RTL بەبێ دەستکاری هیچ شتێکی تر -->
     <div id="rtl-fix-modal" class="custom-modal-overlay">
@@ -5450,6 +5470,121 @@ async function executeMergeAss() {
     let purgeNotice = removedStylesCount > 0 ? ` (${removedStylesCount} ستایلی بەکارنەهاتوو سڕدرانەوە)` : '';
     let successWord = srcF ? "فایلەکان تێکەڵ کران" : "فایلەکە بە سەرکەوتوویی ڕێکخرا";
     showToast(`${successWord}${purgeNotice}!`, "success");
+}
+// فەنکشنەکانی چاککردنی لکانی پیتەکان
+function openFontFixModal() {
+    const modal = document.getElementById('font-fix-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        const fileInp = document.getElementById('fontFixFileInput');
+        if (fileInp) fileInp.value = '';
+        const display = document.getElementById('fontFixCountDisplay');
+        if (display) {
+            display.innerText = 'هیچ فایلێک دیاری نەکراوە';
+            display.style.color = 'var(--text-muted)';
+        }
+    }
+}
+
+function updateFontFixCount(input) {
+    const display = document.getElementById('fontFixCountDisplay');
+    if (!display) return;
+    if (input.files && input.files.length > 0) {
+        display.innerText = `${input.files.length} فایل دیاریکراون`;
+        display.style.color = "var(--success)";
+    } else {
+        display.innerText = 'هیچ فایلێک دیاری نەکراوە';
+        display.style.color = "var(--text-muted)";
+    }
+}
+
+function repairKurdishTextOnly(str) {
+    if (!str) return '';
+    return str.replace(/(\{[^}]*\}|<[^>]*>|[^\{\}<]+)/g, (segment) => {
+        if (segment.startsWith('{') && segment.endsWith('}')) {
+            return segment.replace(/\\fsp[\d\.\-]+/g, '');
+        }
+        if (segment.startsWith('<') && segment.endsWith('>')) {
+            return segment;
+        }
+
+        let text = segment;
+        text = text.replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF\u00A0\u0640]/g, '');
+        text = text.replace(/\s*\\N\s*/g, '\\N');
+        text = text.replace(/[ \t]{2,}/g, ' ');
+        text = text.replace(/\s+([،؟!.,:؛])/g, '$1');
+        return text;
+    });
+}
+
+async function executeFontFix() {
+    const fileInput = document.getElementById('fontFixFileInput');
+    const files = fileInput ? fileInput.files : [];
+    if (!files || files.length === 0) {
+        showToast("تکایە سەرەتا فایل هەڵبژێرە!", "error");
+        return;
+    }
+
+    const modal = document.getElementById('font-fix-modal');
+    if (modal) modal.style.display = 'none';
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const rawContent = await file.text();
+        const lowerName = file.name.toLowerCase();
+        let fixedContent = '';
+
+        if (lowerName.endsWith('.ass') || rawContent.includes('[Events]') || rawContent.includes('[Script Info]')) {
+            const lines = rawContent.split(/\r?\n/);
+            fixedContent = lines.map(line => {
+                let tr = line.trim();
+                if (tr.startsWith('Style:')) {
+                    let parts = tr.split(',');
+                    if (parts.length >= 23) {
+                        parts[11] = '100'; // ScaleX
+                        parts[12] = '100'; // ScaleY
+                        parts[13] = '0';   // Spacing
+                        parts[22] = '1';   // Encoding
+                        return parts.join(',');
+                    }
+                } else if (tr.startsWith('Dialogue:') || tr.startsWith('Comment:')) {
+                    let commaCount = 0;
+                    let splitIdx = -1;
+                    for (let c = 0; c < line.length; c++) {
+                        if (line[c] === ',') {
+                            commaCount++;
+                            if (commaCount === 9) {
+                                splitIdx = c;
+                                break;
+                            }
+                        }
+                    }
+                    if (splitIdx !== -1) {
+                        let prefix = line.substring(0, splitIdx + 1);
+                        let textBody = line.substring(splitIdx + 1);
+                        let fixedText = repairKurdishTextOnly(textBody);
+                        return prefix + fixedText;
+                    }
+                }
+                return line;
+            }).join('\n');
+        } else {
+            const lines = rawContent.split(/\r?\n/);
+            fixedContent = lines.map(line => {
+                let trimmed = line.trim();
+                if (!trimmed || /^\d+$/.test(trimmed) || trimmed.includes('-->') || trimmed.startsWith('WEBVTT') || trimmed.startsWith('NOTE')) {
+                    return line;
+                }
+                return repairKurdishTextOnly(line);
+            }).join('\n');
+        }
+
+        const newFileName = file.name.replace(/\.[^/.]+$/, "") + "_LettersFixed." + file.name.split('.').pop();
+        triggerDownload(fixedContent, newFileName);
+        await new Promise(r => setTimeout(r, 600));
+    }
+
+    showToast("پیت و بۆشاییەکان بە سەرکەوتوویی چاککران!", "success");
 }
     </script>
 </body>
