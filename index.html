@@ -1241,7 +1241,7 @@ function deleteEmptySubtitleLines() {
             <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
             <label>فایلی ئەسڵی (ئینگلیزی / عەرەبی / ...)</label>
             <div class="file-name-display">کرتە بکە بۆ هەڵبژاردن</div>
-            <input type="file" id="fileOriginal" accept="*/*" onclick="this.value=null" onchange="toggleClearBtn(this, 'boxOriginal')">
+            <input type="file" id="fileOriginal" accept=".srt,.ass,.vtt,.txt,.sub,text/plain" onclick="this.value=null" onchange="toggleClearBtn(this, 'boxOriginal')">
         </div>
         
         <div class="file-box" id="boxKurdish">
@@ -1249,7 +1249,7 @@ function deleteEmptySubtitleLines() {
             <div class="upload-icon"><svg style="width:26px;height:26px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
             <label>فایلی وەرگێڕدراو (ئارەزوومەندانە)</label>
             <div class="file-name-display">کرتە بکە بۆ هەڵبژاردن</div>
-            <input type="file" id="fileKurdish" accept="*/*" onclick="this.value=null" onchange="toggleClearBtn(this, 'boxKurdish')">
+            <input type="file" id="fileKurdish" accept=".srt,.ass,.vtt,.txt,.sub,text/plain" onclick="this.value=null" onchange="toggleClearBtn(this, 'boxKurdish')">
         </div>
 
         <button class="btn" style="padding: 13px; margin-top: 4px;" onclick="startEditing()">
@@ -1654,7 +1654,7 @@ function deleteEmptySubtitleLines() {
                         <svg class="icon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                         <span>فایل لە ئامێرەکەت</span>
                     </button>
-                    <input type="file" id="nativeVideoFileInput" accept="video/*,.mkv,.mp4,.webm,*/*" style="display: none;" onchange="handleNativeVideoUpload(this)">
+                    <input type="file" id="nativeVideoFileInput" accept=".mp4,.mkv,.webm,.avi,.mov,.flv,.ts,.m4v" style="display: none;" onchange="handleNativeVideoUpload(this)">
 
                     
                     <button type="button" class="btn btn-outline" style="flex: 1; padding: 10px 8px; font-size: 12px;" onclick="toggleVideoUrlInput()">
