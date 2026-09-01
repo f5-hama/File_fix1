@@ -562,10 +562,12 @@ function deleteEmptySubtitleLines() {
         .custom-modal-overlay { 
     display: none; 
     position: fixed; 
-    top: 0; 
-    left: 0; 
+    inset: 0;
     width: 100%; 
     height: 100%; 
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
     background: rgba(0, 0, 0, 0.55) !important; 
     backdrop-filter: blur(6px); 
     -webkit-backdrop-filter: blur(6px); 
@@ -576,7 +578,60 @@ function deleteEmptySubtitleLines() {
     padding: 12px; 
     animation: fadeIn 0.2s ease; 
 }
-        .custom-modal-content { background: var(--card-bg); padding: 20px 16px; border-radius: 18px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.25s ease; }
+        .custom-modal-content { background: var(--card-bg); padding: 20px 16px; border-radius: 18px; width: 100%; max-width: 440px; box-sizing: border-box; margin: 0 auto; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.25s ease; }
+
+
+        /* پانێلی جوڵاندن و ڕێکخستنی شوێنی دەق */
+        .v-nudge-panel {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            background: rgba(142, 182, 155, 0.06);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+        }
+        .v-nudge-col { min-width: 0; }
+        .v-nudge-title {
+            display: flex; align-items: center; justify-content: space-between; gap: 6px;
+            font-size: 11px; color: var(--text-muted); margin-bottom: 8px;
+        }
+        .v-step-chips { display: flex; gap: 3px; flex-shrink: 0; }
+        .v-step-chip {
+            background: transparent; border: 1px solid var(--border-color); color: var(--text-muted);
+            font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 6px; cursor: pointer;
+            direction: ltr; transition: all .15s ease;
+        }
+        .v-step-chip.active { background: var(--primary); border-color: var(--primary); color: #0d120f; }
+        .v-nudge-pad {
+            position: relative; width: 104px; height: 104px; border-radius: 50%;
+            border: 1px solid var(--border-color); margin: 0 auto;
+        }
+        .v-nudge-btn {
+            position: absolute; background: transparent; border: none; color: var(--primary);
+            width: 30px; height: 30px; padding: 0; cursor: pointer; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; transition: all .12s ease;
+        }
+        .v-nudge-btn svg { width: 20px; height: 20px; }
+        .v-nudge-btn:active { background: rgba(142, 182, 155, 0.22); transform: scale(0.92); }
+        .v-nudge-btn.up { top: 2px; left: 50%; margin-left: -15px; }
+        .v-nudge-btn.down { bottom: 2px; left: 50%; margin-left: -15px; }
+        .v-nudge-btn.left { left: 2px; top: 50%; margin-top: -15px; }
+        .v-nudge-btn.right { right: 2px; top: 50%; margin-top: -15px; }
+        .v-nudge-btn.center {
+            top: 50%; left: 50%; margin: -16px 0 0 -16px; width: 32px; height: 32px;
+            border: 1px solid var(--border-color);
+        }
+        .v-align-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+        .v-align-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            background: transparent; border: 1px solid transparent; color: var(--text-muted);
+            font-size: 10px; padding: 5px 2px; border-radius: 8px; cursor: pointer; transition: all .15s ease;
+        }
+        .v-align-btn svg { width: 20px; height: 20px; color: #e2e8f0; }
+        .v-align-btn:active { background: rgba(142, 182, 155, 0.18); border-color: var(--primary); color: var(--primary); }
+
         
         .custom-modal-actions { 
             display: flex !important; 
@@ -1023,6 +1078,42 @@ function deleteEmptySubtitleLines() {
     width: 100% !important;
     margin: 0 0 10px 0 !important;
     box-sizing: border-box !important;
+}
+
+/* ستایلی خانەی «بێ ڕەنگ» و بژاردەی ئامانجی ڕەنگ */
+.none-swatch {
+    background: repeating-linear-gradient(45deg, #2a2a2a 0 4px, #4a4a4a 4px 8px);
+    position: relative;
+    border: 1px solid #666 !important;
+}
+.none-swatch::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: linear-gradient(to bottom right, transparent 44%, #ff5252 44%, #ff5252 56%, transparent 56%);
+}
+.v-target-row {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 10px 0;
+}
+.v-target-btn {
+    flex: 1;
+    padding: 7px 4px;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color);
+    background: rgba(0,0,0,0.25);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all .15s ease;
+    font-family: inherit;
+}
+.v-target-btn.active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(142, 182, 155, 0.16);
 }
 
 /* ستایلی پەنجەرەی هەڵگرتنی ڕەنگ بە دەستلێدان لەسەر ڤیدیۆ */
@@ -1868,18 +1959,25 @@ function deleteEmptySubtitleLines() {
                 </div>
                 <div class="tech-row" style="margin-bottom: 6px;">
                     <div style="display:flex; align-items:center; gap:4px; font-size:11px;">
+                        <span>ئاوتڵاین:</span>
+                        <input type="number" id="techOutlineVal" placeholder="0" min="0" max="20" step="0.5" class="tech-input" style="width:50px;" title="ئەستووری Outline">
+                    </div>
+                    <div style="display:flex; align-items:center; gap:4px; font-size:11px;">
+                        <span>شادۆ:</span>
+                        <input type="number" id="techShadowVal" placeholder="0" min="0" max="20" step="0.5" class="tech-input" style="width:50px;" title="قەبارەی Shadow">
+                    </div>
+                </div>
+                <div class="tech-row" style="margin-bottom: 6px;">
+                    <div style="display:flex; align-items:center; gap:4px; font-size:11px;">
                         <span>تەڵخی:</span>
                         <input type="number" id="techBlurVal" placeholder="0" min="0" max="10" step="0.5" class="tech-input" style="width:50px;">
                     </div>
                     <div style="display:flex; align-items:center; gap:4px; font-size:11px;">
-                        <span>Outline:</span>
-                        <input type="number" id="techOutlineVal" placeholder="0" min="0" max="10" step="0.5" class="tech-input" style="width:50px;">
-                    </div>
-                    <div style="display:flex; align-items:center; gap:4px; font-size:11px;">
                         <span>قەبارە:</span>
-                        <input type="number" id="techFontSizeVal" placeholder="0" min="10" max="150" class="tech-input" style="width:50px;">
+                        <input type="number" id="techFontSizeVal" placeholder="0" min="1" max="500" step="0.5" class="tech-input" style="width:50px;">
                     </div>
                 </div>
+
 
                 <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 6px 8px; border: 1px solid var(--border-color); display:flex; flex-direction:column; gap:6px;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -1891,6 +1989,7 @@ function deleteEmptySubtitleLines() {
                             <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FF3131;" onclick="setStrokeColor('#FF3131', this)" title="سوور"></div>
                             <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#00F0FF;" onclick="setStrokeColor('#00F0FF', this)" title="شین"></div>
                             <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#39FF14;" onclick="setStrokeColor('#39FF14', this)" title="سەوز"></div>
+                            <div class="palette-btn none-swatch" style="width:19px; height:19px; border-radius:4px;" onclick="setStrokeColor('NONE', this)" title="بێ ڕەنگ (Outline لابدە)"></div>
                         </div>
                         <input type="hidden" id="strokeColorPicker" value="#000000">
                     </div>
@@ -1904,6 +2003,7 @@ function deleteEmptySubtitleLines() {
                             <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFF200;" onclick="setShadowColor('#FFF200', this)" title="زەرد"></div>
                             <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FF3131;" onclick="setShadowColor('#FF3131', this)" title="سوور"></div>
                             <div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#00F0FF;" onclick="setShadowColor('#00F0FF', this)" title="شین"></div>
+                            <div class="palette-btn none-swatch" style="width:19px; height:19px; border-radius:4px;" onclick="setShadowColor('NONE', this)" title="بێ ڕەنگ (Shadow لابدە)"></div>
                         </div>
                         <input type="hidden" id="shadowColorPicker" value="#000000">
                     </div>
@@ -1912,7 +2012,14 @@ function deleteEmptySubtitleLines() {
 
             <!-- ٥. پیشاندانی دەقەکە -->
             <div style="margin-bottom: 10px; text-align: start;">
-                <label style="font-size: 11px; font-weight: bold; color: var(--primary); display:block; margin-bottom: 4px;">دەقی دێڕەکە (دەتوانیت وشەیەک دیاری بکەیت):</label>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom: 4px;">
+                    <label style="font-size: 11px; font-weight: bold; color: var(--primary);">دەقی دێڕەکە (دەتوانیت وشەیەک دیاری بکەیت):</label>
+                    <button type="button" onclick="clearLineStyles()" title="سڕینەوەی هەموو ستایلەکانی ئەم دێڕە" style="flex-shrink:0; display:flex; align-items:center; gap:4px; font-size:10.5px; font-weight:bold; padding:4px 8px; border-radius:8px; cursor:pointer; background: rgba(239, 68, 68, 0.08); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.4);">
+                        <svg style="width:12px; height:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <span>سڕینەوەی ستایل</span>
+                    </button>
+                </div>
+
                 <textarea id="modalSubtitleLiveText" style="width: 100%; min-height: 50px; max-height: 80px; padding: 7px 9px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-main); font-size: 12.5px; line-height: 1.4; resize: vertical; outline: none; direction: auto; text-align: start; box-sizing: border-box;"></textarea>
             </div>
 
@@ -1975,14 +2082,14 @@ function deleteEmptySubtitleLines() {
    
 <!-- پەنجەرەی دیاریکردنی شوێن بە مەگنەتیک و هێڵی ڕێنمایی ناوەڕاست -->
 <div id="grid40-modal" class="custom-modal-overlay">
-    <div class="custom-modal-content" style="max-width: 440px; padding: 14px;">
+    <div class="custom-modal-content" style="max-width: 440px; padding: 14px; max-height: 92vh; overflow-y: auto; overflow-x: hidden;">
         <h3 style="color:var(--primary); margin:0 0 8px 0; font-size:14px;">شوێنی دەقەکە بە دەست لەسەر شاشە ڕابکێشە:</h3>
         
         <!-- بەشی قەبارە و نیشاندانی شوێن -->
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(142, 182, 155, 0.08); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px; margin-bottom: 8px;">
             <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px;">
                 <span>قەبارەی فۆنت:</span>
-                <input type="number" id="vDragFontSizeInput" value="22" min="1" max="500" class="tech-input" style="width: 55px;" oninput="updateLiveDragFontSize(this.value)">
+                <input type="number" id="vDragFontSizeInput" value="22" min="1" max="500" step="0.5" class="tech-input" style="width: 55px;" oninput="updateLiveDragFontSize(this.value)">
             </div>
             <div id="vDragCoordDisplay" style="font-size: 11px; font-weight: bold; color: var(--primary); direction: ltr;">X: 0, Y: 0</div>
         </div>
@@ -1998,8 +2105,69 @@ function deleteEmptySubtitleLines() {
             <div id="vSnapGuideH" style="display: none; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: var(--primary); box-shadow: 0 0 8px var(--primary); z-index: 15; pointer-events: none;"></div>
 
             <!-- دەقی ڕاکێشراو -->
-            <div id="vDraggableSubText" style="position: absolute; color: #FFFFFF; font-family: 'Speda Bold', 'KurdForest', Tahoma, sans-serif; font-weight: bold; white-space: nowrap !important; width: max-content !important; max-width: 95% !important; word-break: keep-all !important; direction: rtl; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 4px rgba(0,0,0,0.8); cursor: grab; padding: 2px 6px; border: 1.5px dashed var(--primary); border-radius: 4px; background: rgba(0,0,0,0.35); transform: translate(-50%, -50%); z-index: 25;">دەق</div>
+            <div id="vDraggableSubText" style="position: absolute; font-family: 'KurdForest', Tahoma, sans-serif; white-space: nowrap !important; width: max-content !important; max-width: 95% !important; word-break: keep-all !important; direction: rtl; cursor: grab; padding: 2px 6px; border: 1.5px dashed var(--primary); border-radius: 4px; background: rgba(0,0,0,0.18); transform: translate(-50%, -50%); z-index: 25; box-sizing: border-box;">دەق</div>
         </div>
+
+        <!-- کۆنترۆڵی جوڵاندن و ڕێکخستن -->
+        <div class="v-nudge-panel">
+            <div class="v-nudge-col">
+                <div class="v-nudge-title">
+                    <span>جوڵاندن</span>
+                    <div class="v-step-chips" id="vStepChips">
+                        <button type="button" class="v-step-chip active" onclick="setNudgeStep(1, this)">1x</button>
+                        <button type="button" class="v-step-chip" onclick="setNudgeStep(2, this)">2x</button>
+                        <button type="button" class="v-step-chip" onclick="setNudgeStep(5, this)">5x</button>
+                        <button type="button" class="v-step-chip" onclick="setNudgeStep(10, this)">10x</button>
+                    </div>
+                </div>
+                <div class="v-nudge-pad">
+                    <button type="button" class="v-nudge-btn up" onclick="nudgeDragPos(0,-1)" aria-label="سەرەوە">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>
+                    </button>
+                    <button type="button" class="v-nudge-btn down" onclick="nudgeDragPos(0,1)" aria-label="خوارەوە">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <button type="button" class="v-nudge-btn left" onclick="nudgeDragPos(-1,0)" aria-label="چەپ">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+                    </button>
+                    <button type="button" class="v-nudge-btn right" onclick="nudgeDragPos(1,0)" aria-label="ڕاست">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                    </button>
+                    <button type="button" class="v-nudge-btn center" onclick="alignDragPos('center'); alignDragPos('middle')" aria-label="ناوەڕاست"></button>
+                </div>
+            </div>
+
+            <div class="v-nudge-col">
+                <div class="v-nudge-title"><span>ڕێکخستنی شوێن</span></div>
+                <div class="v-align-grid">
+                    <button type="button" class="v-align-btn" onclick="alignDragPos('left')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 4v16"/><rect x="6" y="6.5" width="13" height="4" rx="1"/><rect x="6" y="13.5" width="8" height="4" rx="1"/></svg>
+                        <span>چەپ</span>
+                    </button>
+                    <button type="button" class="v-align-btn" onclick="alignDragPos('center')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 3v18"/><rect x="4" y="6.5" width="16" height="4" rx="1"/><rect x="7.5" y="13.5" width="9" height="4" rx="1"/></svg>
+                        <span>ناوەڕاست</span>
+                    </button>
+                    <button type="button" class="v-align-btn" onclick="alignDragPos('right')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M21 4v16"/><rect x="5" y="6.5" width="13" height="4" rx="1"/><rect x="10" y="13.5" width="8" height="4" rx="1"/></svg>
+                        <span>ڕاست</span>
+                    </button>
+                    <button type="button" class="v-align-btn" onclick="alignDragPos('top')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 3h16"/><rect x="6.5" y="6" width="4" height="13" rx="1"/><rect x="13.5" y="6" width="4" height="8" rx="1"/></svg>
+                        <span>سەرەوە</span>
+                    </button>
+                    <button type="button" class="v-align-btn" onclick="alignDragPos('middle')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 12h18"/><rect x="6.5" y="4" width="4" height="16" rx="1"/><rect x="13.5" y="7.5" width="4" height="9" rx="1"/></svg>
+                        <span>ناوەند</span>
+                    </button>
+                    <button type="button" class="v-align-btn" onclick="alignDragPos('bottom')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 21h16"/><rect x="6.5" y="5" width="4" height="13" rx="1"/><rect x="13.5" y="10" width="4" height="8" rx="1"/></svg>
+                        <span>خوارەوە</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
 
         <div class="custom-modal-actions" style="margin-top:10px;">
             <button class="btn" onclick="confirmDraggablePosition()">دانان و جێبەجێکردن</button>
@@ -2020,6 +2188,15 @@ function deleteEmptySubtitleLines() {
                     <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 2px;">ڕەنگی خاڵەکە:</div>
                     <div id="vSampledColorHexText" style="font-size: 16px; font-weight: bold; color: var(--primary); direction: ltr;">#FFFFFF</div>
                     <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 4px;">قەبارەی ئاسایی (1x)</div>
+                </div>
+            </div>
+
+            <div style="text-align: start; margin: 10px 0 6px 0;">
+                <label style="font-size: 11px; font-weight: bold; color: var(--primary); display:block; margin-bottom: 5px;">ڕەنگەکە بۆ کوێ دابنرێت؟</label>
+                <div class="v-target-row">
+                    <button type="button" class="v-target-btn active" id="vTargetText" onclick="setVideoPickTarget('text', this)">ڕەنگی نووسین</button>
+                    <button type="button" class="v-target-btn" id="vTargetOutline" onclick="setVideoPickTarget('outline', this)">Outline</button>
+                    <button type="button" class="v-target-btn" id="vTargetShadow" onclick="setVideoPickTarget('shadow', this)">Shadow</button>
                 </div>
             </div>
 
@@ -4144,22 +4321,53 @@ async function pasteFromClipboard() {
 
         // ====== بەشی تەواو و بێ هەڵەی تەکنیک و ستایل ======
 
+function syncPaletteActive(inputId, hex, el) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    let row = input.parentElement ? input.parentElement.querySelector('div') : null;
+    if (el && el.parentElement) row = el.parentElement;
+    if (row) {
+        row.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+        if (el) {
+            el.classList.add('active');
+        } else {
+            let found = false;
+            row.querySelectorAll('.palette-btn').forEach(b => {
+                const oc = b.getAttribute('onclick') || '';
+                if (oc.indexOf("'" + hex + "'") !== -1) { b.classList.add('active'); found = true; }
+            });
+            // ڕەنگی تایبەت (وەک ئەوەی لە ڤیدیۆ وەرگیراوە) وەک خانەیەکی نوێ پیشان دەدرێت
+            if (!found && hex && hex !== 'NONE') {
+                const fnName = (inputId === 'strokeColorPicker') ? 'setStrokeColor' : 'setShadowColor';
+                let custom = row.querySelector('.picked-swatch');
+                if (!custom) {
+                    custom = document.createElement('div');
+                    custom.className = 'palette-btn picked-swatch';
+                    custom.style.cssText = 'width:19px; height:19px; border-radius:4px;';
+                    row.appendChild(custom);
+                }
+                custom.style.background = hex;
+                custom.title = hex;
+                custom.setAttribute('onclick', fnName + "('" + hex + "', this)");
+                custom.onclick = function () { window[fnName](hex, custom); };
+                custom.classList.add('active');
+            }
+        }
+    }
+}
+
 function setStrokeColor(hex, el) {
     const input = document.getElementById('strokeColorPicker');
     if (input) input.value = hex;
-    if (el && el.parentElement) {
-        el.parentElement.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-    }
+    syncPaletteActive('strokeColorPicker', hex, el);
+    if (hex === 'NONE' && el) showToast("Outline لادرا (بێ ڕەنگ)", "info");
 }
 
 function setShadowColor(hex, el) {
     const input = document.getElementById('shadowColorPicker');
     if (input) input.value = hex;
-    if (el && el.parentElement) {
-        el.parentElement.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-    }
+    syncPaletteActive('shadowColorPicker', hex, el);
+    if (hex === 'NONE' && el) showToast("Shadow لادرا (بێ ڕەنگ)", "info");
 }
 
 // گۆڕینی ڕەنگی پیتەکان بۆ شێوازی فەرمی BGR
@@ -4324,14 +4532,26 @@ function openSubStyleModal(index) {
 
     const blurInput = document.getElementById('techBlurVal');
     const bordInput = document.getElementById('techOutlineVal');
+    const shadInput = document.getElementById('techShadowVal');
     const fsInput = document.getElementById('techFontSizeVal');
     
     let blurMatch = text.match(/\\blur([\d\.]+)/);
     if (blurInput) blurInput.value = blurMatch ? blurMatch[1] : '';
     let bordMatch = text.match(/\\bord([\d\.]+)/);
     if (bordInput) bordInput.value = bordMatch ? bordMatch[1] : '';
-    let fsMatch = text.match(/\\fs(\d+)/);
+    let shadMatch = text.match(/\\shad([\d\.]+)/);
+    if (shadInput) shadInput.value = shadMatch ? shadMatch[1] : '';
+    let fsMatch = text.match(/\\fs(\d+(?:\.\d+)?)/);
     if (fsInput) fsInput.value = fsMatch ? fsMatch[1] : '';
+
+
+    // دۆخی ڕەنگی Outline و Shadow لە دێڕەکەوە دەخوێندرێتەوە
+    let outAlpha = /\\3a&H(?:FF|ff)&/.test(text);
+    let shadAlpha = /\\4a&H(?:FF|ff)&/.test(text) || /\\shad0(?![\d\.])/.test(text);
+    let out3c = text.match(/\\3c&H([0-9A-Fa-f]{6})&/);
+    let out4c = text.match(/\\4c&H([0-9A-Fa-f]{6})&/);
+    setStrokeColor(outAlpha ? 'NONE' : (out3c ? bgrToHex(out3c[1]) : '#000000'), null);
+    setShadowColor(shadAlpha ? 'NONE' : (out4c ? bgrToHex(out4c[1]) : '#000000'), null);
 
     const valInput = document.getElementById('selectedSubColorVal');
     if (valInput) valInput.value = 'KEEP';
@@ -4370,6 +4590,7 @@ function applySubStyleToLine() {
     const italicBtn = document.getElementById('btnTechItalic');
     const blurInput = document.getElementById('techBlurVal');
     const bordInput = document.getElementById('techOutlineVal');
+    const shadInput = document.getElementById('techShadowVal');
     const fsInput = document.getElementById('techFontSizeVal');
 
     let align = alignEl ? alignEl.value : '2';
@@ -4380,7 +4601,9 @@ function applySubStyleToLine() {
     let isItalic = italicBtn ? italicBtn.classList.contains('active') : false;
     let blurVal = blurInput ? blurInput.value.trim() : '';
     let bordVal = bordInput ? bordInput.value.trim() : '';
+    let shadVal = shadInput ? shadInput.value.trim() : '';
     let fsVal = fsInput ? fsInput.value.trim() : '';
+
 
     let posMatch = rawVal.match(/\\pos\([^)]+\)/);
     let existingPos = posMatch ? posMatch[0] : '';
@@ -4394,9 +4617,12 @@ function applySubStyleToLine() {
                          .replace(/\\i[01]/g, '')
                          .replace(/\\blur[\d\.]+/g, '')
                          .replace(/\\bord[\d\.]+/g, '')
-                         .replace(/\\fs\d+/g, '')
+                         .replace(/\\fs\d+(?:\.\d+)?/g, '')
+                         .replace(/\\shad[\d\.]+/g, '')
                          .replace(/\\3c&H[0-9A-Fa-f]+&/g, '')
                          .replace(/\\4c&H[0-9A-Fa-f]+&/g, '')
+                         .replace(/\\3a&H[0-9A-Fa-f]+&/gi, '')
+                         .replace(/\\4a&H[0-9A-Fa-f]+&/gi, '')
                          .replace(/\{\}/g, '')
                          .trim();
 
@@ -4411,20 +4637,40 @@ function applySubStyleToLine() {
     if (isBold) tags += `\\b1`;
     if (isItalic) tags += `\\i1`;
     if (blurVal !== '') tags += `\\blur${blurVal}`;
-    if (bordVal !== '') tags += `\\bord${bordVal}`;
-    if (fsVal !== '') tags += `\\fs${fsVal}`;
+    if (fsVal !== '') {
+        let fsNum = parseFloat(fsVal);
+        if (!isNaN(fsNum)) {
+            fsNum = Math.min(500, Math.max(1, fsNum));
+            if (fsNum % 1 === 0) fsNum = Math.round(fsNum);
+            tags += `\\fs${fsNum}`;
+        }
+    }
 
     let strokeCol = document.getElementById('strokeColorPicker') ? document.getElementById('strokeColorPicker').value : '#000000';
     let shadowCol = document.getElementById('shadowColorPicker') ? document.getElementById('shadowColorPicker').value : '#000000';
 
-    if (strokeCol && strokeCol !== '#000000') {
-        let bgr = strokeCol.substring(5,7) + strokeCol.substring(3,5) + strokeCol.substring(1,3);
-        tags += `\\3c&H${bgr.toUpperCase()}&`;
+    if (strokeCol === 'NONE') {
+        // Outline بە تەواوی لادەبرێت
+        tags += `\\bord0\\3a&HFF&`;
+    } else {
+        if (bordVal !== '') tags += `\\bord${bordVal}`;
+        if (strokeCol && strokeCol !== '#000000') {
+            let bgr = strokeCol.substring(5,7) + strokeCol.substring(3,5) + strokeCol.substring(1,3);
+            tags += `\\3c&H${bgr.toUpperCase()}&`;
+        }
     }
-    if (shadowCol && shadowCol !== '#000000') {
-        let bgr = shadowCol.substring(5,7) + shadowCol.substring(3,5) + shadowCol.substring(1,3);
-        tags += `\\4c&H${bgr.toUpperCase()}&`;
+
+    if (shadowCol === 'NONE') {
+        // Shadow بە تەواوی لادەبرێت
+        tags += `\\shad0\\4a&HFF&`;
+    } else {
+        if (shadVal !== '') tags += `\\shad${shadVal}`;
+        if (shadowCol && shadowCol !== '#000000') {
+            let bgr = shadowCol.substring(5,7) + shadowCol.substring(3,5) + shadowCol.substring(1,3);
+            tags += `\\4c&H${bgr.toUpperCase()}&`;
+        }
     }
+
 
     let finalText = cleanText;
     if (tags) {
@@ -4448,6 +4694,41 @@ function applySubStyleToLine() {
 
     showToast("تەکنیکەکان جێبەجێکران!", "success");
 }
+
+// سڕینەوەی هەموو ستایلەکانی ئەم دێڕە (هەموو تاگە ASSـەکان لادەبرێن)
+function clearLineStyles() {
+    const modalTa = document.getElementById('modalSubtitleLiveText');
+    if (modalTa) {
+        modalTa.value = modalTa.value
+            .replace(/\{[^}]*\}/g, '')
+            .replace(/\\N/g, '\n')
+            .trim();
+    }
+
+    // ڕێکخستنەوەی هەموو کۆنترۆڵەکانی پەنجەرەکە
+    ['techBlurVal','techOutlineVal','techShadowVal','techFontSizeVal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    const boldBtn = document.getElementById('btnTechBold');
+    const italicBtn = document.getElementById('btnTechItalic');
+    if (boldBtn) boldBtn.classList.remove('active');
+    if (italicBtn) italicBtn.classList.remove('active');
+    const chkFade = document.getElementById('chkEnableFade');
+    if (chkFade) { chkFade.checked = false; toggleFadeInputs(false); }
+    const alignEl = document.getElementById('selectedAlignVal');
+    if (alignEl) alignEl.value = '2';
+    setStrokeColor('#000000', null);
+    setShadowColor('#000000', null);
+    const valInput = document.getElementById('selectedSubColorVal');
+    if (valInput) valInput.value = 'KEEP';
+    const textDisplay = document.getElementById('selectedColorCodeText');
+    if (textDisplay) textDisplay.innerText = 'وەک خۆی';
+    document.querySelectorAll('.custom-palette-grid .palette-btn').forEach(b => b.classList.remove('active'));
+
+    showToast("ستایلەکان سڕانەوە — بۆ تۆمارکردن «جێبەجێکردن» دابگرە", "success");
+}
+
 
 let currentChosenSymbolColor = '#FFF200';
 
@@ -4508,6 +4789,9 @@ let currentDragAssX = 960;
 let currentDragAssY = 950;
 let currentDragResX = 1920;
 let currentDragResY = 1080;
+let currentDragRawText = '';
+let currentDragAlign = '2';
+
 
 // دەرهێنانی ١٠٠٪ ڕاستی ڕێزۆلوشنی فایلی ژێرنووسەکە
 function getActiveScriptResolution() {
@@ -4541,7 +4825,7 @@ function getActiveScriptResolution() {
 function getSubtitleLineFontSize(index, rawText) {
     // ١. ئەگەر لەناو خودی دێڕەکە تاگی \fs هەبوو
     let fsM = rawText ? rawText.match(/\\fs(\d+(?:\.\d+)?)/) : null;
-    if (fsM) return Math.round(parseFloat(fsM[1]));
+    if (fsM) return parseFloat(fsM[1]);
 
     // ٢. ئەگەر لە ستایلی فایلی ئەسڵی دیاری کرابوو
     if (typeof originalData !== 'undefined' && originalData[index] && originalData[index].assMeta) {
@@ -4592,14 +4876,16 @@ function openGrid40Modal() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
+    // ستایلی ڕاستەقینەی فایلەکە بۆ ئەم دێڕە
     let rawText = modalTa ? modalTa.value : 'دەقی ژێرنووس';
-    let cleanText = rawText.replace(/\{[^}]+\}/g, '').replace(/[♪\|]/g, '').trim();
-    cleanText = cleanText.replace(/\\N/g, '<br>').replace(/\n/g, '<br>');
-    dragText.innerHTML = cleanText || 'دەقی ژێرنووس';
+    currentDragRawText = rawText;
 
     // وەرگرتنی ڕاستەوخۆی قەبارەی فایلی ئەسڵی خۆی بۆ ئەم دێڕە
     let curFs = getSubtitleLineFontSize(currentStylingIndex, rawText);
     if (fsInput) fsInput.value = curFs;
+
+    // ئاڕاستەی دێڕ (\an) یان ستایلی فایل
+    currentDragAlign = getDragLineAlignment(rawText);
 
     // شوێنی دێڕ
     let posM = rawText.match(/\\pos\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)/);
@@ -4614,10 +4900,59 @@ function openGrid40Modal() {
     document.getElementById('grid40-modal').style.display = 'flex';
 
     setTimeout(() => {
-        updateLiveDragFontSize(curFs);
+        updateLiveDragFontSize(fsInput ? fsInput.value : curFs);
         setDragElementPosition(currentDragAssX, currentDragAssY);
         setupDragTouchEngine(dragBox, dragText);
     }, 50);
+}
+
+// ستایلی ئەم دێڕە لە فایلەکە
+function getDragLineStyle() {
+    var stylesMap = (typeof getAssStylesDictionary === 'function') ? getAssStylesDictionary() : {};
+    var sName = 'default';
+    if (typeof originalData !== 'undefined' && originalData[currentStylingIndex] && originalData[currentStylingIndex].assMeta && originalData[currentStylingIndex].assMeta.style) {
+        sName = originalData[currentStylingIndex].assMeta.style.replace(/^\*/, '').trim().toLowerCase();
+    }
+    return stylesMap[sName] || stylesMap['default'] || {
+        fontname: 'KurdForest', fontsize: 45, primaryColor: '#FFFFFF', outlineColor: '#000000', shadowColor: '#000000',
+        bold: false, italic: false, outline: 1.5, shadow: 1.0, alignment: '2', marginL: 10, marginR: 10, marginV: 18
+    };
+}
+
+function getDragLineAlignment(rawText) {
+    var st = getDragLineStyle();
+    var align = st.alignment || '2';
+    var anM = (rawText || '').match(/\\an(\d)/i);
+    if (anM) align = anM[1];
+    return align;
+}
+
+// نیشاندانی دەقی ڕاکێشراو بە تەواوی ستایلی فایلەکە (ڕەنگ، ستڕۆک، شادۆ، بۆڵد...)
+function renderDragPreviewStyled() {
+    const dragText = document.getElementById('vDraggableSubText');
+    const canvas = document.getElementById('grid40Canvas');
+    const fsInput = document.getElementById('vDragFontSizeInput');
+    if (!dragText || !canvas) return;
+
+    var raw = currentDragRawText || '';
+    var scaleRatio = (canvas.clientHeight || 1) / (currentDragResY || 1080);
+
+    var baseStyle = getDragLineStyle();
+    var fsVal = fsInput ? parseFloat(fsInput.value) : 0;
+    var styleForPreview = Object.assign({}, baseStyle);
+    if (fsVal && fsVal > 0) styleForPreview.fontsize = fsVal;
+
+    // تاگی \fs لادەبرێت تاکو قەبارەی خانەکە کاربکات
+    var textForPreview = raw.replace(/\\fs\d+(?:\.\d+)?/gi, '');
+    textForPreview = textForPreview.replace(/[♪\|]/g, '');
+
+    var html = '';
+    if (typeof parseAssLineToStyledHtml === 'function') {
+        html = parseAssLineToStyledHtml(textForPreview, styleForPreview, scaleRatio);
+    }
+    var plain = textForPreview.replace(/\{[^}]*\}/g, '').trim();
+    if (!plain) html = '<span style="color:' + (baseStyle.primaryColor || '#fff') + ';">دەقی ژێرنووس</span>';
+    dragText.innerHTML = html;
 }
 
 // گۆڕینی قەبارە بەبێ هیچ سنووردارکردنێک (لە ١ تا ٥٠٠)
@@ -4627,11 +4962,34 @@ function updateLiveDragFontSize(val) {
     if (!dragText || !canvas) return;
 
     let fs = parseFloat(val);
-    if (isNaN(fs) || fs <= 0) return;
+    if (isNaN(fs)) return;
+    if (fs < 1) fs = 1;
+    if (fs > 500) fs = 500;
 
-    let scaleRatio = canvas.clientHeight / currentDragResY;
-    let cssFs = (fs * scaleRatio).toFixed(2);
+    let scaleRatio = (canvas.clientHeight || 1) / (currentDragResY || 1080);
+    let cssFs = Math.max(0.5, fs * scaleRatio).toFixed(2);
     dragText.style.fontSize = cssFs + 'px';
+    renderDragPreviewStyled();
+    // دڵنیابوونەوە لەوەی دەقەکە لە شاشەکە دەرناچێت
+    if (typeof setDragElementPosition === 'function') setDragElementPosition(currentDragAssX, currentDragAssY);
+}
+
+// چوارچێوەی ڕاستەقینەی ڤیدیۆ (canvas) لە ناو بۆکسەکەدا
+function getDragFrameMetrics() {
+    const box = document.getElementById('vDragScreenBox');
+    const canvas = document.getElementById('grid40Canvas');
+    if (!box) return null;
+    const bR = box.getBoundingClientRect();
+    const frame = (canvas && canvas.clientWidth) ? canvas : box;
+    const fR = frame.getBoundingClientRect();
+    if (!fR.width || !fR.height) return null;
+    return {
+        offsetLeft: fR.left - bR.left,
+        offsetTop: fR.top - bR.top,
+        width: fR.width,
+        height: fR.height,
+        rect: fR
+    };
 }
 
 function setDragElementPosition(assX, assY) {
@@ -4639,14 +4997,90 @@ function setDragElementPosition(assX, assY) {
     const display = document.getElementById('vDragCoordDisplay');
     if (!dragText) return;
 
-    let leftPct = (assX / currentDragResX) * 100;
-    let topPct = (assY / currentDragResY) * 100;
+    const m = getDragFrameMetrics();
+    if (m) {
+        dragText.style.left = (m.offsetLeft + (assX / currentDragResX) * m.width).toFixed(2) + 'px';
+        dragText.style.top = (m.offsetTop + (assY / currentDragResY) * m.height).toFixed(2) + 'px';
+    } else {
+        dragText.style.left = ((assX / currentDragResX) * 100) + '%';
+        dragText.style.top = ((assY / currentDragResY) * 100) + '%';
+    }
 
-    dragText.style.left = leftPct + '%';
-    dragText.style.top = topPct + '%';
+    // ئاڕاستەی ASS وەک خۆی (\an)
+    var align = currentDragAlign || '2';
+    var tX = '-50%', tY = '-50%';
+    if (['1','4','7'].indexOf(align) !== -1) tX = '0%';
+    if (['3','6','9'].indexOf(align) !== -1) tX = '-100%';
+    if (['7','8','9'].indexOf(align) !== -1) tY = '0%';
+    if (['1','2','3'].indexOf(align) !== -1) tY = '-100%';
+    dragText.style.transform = 'translate(' + tX + ', ' + tY + ')';
 
     if (display) display.innerText = `X: ${assX}, Y: ${assY} [${currentDragResX}×${currentDragResY}]`;
+
+    clampDragTextIntoBox();
 }
+
+// ڕێگرتن لەوەی دەقەکە بچێتە دەرەوەی چوارچێوەی ڤیدیۆکە
+function clampDragTextIntoBox() {
+    const el = document.getElementById('vDraggableSubText');
+    const m = getDragFrameMetrics();
+    if (!el || !m) return;
+
+    const fR = m.rect;
+    const eR = el.getBoundingClientRect();
+
+    let dx = 0, dy = 0;
+    if (eR.width >= fR.width) dx = (fR.left + (fR.width - eR.width) / 2) - eR.left;
+    else if (eR.left < fR.left) dx = fR.left - eR.left;
+    else if (eR.right > fR.right) dx = fR.right - eR.right;
+
+    if (eR.height >= fR.height) dy = (fR.top + (fR.height - eR.height) / 2) - eR.top;
+    else if (eR.top < fR.top) dy = fR.top - eR.top;
+    else if (eR.bottom > fR.bottom) dy = fR.bottom - eR.bottom;
+
+    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+
+    const sx = currentDragResX / m.width;
+    const sy = currentDragResY / m.height;
+    currentDragAssX = Math.round(Math.max(0, Math.min(currentDragResX, currentDragAssX + dx * sx)));
+    currentDragAssY = Math.round(Math.max(0, Math.min(currentDragResY, currentDragAssY + dy * sy)));
+
+    el.style.left = (m.offsetLeft + (currentDragAssX / currentDragResX) * m.width).toFixed(2) + 'px';
+    el.style.top = (m.offsetTop + (currentDragAssY / currentDragResY) * m.height).toFixed(2) + 'px';
+
+    const display = document.getElementById('vDragCoordDisplay');
+    if (display) display.innerText = `X: ${currentDragAssX}, Y: ${currentDragAssY} [${currentDragResX}×${currentDragResY}]`;
+}
+
+// ڕێژەی دوورییەکان بۆ دوگمەکانی جوڵاندن
+let currentNudgeMultiplier = 1;
+
+function setNudgeStep(mult, btn) {
+    currentNudgeMultiplier = mult;
+    document.querySelectorAll('#vStepChips .v-step-chip').forEach(function(c) { c.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+}
+
+function nudgeDragPos(dx, dy) {
+    var base = Math.max(1, Math.round((currentDragResY || 1080) / 135));
+    var step = base * (currentNudgeMultiplier || 1);
+    currentDragAssX = Math.max(0, Math.min(currentDragResX, currentDragAssX + dx * step));
+    currentDragAssY = Math.max(0, Math.min(currentDragResY, currentDragAssY + dy * step));
+    setDragElementPosition(currentDragAssX, currentDragAssY);
+}
+
+function alignDragPos(where) {
+    var st = getDragLineStyle();
+    var mL = st.marginL || 10, mR = st.marginR || 10, mV = st.marginV || 18;
+    if (where === 'left') currentDragAssX = Math.round(mL);
+    else if (where === 'right') currentDragAssX = Math.round(currentDragResX - mR);
+    else if (where === 'center') currentDragAssX = Math.round(currentDragResX / 2);
+    else if (where === 'top') currentDragAssY = Math.round(mV);
+    else if (where === 'bottom') currentDragAssY = Math.round(currentDragResY - mV);
+    else if (where === 'middle') currentDragAssY = Math.round(currentDragResY / 2);
+    setDragElementPosition(currentDragAssX, currentDragAssY);
+}
+
 
 function setupDragTouchEngine(box, textEl) {
     const guideV = document.getElementById('vSnapGuideV');
@@ -4654,7 +5088,9 @@ function setupDragTouchEngine(box, textEl) {
 
     function handleMove(e) {
         e.preventDefault();
-        const rect = box.getBoundingClientRect();
+        // چوارچێوەی ڕاستەقینەی ڤیدیۆ (canvas) بەکاردەهێنرێت نەک بۆکسی دەرەوە
+        const m = getDragFrameMetrics();
+        const rect = m ? m.rect : box.getBoundingClientRect();
         const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
         const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
 
@@ -4713,20 +5149,35 @@ function setupDragTouchEngine(box, textEl) {
     box.ontouchcancel = handleEnd;
 }
 
+// لابردنی تاگەکانی \pos و \an و \fs بەبێ زیانگەیاندن بە تاگەکانی تر (تەنها بۆ ئەم دێڕە)
+function stripPosAndFsTags(text) {
+    if (!text) return '';
+    return text.replace(/\{([^}]*)\}/g, function(all, inner) {
+        var cleaned = inner
+            .replace(/\\pos\([^)]*\)/gi, '')
+            .replace(/\\an\d/gi, '')
+            .replace(/\\fs\d+(?:\.\d+)?/gi, '');
+        cleaned = cleaned.trim();
+        return cleaned ? '{' + cleaned + '}' : '';
+    });
+}
+
 function confirmDraggablePosition() {
     const modalTa = document.getElementById('modalSubtitleLiveText');
     const fsInput = document.getElementById('vDragFontSizeInput');
     const techFsInput = document.getElementById('techFontSizeVal');
 
-    let chosenFs = fsInput ? parseInt(fsInput.value, 10) : 0;
+    let chosenFs = fsInput ? parseFloat(fsInput.value) : 0;
+    if (isNaN(chosenFs)) chosenFs = 0;
+    if (chosenFs) chosenFs = Math.min(500, Math.max(1, chosenFs));
+    if (chosenFs % 1 === 0) chosenFs = Math.round(chosenFs);
     if (techFsInput && chosenFs) techFsInput.value = chosenFs;
 
     if (modalTa) {
-        let val = modalTa.value;
-        val = val.replace(/\{\\pos\([^)]+\)\}/g, '').replace(/\{\\an\d\}/g, '');
-        
+        // تاگەکانی شوێن و قەبارە تەنها لەم دێڕەدا دەسڕدرێنەوە و لە جیاتیان نوێیەکە دادەنرێت
+        let val = stripPosAndFsTags(modalTa.value);
+
         if (chosenFs) {
-            val = val.replace(/\\fs\d+/g, '');
             val = `{\\pos(${currentDragAssX},${currentDragAssY})\\fs${chosenFs}}` + val;
         } else {
             val = `{\\pos(${currentDragAssX},${currentDragAssY})}` + val;
@@ -4815,10 +5266,32 @@ function setupCanvasColorTouch(canvas, ctx) {
     canvas.ontouchstart = (e) => { sampleAtPoint(e); canvas.ontouchmove = sampleAtPoint; };
 }
 
+let videoPickTarget = 'text';
+
+function setVideoPickTarget(target, el) {
+    videoPickTarget = target;
+    document.querySelectorAll('.v-target-btn').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+}
+
 function confirmVideoCanvasColor() {
-    setCustomPaletteColor(tempSampledVideoHex, null);
+    if (!tempSampledVideoHex) {
+        showToast("تکایە سەرەتا خاڵێک لەسەر وێنەکە دیاری بکە!", "warning");
+        return;
+    }
+
+    if (videoPickTarget === 'outline') {
+        setStrokeColor(tempSampledVideoHex, null);
+        showToast("ڕەنگی Outline لە ڤیدیۆ وەرگیرا: " + tempSampledVideoHex, "success");
+    } else if (videoPickTarget === 'shadow') {
+        setShadowColor(tempSampledVideoHex, null);
+        showToast("ڕەنگی Shadow لە ڤیدیۆ وەرگیرا: " + tempSampledVideoHex, "success");
+    } else {
+        setCustomPaletteColor(tempSampledVideoHex, null);
+        showToast("ڕەنگی نووسین لە ڤیدیۆ وەرگیرا!", "success");
+    }
+
     document.getElementById('video-color-picker-modal').style.display = 'none';
-    showToast("ڕەنگەکە لە ڤیدیۆ وەرگیرا!", "success");
 }
 
         function toggleVideoUrlInput() {
@@ -4960,66 +5433,146 @@ function resetVideoPlayer() {
     clearTimeout(playerControlsTimer);
 }
 
-// وەرگێڕی ڕەنگەکانی فایلی ئەسڵی ASS
+// وەرگێڕی فەرمیی و بێ کێشەی ڕەنگەکانی ASS
 function parseAssColor(str, defaultHex) {
     if (!str) return defaultHex || '#FFFFFF';
     try {
-        var clean = str.toString().trim().replace(/&H/gi, '').replace(/&/g, '');
-        if (!clean) return defaultHex || '#FFFFFF';
-        if (/^-?\d+$/.test(clean)) {
-            var n = (parseInt(clean, 10) >>> 0).toString(16);
-            clean = n.padStart(6, '0');
+        var s = str.toString().trim();
+        // ئەگەر ژمارەی دەیی (Decimal) بوو
+        if (/^-?\d+$/.test(s) && !/[&#hH]/.test(str.toString())) {
+            var num = (parseInt(s, 10) >>> 0).toString(16);
+            s = num;
         }
+        var clean = s.replace(/&H/gi, '').replace(/&/g, '').replace(/#/g, '').trim();
+        if (!clean) return defaultHex || '#FFFFFF';
+        
+        // پڕکردنەوەی ژمارە کورتەکان بۆ لانیکەم ٦ پیت
         while (clean.length < 6) clean = '0' + clean;
-        var b = clean.substring(clean.length - 6, clean.length - 4);
-        var g = clean.substring(clean.length - 4, clean.length - 2);
-        var r = clean.substring(clean.length - 2);
+        
+        var r, g, b;
+        // ئەگەر ٨ پیت بوو (AABBGGRR)
+        if (clean.length >= 8) {
+            clean = clean.slice(-8); // دوایین ٨ پیت وەردەگرێت
+            b = clean.substring(2, 4);
+            g = clean.substring(4, 6);
+            r = clean.substring(6, 8);
+        } else {
+            // ئەگەر ٦ پیت بوو (BBGGRR)
+            clean = clean.slice(-6);
+            b = clean.substring(0, 2);
+            g = clean.substring(2, 4);
+            r = clean.substring(4, 6);
+        }
         return '#' + r + g + b;
     } catch(e) {
         return defaultHex || '#FFFFFF';
     }
 }
 
-// شیکەرەوەی دەق و تاگەکانی ناو دێڕ بەبێ کێشە
-function parseAssLineToHtml(rawText, defColor, isBold, isItalic, defFs) {
-    if (!rawText) return '';
-    var curColor = defColor || '#FFFFFF';
-    var curBold = !!isBold;
-    var curItalic = !!isItalic;
-    var html = '';
+// دروستکردنی ستڕۆک و شادۆی ورد
+function buildAssShadowCss(bordW, strokeColor, shadW, shadowColor, blurW) {
+    var shadows = [];
+    var b = bordW > 0 ? bordW.toFixed(1) : 0;
+    var d = (bordW * 0.707).toFixed(1);
     
-    // سڕینەوەی کۆدی وێنەکێشانی ئەنیمەیشن بەبێ لەکارکەوتن
+    if (bordW > 0) {
+        shadows.push(b + 'px 0px 0px ' + strokeColor);
+        shadows.push('-' + b + 'px 0px 0px ' + strokeColor);
+        shadows.push('0px ' + b + 'px 0px ' + strokeColor);
+        shadows.push('0px -' + b + 'px 0px ' + strokeColor);
+        shadows.push(d + 'px ' + d + 'px 0px ' + strokeColor);
+        shadows.push('-' + d + 'px -' + d + 'px 0px ' + strokeColor);
+        shadows.push(d + 'px -' + d + 'px 0px ' + strokeColor);
+        shadows.push('-' + d + 'px ' + d + 'px 0px ' + strokeColor);
+    }
+    
+    if (shadW > 0) {
+        var s = shadW.toFixed(1);
+        var sOffset = (parseFloat(s) + parseFloat(b)).toFixed(1);
+        shadows.push(sOffset + 'px ' + sOffset + 'px 0px ' + shadowColor);
+    }
+    
+    return shadows.length > 0 ? 'text-shadow: ' + shadows.join(', ') + ';' : 'text-shadow: none;';
+}
+
+// شیکەرەوەی ناوەڕۆکی دێڕ بە دەرکێشانی تەواوی تاگەکانی \c و \3c و \bord و \fn
+function parseAssLineToStyledHtml(rawText, style, scaleY) {
+    if (!rawText) return '';
+    
+    var curPrimary = style.primaryColor || '#FFFFFF';
+    var curOutline = style.outlineColor || '#000000';
+    var curShadow = style.shadowColor || '#000000';
+    var curBord = (style.outline !== undefined ? style.outline : 1.5) * scaleY;
+    var curShad = (style.shadow !== undefined ? style.shadow : 1.0) * scaleY;
+    var curBlur = 0;
+    var curBold = style.bold;
+    var curItalic = style.italic;
+    var curFs = style.fontsize * scaleY;
+    var curFn = style.fontname || 'KurdForest';
+    
     var textOnly = rawText.replace(/\{\\p[1-9]\}[^\}]*(\{\\p0\}|$)/gi, '');
     var parts = textOnly.split(/(\{[\s\S]*?\})/g);
+    var html = '';
 
     for (var i = 0; i < parts.length; i++) {
         var part = parts[i];
         if (!part) continue;
         if (part.charAt(0) === '{' && part.charAt(part.length - 1) === '}') {
-            var cM = part.match(/\\(?:c|1c)&?H?([0-9a-fA-F]+)&?/i);
-            if (cM) curColor = parseAssColor(cM[1], defColor);
+            // گەڕان بەدوای \c و \1c بەبێ تێکەڵبوون لەگەڵ \3c یان \4c
+            var cM = part.match(/(?:^|[\\{])(?:c|1c)\s*(&?H?[0-9a-fA-F]{1,8})&?/i);
+            if (cM) curPrimary = parseAssColor(cM[1], curPrimary);
+            
+            // گەڕان بەدوای \3c (Outline/Stroke)
+            var c3M = part.match(/(?:^|[\\{])3c\s*(&?H?[0-9a-fA-F]{1,8})&?/i);
+            if (c3M) curOutline = parseAssColor(c3M[1], curOutline);
+            
+            // گەڕان بەدوای \4c (Shadow)
+            var c4M = part.match(/(?:^|[\\{])4c\s*(&?H?[0-9a-fA-F]{1,8})&?/i);
+            if (c4M) curShadow = parseAssColor(c4M[1], curShadow);
+            
+            var bordM = part.match(/\\bord([\d\.]+)/i);
+            if (bordM) curBord = parseFloat(bordM[1]) * scaleY;
+            
+            var shadM = part.match(/\\shad([\d\.]+)/i);
+            if (shadM) curShad = parseFloat(shadM[1]) * scaleY;
+            
+            var blurM = part.match(/\\(?:blur|be)([\d\.]+)/i);
+            if (blurM) curBlur = parseFloat(blurM[1]) * scaleY;
+            
+            var fsM = part.match(/\\fs(\d+(?:\.\d+)?)/i);
+            if (fsM) curFs = parseFloat(fsM[1]) * scaleY;
+            
+            var fnM = part.match(/\\fn([^\}\\]+)/i);
+            if (fnM) curFn = fnM[1].trim();
             
             if (/\\b1\b/i.test(part)) curBold = true;
             if (/\\b0\b/i.test(part)) curBold = false;
             if (/\\i1\b/i.test(part)) curItalic = true;
             if (/\\i0\b/i.test(part)) curItalic = false;
-            
-            if (/\\r/i.test(part)) { 
-                curColor = defColor || '#FFFFFF'; 
-                curBold = !!isBold; 
-                curItalic = !!isItalic; 
+
+            // گەڕانەوە بۆ ستایلی ئەسڵی لەکاتی بوونی \r
+            if (/\\r\b/i.test(part)) {
+                curPrimary = style.primaryColor || '#FFFFFF';
+                curOutline = style.outlineColor || '#000000';
+                curShadow = style.shadowColor || '#000000';
             }
         } else {
             var cleanChunk = part.replace(/\\N/gi, '<br>').replace(/\\n/gi, '<br>').replace(/\\h/gi, '&nbsp;');
+            var shadowCss = buildAssShadowCss(curBord, curOutline, curShad, curShadow, curBlur);
+            var fsCss = 'font-size: ' + Math.max(0.5, curFs).toFixed(2) + 'px !important;';
+            // فۆنتی ماڵپەڕەکە دەخرێتە سەر هەموو ژێرنووسەکان لەکاتی بینین
+            var fnCss = 'font-family: \'KurdForest\', \'' + curFn + '\', Tahoma, sans-serif !important;';
+
             var w = curBold ? 'font-weight:bold;' : 'font-weight:normal;';
             var f = curItalic ? 'font-style:italic;' : 'font-style:normal;';
-            html += '<span style="color:' + curColor + ' !important; ' + w + ' ' + f + '">' + cleanChunk + '</span>';
+            
+            html += '<span style="color:' + curPrimary + ' !important; ' + fsCss + ' ' + fnCss + ' ' + shadowCss + ' ' + w + ' ' + f + ' line-height:1.25;">' + cleanChunk + '</span>';
         }
     }
     return html || rawText;
 }
 
-// پێوانی شوێنی ڕاستەقینەی ڤیدیۆ بە سەلامەتی
+// دۆزینەوەی چوارچێوەی ڤیدیۆ
 function getVideoRenderBox(video, container) {
     var cW = (container && container.clientWidth) ? container.clientWidth : 360;
     var cH = (container && container.clientHeight) ? container.clientHeight : 220;
@@ -5039,218 +5592,286 @@ function getVideoRenderBox(video, container) {
         rH = rW / videoRatio;
         oY = (cH - rH) / 2;
     }
-    return { width: Math.max(100, rW), height: Math.max(80, rH), left: Math.max(0, oX), top: Math.max(0, oY) };
+    return { width: Math.max(50, rW), height: Math.max(50, rH), left: Math.max(0, oX), top: Math.max(0, oY) };
 }
 
-// بزوێنەری نیشاندانی ژێرنووس
-function setupVideoSync() {
+// کۆکردنەوە و شی کردنەوەی تەواوی ستایلەکانی سەرەتای فایلی ASS
+function getAssStylesDictionary() {
+    var stylesMap = {};
+    if (typeof assHeaderLines === 'undefined' || !assHeaderLines || assHeaderLines.length === 0) return stylesMap;
+    
+    // ڕیزبەندی بنەڕەتی ستایلەکانی V4+
+    var formatKeys = ["name","fontname","fontsize","primarycolour","secondarycolour","outlinecolour","backcolour","bold","italic","underline","strikeout","scalex","scaley","spacing","angle","borderstyle","outline","shadow","alignment","marginl","marginr","marginv","encoding"];
+
+    for (var i = 0; i < assHeaderLines.length; i++) {
+        var tr = assHeaderLines[i].trim();
+        
+        // دەرهێنانی ناوی ستوونەکان بەپێی Formatـی ناو فایلەکە
+        if (/^Format\s*:/i.test(tr) && /primarycolour/i.test(tr)) {
+            formatKeys = tr.replace(/^Format\s*:\s*/i, '').split(',').map(function(k){ return k.trim().toLowerCase(); });
+        } else if (/^Style\s*:/i.test(tr)) {
+            var vals = tr.replace(/^Style\s*:\s*/i, '').split(',');
+            var sObj = {};
+            for (var idx = 0; idx < vals.length; idx++) {
+                var key = formatKeys[idx] || ('col' + idx);
+                sObj[key] = vals[idx] ? vals[idx].trim() : '';
+            }
+            
+            var sName = (sObj.name || 'default').replace(/^\*/, '').trim().toLowerCase();
+            
+            // وەرگرتنی ڕەنگی Outline چ لە فۆرماتی نوێ (outlinecolour) یان فۆرماتی کۆن (tertiarycolour)
+            var rawOutlineColor = sObj.outlinecolour || sObj.tertiarycolour || '&H00000000';
+            var rawPrimaryColor = sObj.primarycolour || '&H00FFFFFF';
+            var rawShadowColor = sObj.backcolour || '&H00000000';
+
+            stylesMap[sName] = {
+                fontname: sObj.fontname || 'KurdForest',
+                fontsize: parseFloat(sObj.fontsize) || 45,
+                primaryColor: parseAssColor(rawPrimaryColor, '#FFFFFF'),
+                outlineColor: parseAssColor(rawOutlineColor, '#000000'),
+                shadowColor: parseAssColor(rawShadowColor, '#000000'),
+                bold: sObj.bold === '-1' || sObj.bold === '1',
+                italic: sObj.italic === '-1' || sObj.italic === '1',
+                outline: (sObj.outline !== undefined && sObj.outline !== '') ? parseFloat(sObj.outline) : 1.5,
+                shadow: (sObj.shadow !== undefined && sObj.shadow !== '') ? parseFloat(sObj.shadow) : 1.0,
+                alignment: sObj.alignment || '2',
+                marginL: parseFloat(sObj.marginl) || 10,
+                marginR: parseFloat(sObj.marginr) || 10,
+                marginV: parseFloat(sObj.marginv) || 18
+            };
+        }
+    }
+    return stylesMap;
+}
+
+// بزوێنەری پێشکەوتووی نیشاندانی ژێرنووس بە 60 FPS و پاراستنی تەواوی تاگ و شوێنەکان
+var subtitleAnimFrameId = null;
+
+function renderSubtitlesNow() {
     var video = document.getElementById('preview-video');
     var overlay = document.getElementById('video-subtitle-overlay');
     var playerWrapper = document.getElementById('video-player-wrapper');
-    if (!video || !overlay || !playerWrapper) return;
+    if (!video || !overlay || !playerWrapper || !originalData || originalData.length === 0) return;
 
-    var stylesMap = {};
-    var styleFormatKeys = ["name","fontname","fontsize","primarycolour","secondarycolour","outlinecolour","backcolour","bold","italic","underline","strikeout","scalex","scaley","spacing","angle","borderstyle","outline","shadow","alignment","marginl","marginr","marginv","encoding"];
+    try {
+        var ct = video.currentTime;
+        var activeSubs = [];
+        
+        for (var i = 0; i < originalData.length; i++) {
+            if (ct >= originalData[i].startSec && ct <= originalData[i].endSec) {
+                var card = document.querySelector('.subtitle-card[data-index="' + i + '"]');
+                var userText = card ? card.querySelector('textarea').value : '';
+                var finalText = '';
 
-    if (typeof assHeaderLines !== 'undefined' && assHeaderLines.length > 0) {
-        assHeaderLines.forEach(function(line) {
-            var tr = line.trim();
-            if (tr.startsWith('Format:') && tr.toLowerCase().includes('primarycolour')) {
-                styleFormatKeys = tr.replace(/^Format:\s*/i, '').split(',').map(function(k){ return k.trim().toLowerCase(); });
-            } else if (tr.startsWith('Style:')) {
-                var vals = tr.replace(/^Style:\s*/i, '').split(',');
-                var sObj = {};
-                for (var idx = 0; idx < vals.length; idx++) {
-                    var key = styleFormatKeys[idx] || ('col' + idx);
-                    sObj[key] = vals[idx] ? vals[idx].trim() : '';
+                // پاراستنی تاگەکانی شوێن و ڕەنگ کاتێک تەنها دەقی سادە لە خانەکەدا دەنووسرێت
+                if (userText && userText.trim() !== '') {
+                    var origRaw = originalData[i].rawText || '';
+                    var origTagsMatch = origRaw.match(/^(\{[^}]+\})+/);
+                    if (origTagsMatch && !userText.includes('{')) {
+                        finalText = origTagsMatch[0] + userText;
+                    } else {
+                        finalText = userText;
+                    }
+                } else {
+                    finalText = originalData[i].rawText || originalData[i].text;
                 }
-                var sName = (sObj.name || 'default').toLowerCase();
-                
-                stylesMap[sName] = {
-                    fontname: sObj.fontname || 'Speda Bold',
-                    fontsize: parseFloat(sObj.fontsize) || 45,
-                    primaryColor: parseAssColor(sObj.primarycolour, '#FFFFFF'),
-                    outlineColor: parseAssColor(sObj.outlinecolour, '#000000'),
-                    shadowColor: parseAssColor(sObj.backcolour, '#000000'),
-                    bold: sObj.bold === '-1' || sObj.bold === '1',
-                    italic: sObj.italic === '-1' || sObj.italic === '1',
-                    outline: parseFloat(sObj.outline) || 1.5,
-                    shadow: parseFloat(sObj.shadow) || 1.0,
-                    alignment: sObj.alignment || '2',
-                    marginL: parseFloat(sObj.marginl) || 10,
-                    marginR: parseFloat(sObj.marginr) || 10,
-                    marginV: parseFloat(sObj.marginv) || 18
-                };
+
+                activeSubs.push({
+                    index: i,
+                    text: finalText,
+                    startSec: originalData[i].startSec,
+                    endSec: originalData[i].endSec,
+                    duration: Math.max(0.01, originalData[i].endSec - originalData[i].startSec),
+                    styleName: (originalData[i].assMeta && originalData[i].assMeta.style) ? originalData[i].assMeta.style.replace(/^\*/, '').trim().toLowerCase() : 'default'
+                });
             }
+        }
+
+        // دیاریکردنی کارتی چالاک
+        document.querySelectorAll('.active-sub').forEach(function(el) { el.classList.remove('active-sub'); });
+        activeSubs.forEach(function(s) {
+            var c = document.querySelector('.subtitle-card[data-index="' + s.index + '"]');
+            if (c) c.classList.add('active-sub');
         });
+
+        var stylesMap = (typeof getAssStylesDictionary === 'function') ? getAssStylesDictionary() : {};
+        var res = (typeof getActiveScriptResolution === 'function') ? getActiveScriptResolution() : { resX: 1920, resY: 1080 };
+        var fileResX = res.resX || 1920;
+        var fileResY = res.resY || 1080;
+        var vBox = getVideoRenderBox(video, playerWrapper);
+        
+        var scaleX = vBox.width / fileResX;
+        var scaleY = vBox.height / fileResY;
+
+        var renderedElementsHtml = '';
+        activeSubs.forEach(function(sub) {
+            var str = sub.text;
+            var elapsed = ct - sub.startSec;
+            var style = stylesMap[sub.styleName] || stylesMap['default'] || {
+                fontname: 'KurdForest', fontsize: 45, primaryColor: '#FFFFFF', outlineColor: '#000000', shadowColor: '#000000',
+                bold: false, italic: false, outline: 1.5, shadow: 1.0, alignment: '2', marginL: 10, marginR: 10, marginV: 18
+            };
+
+            // ١. ئاڕاستە (Alignment)
+            var align = style.alignment || '2';
+            var anM = str.match(/\\an(\d)/i);
+            if (anM) align = anM[1];
+
+            // ٢. فەیدی زۆر نەرم بە 60 FPS
+            var opacityVal = 1;
+            var fadM = str.match(/\\fad\((\d+),\s*(\d+)\)/i);
+            if (fadM) {
+                var fIn = parseFloat(fadM[1]) / 1000;
+                var fOut = parseFloat(fadM[2]) / 1000;
+                var remaining = sub.endSec - ct;
+                if (fIn > 0 && elapsed < fIn) {
+                    opacityVal = elapsed / fIn;
+                } else if (fOut > 0 && remaining < fOut) {
+                    opacityVal = remaining / fOut;
+                }
+            }
+            var opacityCss = 'opacity: ' + Math.max(0, Math.min(1, opacityVal)).toFixed(3) + ';';
+
+            // ٣. سوڕانەوە و گەورەکردن
+            var rotM = str.match(/\\(?:frz|fr)(-?[\d\.]+)/i);
+            var rotDeg = rotM ? parseFloat(rotM[1]) : 0;
+            var rotTransform = rotDeg !== 0 ? ' rotate(' + (-rotDeg) + 'deg)' : '';
+
+            var fscxM = str.match(/\\fscx(\d+(?:\.\d+)?)/i);
+            var fscyM = str.match(/\\fscy(\d+(?:\.\d+)?)/i);
+            var scX = fscxM ? parseFloat(fscxM[1]) / 100 : 1;
+            var scY = fscyM ? parseFloat(fscyM[1]) / 100 : 1;
+            var scaleTransform = (scX !== 1 || scY !== 1) ? ' scale(' + scX + ',' + scY + ')' : '';
+
+            // ٤. شوێنی ڕاستەقینەی دەق لەسەر شاشە (\pos و \move)
+            var posX = 0, posY = 0, isPos = false;
+            var moveM = str.match(/\\move\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)(?:,\s*(\d+)\s*,\s*(\d+))?\s*\)/i);
+            var posM = str.match(/\\pos\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*\)/i);
+
+            if (moveM) {
+                isPos = true;
+                var x1 = parseFloat(moveM[1]), y1 = parseFloat(moveM[2]);
+                var x2 = parseFloat(moveM[3]), y2 = parseFloat(moveM[4]);
+                var t1 = moveM[5] ? parseFloat(moveM[5]) / 1000 : 0;
+                var t2 = moveM[6] ? parseFloat(moveM[6]) / 1000 : sub.duration;
+                var progress = (t2 > t1) ? Math.max(0, Math.min(1, (elapsed - t1) / (t2 - t1))) : 1;
+                posX = vBox.left + ((x1 + (x2 - x1) * progress) * scaleX);
+                posY = vBox.top + ((y1 + (y2 - y1) * progress) * scaleY);
+            } else if (posM) {
+                isPos = true;
+                posX = vBox.left + (parseFloat(posM[1]) * scaleX);
+                posY = vBox.top + (parseFloat(posM[2]) * scaleY);
+            }
+
+            var mL = (style.marginL || 10) * scaleX;
+            var mR = (style.marginR || 10) * scaleX;
+            var mV = (style.marginV || 18) * scaleY;
+
+            var posCss = '';
+            if (isPos) {
+                var transX = '-50%', transY = '-100%';
+                if (['1','4','7'].includes(align)) transX = '0%';
+                if (['2','5','8'].includes(align)) transX = '-50%';
+                if (['3','6','9'].includes(align)) transX = '-100%';
+                if (['7','8','9'].includes(align)) transY = '0%';
+                if (['4','5','6'].includes(align)) transY = '-50%';
+                if (['1','2','3'].includes(align)) transY = '-100%';
+                
+                posCss = 'position: absolute; left: ' + posX.toFixed(1) + 'px; top: ' + posY.toFixed(1) + 'px; transform: translate(' + transX + ', ' + transY + ')' + rotTransform + scaleTransform + ';';
+
+            } else {
+                var finalX = vBox.left + (vBox.width / 2);
+                var finalY = vBox.top + vBox.height - mV;
+                var transX = '-50%', transY = '-100%';
+
+                if (['7','8','9'].includes(align)) {
+                    finalY = vBox.top + mV;
+                    transY = '0%';
+                } else if (['4','5','6'].includes(align)) {
+                    finalY = vBox.top + (vBox.height / 2);
+                    transY = '-50%';
+                }
+
+                if (['1','4','7'].includes(align)) {
+                    finalX = vBox.left + mL;
+                    transX = '0%';
+                } else if (['3','6','9'].includes(align)) {
+                    finalX = vBox.left + vBox.width - mR;
+                    transX = '-100%';
+                }
+
+                posCss = 'position: absolute; left: ' + finalX.toFixed(1) + 'px; top: ' + finalY.toFixed(1) + 'px; transform: translate(' + transX + ', ' + transY + ')' + rotTransform + scaleTransform + '; text-align: center;';
+            }
+
+            var formattedHtml = parseAssLineToStyledHtml(str, style, scaleY);
+            // تەنها ئەگەر دەقەکە لە پانی شاشەکە زیاتر بوو ئەوا دەبێتە دوو ڕیز (بینین تەنها، فایل دەستکاری نەکراوە)
+            var maxW = Math.max(80, vBox.width - 8);
+            var wrapCss = 'white-space: normal; width: max-content; word-break: normal; overflow-wrap: break-word; line-height: 1.24; text-align: center; max-width: ' + maxW.toFixed(0) + 'px;';
+            renderedElementsHtml += '<div class="sub-rendered-line" style="' + posCss + ' ' + opacityCss + ' ' + wrapCss + ' pointer-events: none; z-index: 20;">' + formattedHtml + '</div>';
+
+
+        });
+
+        overlay.innerHTML = renderedElementsHtml;
+
+        // ڕێگرتن لەوەی هیچ دێڕێک بچێتە دەرەوەی چوارچێوەی ڤیدیۆکە
+        var oRect = overlay.getBoundingClientRect();
+        var minL = oRect.left + vBox.left, maxR = minL + vBox.width;
+        var minT = oRect.top + vBox.top, maxB = minT + vBox.height;
+        Array.prototype.forEach.call(overlay.querySelectorAll('.sub-rendered-line'), function(el) {
+            var r = el.getBoundingClientRect();
+            var dx = 0, dy = 0;
+            if (r.width >= vBox.width || r.left < minL) dx = minL - r.left;
+            else if (r.right > maxR) dx = maxR - r.right;
+            if (r.height >= vBox.height || r.top < minT) dy = minT - r.top;
+            else if (r.bottom > maxB) dy = maxB - r.bottom;
+            if (dx) el.style.marginLeft = dx.toFixed(1) + 'px';
+            if (dy) el.style.marginTop = dy.toFixed(1) + 'px';
+        });
+
+        if (video.duration) {
+            var pct = (video.currentTime / video.duration) * 100;
+            var fill = document.getElementById('customProgressFill');
+            if (fill) fill.style.width = pct + '%';
+            var timeText = document.getElementById('customTimeText');
+            if (timeText) timeText.innerText = formatPlayerTime(video.currentTime) + ' / ' + formatPlayerTime(video.duration);
+        }
+    } catch(err) {
+        console.error("Subtitle render error:", err);
+    }
+}
+
+function setupVideoSync() {
+    var video = document.getElementById('preview-video');
+    if (!video) return;
+
+    function renderLoop() {
+        renderSubtitlesNow();
+        if (!video.paused && !video.ended) {
+            subtitleAnimFrameId = requestAnimationFrame(renderLoop);
+        }
     }
 
-    video.ontimeupdate = function() {
-        try {
-            var ct = video.currentTime;
-            var activeSubs = [];
-            for (var i = 0; i < originalData.length; i++) {
-                if (ct >= originalData[i].startSec && ct <= originalData[i].endSec) {
-                    var card = document.querySelector('.subtitle-card[data-index="' + i + '"]');
-                    var userText = card ? card.querySelector('textarea').value : '';
-                    var finalText = userText.trim() !== '' ? userText : (originalData[i].rawText || originalData[i].text);
-                    activeSubs.push({
-                        index: i,
-                        text: finalText,
-                        startSec: originalData[i].startSec,
-                        endSec: originalData[i].endSec,
-                        duration: originalData[i].endSec - originalData[i].startSec,
-                        styleName: (originalData[i].assMeta && originalData[i].assMeta.style) ? originalData[i].assMeta.style.toLowerCase() : 'default'
-                    });
-                }
-            }
-
-            document.querySelectorAll('.active-sub').forEach(function(el) { el.classList.remove('active-sub'); });
-            activeSubs.forEach(function(s) {
-                var c = document.querySelector('.subtitle-card[data-index="' + s.index + '"]');
-                if (c) c.classList.add('active-sub');
-            });
-
-            var res = getActiveScriptResolution();
-            var fileResX = res.resX || 1920;
-            var fileResY = res.resY || 1080;
-            var vBox = getVideoRenderBox(video, playerWrapper);
-            
-            var scaleX = vBox.width / fileResX;
-            var scaleY = vBox.height / fileResY;
-            var scaleFont = Math.max(0.2, scaleY);
-
-            var renderedElementsHtml = '';
-            activeSubs.forEach(function(sub) {
-                var str = sub.text;
-                var elapsed = ct - sub.startSec;
-                var style = stylesMap[sub.styleName] || stylesMap['default'] || {
-                    fontname: 'Speda Bold', fontsize: 45, primaryColor: '#FFFFFF', outlineColor: '#000000', shadowColor: '#000000',
-                    bold: false, italic: false, outline: 1.5, shadow: 1.0, alignment: '2', marginL: 10, marginR: 10, marginV: 18
-                };
-
-                // قەبارەی فۆنت (بە قەبارەیەکی ڕوون کە لە مۆبایلیش زۆر دیار بێت)
-                var fsVal = style.fontsize;
-                var fsM = str.match(/\\fs(\d+(?:\.\d+)?)/i);
-                if (fsM) fsVal = parseFloat(fsM[1]);
-                var renderedFs = Math.max(12, Math.round(fsVal * scaleFont));
-
-                // ناوی فۆنت
-                var fontName = style.fontname;
-                var fnM = str.match(/\\fn([^\}\\]+)/i);
-                if (fnM) fontName = fnM[1].trim();
-
-                // شوێن
-                var posX = 0, posY = 0, isPos = false;
-                var moveM = str.match(/\\move\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)(?:,\s*(\d+)\s*,\s*(\d+))?\s*\)/i);
-                var posM = str.match(/\\pos\(\s*(-?[\d\.]+)\s*,\s*(-?[\d\.]+)\s*\)/i);
-
-                if (moveM) {
-                    isPos = true;
-                    var x1 = parseFloat(moveM[1]), y1 = parseFloat(moveM[2]);
-                    var x2 = parseFloat(moveM[3]), y2 = parseFloat(moveM[4]);
-                    var t1 = moveM[5] ? parseFloat(moveM[5]) / 1000 : 0;
-                    var t2 = moveM[6] ? parseFloat(moveM[6]) / 1000 : sub.duration;
-                    var progress = (t2 > t1) ? Math.max(0, Math.min(1, (elapsed - t1) / (t2 - t1))) : 1;
-                    posX = vBox.left + (x1 + (x2 - x1) * progress) * scaleX;
-                    posY = vBox.top + (y1 + (y2 - y1) * progress) * scaleY;
-                } else if (posM) {
-                    isPos = true;
-                    var rawX = parseFloat(posM[1]), rawY = parseFloat(posM[2]);
-                    if (!posM[1].includes('.') && Math.abs(rawX) >= 10000) rawX /= 1000;
-                    if (!posM[2].includes('.') && Math.abs(rawY) >= 10000) rawY /= 1000;
-                    posX = vBox.left + (rawX * scaleX);
-                    posY = vBox.top + (rawY * scaleY);
-                }
-
-                var align = style.alignment;
-                var anM = str.match(/\\an(\d)/i);
-                if (anM) align = anM[1];
-
-                // ستڕۆک
-                var bordW = (style.outline || 1.5) * scaleFont;
-                var bordM = str.match(/\\bord([\d\.]+)/i);
-                if (bordM) bordW = parseFloat(bordM[1]) * scaleFont;
-
-                var strokeHex = style.outlineColor || '#000000';
-                var c3M = str.match(/\\3c&?H?([0-9a-fA-F]+)&?/i);
-                if (c3M) strokeHex = parseAssColor(c3M[1], strokeHex);
-
-                // سێبەر
-                var shadW = (style.shadow || 1.0) * scaleFont;
-                var shadM = str.match(/\\shad([\d\.]+)/i);
-                if (shadM) shadW = parseFloat(shadM[1]) * scaleFont;
-
-                var shadowHex = style.shadowColor || '#000000';
-                var c4M = str.match(/\\4c&?H?([0-9a-fA-F]+)&?/i);
-                if (c4M) shadowHex = parseAssColor(c4M[1], shadowHex);
-
-                var b = Math.max(0.8, bordW);
-                var d = (b * 0.707).toFixed(1);
-                var bFixed = b.toFixed(1);
-                
-                var textShadowList = [
-                    bFixed + 'px 0 0 ' + strokeHex,
-                    '-' + bFixed + 'px 0 0 ' + strokeHex,
-                    '0 ' + bFixed + 'px 0 ' + strokeHex,
-                    '0 -' + bFixed + 'px 0 ' + strokeHex,
-                    d + 'px ' + d + 'px 0 ' + strokeHex,
-                    '-' + d + 'px ' + d + 'px 0 ' + strokeHex,
-                    d + 'px -' + d + 'px 0 ' + strokeHex,
-                    '-' + d + 'px -' + d + 'px 0 ' + strokeHex
-                ];
-
-                if (shadW > 0) {
-                    var sX = (shadW + (b * 0.5)).toFixed(1);
-                    var sY = (shadW + (b * 0.5)).toFixed(1);
-                    textShadowList.push(sX + 'px ' + sY + 'px 0px ' + shadowHex);
-                }
-
-                var shadowCss = 'text-shadow: ' + textShadowList.join(', ') + ';';
-                var formattedHtml = parseAssLineToHtml(str, style.primaryColor, style.bold, style.italic, renderedFs);
-
-                var posCss = '';
-                if (isPos) {
-                    var transX = '-50%', transY = '-50%';
-                    if (['1','4','7'].includes(align)) transX = '0%';
-                    if (['3','6','9'].includes(align)) transX = '-100%';
-                    if (['7','8','9'].includes(align)) transY = '0%';
-                    if (['1','2','3'].includes(align)) transY = '-100%';
-                    posCss = 'position: absolute; left: ' + posX.toFixed(1) + 'px; top: ' + posY.toFixed(1) + 'px; transform: translate(' + transX + ', ' + transY + ');';
-                } else {
-                    var marginL = vBox.left + ((style.marginL || 10) * scaleX);
-                    var marginR = (playerWrapper.clientWidth - (vBox.left + vBox.width)) + ((style.marginR || 10) * scaleX);
-                    var marginV = (playerWrapper.clientHeight - (vBox.top + vBox.height)) + ((style.marginV || 18) * scaleY);
-                    var marginVTop = vBox.top + ((style.marginV || 18) * scaleY);
-
-                    if (align === '7') posCss = 'position: absolute; top: ' + marginVTop.toFixed(1) + 'px; left: ' + marginL.toFixed(1) + 'px; text-align: left;';
-                    else if (align === '8') posCss = 'position: absolute; top: ' + marginVTop.toFixed(1) + 'px; left: 50%; transform: translateX(-50%); text-align: center;';
-                    else if (align === '9') posCss = 'position: absolute; top: ' + marginVTop.toFixed(1) + 'px; right: ' + marginR.toFixed(1) + 'px; text-align: right;';
-                    else if (align === '4') posCss = 'position: absolute; top: 50%; left: ' + marginL.toFixed(1) + 'px; transform: translateY(-50%); text-align: left;';
-                    else if (align === '5') posCss = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;';
-                    else if (align === '6') posCss = 'position: absolute; top: 50%; right: ' + marginR.toFixed(1) + 'px; transform: translateY(-50%); text-align: right;';
-                    else if (align === '1') posCss = 'position: absolute; bottom: ' + marginV.toFixed(1) + 'px; left: ' + marginL.toFixed(1) + 'px; text-align: left;';
-                    else if (align === '3') posCss = 'position: absolute; bottom: ' + marginV.toFixed(1) + 'px; right: ' + marginR.toFixed(1) + 'px; text-align: right;';
-                    else posCss = 'position: absolute; bottom: ' + marginV.toFixed(1) + 'px; left: 50%; transform: translateX(-50%); text-align: center;';
-                }
-
-                renderedElementsHtml += '<div class="sub-rendered-line" style="' + posCss + ' font-size: ' + renderedFs + 'px !important; font-family: \'' + fontName + '\', \'Speda Bold\', Tahoma, sans-serif !important; white-space: nowrap; word-break: keep-all; direction: rtl; ' + shadowCss + '">' +
-                    formattedHtml +
-                    '</div>';
-            });
-
-            overlay.innerHTML = renderedElementsHtml;
-            if (video.duration) {
-                var pct = (video.currentTime / video.duration) * 100;
-                var fill = document.getElementById('customProgressFill');
-                if (fill) fill.style.width = pct + '%';
-                var timeText = document.getElementById('customTimeText');
-                if (timeText) timeText.innerText = formatPlayerTime(video.currentTime) + ' / ' + formatPlayerTime(video.duration);
-            }
-        } catch(err) {
-            console.error("Subtitle render error:", err);
-        }
+    video.onplay = function() {
+        document.getElementById('iconCustomPlay').style.display = 'none';
+        document.getElementById('iconCustomPause').style.display = 'block';
+        if (typeof resetControlsHideTimer === 'function') resetControlsHideTimer();
+        if (subtitleAnimFrameId) cancelAnimationFrame(subtitleAnimFrameId);
+        subtitleAnimFrameId = requestAnimationFrame(renderLoop);
     };
+
+    video.onpause = function() {
+        document.getElementById('iconCustomPlay').style.display = 'block';
+        document.getElementById('iconCustomPause').style.display = 'none';
+        var ctrl = document.getElementById('customPlayerControls');
+        if (ctrl) ctrl.classList.remove('hide');
+        if (subtitleAnimFrameId) cancelAnimationFrame(subtitleAnimFrameId);
+        renderSubtitlesNow();
+    };
+
+    video.ontimeupdate = renderSubtitlesNow;
+    video.onseeking = renderSubtitlesNow;
+    video.onseeked = renderSubtitlesNow;
 }
 
         // کۆنتڕۆڵی نەرم و وردی سەهمەکە بەپێی پەنجە لەناو چوارچێوەی دێڕەکان
