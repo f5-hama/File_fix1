@@ -5807,7 +5807,7 @@ function renderSubtitlesNow() {
             // تەنها ئەگەر دەقەکە لە پانی شاشەکە زیاتر بوو ئەوا دەبێتە دوو ڕیز (بینین تەنها، فایل دەستکاری نەکراوە)
             var maxW = Math.max(80, vBox.width - 8);
             var wrapCss = 'white-space: normal; width: max-content; word-break: normal; overflow-wrap: break-word; line-height: 1.24; text-align: center; max-width: ' + maxW.toFixed(0) + 'px;';
-            renderedElementsHtml += '<div class="sub-rendered-line" style="' + posCss + ' ' + opacityCss + ' ' + wrapCss + ' pointer-events: none; z-index: 20;">' + formattedHtml + '</div>';
+            renderedElementsHtml += '<div class="sub-rendered-line"' + (isPos ? ' data-pos="1"' : '') + ' style="' + posCss + ' ' + opacityCss + ' ' + wrapCss + ' pointer-events: none; z-index: 20;">' + formattedHtml + '</div>';
 
 
         });
@@ -5818,7 +5818,7 @@ function renderSubtitlesNow() {
         var oRect = overlay.getBoundingClientRect();
         var minL = oRect.left + vBox.left, maxR = minL + vBox.width;
         var minT = oRect.top + vBox.top, maxB = minT + vBox.height;
-        Array.prototype.forEach.call(overlay.querySelectorAll('.sub-rendered-line'), function(el) {
+        Array.prototype.forEach.call(overlay.querySelectorAll('.sub-rendered-line:not([data-pos])'), function(el) {
             var r = el.getBoundingClientRect();
             var dx = 0, dy = 0;
             if (r.width >= vBox.width || r.left < minL) dx = minL - r.left;
@@ -6419,5 +6419,261 @@ async function executeMergeAss() {
     showToast(`${successWord}${purgeNotice}!`, "success");
 }
     </script>
+<!-- ================= چاککردنی شوێن و جوڵەی ژێرنووس بە libass (وەک پلەیەری ڕاستەقینە) ================= -->
+<script src="https://cdn.jsdelivr.net/npm/jassub@1.7.17/dist/jassub.umd.js"></script>
+<script>
+(function () {
+    var CDN = 'https://cdn.jsdelivr.net/npm/jassub@1.7.17/dist/';
+    var FONT_AR = 'https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/NotoNaskhArabic/NotoNaskhArabic-Regular.ttf';
+    var jassub = null, workerUrl = null, lastContent = '', booting = false;
+    var legacyRender = null;
+
+    function libassSupported() {
+        return typeof window.JASSUB !== 'undefined' && typeof WebAssembly !== 'undefined';
+    }
+
+    function getWorkerUrl() {
+        if (workerUrl) return Promise.resolve(workerUrl);
+        return fetch(CDN + 'jassub-worker.js')
+            .then(function (r) { return r.text(); })
+            .then(function (code) {
+                workerUrl = URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
+                return workerUrl;
+            });
+    }
+
+    function assTime(sec) {
+        if (typeof formatTimeASS === 'function') return formatTimeASS(sec);
+        sec = Math.max(0, sec || 0);
+        var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+        return h + ':' + String(m).padStart(2, '0') + ':' + s.toFixed(2).padStart(5, '0');
+    }
+
+    // دەقی ئێستای هەر دێڕێک (دەستکاریی بەکارهێنەر) لەگەڵ پاراستنی تاگەکانی ئەسڵی
+    function currentTextFor(i) {
+        var item = originalData[i];
+        var card = document.querySelector('.subtitle-card[data-index="' + i + '"]');
+        var ta = card ? card.querySelector('textarea') : null;
+        var userText = ta ? ta.value : '';
+        var out;
+        if (userText && userText.trim() !== '') {
+            var origRaw = item.rawText || '';
+            var tags = origRaw.match(/^(\{[^}]+\})+/);
+            out = (tags && userText.indexOf('{') === -1) ? (tags[0] + userText) : userText;
+        } else {
+            out = item.rawText || item.text || '';
+        }
+        return String(out)
+            .replace(/<i>/gi, '{\\i1}').replace(/<\/i>/gi, '{\\i0}')
+            .replace(/<b>/gi, '{\\b1}').replace(/<\/b>/gi, '{\\b0}')
+            .replace(/<u>/gi, '{\\u1}').replace(/<\/u>/gi, '{\\u0}')
+            .replace(/\r?\n/g, '\\N');
+    }
+
+    function defaultHeader() {
+        var res = (typeof getActiveScriptResolution === 'function')
+            ? getActiveScriptResolution() : { resX: 1920, resY: 1080 };
+        var fs = Math.round(res.resY / 20);
+        return '[Script Info]\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\n' +
+            'PlayResX: ' + res.resX + '\nPlayResY: ' + res.resY + '\nYCbCr Matrix: None\n\n' +
+            '[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n' +
+            'Style: Default,Noto Naskh Arabic,' + fs + ',&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,' +
+            (fs / 16).toFixed(1) + ',0,2,20,20,' + Math.round(res.resY / 22) + ',1\n';
+    }
+
+    // دروستکردنی فایلێکی تەواوی ASS لە دۆخی ئێستای دەستکاریکەر
+    function buildLiveAssContent() {
+        if (!window.originalData || originalData.length === 0) return '';
+        var header;
+        var isAss = (typeof isAssFormat !== 'undefined' && isAssFormat) &&
+            (typeof assHeaderLines !== 'undefined' && assHeaderLines.length > 0);
+
+        if (isAss) {
+            header = assHeaderLines.join('\n').replace(/\s+$/, '') + '\n';
+            // دڵنیابوون لەوەی PlayRes هەیە (بەبێ ئەوە شوێنەکان هەڵە دەبن)
+            if (!/PlayResX\s*:/i.test(header) || !/PlayResY\s*:/i.test(header)) {
+                var r = (typeof getActiveScriptResolution === 'function')
+                    ? getActiveScriptResolution() : { resX: 1920, resY: 1080 };
+                header = header.replace(/(\[Script Info\][^\n]*\n)/i,
+                    '$1PlayResX: ' + r.resX + '\nPlayResY: ' + r.resY + '\n');
+            }
+            header += '\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
+        } else {
+            header = defaultHeader() +
+                '\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
+        }
+
+        var body = '';
+        for (var i = 0; i < originalData.length; i++) {
+            var it = originalData[i];
+            var m = it.assMeta || {};
+            body += 'Dialogue: ' + (m.layer || '0') + ',' +
+                assTime(it.startSec) + ',' + assTime(it.endSec) + ',' +
+                (m.style || 'Default') + ',' + (m.name || '') + ',' +
+                (m.marginL || '0') + ',' + (m.marginR || '0') + ',' + (m.marginV || '0') + ',' +
+                (m.effect || '') + ',' + currentTextFor(i) + '\n';
+        }
+        return header + body;
+    }
+    window.buildLiveAssContent = buildLiveAssContent;
+
+    function styleCanvas(cv) {
+        if (!cv) return;
+        cv.style.position = 'absolute';
+        cv.style.top = '0';
+        cv.style.left = '0';
+        cv.style.width = '100%';
+        cv.style.height = '100%';
+        cv.style.pointerEvents = 'none';
+        cv.style.zIndex = '15';
+    }
+
+    function bootLibass() {
+        var video = document.getElementById('preview-video');
+        var overlay = document.getElementById('video-subtitle-overlay');
+        if (!video || !video.src || booting || jassub || !libassSupported()) return;
+        var content = buildLiveAssContent();
+        if (!content) return;
+        booting = true;
+        getWorkerUrl().then(function (wUrl) {
+            try {
+                jassub = new window.JASSUB({
+                    video: video,
+                    subContent: content,
+                    workerUrl: wUrl,
+                    wasmUrl: CDN + 'jassub-worker.wasm',
+                    legacyWasmUrl: CDN + 'jassub-worker.wasm.js',
+                    availableFonts: {
+                        'noto naskh arabic': FONT_AR,
+                        'kurdforest': FONT_AR,
+                        'arial': FONT_AR
+                    },
+                    fallbackFont: 'noto naskh arabic',
+                    dropAllBlur: false,
+                    prescaleFactor: 1,
+                    targetFps: 60
+                });
+                lastContent = content;
+                if (overlay) overlay.innerHTML = '';
+                setTimeout(function () { styleCanvas(jassub && jassub._canvas); }, 60);
+            } catch (e) {
+                console.error('libass boot failed, using fallback renderer', e);
+                jassub = null;
+            }
+            booting = false;
+        }).catch(function (e) {
+            console.error('libass worker load failed, using fallback renderer', e);
+            booting = false;
+        });
+    }
+    window.bootLibass = bootLibass;
+
+    function destroyLibass() {
+        if (jassub) { try { jassub.destroy(); } catch (e) {} }
+        jassub = null; lastContent = '';
+    }
+    window.destroyLibass = destroyLibass;
+
+    var refreshTimer = null;
+    function refreshLiveSubs() {
+        if (!jassub) { bootLibass(); return; }
+        clearTimeout(refreshTimer);
+        refreshTimer = setTimeout(function () {
+            var c = buildLiveAssContent();
+            if (c && c !== lastContent) {
+                lastContent = c;
+                try { jassub.setTrack(c); } catch (e) { console.error(e); }
+            }
+        }, 250);
+    }
+    window.refreshLiveSubs = refreshLiveSubs;
+
+    // ١. لەبری ڕەندەری کۆن، libass بەکاردەهێنین بۆ شوێن و جوڵەی ١٠٠٪ ڕاست
+    function installOverride() {
+        if (typeof window.renderSubtitlesNow !== 'function') return false;
+        if (legacyRender) return true;
+        legacyRender = window.renderSubtitlesNow;
+        window.renderSubtitlesNow = function () {
+            var video = document.getElementById('preview-video');
+            if (!jassub && video && video.src && libassSupported()) bootLibass();
+            if (jassub) {
+                // تەنها دیاریکردنی کارتی چالاک و شریتی کات (نیشاندان لەلایەن libassـەوەیە)
+                try {
+                    var ct = video.currentTime;
+                    document.querySelectorAll('.active-sub').forEach(function (el) { el.classList.remove('active-sub'); });
+                    for (var i = 0; i < originalData.length; i++) {
+                        if (ct >= originalData[i].startSec && ct <= originalData[i].endSec) {
+                            var c = document.querySelector('.subtitle-card[data-index="' + i + '"]');
+                            if (c) c.classList.add('active-sub');
+                        }
+                    }
+                    var ov = document.getElementById('video-subtitle-overlay');
+                    if (ov && ov.innerHTML) ov.innerHTML = '';
+                    if (video.duration) {
+                        var fill = document.getElementById('customProgressFill');
+                        if (fill) fill.style.width = ((video.currentTime / video.duration) * 100) + '%';
+                        var tt = document.getElementById('customTimeText');
+                        if (tt && typeof formatPlayerTime === 'function') {
+                            tt.innerText = formatPlayerTime(video.currentTime) + ' / ' + formatPlayerTime(video.duration);
+                        }
+                    }
+                } catch (e) {}
+                return;
+            }
+            return legacyRender.apply(this, arguments);
+        };
+        return true;
+    }
+
+    // ٢. گرێدانی گۆڕانکاریی دەق و لابردن/گۆڕینی ڤیدیۆ
+    function wireUp() {
+        installOverride();
+
+        var origPlay = window.playVideoSource;
+        if (typeof origPlay === 'function' && !origPlay.__libassWrapped) {
+            window.playVideoSource = function (src) {
+                destroyLibass();
+                var r = origPlay.apply(this, arguments);
+                var v = document.getElementById('preview-video');
+                if (v) {
+                    var once = function () { bootLibass(); };
+                    v.addEventListener('loadedmetadata', once, { once: true });
+                }
+                return r;
+            };
+            window.playVideoSource.__libassWrapped = true;
+        }
+
+        var origReset = window.resetVideoPlayer;
+        if (typeof origReset === 'function' && !origReset.__libassWrapped) {
+            window.resetVideoPlayer = function () {
+                destroyLibass();
+                return origReset.apply(this, arguments);
+            };
+            window.resetVideoPlayer.__libassWrapped = true;
+        }
+
+        document.addEventListener('input', function (e) {
+            if (e.target && e.target.tagName === 'TEXTAREA') refreshLiveSubs();
+        }, true);
+        document.addEventListener('change', function (e) {
+            if (e.target && e.target.tagName === 'TEXTAREA') refreshLiveSubs();
+        }, true);
+
+        window.addEventListener('resize', function () {
+            if (jassub) { try { jassub.resize(); } catch (e) {} }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', wireUp);
+    } else {
+        wireUp();
+    }
+    // دووبارە هەوڵدان بۆ دڵنیابوون لەوەی فەنکشنە سەرەکییەکان بارکراون
+    setTimeout(wireUp, 800);
+})();
+</script>
+
 </body>
 </html>
