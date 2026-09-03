@@ -45,8 +45,8 @@ function deleteEmptySubtitleLines() {
         let origText = originalData[i].text ? originalData[i].text.trim() : '';
         let rawCheck = (originalData[i].rawText || '').replace(/\{[^}]*\}/g, '').trim();
 
-        // ئەگەر دەقی وەرگێڕان یان دەقی ئەسڵی هەبوو دەیهێڵێتەوە
-        if (userText !== '' || rawCheck !== '') {
+        // ئەگەر یەکێک لە دوو بۆکسەکە بەتاڵ بێت (وەرگێڕان یان ئەسڵی) ئەوا دەسڕدرێتەوە
+        if (userText !== '' && rawCheck !== '') {
             newOriginalData.push(originalData[i]);
             newTexts.push(currentTexts[i]);
         }
@@ -479,6 +479,29 @@ function deleteEmptySubtitleLines() {
             text-align: start; 
         }
         .subtitle-kurd textarea:focus { border-color: var(--primary); }
+        .subtitle-note { margin-top: 8px; }
+        .subtitle-note-label {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 11px; font-weight: bold; color: var(--text-muted);
+            margin-bottom: 4px; text-align: start;
+        }
+        .subtitle-note textarea {
+            width: 100%;
+            min-height: 38px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1.5px dashed var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12.5px;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+            direction: auto;
+            unicode-bidi: plaintext;
+            text-align: start;
+        }
+        .subtitle-note textarea:focus { border-color: var(--primary); color: var(--text-main); }
         .play-sub-btn { background: var(--bg-color); border: 1px solid var(--primary); color: var(--primary); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         .play-sub-btn:hover { transform: scale(1.1); }
         
@@ -1600,11 +1623,28 @@ function deleteEmptySubtitleLines() {
             
             <div class="file-box" style="margin-bottom:8px; padding:10px;">
                 <label style="font-size:12px;">٢. فایلی دووەم (کە دەق و ستایلەکەی دەگوازرێتەوە):</label>
-                <input type="file" id="mergeSourceFile" accept=".ass">
+                <input type="file" id="mergeSourceFile" accept=".ass" onchange="handleMergeSourceFileSelect(this)">
+            </div>
+
+            <!-- ======= بەشی بەڕێوەبردنی فۆنتەکان و دیاریکردنیان بۆ ستایل و دێڕەکان ======= -->
+            <div id="mergeFontAssignContainer" style="display:none; margin-bottom:10px; background:rgba(0,0,0,0.3); padding:8px; border-radius:10px; border:1px solid var(--border-color);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
+                    <span style="font-size:11px; font-weight:bold; color:var(--primary);">فۆنتەکان و دیاریکردنیان بۆ ستایل / دێڕەکان:</span>
+                    <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:10.5px; width:auto; color:#ef4444; border-color:rgba(239,68,68,0.4);" onclick="clearAllMergeFonts()">سڕینەوەی هەموو فۆنتەکان</button>
+                </div>
+
+                <div style="display:flex; gap:6px; margin-bottom:8px;">
+                    <input type="text" id="mergeFontInput" class="input-field" placeholder="ناوی فۆنت بنووسە، بۆ نموونە Speda Bold..." style="padding:7px; font-size:12px; flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addMergeFont();}">
+                    <button type="button" class="btn" style="width:auto; padding:6px 12px; font-size:11.5px;" onclick="addMergeFont()">زیادکردن</button>
+                </div>
+
+                <div id="mergeFontsList"></div>
+
+                <div id="mergeAssignSummary" style="font-size:10.5px; color:var(--text-muted); margin-top:6px; line-height:1.6;"></div>
             </div>
 
             <div style="margin-bottom:10px; margin-top:6px;">
-                <label style="font-size:12px; font-weight:bold; color:var(--primary); display:block; margin-bottom:4px;">گۆڕینی ناوی فۆنتەکانی فایلی سەرەکی بۆ:</label>
+                <label style="font-size:12px; font-weight:bold; color:var(--primary); display:block; margin-bottom:4px;">فۆنتی بنەڕەت بۆ ئەو ستایلانەی دیاری نەکراون (ئارەزوومەندانە):</label>
                 <input type="text" id="mergeNewFontName" placeholder="ناوی فۆنت، بۆ نموونە Speda Bold..." class="input-field" style="padding:7px; font-size:12px;">
             </div>
 
@@ -2021,6 +2061,35 @@ function deleteEmptySubtitleLines() {
                 </div>
 
                 <textarea id="modalSubtitleLiveText" style="width: 100%; min-height: 50px; max-height: 80px; padding: 7px 9px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-main); font-size: 12.5px; line-height: 1.4; resize: vertical; outline: none; direction: auto; text-align: start; box-sizing: border-box;"></textarea>
+            </div>
+
+            <!-- بۆکسی تێبینی: ڕاستەوخۆ دەچێتە خواری ڕستەکە بە \N -->
+            <div style="margin-bottom: 10px; background: rgba(142, 182, 155, 0.08); border-radius: 10px; padding: 8px 10px; border: 1px solid var(--border-color); text-align: start;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom: 5px;">
+                    <label style="font-size: 11px; font-weight: bold; color: var(--primary);">تێبینی (دەچێتە خواری ڕستەکە لە فایلەکە):</label>
+                    <button type="button" onclick="clearNoteBox()" style="flex-shrink:0; font-size:10.5px; font-weight:bold; padding:3px 8px; border-radius:8px; cursor:pointer; background: rgba(239, 68, 68, 0.08); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.4);">سڕینەوەی تێبینی</button>
+                </div>
+
+                <textarea id="modalNoteText" dir="auto" placeholder="تێبینی لێرە بنووسە..." style="width: 100%; min-height: 42px; max-height: 80px; padding: 7px 9px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-main); font-size: 12.5px; line-height: 1.4; resize: vertical; outline: none; direction: auto; text-align: start; box-sizing: border-box; margin-bottom: 6px;"></textarea>
+
+                <div class="tech-row" style="margin-bottom: 6px;">
+                    <button type="button" class="tech-toggle-btn" onclick="insertSymbolToNote('♪')">♪ گۆرانی ♪</button>
+                    <button type="button" class="tech-toggle-btn" onclick="insertSymbolToNote('|')">| تابلۆ |</button>
+                </div>
+
+                <span style="font-size: 10.5px; color: var(--text-muted); display: block; margin-bottom: 4px;">ڕەنگی نیشانەی تێبینی:</span>
+                <div style="display: flex; gap: 5px; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 6px;">
+                    <div class="palette-btn active" style="width:19px; height:19px; border-radius:4px; background:#FFF200;" onclick="setNoteSymbolColor('#FFF200', this)" title="زەرد"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFD700;" onclick="setNoteSymbolColor('#FFD700', this)" title="زێڕین"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#00F0FF;" onclick="setNoteSymbolColor('#00F0FF', this)" title="شین"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#39FF14;" onclick="setNoteSymbolColor('#39FF14', this)" title="سەوز"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFFFFF;" onclick="setNoteSymbolColor('#FFFFFF', this)" title="سپی"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FF3131;" onclick="setNoteSymbolColor('#FF3131', this)" title="سوور"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FF77A9;" onclick="setNoteSymbolColor('#FF77A9', this)" title="پەمەیی"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#BF55EC;" onclick="setNoteSymbolColor('#BF55EC', this)" title="مۆر"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFA500;" onclick="setNoteSymbolColor('#FFA500', this)" title="پرتەقاڵی"></div>
+                </div>
+
+                <span style="font-size: 10.5px; color: var(--text-muted); display: block; margin-bottom: 4px;">ڕەنگی نووسینی تێبینی:</span>
+                <div style="display: flex; gap: 5px; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div class="palette-btn active" style="width:19px; height:19px; border-radius:4px; background:#FFFFFF;" onclick="setNoteTextColor('#FFFFFF', this)" title="سپی"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFF200;" onclick="setNoteTextColor('#FFF200', this)" title="زەرد"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFD700;" onclick="setNoteTextColor('#FFD700', this)" title="زێڕین"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#00F0FF;" onclick="setNoteTextColor('#00F0FF', this)" title="شین"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#39FF14;" onclick="setNoteTextColor('#39FF14', this)" title="سەوز"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FF3131;" onclick="setNoteTextColor('#FF3131', this)" title="سوور"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FF77A9;" onclick="setNoteTextColor('#FF77A9', this)" title="پەمەیی"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#BF55EC;" onclick="setNoteTextColor('#BF55EC', this)" title="مۆر"></div><div class="palette-btn" style="width:19px; height:19px; border-radius:4px; background:#FFA500;" onclick="setNoteTextColor('#FFA500', this)" title="پرتەقاڵی"></div>
+                </div>
+
+                <input type="hidden" id="noteSymbolColorChoice" value="#FFF200">
+                <input type="hidden" id="noteTextColorChoice" value="KEEP">
+                <input type="hidden" id="modalExtraLineTags" value="">
             </div>
 
             <!-- ٦. پالتەی سەرەکی ڕەنگەکان -->
@@ -2532,6 +2601,7 @@ function restoreFromHistory(id) {
         assHeaderLines = item.assHeaderLines || [];
         const modal = document.getElementById('history-modal');
         if (modal) modal.style.display = 'none';
+        subtitleNotes = item.notes || [];
         buildEditorUI(item.savedState || []);
     }
 }
@@ -3743,7 +3813,8 @@ function processAssStyleLine(line) {
                         header = assHeaderLines.join('\n') + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
                     } else {
                         // کاتێک فایلی تر (وەک SRT/VTT) دەکرێتە ASS: تەنها ستایلی Default زیاد دەکرێت
-                        header = `[Script Info]\nTitle: Converted Subtitle\nScriptType: v4.00+\nWrapStyle: 0\nScaledBorderAndShadow: yes\nYCbCr Matrix: None\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,KurdForest,26,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0.6,0.5,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
+                        const assTitleName = file.name.replace(/\.[^/.]+$/, "") || 'Converted Subtitle';
+                        header = `[Script Info]\nTitle: ${assTitleName}\nScriptType: v4.00+\nWrapStyle: 0\nPlayResX: 1920\nPlayResY: 1080\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Speda Bold,67,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1.5,2.0,2,10,10,20,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;
                     }
                     
                     finalContent = header;
@@ -4027,7 +4098,7 @@ function parseVTTContent(data) {
 function saveSession() {
     try {
         if (!isEditing) return;
-        const session = { originalData, currentFileName, isAssFormat, isVttFormat, assHeaderLines, savedState: getCurrentState() };
+        const session = { originalData, currentFileName, isAssFormat, isVttFormat, assHeaderLines, savedState: getCurrentState(), notes: subtitleNotes };
         localStorage.setItem('kf_autosave_session', JSON.stringify(session));
 
         saveToHistory({
@@ -4038,6 +4109,7 @@ function saveSession() {
             count: originalData.length,
             originalData,
             savedState: getCurrentState(),
+            notes: subtitleNotes,
             isAssFormat,
             isVttFormat,
             assHeaderLines
@@ -4062,6 +4134,7 @@ function resumeSession() {
             isAssFormat = session.isAssFormat || false; 
             isVttFormat = session.isVttFormat || false; 
             assHeaderLines = session.assHeaderLines || [];
+            subtitleNotes = session.notes || [];
             buildEditorUI(session.savedState || []);
         }
         const modal = document.getElementById('resume-modal');
@@ -4143,6 +4216,27 @@ async function startEditing() {
 }
 
         // لە جێگەی فەنکشنەکانی پێشووی undo, redo, buildEditorUI ئەم کۆدە دابنێ:
+// ====== تێبینییەکانی هەر دێڕێک (بە تەواوی جیا لە دەقی ژێرنووس) ======
+let subtitleNotes = [];
+
+function escapeNoteHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function getCurrentNotes() {
+    return subtitleNotes.slice();
+}
+
+let noteTypingTimer = null;
+function onNoteType(index, value) {
+    subtitleNotes[index] = value;
+    clearTimeout(noteTypingTimer);
+    noteTypingTimer = setTimeout(() => { saveSession(); }, 400);
+}
+
 function buildEditorUI(kurdishState = [], resetHistory = true) {
     let html = '';
     for(let i = 0; i < originalData.length; i++) {
@@ -4501,10 +4595,42 @@ function openSubStyleModal(index) {
     const ta = card ? card.querySelector('textarea') : null;
     let text = ta ? ta.value : ((originalData[index] && originalData[index].rawText) || (originalData[index] && originalData[index].text) || '');
 
+    // بەشی تێبینی لە کۆتایی دێڕەکە جیا دەکرێتەوە (تەنها ئەوەی خۆمان زیادمان کردووە)
+    let notePart = subtitleNotes[index] || '';
+    if (notePart && text.endsWith('\\N' + notePart)) {
+        text = text.slice(0, text.length - (notePart.length + 2)).trim();
+    } else if (notePart) {
+        notePart = '';
+        subtitleNotes[index] = '';
+    }
+
     const modalTa = document.getElementById('modalSubtitleLiveText');
     if (modalTa) {
-        modalTa.value = text;
+        // تاگە سەرەتاییەکانی دێڕەکە (\an, \fad, \bord, ڕەنگەکان...) لە بۆکسی دەق پیشان نادەین
+        // چونکە کۆنترۆڵەکانی پەنجەرەکە خۆیان دەیانگرنەوە؛ تەنها \pos و \move هەڵدەگیرێن
+        let extraTags = '';
+        let displayText = text;
+        let leadM = text.match(/^(\{[^{}]*\})+/);
+        if (leadM) {
+            let afterLead = text.slice(leadM[0].length).replace(/^\s+/, '');
+            // ئەگەر دێڕەکە بە نیشانە (♪ یان |) دەست پێبکات، تاگی ڕەنگی نیشانەکە دەست ناکەین
+            if (!/^[♪|]/.test(afterLead)) {
+                displayText = afterLead.trim();
+                let pm = leadM[0].match(/\\(?:pos|move)\([^()]*\)/g);
+                if (pm) extraTags = pm.join('');
+            }
+        }
+        const extraIn = document.getElementById('modalExtraLineTags');
+        if (extraIn) extraIn.value = extraTags;
+        modalTa.value = displayText;
     }
+
+    const noteTaEl = document.getElementById('modalNoteText');
+    if (noteTaEl) noteTaEl.value = notePart.replace(/\\N/g, '\n');
+    const nSymIn = document.getElementById('noteSymbolColorChoice');
+    if (nSymIn) nSymIn.value = '#FFF200';
+    const nTxtIn = document.getElementById('noteTextColorChoice');
+    if (nTxtIn) nTxtIn.value = 'KEEP';
 
     let alignMatch = text.match(/\\an(\d)/);
     selectAlignment(alignMatch ? alignMatch[1] : '2');
@@ -4606,7 +4732,12 @@ function applySubStyleToLine() {
 
 
     let posMatch = rawVal.match(/\\pos\([^)]+\)/);
-    let existingPos = posMatch ? posMatch[0] : '';
+    let moveMatch = rawVal.match(/\\move\([^)]+\)/);
+    let existingPos = posMatch ? posMatch[0] : (moveMatch ? moveMatch[0] : '');
+    if (!existingPos) {
+        const extraTagsIn = document.getElementById('modalExtraLineTags');
+        if (extraTagsIn && extraTagsIn.value.trim()) existingPos = extraTagsIn.value.trim();
+    }
 
     // پاراستنی تاگەکانی ڕەنگ لە ناو خودی دەق
     let cleanText = rawVal;
@@ -4649,26 +4780,33 @@ function applySubStyleToLine() {
     let strokeCol = document.getElementById('strokeColorPicker') ? document.getElementById('strokeColorPicker').value : '#000000';
     let shadowCol = document.getElementById('shadowColorPicker') ? document.getElementById('shadowColorPicker').value : '#000000';
 
-    if (strokeCol === 'NONE') {
+    // ڕەنگەکان بە ڕوونی دەنووسرێن تاکو ڕەنگی ڕەشی بنەڕەتی ستایلەکە لە پشتەوە دەرنەکەوێت
+    const hexToAssBgr = (hex) => (hex.substring(5,7) + hex.substring(3,5) + hex.substring(1,3)).toUpperCase();
+
+    let strokePicked = strokeCol && strokeCol !== 'NONE' && strokeCol.toUpperCase() !== '#000000';
+    let shadowPicked = shadowCol && shadowCol !== 'NONE' && shadowCol.toUpperCase() !== '#000000';
+
+    let effStroke = (strokeCol === 'NONE') ? 'NONE' : strokeCol;
+    let effShadow = (shadowCol === 'NONE') ? 'NONE' : shadowCol;
+
+    // ئەگەر تەنها یەکێکیان گۆڕدرا، ئەوی تر هەمان ڕەنگ وەردەگرێت (نەک ڕەشی بنەڕەتی)
+    if (strokePicked && !shadowPicked && effShadow !== 'NONE') effShadow = strokeCol;
+    if (shadowPicked && !strokePicked && effStroke !== 'NONE') effStroke = shadowCol;
+
+    if (effStroke === 'NONE') {
         // Outline بە تەواوی لادەبرێت
         tags += `\\bord0\\3a&HFF&`;
     } else {
         if (bordVal !== '') tags += `\\bord${bordVal}`;
-        if (strokeCol && strokeCol !== '#000000') {
-            let bgr = strokeCol.substring(5,7) + strokeCol.substring(3,5) + strokeCol.substring(1,3);
-            tags += `\\3c&H${bgr.toUpperCase()}&`;
-        }
+        tags += `\\3a&H00&\\3c&H${hexToAssBgr(effStroke)}&`;
     }
 
-    if (shadowCol === 'NONE') {
+    if (effShadow === 'NONE') {
         // Shadow بە تەواوی لادەبرێت
         tags += `\\shad0\\4a&HFF&`;
     } else {
         if (shadVal !== '') tags += `\\shad${shadVal}`;
-        if (shadowCol && shadowCol !== '#000000') {
-            let bgr = shadowCol.substring(5,7) + shadowCol.substring(3,5) + shadowCol.substring(1,3);
-            tags += `\\4c&H${bgr.toUpperCase()}&`;
-        }
+        tags += `\\4a&H00&\\4c&H${hexToAssBgr(effShadow)}&`;
     }
 
 
@@ -4677,6 +4815,30 @@ function applySubStyleToLine() {
         finalText = `{${tags}}` + finalText;
     }
     finalText = finalText.replace(/\{\}/g, '').trim();
+
+    // بۆکسی تێبینی: بە \N دەچێتە خواری ڕستەکە لە ناو فایلەکە
+    const noteTa = document.getElementById('modalNoteText');
+    let noteRaw = noteTa ? noteTa.value.trim() : '';
+    let noteFinal = '';
+    if (noteRaw) {
+        noteFinal = noteRaw.replace(/\r?\n/g, '\\N').trim();
+        let nTxt = document.getElementById('noteTextColorChoice') ? document.getElementById('noteTextColorChoice').value : 'KEEP';
+        if (nTxt && nTxt !== 'KEEP') {
+            const noteTextTag = `{\\c&H${hexToAssBgr(nTxt)}&}`;
+            // ئەگەر تێبینییەکە بە نیشانە دەست پێدەکات (تاگی ڕەنگی نیشانە + ♪ یان |)،
+            // ڕەنگی نووسین دەچێتە دوای نیشانەکەوە نەک لە پێشەوە، بۆ ئەوەی ڕەنگی نیشانەکە نەسڕدرێتەوە
+            const symLead = noteFinal.match(/^(\{\\c&H[0-9A-Fa-f]+&\}[♪|])\s*(?:\{\\c&H[0-9A-Fa-f]+&\})?\s*/);
+            if (symLead) {
+                // بۆشاییەک لە نێوان نیشانەکە (و تاگی ڕەنگی نووسین) و دەقەکە دەهێڵینەوە، وەک کۆتایی دێڕەکە
+                noteFinal = symLead[1] + noteTextTag + ' ' + noteFinal.slice(symLead[0].length);
+            } else {
+                noteFinal = noteFinal.replace(/^\{\\c&H[0-9A-Fa-f]+&\}/, '');
+                noteFinal = noteTextTag + noteFinal;
+            }
+        }
+        finalText = finalText + '\\N' + noteFinal;
+    }
+    subtitleNotes[currentStylingIndex] = noteFinal;
 
     ta.value = finalText;
     ta.style.height = 'auto';
@@ -4718,6 +4880,8 @@ function clearLineStyles() {
     if (chkFade) { chkFade.checked = false; toggleFadeInputs(false); }
     const alignEl = document.getElementById('selectedAlignVal');
     if (alignEl) alignEl.value = '2';
+    const extraTagsEl = document.getElementById('modalExtraLineTags');
+    if (extraTagsEl) extraTagsEl.value = '';
     setStrokeColor('#000000', null);
     setShadowColor('#000000', null);
     const valInput = document.getElementById('selectedSubColorVal');
@@ -4782,6 +4946,65 @@ function insertSymbolToText(sym) {
 
     modalTa.value = `${symTag}${sym}${textTag} ${clean} ${symTag}${sym}{\\c&HFFFFFF&}`;
     showToast(`نیشانەی ${sym} دانرا!`, "success");
+}
+
+// ====== کۆنترۆڵەکانی بۆکسی تێبینی (بە تەواوی جیا لە بۆکسی دەق) ======
+function noteHexToBgr(hex) {
+    return (hex.substring(5,7) + hex.substring(3,5) + hex.substring(1,3)).toUpperCase();
+}
+
+function setNoteSymbolColor(hex, el) {
+    const input = document.getElementById('noteSymbolColorChoice');
+    if (input) input.value = hex;
+    if (el && el.parentElement) {
+        el.parentElement.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+    const noteTa = document.getElementById('modalNoteText');
+    if (!noteTa || !noteTa.value.trim()) return;
+    let val = noteTa.value.trim();
+    let hasMusic = val.includes('♪');
+    let hasSign = val.includes('|');
+    if (!hasMusic && !hasSign) return;
+    let sym = hasMusic ? '♪' : '|';
+    noteTa.value = buildNoteWithSymbol(val, sym, hex);
+    showToast("ڕەنگی نیشانەی تێبینی گۆڕدرا!", "success");
+}
+
+function setNoteTextColor(hex, el) {
+    const input = document.getElementById('noteTextColorChoice');
+    if (input) input.value = hex;
+    if (el && el.parentElement) {
+        el.parentElement.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+    showToast("ڕەنگی نووسینی تێبینی دیاری کرا!", "success");
+}
+
+function buildNoteWithSymbol(val, sym, symHex) {
+    let symTag = `{\\c&H${noteHexToBgr(symHex)}&}`;
+    let nTxt = document.getElementById('noteTextColorChoice') ? document.getElementById('noteTextColorChoice').value : 'KEEP';
+    let textTag = (nTxt && nTxt !== 'KEEP') ? `{\\c&H${noteHexToBgr(nTxt)}&}` : '';
+    let clean = val.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '').replace(/[♪\|]/g, '').trim();
+    return `${symTag}${sym}${textTag} ${clean} ${symTag}${sym}{\\c&HFFFFFF&}`;
+}
+
+function insertSymbolToNote(sym) {
+    const noteTa = document.getElementById('modalNoteText');
+    if (!noteTa) return;
+    let val = noteTa.value.trim();
+    if (!val) { showToast("سەرەتا تێبینییەکە بنووسە", "error"); return; }
+    let symHex = (document.getElementById('noteSymbolColorChoice') && document.getElementById('noteSymbolColorChoice').value) || '#FFF200';
+    noteTa.value = buildNoteWithSymbol(val, sym, symHex);
+    showToast(`نیشانەی ${sym} بۆ تێبینی دانرا!`, "success");
+}
+
+function clearNoteBox() {
+    const noteTa = document.getElementById('modalNoteText');
+    if (noteTa) noteTa.value = '';
+    const nTxtIn = document.getElementById('noteTextColorChoice');
+    if (nTxtIn) nTxtIn.value = 'KEEP';
+    showToast("تێبینی سڕایەوە — بۆ تۆمارکردن «جێبەجێکردن» دابگرە", "success");
 }
 
 // ٤٠ خانەکە بە مەودای زۆر سەلامەت بۆ ناوەوەی شاشە
@@ -5947,33 +6170,61 @@ function setupVideoSync() {
             showToast("هیچ فایلێک نییە بۆ داگرتن!", "warning");
             return;
         }
+        const fmtNow = isAssFormat ? 'ass' : (isVttFormat ? 'vtt' : 'srt');
+        const hasAnyText = Array.from(document.querySelectorAll('.subtitle-kurd textarea')).some(t => t.value.trim() !== "");
+        if (!hasAnyText) {
+            showToast("هیچ دەقێکت نەنوسیوە بۆ سەیڤکردن!", "warning");
+            return;
+        }
+        const editedOut = buildDownloadContent(false);
+        const originalOut = buildDownloadContent(true);
+        const baseName = currentFileName.replace(/\.[^/.]+$/, "");
+        triggerDownload(editedOut, baseName + "_Edited." + fmtNow);
+        setTimeout(function() {
+            triggerDownload(originalOut, baseName + "_Original." + fmtNow);
+        }, 1200);
+        showToast("دوو فایل سەیڤ کران: کوردی + ئەسڵی (بە هەمان دەستکارییەکان)!", "success");
+    } catch (err) {
+        console.error("Save error:", err);
+        showToast("کێشەیەک ڕوویدا لە سەیڤکردن: " + err.message, "error");
+    }
+}
 
-        const textareas = document.querySelectorAll('.subtitle-kurd textarea');
+function buildDownloadContent(useOriginal) {
+    {
+        const textareas = useOriginal ? [] : document.querySelectorAll('.subtitle-kurd textarea');
         let finalContent = "";
         const targetFormat = isAssFormat ? 'ass' : (isVttFormat ? 'vtt' : 'srt');
 
         if (targetFormat === 'srt') {
+            let outIdx = 0;
             originalData.forEach((item, idx) => {
                 let userText = textareas[idx] ? textareas[idx].value.trim() : "";
+                // لە فایلی دەستکاریکراو تەنها ئەو دێڕانە دەخرێتە ڕوو کە نووسراون
+                if (!useOriginal && userText === "") return;
                 let lines = userText !== "" ? userText : (item.rawText || item.text);
-                finalContent += `${idx + 1}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${lines}\n\n`;
+                outIdx++;
+                finalContent += `${outIdx}\n${formatTimeSRT(item.startSec)} --> ${formatTimeSRT(item.endSec)}\n${lines}\n\n`;
             });
         } else if (targetFormat === 'vtt') {
             finalContent = "WEBVTT\n\n";
             originalData.forEach((item, idx) => {
                 let userText = textareas[idx] ? textareas[idx].value.trim() : "";
+                if (!useOriginal && userText === "") return;
                 let lines = userText !== "" ? userText : (item.rawText || item.text);
                 finalContent += `${formatTimeVTT(item.startSec)} --> ${formatTimeVTT(item.endSec)}\n${lines}\n\n`;
             });
         } else if (targetFormat === 'ass') {
             let titleName = currentFileName ? currentFileName.replace(/\.[^/.]+$/, "") : "Subtitle";
             
+            const dlRes = (typeof getActiveScriptResolution === 'function') ? getActiveScriptResolution() : { resX: 1920, resY: 1080 };
+
             let header = `[Script Info]
 Title: ${titleName}
 ScriptType: v4.00+
 WrapStyle: 0
-PlayResX: 1920
-PlayResY: 1080
+PlayResX: ${dlRes.resX}
+PlayResY: ${dlRes.resY}
 ScaledBorderAndShadow: yes
 
 [V4+ Styles]
@@ -5986,6 +6237,17 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             
             if (isAssFormat && assHeaderLines.length > 0) {
                 let cleanHeader = assHeaderLines.filter(l => !l.trim().startsWith('[Events]') && !l.trim().startsWith('Format: Layer')).join('\n');
+                // دڵنیابوون لەوەی PlayResX/Y هەیە و هەمان ڕێزۆلوشنە کە شوێنەکان (\pos) پێی هەژمار کراون
+                if (!/PlayResX\s*:/i.test(cleanHeader) || !/PlayResY\s*:/i.test(cleanHeader)) {
+                    cleanHeader = cleanHeader.replace(/^[ \t]*PlayRes[XY]\s*:.*\r?\n?/gim, '');
+                    if (/\[Script Info\]/i.test(cleanHeader)) {
+                        cleanHeader = cleanHeader.replace(/(\[Script Info\][^\n]*\n)/i,
+                            '$1PlayResX: ' + dlRes.resX + '\nPlayResY: ' + dlRes.resY + '\n');
+                    } else {
+                        cleanHeader = '[Script Info]\nScriptType: v4.00+\nPlayResX: ' + dlRes.resX +
+                            '\nPlayResY: ' + dlRes.resY + '\n' + cleanHeader;
+                    }
+                }
                 finalContent = cleanHeader.trim() + '\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
             } else {
                 finalContent = header;
@@ -6000,6 +6262,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                         let foundIdx = originalData.findIndex(item => item && item.uid === ev.uid);
                         if (foundIdx !== -1) {
                             let userText = textareas[foundIdx] ? textareas[foundIdx].value.trim() : "";
+                            if (!useOriginal && userText === "") return; // تەنها دێڕە نووسراوەکان
                             let lines = userText !== "" ? userText : (originalData[foundIdx].rawText || originalData[foundIdx].text);
                             lines = lines.replace(/\n/g, '\\N');
 
@@ -6020,6 +6283,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             } else {
                 originalData.forEach((item, idx) => {
                     let userText = textareas[idx] ? textareas[idx].value.trim() : "";
+                    if (!useOriginal && userText === "") return; // تەنها دێڕە نووسراوەکان
                     let lines = userText !== "" ? userText : (item.rawText || item.text);
                     lines = lines.replace(/\n/g, '\\N');
 
@@ -6036,12 +6300,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             }
         }
 
-        let newFileName = currentFileName.replace(/\.[^/.]+$/, "") + "_Edited." + targetFormat;
-        triggerDownload(finalContent.trim() + '\n\n', newFileName);
-        showToast("فایلەکە بە سەرکەوتوویی سەیڤ کرا و داگیرا!", "success");
-    } catch (err) {
-        console.error("Save error:", err);
-        showToast("کێشەیەک ڕوویدا لە سەیڤکردن: " + err.message, "error");
+        return finalContent.trim() + '\n\n';
     }
 }
 
@@ -6059,6 +6318,11 @@ function openMergeModal() {
     document.getElementById('mergeStylesContainer').style.display = 'none';
     mergeDeletedStyles.clear();
     mergeBaseRawText = '';
+    mergeSourceRawText = '';
+    mergeFonts = [];
+    const fc = document.getElementById('mergeFontAssignContainer');
+    if (fc) fc.style.display = 'none';
+    renderMergeFonts();
 }
 
 // خوێندنەوەی دەستبەجێی ستایلەکان کاتێک فایلی سەرەکی هەڵدەبژێریت
@@ -6074,6 +6338,7 @@ async function handleMergeBaseFileSelect(input) {
 
     mergeBaseRawText = await file.text();
     renderMergeStylesList();
+    refreshMergeFontTargets();
 }
 
 function renderMergeStylesList() {
@@ -6139,6 +6404,7 @@ function renderMergeStylesList() {
 function deleteMergeBaseStyle(name) {
     mergeDeletedStyles.add(name.toLowerCase());
     renderMergeStylesList();
+    refreshMergeFontTargets();
     showToast(`ستایلی ${name} لەگەڵ هەموو دیالۆگەکانی سڕدرانەوە!`, "info");
 }
 
@@ -6176,10 +6442,303 @@ function deleteEmptyMergeStyles() {
 
     if (deletedCount > 0) {
         renderMergeStylesList();
+        refreshMergeFontTargets();
         showToast(`${deletedCount} ستایلی بەتاڵ (٠ دێڕ) بە سەرکەوتوویی سڕدرانەوە!`, "success");
     } else {
         showToast("هیچ ستایلێکی بەتاڵ (٠ دێڕ) لەم فایلەدا نییە!", "info");
     }
+}
+
+
+// ====== بەڕێوەبەری فۆنتەکان: ناساندن، دیاریکردن بۆ ستایل/دێڕ، و پێوانەی قەبارەی سروشتی فۆنت ======
+let mergeSourceRawText = '';
+let mergeFonts = [];          // {id,name,file,fileFamily,factorAuto,manual,useAuto,styles:Set,inlines:Set,allInline:bool,open:bool}
+let mergeFontSeq = 0;
+let mergeAllStylesCache = [];
+let mergeInlineFontsCache = [];
+
+async function handleMergeSourceFileSelect(input) {
+    const f = input.files[0];
+    mergeSourceRawText = f ? await f.text() : '';
+    refreshMergeFontTargets();
+}
+
+function collectStylesAndInlines(text) {
+    let styles = [], inlines = new Set();
+    if (!text) return { styles, inlines };
+    text.split(/\r?\n/).forEach(l => {
+        let tr = l.trim();
+        if (tr.startsWith('Style:')) {
+            let n = tr.split(',')[0].replace('Style:', '').trim();
+            if (n) styles.push(n);
+        } else if (tr.startsWith('Dialogue:') || tr.startsWith('Comment:')) {
+            let ms = tr.matchAll(/\\fn([^\\\}]+)/gi);
+            for (let m of ms) { let v = m[1].trim(); if (v) inlines.add(v); }
+        }
+    });
+    return { styles, inlines };
+}
+
+function refreshMergeFontTargets() {
+    const box = document.getElementById('mergeFontAssignContainer');
+    if (!box) return;
+    if (!mergeBaseRawText) { box.style.display = 'none'; return; }
+
+    let a = collectStylesAndInlines(mergeBaseRawText);
+    let b = collectStylesAndInlines(mergeSourceRawText);
+
+    let all = [];
+    a.styles.concat(b.styles).forEach(n => {
+        if (mergeDeletedStyles.has(n.toLowerCase())) return;
+        if (!all.some(x => x.toLowerCase() === n.toLowerCase())) all.push(n);
+    });
+    mergeAllStylesCache = all;
+
+    let inl = [];
+    [...a.inlines, ...b.inlines].forEach(n => {
+        if (!inl.some(x => x.toLowerCase() === n.toLowerCase())) inl.push(n);
+    });
+    mergeInlineFontsCache = inl;
+
+    box.style.display = (mergeBaseRawText && mergeSourceRawText) ? 'block' : 'block';
+    renderMergeFonts();
+}
+
+function addMergeFont() {
+    const inp = document.getElementById('mergeFontInput');
+    if (!inp) return;
+    let raw = inp.value.trim();
+    if (!raw) return showToast("تکایە ناوی فۆنتێک بنووسە!", "error");
+    // ڕێگەدان بە نووسینی چەند فۆنتێک بە کۆما یان بە دێڕی نوێ
+    raw.split(/[,\n;]+/).map(x => x.trim()).filter(Boolean).forEach(name => {
+        if (mergeFonts.some(f => f.name.toLowerCase() === name.toLowerCase())) return;
+        mergeFonts.push({
+            id: ++mergeFontSeq, name: name, fileFamily: '', factorAuto: null,
+            manual: 100, useAuto: true, styles: new Set(), inlines: new Set(),
+            allInline: false, open: true
+        });
+    });
+    inp.value = '';
+    mergeFonts.forEach(measureMergeFont);
+    renderMergeFonts();
+}
+
+function removeMergeFont(id) {
+    mergeFonts = mergeFonts.filter(f => f.id !== id);
+    renderMergeFonts();
+}
+function clearAllMergeFonts() {
+    if (!mergeFonts.length) return showToast("هیچ فۆنتێک زیاد نەکراوە!", "info");
+    mergeFonts = [];
+    renderMergeFonts();
+    showToast("هەموو فۆنتەکان سڕدرانەوە!", "success");
+}
+function toggleMergeFontOpen(id) {
+    let f = mergeFonts.find(x => x.id === id); if (!f) return;
+    f.open = !f.open; renderMergeFonts();
+}
+
+// ---- پێوانەی قەبارەی سروشتی فۆنت (بۆ گونجاندنی سایزی ستایلەکان) ----
+function measureFontHeight(family) {
+    try {
+        const c = document.createElement('canvas').getContext('2d');
+        c.font = '100px "' + family + '"';
+        const m = c.measureText('نموونەHxTgپ');
+        let h = (m.actualBoundingBoxAscent || 0) + (m.actualBoundingBoxDescent || 0);
+        let w = m.width || 0;
+        if (!h || !w) return null;
+        return { h: h, w: w };
+    } catch (e) { return null; }
+}
+
+function measureMergeFont(f) {
+    let fam = f.fileFamily || f.name;
+    let available = f.fileFamily ? true : (document.fonts && document.fonts.check ? document.fonts.check('100px "' + f.name + '"') : false);
+    if (!available) { f.factorAuto = null; return; }
+    let ref = measureFontHeight('Arial');
+    let cur = measureFontHeight(fam);
+    if (!ref || !cur) { f.factorAuto = null; return; }
+    // تێکڕای بەرزی و پانی بۆ ژماردنی ڕێژەی گونجاندن
+    let ratio = ((ref.h / cur.h) * 0.7) + ((ref.w / cur.w) * 0.3);
+    if (!isFinite(ratio) || ratio <= 0) { f.factorAuto = null; return; }
+    f.factorAuto = Math.min(1.6, Math.max(0.6, ratio));
+}
+
+async function loadMergeFontFile(id, input) {
+    const file = input.files[0]; if (!file) return;
+    let f = mergeFonts.find(x => x.id === id); if (!f) return;
+    try {
+        const buf = await file.arrayBuffer();
+        const fam = '__mf_' + f.id;
+        const ff = new FontFace(fam, buf);
+        await ff.load();
+        document.fonts.add(ff);
+        f.fileFamily = fam;
+        measureMergeFont(f);
+        renderMergeFonts();
+        showToast('فایلی فۆنتی ' + f.name + ' پێوانە کرا!', 'success');
+    } catch (e) {
+        showToast('نەتوانرا فایلی فۆنتەکە بخوێنرێتەوە!', 'error');
+    }
+}
+
+function getMergeFontFactor(f) {
+    if (f.useAuto) return f.factorAuto || 1;
+    let v = parseFloat(f.manual);
+    if (!isFinite(v) || v <= 0) v = 100;
+    return Math.min(3, Math.max(0.3, v / 100));
+}
+
+function assignStyleToFont(id, styleName) {
+    let key = styleName.toLowerCase();
+    let target = mergeFonts.find(x => x.id === id); if (!target) return;
+    let had = target.styles.has(key);
+    mergeFonts.forEach(f => f.styles.delete(key));   // هەر ستایلێک تەنها بۆ یەک فۆنت
+    if (!had) target.styles.add(key);
+    renderMergeFonts();
+}
+function assignInlineToFont(id, inlineName) {
+    let key = inlineName.toLowerCase();
+    let target = mergeFonts.find(x => x.id === id); if (!target) return;
+    let had = target.inlines.has(key);
+    mergeFonts.forEach(f => f.inlines.delete(key));
+    if (!had) target.inlines.add(key);
+    renderMergeFonts();
+}
+function toggleAllInline(id) {
+    let target = mergeFonts.find(x => x.id === id); if (!target) return;
+    let v = !target.allInline;
+    mergeFonts.forEach(f => f.allInline = false);
+    target.allInline = v;
+    renderMergeFonts();
+}
+function setMergeFontMode(id, useAuto) {
+    let f = mergeFonts.find(x => x.id === id); if (!f) return;
+    f.useAuto = useAuto; renderMergeFonts();
+}
+function setMergeFontManual(id, val) {
+    let f = mergeFonts.find(x => x.id === id); if (!f) return;
+    f.manual = val;
+    let el = document.getElementById('mfFactor_' + id);
+    if (el) el.textContent = '×' + getMergeFontFactor(f).toFixed(2);
+}
+
+function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+function renderMergeFonts() {
+    const list = document.getElementById('mergeFontsList');
+    const sum = document.getElementById('mergeAssignSummary');
+    if (!list) return;
+
+    if (!mergeFonts.length) {
+        list.innerHTML = '<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:8px;">هێشتا هیچ فۆنتێک زیاد نەکراوە — ناوی فۆنتەکانت بنووسە پاشان دیاری بکە بۆ کام ستایل یان کام فۆنتی ناو دێڕەکان بڕوات.</div>';
+        if (sum) sum.textContent = '';
+        return;
+    }
+
+    list.innerHTML = mergeFonts.map(f => {
+        let factor = getMergeFontFactor(f);
+        let known = f.factorAuto !== null;
+        let styleChips = mergeAllStylesCache.map(n => {
+            let key = n.toLowerCase();
+            let mine = f.styles.has(key);
+            let takenBy = mergeFonts.find(x => x.id !== f.id && x.styles.has(key));
+            let bg = mine ? 'rgba(142,182,155,0.25)' : (takenBy ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.06)');
+            let bc = mine ? 'var(--primary)' : 'rgba(255,255,255,0.10)';
+            let op = takenBy ? '0.45' : '1';
+            return `<button type="button" onclick="assignStyleToFont(${f.id}, '${esc(n).replace(/'/g,"\\'")}')" style="opacity:${op}; direction:ltr; background:${bg}; border:1px solid ${bc}; color:var(--text-main); font-size:10px; padding:3px 7px; border-radius:6px; margin:0 0 4px 4px; cursor:pointer;">${esc(n)}${takenBy ? ' •' : ''}</button>`;
+        }).join('') || '<span style="font-size:10px;color:var(--text-muted);">هیچ ستایلێک نەدۆزرایەوە</span>';
+
+        let inlineChips = mergeInlineFontsCache.map(n => {
+            let key = n.toLowerCase();
+            let mine = f.inlines.has(key);
+            let takenBy = mergeFonts.find(x => x.id !== f.id && x.inlines.has(key));
+            let bg = mine ? 'rgba(142,182,155,0.25)' : 'rgba(255,255,255,0.06)';
+            let bc = mine ? 'var(--primary)' : 'rgba(255,255,255,0.10)';
+            return `<button type="button" onclick="assignInlineToFont(${f.id}, '${esc(n).replace(/'/g,"\\'")}')" style="opacity:${takenBy ? '0.45' : '1'}; direction:ltr; background:${bg}; border:1px solid ${bc}; color:var(--text-main); font-size:10px; padding:3px 7px; border-radius:6px; margin:0 0 4px 4px; cursor:pointer;">\\fn ${esc(n)}</button>`;
+        }).join('') || '<span style="font-size:10px;color:var(--text-muted);">هیچ فۆنتێک لەناو دێڕەکاندا نەدۆزرایەوە</span>';
+
+        return `
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:9px; margin-bottom:6px; overflow:hidden;">
+            <div style="display:flex; align-items:center; gap:6px; padding:6px 8px;">
+                <button type="button" class="btn btn-outline" style="flex-shrink:0; width:auto; margin:0; padding:3px 7px; font-size:10px; color:#ef4444; border-color:rgba(239,68,68,0.4);" onclick="removeMergeFont(${f.id})">سڕینەوە</button>
+                <span id="mfFactor_${f.id}" title="ڕێژەی گونجاندنی قەبارە" style="flex-shrink:0; font-size:10px; font-weight:bold; color:${known || !f.useAuto ? 'var(--primary)' : '#f59e0b'}; background:rgba(142,182,155,0.12); padding:2px 6px; border-radius:4px; border:1px solid rgba(142,182,155,0.25);">×${factor.toFixed(2)}</span>
+                <div onclick="toggleMergeFontOpen(${f.id})" style="flex:1; cursor:pointer; text-align:end; direction:ltr; overflow:hidden; white-space:nowrap;">
+                    <span style="font-weight:bold; font-size:11.5px; color:var(--text-main);">${esc(f.name)}</span>
+                </div>
+                <span onclick="toggleMergeFontOpen(${f.id})" style="cursor:pointer; font-size:11px; color:var(--text-muted);">${f.open ? '▲' : '▼'}</span>
+            </div>
+
+            <div style="display:${f.open ? 'block' : 'none'}; padding:0 8px 8px 8px;">
+                <div style="font-size:10.5px; font-weight:bold; color:var(--primary); margin:4px 0;">ستایلەکان بۆ ئەم فۆنتە:</div>
+                <div style="max-height:110px; overflow-y:auto;">${styleChips}</div>
+
+                <div style="font-size:10.5px; font-weight:bold; color:var(--primary); margin:8px 0 4px;">فۆنتەکانی ناو دێڕەکان (\\fn):</div>
+                <label style="display:flex; align-items:center; gap:6px; font-size:10.5px; color:var(--text-main); margin-bottom:5px;">
+                    <input type="checkbox" ${f.allInline ? 'checked' : ''} onchange="toggleAllInline(${f.id})"> بۆ هەموو فۆنتەکانی ناو دێڕەکان بەکاربێت
+                </label>
+                <div style="max-height:110px; overflow-y:auto; ${f.allInline ? 'opacity:0.4; pointer-events:none;' : ''}">${inlineChips}</div>
+
+                <div style="font-size:10.5px; font-weight:bold; color:var(--primary); margin:8px 0 4px;">گونجاندنی قەبارە:</div>
+                <label style="display:flex; align-items:center; gap:6px; font-size:10.5px; margin-bottom:4px;">
+                    <input type="radio" name="mfmode_${f.id}" ${f.useAuto ? 'checked' : ''} onchange="setMergeFontMode(${f.id}, true)">
+                    خۆکار (بەپێی قەبارەی سروشتی فۆنتەکە) ${known ? '' : '<span style="color:#f59e0b;">— فۆنتەکە لەم ئامێرەدا نییە</span>'}
+                </label>
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
+                    <label style="display:flex; align-items:center; gap:6px; font-size:10.5px;">
+                        <input type="radio" name="mfmode_${f.id}" ${!f.useAuto ? 'checked' : ''} onchange="setMergeFontMode(${f.id}, false)"> دەستی %
+                    </label>
+                    <input type="number" min="30" max="300" value="${f.manual}" oninput="setMergeFontManual(${f.id}, this.value)" class="input-field" style="width:80px; padding:4px; font-size:11px;">
+                </div>
+                <label style="font-size:10.5px; color:var(--text-muted); display:block;">
+                    فایلی فۆنت دابنێ بۆ پێوانەی وردتر (ttf/otf):
+                    <input type="file" accept=".ttf,.otf,.woff,.woff2" style="font-size:10px; margin-top:3px;" onchange="loadMergeFontFile(${f.id}, this)">
+                </label>
+            </div>
+        </div>`;
+    }).join('');
+
+    if (sum) {
+        let assigned = mergeFonts.map(f => {
+            let parts = [];
+            if (f.styles.size) parts.push(f.styles.size + ' ستایل');
+            if (f.allInline) parts.push('هەموو دێڕەکان');
+            else if (f.inlines.size) parts.push(f.inlines.size + ' فۆنتی ناو دێڕ');
+            return parts.length ? `• ${f.name}: ${parts.join(' + ')} (×${getMergeFontFactor(f).toFixed(2)})` : `• ${f.name}: هێشتا دیاری نەکراوە`;
+        }).join('<br>');
+        sum.innerHTML = assigned;
+    }
+}
+
+function buildMergeFontPlan() {
+    let styleMap = {}, inlineMap = {}, allInline = null;
+    mergeFonts.forEach(f => {
+        let factor = getMergeFontFactor(f);
+        f.styles.forEach(k => styleMap[k] = { font: f.name, factor: factor });
+        f.inlines.forEach(k => inlineMap[k] = { font: f.name, factor: factor });
+        if (f.allInline) allInline = { font: f.name, factor: factor };
+    });
+    return { styleMap, inlineMap, allInline, any: mergeFonts.length > 0 };
+}
+
+
+// گۆڕینی فۆنتی ناو دێڕەکان (\fn) بەپێی پلانی هەڵبژێردراو، لەگەڵ گونجاندنی \fs
+function applyInlineFontPlan(line, plan, fallbackFont) {
+    if (!line) return line;
+    return line.replace(/\{([^}]*)\}/g, (block, inner) => {
+        let factorUsed = null;
+        let out = inner.replace(/\\fn([^\\\}]+)/gi, (m, name) => {
+            let key = name.trim().toLowerCase();
+            let hit = (plan.inlineMap && plan.inlineMap[key]) ? plan.inlineMap[key] : (plan.allInline || null);
+            if (hit) { factorUsed = hit.factor; return '\\fn' + hit.font; }
+            if (!plan.any && fallbackFont) return '\\fn' + fallbackFont;
+            return m;
+        });
+        if (factorUsed && Math.abs(factorUsed - 1) > 0.01) {
+            out = out.replace(/\\fs(\d+(?:\.\d+)?)/gi, (m, v) => '\\fs' + Math.max(1, Math.round(parseFloat(v) * factorUsed)));
+        }
+        return '{' + out + '}';
+    });
 }
 
 async function executeMergeAss() {
@@ -6189,6 +6748,7 @@ async function executeMergeAss() {
 
     if (!baseF) return showToast("تکایە سەرەتا فایلی سەرەکی هەڵبژێرە!", "error");
 
+    const fontPlan = buildMergeFontPlan();
     const baseText = mergeBaseRawText || await baseF.text();
     const srcText = srcF ? await srcF.text() : '';
 
@@ -6275,10 +6835,14 @@ async function executeMergeAss() {
 
                 parts[6] = makeShadowSolid(parts[6]);
 
+                const assign = fontPlan.styleMap[styleName.toLowerCase()] || null;
+                const styleFont = assign ? assign.font : (newFont || '');
+                const sizeFactor = assign ? assign.factor : 1;
+
                 if (isDialogueStyle(styleName)) {
-                    if (newFont) parts[1] = newFont;
+                    if (styleFont) parts[1] = styleFont;
                     const preset = getSpedaPreset(baseRes.y);
-                    parts[2] = preset.size;
+                    parts[2] = Math.max(1, Math.round(preset.size * sizeFactor));
                     parts[11] = '100';
                     parts[12] = '100';
                     parts[13] = '0';
@@ -6287,10 +6851,10 @@ async function executeMergeAss() {
                     parts[21] = preset.marginV;
                     parts[22] = '1';
                 } else {
-                    // تابلۆ و تەکنیک: ناوی فۆنت دەگۆڕێت و قەبارە لە 0.88 دەدرێت، هەموو شادۆ و چێوەکان پارێزراو دەبن
-                    if (newFont) parts[1] = newFont;
+                    // تابلۆ و تەکنیک: ناوی فۆنت دەگۆڕێت و قەبارە بەپێی فۆنتەکە دەگونجێنرێت
+                    if (styleFont) parts[1] = styleFont;
                     let originalSize = parseFloat(parts[2]) || 20;
-                    parts[2] = Math.max(1, Math.round(originalSize * 0.88));
+                    parts[2] = Math.max(1, Math.round(originalSize * 0.88 * sizeFactor));
                 }
                 tr = parts.join(',');
             }
@@ -6300,7 +6864,7 @@ async function executeMergeAss() {
             if (m && mergeDeletedStyles.has(m[1].trim().toLowerCase())) return;
 
             tr = cleanHarmfulTags(tr);
-            if (newFont) tr = tr.replace(/\\fn([^\}\\]+)/gi, `\\fn${newFont}`);
+            tr = applyInlineFontPlan(tr, fontPlan, newFont);
 
             let commaCount = 0, splitIdx = -1;
             for (let c = 0; c < tr.length; c++) {
@@ -6343,6 +6907,7 @@ async function executeMergeAss() {
                 srcStyles.push(tr);
             } else if (tr.startsWith('Dialogue:') || tr.startsWith('Comment:')) {
                 tr = cleanHarmfulTags(tr);
+                tr = applyInlineFontPlan(tr, fontPlan, '');
                 if (needsRescale) {
                     tr = tr.replace(/\\fs(\d+(?:\.\d+)?)/g, (m, v) => `\\fs${Math.round(parseFloat(v) * scaleY)}`);
                     tr = tr.replace(/\\bord(\d+(?:\.\d+)?)/g, (m, v) => `\\bord${(parseFloat(v) * scaleY).toFixed(1)}`);
