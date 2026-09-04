@@ -1607,6 +1607,8 @@ function deleteEmptySubtitleLines() {
             <div class="file-box" style="margin-bottom:8px; padding:10px;">
                 <label style="font-size:12px;">١. فایلی سەرەکی (بنچینە):</label>
                 <input type="file" id="mergeBaseFile" accept=".ass" onchange="handleMergeBaseFileSelect(this)">
+                <div id="mergeBaseFileName" style="display:none; font-size:11px; font-weight:bold; color:var(--primary); margin-top:6px; word-break:break-all;"></div>
+                <div id="mergeBaseTotalLines" style="display:none; font-size:11px; font-weight:bold; color:var(--primary); background:rgba(142,182,155,0.12); border:1px solid rgba(142,182,155,0.25); padding:3px 8px; border-radius:6px; margin-top:6px;"></div>
             </div>
 
             <!-- بەشی نیشاندانی ستایلەکانی فایلی سەرەکی بۆ سڕینەوە لەگەڵ دیالۆگەکانیان -->
@@ -1624,6 +1626,7 @@ function deleteEmptySubtitleLines() {
             <div class="file-box" style="margin-bottom:8px; padding:10px;">
                 <label style="font-size:12px;">٢. فایلی دووەم (کە دەق و ستایلەکەی دەگوازرێتەوە):</label>
                 <input type="file" id="mergeSourceFile" accept=".ass" onchange="handleMergeSourceFileSelect(this)">
+                <div id="mergeSourceFileName" style="display:none; font-size:11px; font-weight:bold; color:var(--primary); margin-top:6px; word-break:break-all;"></div>
             </div>
 
             <!-- ======= بەشی بەڕێوەبردنی فۆنتەکان و دیاریکردنیان بۆ ستایل و دێڕەکان ======= -->
@@ -1780,10 +1783,11 @@ function deleteEmptySubtitleLines() {
         <div class="floating-search-bar" id="searchBarPanel">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span style="font-size: 13.5px; font-weight: bold; color: var(--primary);" data-i18n="searchLbl">گەڕان و گۆڕین</span>
+                <span id="searchMatchInfo" style="font-size: 11.5px; font-weight: bold; color: var(--primary); background: rgba(142,182,155,0.14); border: 1px solid rgba(142,182,155,0.3); padding: 2px 8px; border-radius: 20px; direction: ltr; display: none; margin-inline-start: auto; margin-inline-end: 8px;"></span>
                 <button class="close-search-btn" onclick="toggleSearchBar()"><svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
             <div class="search-row">
-                <div class="search-input-group" style="flex: 2;"><input type="text" id="searchInput" data-i18n="searchPlh" placeholder="گەڕان بەدوای..." onkeydown="if(event.key === 'Enter') findNext(1)"></div>
+                <div class="search-input-group" style="flex: 2;"><input type="text" id="searchInput" data-i18n="searchPlh" placeholder="گەڕان بەدوای..." oninput="updateSearchMatchInfo()" onkeydown="if(event.key === 'Enter') findNext(1)"></div>
                 <button class="search-btn" style="flex: 0; padding: 7px 10px;" onclick="findNext(-1)" title="Previous"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
                 <button class="search-btn" style="flex: 0; padding: 7px 10px;" onclick="findNext(1)" title="Next"><svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
             </div>
@@ -2732,10 +2736,74 @@ window.onload = () => {
         function toggleSearchBar() {
             const panel = document.getElementById('searchBarPanel');
             if (panel.style.display === 'none' || panel.style.display === '') {
-                panel.style.display = 'block'; 
-            } else { 
-                panel.style.display = 'none'; 
+                panel.style.display = 'block';
+                updateSearchMatchInfo();
+                syncSearchBarToKeyboard();
+                const si = document.getElementById('searchInput');
+                if (si) setTimeout(() => si.focus(), 60);
+            } else {
+                panel.style.display = 'none';
+                currentSearchIndex = 0;
+                const info = document.getElementById('searchMatchInfo');
+                if (info) info.style.display = 'none';
+                panel.style.bottom = '';
+                const si = document.getElementById('searchInput');
+                if (si) si.blur();
             }
+        }
+
+        // ژمارەی ئەو دێڕانەی وشەکەی تێدایە (لەگەڵ کۆی هەموو جارەکان)
+        function countSearchMatches(term) {
+            let lines = 0, total = 0;
+            if (!term) return { lines, total };
+            const t = term.toLowerCase();
+            document.querySelectorAll('.subtitle-kurd textarea').forEach(ta => {
+                const v = ta.value.toLowerCase();
+                let c = 0, from = 0, at;
+                while ((at = v.indexOf(t, from)) !== -1) { c++; from = at + t.length; }
+                if (c > 0) { lines++; total += c; }
+            });
+            return { lines, total };
+        }
+
+        function updateSearchMatchInfo() {
+            const info = document.getElementById('searchMatchInfo');
+            const si = document.getElementById('searchInput');
+            if (!info || !si) return;
+            const term = si.value.trim();
+            if (!term) { info.style.display = 'none'; info.innerText = ''; return; }
+            const r = countSearchMatches(term);
+            info.style.display = 'inline-block';
+            if (r.total === 0) {
+                info.style.opacity = '0.6';
+                info.innerText = '0';
+            } else {
+                info.style.opacity = '1';
+                let pos = 0;
+                if (currentSearchIndex > 0) {
+                    const tas = document.querySelectorAll('.subtitle-kurd textarea');
+                    const tl = term.toLowerCase();
+                    for (let i = 0; i < currentSearchIndex && i < tas.length; i++) {
+                        if (tas[i].value.toLowerCase().indexOf(tl) !== -1) pos++;
+                    }
+                }
+                info.innerText = (pos > 0 ? pos + ' / ' : '') + r.total + ' جار (' + r.lines + ' دێڕ)';
+            }
+        }
+
+        // بۆکسی گەڕان لەگەڵ کیبۆرد سەرکەوتن/داکەوتن دەکات
+        function syncSearchBarToKeyboard() {
+            const panel = document.getElementById('searchBarPanel');
+            if (!panel || panel.style.display !== 'block') return;
+            const vv = window.visualViewport;
+            if (!vv) return;
+            const gap = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+            panel.style.bottom = (gap + 12) + 'px';
+        }
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', syncSearchBarToKeyboard);
+            window.visualViewport.addEventListener('scroll', syncSearchBarToKeyboard);
         }
 
         function findNext(direction = 1) {
@@ -2769,6 +2837,7 @@ window.onload = () => {
                 showToast(i18n[currentLang]['msgNotFound'], 'error'); 
                 currentSearchIndex = 0; 
             }
+            updateSearchMatchInfo();
         }
 
         function replaceText() {
@@ -3610,24 +3679,34 @@ function updateRtlFixCount(input) {
     }
 }
 
-// چاککردنی ئاڕاستەی RTL بە شێوازی فەرمیی Re:Zero بەبێ دەستکاری هیچ تاگێک
+// چاککردنی ئاڕاستەی RTL: تاگەکان لە شوێنی خۆیان دەمێننەوە، بەڵام
+// هەر تاگێکی {...} کە دەکەوێتە ناوەڕاستی دێڕەکەوە بە نیشانەی RLM (\u200F)
+// دەگیردرێت لە پێش و پاشیەوە، تاکو FFmpeg/libass وا نەزانێت ئاڕاستە بۆ LTR گۆڕاوە.
 function applyPureRtlFixToLine(text) {
     if (!text) return text;
     if (!/[\u0600-\u06FF\u0750-\u077F]/.test(text)) return text;
-    
-    // سڕینەوەی نیشانە کۆنەکان بۆ ئەوەی دووبارە نەبێتەوە
-    let clean = text.replace(/[\u200F\u202B]/g, '');
-    
-    // دۆزینەوەی هەموو تاگە تەکنیکییەکانی سەرەتا ({\pos}{\clip}...) بەبێ دەستکاری
-    const leadingTagsMatch = clean.match(/^(\{[^}]*\})+/);
-    if (leadingTagsMatch) {
-        const tags = leadingTagsMatch[0];
-        const rest = clean.substring(tags.length);
-        return tags + '\u202B' + rest;
-    } else {
-        return '\u202B' + clean;
-    }
+
+    const RLM = '\u200F';
+    const RLE = '\u202B';
+
+    // سڕینەوەی نیشانە کۆنەکان بۆ ئەوەی دووبارە نەبنەوە
+    let clean = text.replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '');
+
+    // جیاکردنەوەی تاگەکانی سەرەتا ({\pos}{\clip}...) بەبێ دەستکاری
+    const leadingTagsMatch = clean.match(/^(?:\{[^}]*\})+/);
+    const leadingTags = leadingTagsMatch ? leadingTagsMatch[0] : '';
+    let rest = clean.substring(leadingTags.length);
+
+    // تاگەکانی ناوەڕاست: RLM لە پێش و پاش هەر تاگێک دادەنرێت
+    rest = rest.replace(/(?:\{[^}]*\})+/g, function (m, offset, full) {
+        // تاگە کۆتاییەکان پێویستیان بە نیشانەی دوایی نییە
+        let atEnd = (offset + m.length) === full.length;
+        return RLM + m + (atEnd ? '' : RLM);
+    });
+
+    return leadingTags + RLE + rest;
 }
+
 
 // جێبەجێکردنی RTL Fix بە تەواوی و بەبێ سڕینەوەی هیچ کۆدێکی ASS و SRT
 async function executeRtlFix() {
@@ -4477,6 +4556,88 @@ function bgrToHex(bgr) {
     return `#${bgr.substring(4,6)}${bgr.substring(2,4)}${bgr.substring(0,2)}`;
 }
 
+// ====== هەڵبژاردنی وشە (بۆ ڕەنگکردنی تەنها ئەو وشەیەی دیاریت کردووە) ======
+const lastTaSelection = {};
+
+function trackTaSelection(ta) {
+    if (!ta || ta.dataset.selTracked) return;
+    ta.dataset.selTracked = '1';
+    const save = () => {
+        lastTaSelection[ta.id] = { start: ta.selectionStart, end: ta.selectionEnd };
+    };
+    ['keyup', 'mouseup', 'select', 'touchend', 'blur'].forEach(ev => ta.addEventListener(ev, save));
+}
+
+function getTaSelection(ta) {
+    if (!ta) return null;
+    trackTaSelection(ta);
+    let s = lastTaSelection[ta.id];
+    if (document.activeElement === ta && ta.selectionStart !== ta.selectionEnd) {
+        s = { start: ta.selectionStart, end: ta.selectionEnd };
+    }
+    if (!s || s.start === s.end) return null;
+    // ئەگەر هەڵبژاردنەکە تەنها تاگ بێت، پشتگوێ دەخرێت
+    const picked = ta.value.substring(s.start, s.end);
+    if (!picked.replace(/\{[^}]*\}/g, '').trim()) return null;
+    return s;
+}
+
+// ڕەنگی سەرەکی ستایلی ئەم دێڕە (بۆ گەڕاندنەوەی ڕەنگی وشەکانی دوای هەڵبژاردن)
+function getStylePrimaryColorTag() {
+    try {
+        let styleName = 'Default';
+        if (typeof currentStylingIndex !== 'undefined' && originalData[currentStylingIndex] &&
+            originalData[currentStylingIndex].assMeta && originalData[currentStylingIndex].assMeta.style) {
+            styleName = originalData[currentStylingIndex].assMeta.style;
+        }
+        if (typeof assHeaderLines !== 'undefined' && assHeaderLines && assHeaderLines.length) {
+            for (let l of assHeaderLines) {
+                let tr = String(l).trim();
+                if (!tr.startsWith('Style:')) continue;
+                let parts = tr.split(',');
+                let n = parts[0].replace('Style:', '').trim();
+                if (n.toLowerCase() !== styleName.toLowerCase()) continue;
+                let m = (parts[3] || '').match(/&H([0-9A-Fa-f]{6,8})/i);
+                if (m) return '{\\c&H' + m[1].slice(-6).toUpperCase() + '&}';
+            }
+        }
+    } catch (e) {}
+    return '{\\c&HFFFFFF&}';
+}
+
+// ڕەنگکردنی تەنها ئەو بەشەی دیاریکراوە، بەبێ گۆڕینی ڕەنگی وشەکانی تر
+function colorSelectionInTextarea(ta, colorTag) {
+    const sel = getTaSelection(ta);
+    if (!sel) return false;
+    const val = ta.value;
+    const before = val.substring(0, sel.start);
+    let picked = val.substring(sel.start, sel.end);
+    const after = val.substring(sel.end);
+
+    // ڕەنگی پێشوو (ئەوەی پێش هەڵبژاردنەکە کاری کردووە) بۆ گەڕاندنەوەی دوای وشەکە
+    const prevMatches = before.match(/\{?\\[c1]?c?&H[0-9A-Fa-f]+&\}?/g);
+    const prevColor = before.match(/\\1?c&H([0-9A-Fa-f]{6,8})&/g);
+    let restoreTag;
+    if (prevColor && prevColor.length) {
+        const last = prevColor[prevColor.length - 1].match(/&H([0-9A-Fa-f]{6,8})&/)[1];
+        restoreTag = '{\\c&H' + last.slice(-6) + '&}';
+    } else {
+        restoreTag = getStylePrimaryColorTag();
+    }
+
+    // لابردنی تاگی ڕەنگی ناو هەڵبژاردنەکە بۆ ئەوەی ڕەنگی نوێ کاریگەر بێت
+    picked = picked.replace(/\{\\c&H[0-9A-Fa-f]+&\}/g, '').replace(/\\1?c&H[0-9A-Fa-f]+&/g, '');
+
+    // ئەگەر دوای هەڵبژاردنەکە هیچ دەقێک نەمابێت، پێویست بە گەڕاندنەوەی ڕەنگ نییە
+    const hasTextAfter = after.replace(/\{[^}]*\}/g, '').trim() !== '';
+    ta.value = (before + colorTag + picked + (hasTextAfter ? restoreTag : '') + after).replace(/\{\}/g, '');
+    // پاراستنی هەڵبژاردنەکە بۆ گۆڕینی دووبارە
+    const ns = before.length + colorTag.length;
+    lastTaSelection[ta.id] = { start: ns, end: ns + picked.length };
+    try { ta.setSelectionRange(ns, ns + picked.length); } catch (e) {}
+    return true;
+}
+
 // ١. پالتەی خوارەوە: ڕەنگی دەقەکە دەگۆڕێت و نیشانەکان بە ڕەنگی خۆیان دەهێڵێتەوە
 function setCustomPaletteColor(hex, btnEl) {
     const valInput = document.getElementById('selectedSubColorVal');
@@ -4489,6 +4650,16 @@ function setCustomPaletteColor(hex, btnEl) {
     if (btnEl) btnEl.classList.add('active');
 
     if (!modalTa) return;
+
+    // ئەگەر وشەیەک/بەشێک دیاریکرابێت، تەنها ئەو دەگۆڕێت
+    if (hex !== 'KEEP') {
+        if (colorSelectionInTextarea(modalTa, `{\\c&H${hexToAssBgr(hex)}&}`)) {
+            if (textDisplay) textDisplay.innerText = hex;
+            showToast("ڕەنگی وشە دیاریکراوەکە گۆڕدرا!", "success");
+            return;
+        }
+    }
+
 
     if (hex === 'KEEP') {
         if (textDisplay) textDisplay.innerText = "وەک خۆی";
@@ -4823,7 +4994,9 @@ function applySubStyleToLine() {
     if (noteRaw) {
         noteFinal = noteRaw.replace(/\r?\n/g, '\\N').trim();
         let nTxt = document.getElementById('noteTextColorChoice') ? document.getElementById('noteTextColorChoice').value : 'KEEP';
-        if (nTxt && nTxt !== 'KEEP') {
+        // ئەگەر وشە بە وشە ڕەنگ کرابێت (تاگی \c لە ناو تێبینییەکەدا هەیە)، دەستکاری ناکرێت
+        const noteHasInlineColor = /\{\\c(&H[0-9A-Fa-f]+&)?\}/.test(noteFinal.replace(/^\{\\c&H[0-9A-Fa-f]+&\}[♪|]/, ''));
+        if (nTxt && nTxt !== 'KEEP' && !noteHasInlineColor) {
             const noteTextTag = `{\\c&H${hexToAssBgr(nTxt)}&}`;
             // ئەگەر تێبینییەکە بە نیشانە دەست پێدەکات (تاگی ڕەنگی نیشانە + ♪ یان |)،
             // ڕەنگی نووسین دەچێتە دوای نیشانەکەوە نەک لە پێشەوە، بۆ ئەوەی ڕەنگی نیشانەکە نەسڕدرێتەوە
@@ -4978,8 +5151,17 @@ function setNoteTextColor(hex, el) {
         el.parentElement.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
     }
+    // ئەگەر وشەیەک لە بۆکسی تێبینی دیاریکرابێت، تەنها ئەو وشەیە ڕەنگ دەگۆڕێت
+    const noteTa = document.getElementById('modalNoteText');
+    if (noteTa && hex && hex !== 'KEEP') {
+        if (colorSelectionInTextarea(noteTa, `{\\c&H${noteHexToBgr(hex)}&}`)) {
+            showToast("ڕەنگی وشە دیاریکراوەکەی تێبینی گۆڕدرا!", "success");
+            return;
+        }
+    }
     showToast("ڕەنگی نووسینی تێبینی دیاری کرا!", "success");
 }
+
 
 function buildNoteWithSymbol(val, sym, symHex) {
     let symTag = `{\\c&H${noteHexToBgr(symHex)}&}`;
@@ -6177,13 +6359,9 @@ function setupVideoSync() {
             return;
         }
         const editedOut = buildDownloadContent(false);
-        const originalOut = buildDownloadContent(true);
         const baseName = currentFileName.replace(/\.[^/.]+$/, "");
         triggerDownload(editedOut, baseName + "_Edited." + fmtNow);
-        setTimeout(function() {
-            triggerDownload(originalOut, baseName + "_Original." + fmtNow);
-        }, 1200);
-        showToast("دوو فایل سەیڤ کران: کوردی + ئەسڵی (بە هەمان دەستکارییەکان)!", "success");
+        showToast("فایلی دەستکاریکراو سەیڤ کرا!", "success");
     } catch (err) {
         console.error("Save error:", err);
         showToast("کێشەیەک ڕوویدا لە سەیڤکردن: " + err.message, "error");
@@ -6316,6 +6494,10 @@ function openMergeModal() {
     document.getElementById('mergeBaseFile').value = '';
     document.getElementById('mergeSourceFile').value = '';
     document.getElementById('mergeStylesContainer').style.display = 'none';
+    ['mergeBaseFileName', 'mergeSourceFileName', 'mergeBaseTotalLines'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.style.display = 'none'; el.innerText = ''; }
+    });
     mergeDeletedStyles.clear();
     mergeBaseRawText = '';
     mergeSourceRawText = '';
@@ -6329,12 +6511,17 @@ function openMergeModal() {
 async function handleMergeBaseFileSelect(input) {
     const file = input.files[0];
     const container = document.getElementById('mergeStylesContainer');
+    const nameEl = document.getElementById('mergeBaseFileName');
+    const totalEl = document.getElementById('mergeBaseTotalLines');
     mergeDeletedStyles.clear();
     
     if (!file) {
         if (container) container.style.display = 'none';
+        if (nameEl) { nameEl.style.display = 'none'; nameEl.innerText = ''; }
+        if (totalEl) { totalEl.style.display = 'none'; totalEl.innerText = ''; }
         return;
     }
+    if (nameEl) { nameEl.style.display = 'block'; nameEl.innerText = '✔ ' + file.name; }
 
     mergeBaseRawText = await file.text();
     renderMergeStylesList();
@@ -6367,6 +6554,15 @@ function renderMergeStylesList() {
     });
 
     let visibleStyles = styleNames.filter(name => !mergeDeletedStyles.has(name.toLowerCase()));
+
+    // کۆکەرەوەی ژمارەی ڕستەکانی ئەو ستایلانەی ماوەتەوە
+    let totalVisibleLines = 0;
+    visibleStyles.forEach(n => { totalVisibleLines += (styleCounts[n.toLowerCase()] || 0); });
+    const totalEl = document.getElementById('mergeBaseTotalLines');
+    if (totalEl) {
+        totalEl.style.display = 'block';
+        totalEl.innerText = 'کۆی گشتی ڕستەکان: ' + totalVisibleLines + ' دێڕ لە ' + visibleStyles.length + ' ستایل';
+    }
 
     if (visibleStyles.length === 0) {
         listEl.innerHTML = '<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:6px;">هیچ ستایلێک نەماوەتەوە</div>';
@@ -6459,6 +6655,11 @@ let mergeInlineFontsCache = [];
 
 async function handleMergeSourceFileSelect(input) {
     const f = input.files[0];
+    const nameEl = document.getElementById('mergeSourceFileName');
+    if (nameEl) {
+        if (f) { nameEl.style.display = 'block'; nameEl.innerText = '✔ ' + f.name; }
+        else { nameEl.style.display = 'none'; nameEl.innerText = ''; }
+    }
     mergeSourceRawText = f ? await f.text() : '';
     refreshMergeFontTargets();
 }
@@ -6574,6 +6775,7 @@ async function loadMergeFontFile(id, input) {
         await ff.load();
         document.fonts.add(ff);
         f.fileFamily = fam;
+        f.fileName = file.name;   // ناوی فایلی هەڵبژێردراو بۆ پیشاندان
         measureMergeFont(f);
         renderMergeFonts();
         showToast('فایلی فۆنتی ' + f.name + ' پێوانە کرا!', 'success');
@@ -6581,6 +6783,14 @@ async function loadMergeFontFile(id, input) {
         showToast('نەتوانرا فایلی فۆنتەکە بخوێنرێتەوە!', 'error');
     }
 }
+
+function clearMergeFontFile(id) {
+    let f = mergeFonts.find(x => x.id === id); if (!f) return;
+    f.fileFamily = ''; f.fileName = '';
+    measureMergeFont(f);
+    renderMergeFonts();
+}
+
 
 function getMergeFontFactor(f) {
     if (f.useAuto) return f.factorAuto || 1;
@@ -6694,6 +6904,15 @@ function renderMergeFonts() {
                     فایلی فۆنت دابنێ بۆ پێوانەی وردتر (ttf/otf):
                     <input type="file" accept=".ttf,.otf,.woff,.woff2" style="font-size:10px; margin-top:3px;" onchange="loadMergeFontFile(${f.id}, this)">
                 </label>
+                ${f.fileName ? `
+                <div style="display:flex; align-items:center; gap:6px; margin-top:5px; background:rgba(142,182,155,0.12); border:1px solid rgba(142,182,155,0.35); border-radius:6px; padding:4px 7px;">
+                    <span style="font-size:11px; color:var(--primary); font-weight:bold;">✔</span>
+                    <span style="flex:1; font-size:10.5px; color:var(--text-main); direction:ltr; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(f.fileName)}</span>
+                    <span onclick="clearMergeFontFile(${f.id})" style="cursor:pointer; font-size:10px; color:#ef4444;">سڕینەوە</span>
+                </div>
+                <div style="font-size:10px; color:var(--text-muted); margin-top:3px;">نموونە: <span style="font-family:'${f.fileFamily}'; font-size:14px; color:var(--text-main);">${esc(f.name)} — نموونەی نووسین</span></div>
+                ` : `<div style="font-size:10px; color:var(--text-muted); margin-top:3px;">هێشتا هیچ فایلێکی فۆنت دیاری نەکراوە</div>`}
+
             </div>
         </div>`;
     }).join('');
@@ -6749,6 +6968,9 @@ async function executeMergeAss() {
     if (!baseF) return showToast("تکایە سەرەتا فایلی سەرەکی هەڵبژێرە!", "error");
 
     const fontPlan = buildMergeFontPlan();
+    // ئەگەر تەنها فایلی یەکەم هەڵبژێردرابێت و هیچ فۆنتێک دیاری نەکرابێت،
+    // تەنها ستایلە سڕدراوەکان لادەبرێن و هیچ شتێکی تر (سایز، سترۆک، شادۆ، بەرزی) نەگۆڕدرێت
+    const stylesOnlyMode = !srcF && !fontPlan.any && !newFont;
     const baseText = mergeBaseRawText || await baseF.text();
     const srcText = srcF ? await srcF.text() : '';
 
@@ -6833,6 +7055,11 @@ async function executeMergeAss() {
                 let styleName = parts[0].replace('Style:', '').trim();
                 if (mergeDeletedStyles.has(styleName.toLowerCase())) return;
 
+                if (stylesOnlyMode) {
+                    baseStyles.push(tr);
+                    return;
+                }
+
                 parts[6] = makeShadowSolid(parts[6]);
 
                 const assign = fontPlan.styleMap[styleName.toLowerCase()] || null;
@@ -6862,6 +7089,11 @@ async function executeMergeAss() {
         } else if (tr.startsWith('Dialogue:') || tr.startsWith('Comment:')) {
             let m = tr.match(/^(?:Dialogue|Comment):\s*[^,]*,[^,]*,[^,]*,([^,]+),/i);
             if (m && mergeDeletedStyles.has(m[1].trim().toLowerCase())) return;
+
+            if (stylesOnlyMode) {
+                baseDialogues.push(tr);
+                return;
+            }
 
             tr = cleanHarmfulTags(tr);
             tr = applyInlineFontPlan(tr, fontPlan, newFont);
