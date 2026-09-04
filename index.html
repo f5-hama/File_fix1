@@ -597,11 +597,14 @@ function deleteEmptySubtitleLines() {
     z-index: 2000; 
     flex-direction: column; 
     align-items: center; 
-    justify-content: center; 
+    justify-content: flex-start; 
     padding: 12px; 
     animation: fadeIn 0.2s ease; 
+    -webkit-overflow-scrolling: touch;
 }
-        .custom-modal-content { background: var(--card-bg); padding: 20px 16px; border-radius: 18px; width: 100%; max-width: 440px; box-sizing: border-box; margin: 0 auto; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.25s ease; }
+        .logo-style-opt { display:flex; align-items:flex-start; gap:7px; cursor:pointer; font-size:11.5px; line-height:1.5; background:rgba(142,182,155,0.06); border:1px solid var(--border-color); border-radius:10px; padding:7px 9px; text-align:start; }
+        .logo-style-opt:has(input:checked) { border-color: var(--primary); background: rgba(142,182,155,0.16); }
+        .custom-modal-content { background: var(--card-bg); padding: 20px 16px; border-radius: 18px; width: 100%; max-width: 440px; box-sizing: border-box; margin: auto; box-shadow: var(--shadow-lg); text-align: center; border: 1px solid var(--card-border); animation: slideUpFade 0.25s ease; }
 
 
         /* پانێلی جوڵاندن و ڕێکخستنی شوێنی دەق */
@@ -1649,6 +1652,27 @@ function deleteEmptySubtitleLines() {
             <div style="margin-bottom:10px; margin-top:6px;">
                 <label style="font-size:12px; font-weight:bold; color:var(--primary); display:block; margin-bottom:4px;">فۆنتی بنەڕەت بۆ ئەو ستایلانەی دیاری نەکراون (ئارەزوومەندانە):</label>
                 <input type="text" id="mergeNewFontName" placeholder="ناوی فۆنت، بۆ نموونە Speda Bold..." class="input-field" style="padding:7px; font-size:12px;">
+            </div>
+
+            <!-- ======= بەشی زیادکردنی لۆگۆی KURD FOREST (ئارەزوومەندانە) ======= -->
+            <div style="margin-bottom:10px; background:rgba(0,0,0,0.3); padding:9px; border-radius:10px; border:1px solid var(--border-color);">
+                <label style="display:flex; align-items:center; gap:7px; cursor:pointer; font-size:12px; font-weight:bold; color:var(--primary);">
+                    <input type="checkbox" id="logoEnable" onchange="toggleLogoOptions()" style="width:15px; height:15px; accent-color:var(--primary);">
+                    <span>زیادکردنی لۆگۆی KURD FOREST (ئارەزوومەندانە)</span>
+                </label>
+                <div id="logoOptionsBox" style="display:none; margin-top:8px;">
+                    <label style="font-size:11.5px; display:block; margin-bottom:4px;">ستایلی لۆگۆ:</label>
+                    <div id="logoStyleChoices" style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
+                        <label class="logo-style-opt"><input type="checkbox" class="logoStyleCb" value="1" style="width:15px;height:15px;accent-color:var(--primary);"><span>ستایلی ١: جوڵان لە خوارەوە (لە ڕاستەوە بۆ چەپ)</span></label>
+                        <label class="logo-style-opt"><input type="checkbox" class="logoStyleCb" value="2" checked style="width:15px;height:15px;accent-color:var(--primary);"><span>ستایلی ٢: دوو لایەن پێکەوە (KURD لە چەپ-خوارەوە و FOREST لە ڕاست-سەرەوە بۆ شوێنی لۆگۆ)</span></label>
+                        <label class="logo-style-opt"><input type="checkbox" class="logoStyleCb" value="3" style="width:15px;height:15px;accent-color:var(--primary);"><span>ستایلی ٣: لە لۆگۆکەوە دەرچوون بۆ چەپی خوارەوە</span></label>
+                    </div>
+                    <label style="font-size:11.5px; display:block; margin-bottom:4px;">چەند جار لەناو فایلەکەدا دووبارە ببێتەوە؟</label>
+                    <input type="number" id="logoCount" class="input-field" value="3" min="1" max="30" step="1" style="padding:7px; font-size:12px;">
+                    <div style="font-size:10.5px; color:var(--text-muted); margin-top:6px; line-height:1.6;">
+                        هەر جارێک هەموو ستایلە هەڵبژێردراوەکان دەخاتەوە (بۆ نموونە ٢ جار × ٣ ستایل = ٦ جار)، بە شێوەیەکی زیرەکانە بەسەر درێژایی فایلەکەدا دابەش دەکرێن. ئەگەر ستایلی کورد فۆڕێست پێشتر لە فایلەکەدا بێت، ستایلەکە نەگۆڕدراو دەمێنێتەوە و تەنها دێڕەکانی لۆگۆ زیاد دەکرێن.
+                    </div>
+                </div>
             </div>
 
             <div class="custom-modal-actions">
@@ -6960,6 +6984,97 @@ function applyInlineFontPlan(line, plan, fallbackFont) {
     });
 }
 
+function toggleLogoOptions() {
+    const cb = document.getElementById('logoEnable');
+    const box = document.getElementById('logoOptionsBox');
+    if (box) box.style.display = (cb && cb.checked) ? 'block' : 'none';
+}
+
+// ====== زیادکردنی لۆگۆی KURD FOREST بۆ فایلی تێکەڵکراو ======
+function assTimeToSeconds(t) {
+    let m = String(t).trim().match(/^(\d+):(\d{1,2}):(\d{1,2}(?:\.\d+)?)$/);
+    if (!m) return 0;
+    return parseInt(m[1],10)*3600 + parseInt(m[2],10)*60 + parseFloat(m[3]);
+}
+function secondsToAssTime(sec) {
+    sec = Math.max(0, sec);
+    let h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec - h*3600 - m*60;
+    return h + ':' + String(m).padStart(2,'0') + ':' + s.toFixed(2).padStart(5,'0');
+}
+
+// دروستکردنی ستایل و دێڕەکانی لۆگۆ بەپێی ڕیزۆلوشن و درێژایی فایلەکە
+function buildKurdForestLogo(dialogues, res, count, styleKind, existingStyleName) {
+    const LOGO_STYLE = existingStyleName || 'Logo-KurdForest';
+    const DURATION = 30;
+    const REF_X = 1920, REF_Y = 1080;
+    const sx = (res.x || REF_X) / REF_X;
+    const sy = (res.y || REF_Y) / REF_Y;
+    let kinds = Array.isArray(styleKind) ? styleKind.map(String) : [String(styleKind || '1')];
+    kinds = kinds.filter(k => ['1','2','3'].indexOf(k) !== -1);
+    if (kinds.length === 0) kinds = ['1'];
+
+    // درێژایی گشتی فایلەکە بەپێی دوایین کۆتایی دێڕ
+    let total = 0;
+    dialogues.forEach(line => {
+        let m = line.match(/^(?:Dialogue|Comment):\s*[^,]*,\s*([^,]+),\s*([^,]+),/i);
+        if (m) {
+            let e = assTimeToSeconds(m[2]);
+            if (e > total) total = e;
+        }
+    });
+
+    // هەر جارێکی دووبارەبوونەوە هەموو ستایلە هەڵبژێردراوەکان لەخۆدەگرێت
+    let repeats = Math.max(1, Math.min(30, parseInt(count, 10) || 1));
+    let n = repeats * kinds.length;
+    if (total <= 0) total = DURATION * n + 60;
+
+    // ڕێکخستنی شوێنەکان بە ڕێژەیەکی گونجاو بەسەر درێژایی فایلەکەدا
+    let usable = Math.max(DURATION, total - 4);       // دوورخستنەوە لە کۆتایی ڕەسەن
+    let step = usable / (n + 1);
+    let lines = [];
+    let lastEnd = -1;
+    for (let k = 1; k <= n; k++) {
+        let center = step * k;
+        let start = center - DURATION / 2;
+        if (start < 2) start = 2;                                   // نەک ڕێک لە چرکەی یەکەم
+        if (start + DURATION > usable) start = Math.max(2, usable - DURATION);
+        if (start < lastEnd + 1) start = lastEnd + 1;               // نەخشاندنی سەریەک
+        let end = start + DURATION;
+        lastEnd = end;
+        const X = v => Math.round(v * sx), Y = v => Math.round(v * sy);
+        const head = 'Dialogue: 0,' + secondsToAssTime(start) + ',' + secondsToAssTime(end) + ',' + LOGO_STYLE + ',,0,0,0,,';
+        // شوێنی کۆتایی لۆگۆ (سەرەوەی چەپ) و شوێنی چەپی خوارەوە لەسەر بنەمای 1920x1080
+        const LX = 30, LY = 28, BLY = 1000, TRX = 1800, TRY = 60, WORD2 = 205;
+
+        const kind = kinds[(k - 1) % kinds.length];
+
+
+        if (kind === '2') {
+            // پێچەوانەکراوە: KURD لە چەپی خوارەوە، FOREST لە ڕاستی سەرەوە، هەردووکیان بۆ شوێنی لۆگۆ
+            lines.push(head + '{\\alpha&H80&\\move(' + X(LX) + ',' + Y(BLY) + ',' + X(LX) + ',' + Y(LY) + ')}KURD');
+            lines.push(head + '{\\alpha&H80&\\c&H4C891F&\\move(' + X(TRX) + ',' + Y(TRY) + ',' + X(LX + WORD2) + ',' + Y(LY) + ')}FOREST');
+        } else if (kind === '3') {
+            // لە شوێنی لۆگۆکەوە دەرچوون بەرەو چەپی خوارەوە
+            lines.push(head + '{\\alpha&H80&\\move(' + X(LX) + ',' + Y(LY) + ',' + X(LX) + ',' + Y(BLY) + ')}KURD {\\c&H4C891F&}FOREST');
+        } else {
+            // بنەڕەت: لە ڕاستی خوارەوە بۆ شوێنی لۆگۆ
+            lines.push(head + '{\\alpha&H80&\\move(' + X(TRX) + ',' + Y(BLY) + ',' + X(LX) + ',' + Y(LY) + ')}KURD {\\c&H4C891F&}FOREST');
+        }
+    }
+
+    // ستایلی دڵخواز: Logo-KurdForest,Michroma,55,... لەسەر بنەمای 1920x1080
+    let fontSize = Math.max(8, Math.round(55 * sy));
+    let outline = Math.max(0.5, 1.2 * sy).toFixed(1);
+    let shadow = Math.max(0, 0.4 * sy).toFixed(1);
+    let marginLR = Math.round(30 * sx);
+    let marginV = Math.round(28 * sy);
+    let styleLine = 'Style: ' + LOGO_STYLE + ',Michroma,' + fontSize +
+        ',&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,' +
+        outline + ',' + shadow + ',7,' + marginLR + ',' + marginLR + ',' + marginV + ',1';
+
+    return { styleName: LOGO_STYLE, styleLine: styleLine, lines: lines };
+}
+
 async function executeMergeAss() {
     const baseF = document.getElementById('mergeBaseFile').files[0];
     const srcF = document.getElementById('mergeSourceFile').files[0];
@@ -7177,6 +7292,33 @@ async function executeMergeAss() {
     let cleanDialogues = [...srcDialogues, ...baseDialogues].filter(d => d.length > 0);
     let allStyles = [...baseStyles, ...srcStyles].filter(s => s.length > 0);
 
+    // زیادکردنی لۆگۆی KURD FOREST ئەگەر بەکارهێنەر داوای کردبێت
+    let logoAddedCount = 0;
+    const logoCb = document.getElementById('logoEnable');
+    if (logoCb && logoCb.checked) {
+        const logoCountVal = document.getElementById('logoCount') ? document.getElementById('logoCount').value : 1;
+        const logoStyleVal = Array.from(document.querySelectorAll('.logoStyleCb:checked')).map(cb => cb.value);
+        // ئەگەر ستایلی کورد فۆڕێست پێشتر لە فایلەکەدا هەبێت، ستایلەکە وەک خۆی دەمێنێتەوە
+        let existingLogoStyle = null;
+        allStyles.forEach(s => {
+            let nm = s.split(',')[0].replace(/^Style:/i, '').trim();
+            let low = nm.toLowerCase().replace(/[\s_-]/g, '');
+            if (!existingLogoStyle && low.indexOf('kurd') !== -1 && low.indexOf('forest') !== -1) existingLogoStyle = nm;
+        });
+        const logo = buildKurdForestLogo(cleanDialogues, baseRes, logoCountVal, logoStyleVal, existingLogoStyle);
+        if (!existingLogoStyle) {
+            allStyles = allStyles.filter(s => s.split(',')[0].replace('Style:', '').trim().toLowerCase() !== logo.styleName.toLowerCase());
+            cleanDialogues = cleanDialogues.filter(d => {
+                let m = d.match(/^(?:Dialogue|Comment):\s*[^,]*,[^,]*,[^,]*,([^,]+),/i);
+                return !(m && m[1].trim().toLowerCase() === logo.styleName.toLowerCase());
+            });
+            allStyles.push(logo.styleLine);
+        }
+        cleanDialogues = cleanDialogues.concat(logo.lines);
+        logoAddedCount = logo.lines.length;
+
+    }
+
     let usedStyleNames = new Set(['default']);
     cleanDialogues.forEach(line => {
         let m = line.match(/^(?:Dialogue|Comment):\s*[^,]*,[^,]*,[^,]*,([^,]+),/i);
@@ -7213,7 +7355,8 @@ async function executeMergeAss() {
 
     let purgeNotice = removedStylesCount > 0 ? ` (${removedStylesCount} ستایلی بەکارنەهاتوو سڕدرانەوە)` : '';
     let successWord = srcF ? "فایلەکان تێکەڵ کران" : "فایلەکە بە سەرکەوتوویی ڕێکخرا";
-    showToast(`${successWord}${purgeNotice}!`, "success");
+    let logoNotice = logoAddedCount > 0 ? ` (لۆگۆی KURD FOREST ${logoAddedCount} جار زیادکرا)` : '';
+    showToast(`${successWord}${purgeNotice}${logoNotice}!`, "success");
 }
     </script>
 <!-- ================= چاککردنی شوێن و جوڵەی ژێرنووس بە libass (وەک پلەیەری ڕاستەقینە) ================= -->
