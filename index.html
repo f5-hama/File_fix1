@@ -1682,6 +1682,7 @@ function deleteEmptySubtitleLines() {
         </div>
     </div>
     
+
     <!-- مۆداڵی چاککردنی لکانی پیتەکان -->
     <div id="font-fix-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
@@ -6513,6 +6514,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 let mergeBaseRawText = '';
 let mergeDeletedStyles = new Set();
 
+
 function openMergeModal() {
     document.getElementById('merge-modal').style.display = 'flex';
     document.getElementById('mergeBaseFile').value = '';
@@ -6710,7 +6712,9 @@ function refreshMergeFontTargets() {
     if (!mergeBaseRawText) { box.style.display = 'none'; return; }
 
     let a = collectStylesAndInlines(mergeBaseRawText);
-    let b = collectStylesAndInlines(mergeSourceRawText);
+    // تەنها ستایل و فۆنتەکانی فایلی یەکەم نیشان دەدرێن —
+    // فایلی دووەم پێشتر ئامادەکراوە (فۆنت و قەبارە) بۆیە دەست لێی نادرێت
+    let b = { styles: [], inlines: new Set() };
 
     let all = [];
     a.styles.concat(b.styles).forEach(n => {
@@ -7002,10 +7006,33 @@ function secondsToAssTime(sec) {
     return h + ':' + String(m).padStart(2,'0') + ':' + s.toFixed(2).padStart(5,'0');
 }
 
+// ژمارەکردنی درێژایی ڕاستەقینەی فایلەکە (بە چرکە) لە هەموو دێڕەکانەوە
+function detectAssTotalSeconds(textOrLines) {
+    let arr = Array.isArray(textOrLines) ? textOrLines : String(textOrLines || '').split(/\r?\n/);
+    let ends = [];
+    arr.forEach(line => {
+        let tr = String(line).trim();
+        if (!/^(Dialogue|Comment)\s*:/i.test(tr)) return;
+        let parts = tr.split(',');
+        if (parts.length < 3) return;
+        let e = assTimeToSeconds(parts[2]);
+        if (e > 0) ends.push(e);
+    });
+    if (ends.length === 0) return 0;
+    ends.sort((a, b) => a - b);
+    let max = ends[ends.length - 1];
+    // ئەگەر چەند کاتێکی زۆر گەورەی تەنیا (outlier) هەبێت، پەراوێزیان دەخەینە دەرەوە
+    // بۆ ئەوەی دابەشکردنی لۆگۆ بەپێی درێژی ڕاستەقینەی فایلەکە بێت
+    if (ends.length >= 10) {
+        let p98 = ends[Math.floor(0.98 * (ends.length - 1))];
+        if (max > p98 * 1.5 && p98 > 0) return p98;
+    }
+    return max;
+}
+
 // دروستکردنی ستایل و دێڕەکانی لۆگۆ بەپێی ڕیزۆلوشن و درێژایی فایلەکە
-function buildKurdForestLogo(dialogues, res, count, styleKind, existingStyleName) {
+function buildKurdForestLogo(dialogues, res, count, styleKind, existingStyleName, totalHint) {
     const LOGO_STYLE = existingStyleName || 'Logo-KurdForest';
-    const DURATION = 30;
     const REF_X = 1920, REF_Y = 1080;
     const sx = (res.x || REF_X) / REF_X;
     const sy = (res.y || REF_Y) / REF_Y;
@@ -7013,56 +7040,60 @@ function buildKurdForestLogo(dialogues, res, count, styleKind, existingStyleName
     kinds = kinds.filter(k => ['1','2','3'].indexOf(k) !== -1);
     if (kinds.length === 0) kinds = ['1'];
 
-    // درێژایی گشتی فایلەکە بەپێی دوایین کۆتایی دێڕ
-    let total = 0;
-    dialogues.forEach(line => {
-        let m = line.match(/^(?:Dialogue|Comment):\s*[^,]*,\s*([^,]+),\s*([^,]+),/i);
-        if (m) {
-            let e = assTimeToSeconds(m[2]);
-            if (e > total) total = e;
-        }
-    });
+    // درێژایی گشتی فایلەکە: یەکەم لە هینتەکە، ئەگەرنا لە دێڕەکانەوە
+    let total = Math.max(Number(totalHint) || 0, detectAssTotalSeconds(dialogues));
 
-    // هەر جارێکی دووبارەبوونەوە هەموو ستایلە هەڵبژێردراوەکان لەخۆدەگرێت
     let repeats = Math.max(1, Math.min(30, parseInt(count, 10) || 1));
     let n = repeats * kinds.length;
-    if (total <= 0) total = DURATION * n + 60;
 
-    // ڕێکخستنی شوێنەکان بە ڕێژەیەکی گونجاو بەسەر درێژایی فایلەکەدا
-    let usable = Math.max(DURATION, total - 4);       // دوورخستنەوە لە کۆتایی ڕەسەن
-    let step = usable / (n + 1);
+    // ئەگەر درێژایی نەزانرا، دۆخێکی سەلامەت
+    if (!total || total < 60) total = Math.max(total, 60 * n + 60);
+
+    // سنووری سەرەتا و کۆتایی: ٢٪ی فایلەکە (لانیکەم ١٥ چرکە، زۆرترین ٩٠ چرکە)
+    let pad = Math.min(90, Math.max(15, total * 0.02));
+    let winStart = pad;
+    let winEnd = Math.max(pad + 5, total - pad);
+    let span = winEnd - winStart;
+
+    // ماوەی دەرکەوتنی لۆگۆ: ٣٠ چرکە، بەڵام هەرگیز زیاتر لە ٦٠٪ی بەشەکەی خۆی
+    let slot = span / n;
+    let DURATION = Math.max(6, Math.min(30, slot * 0.6));
+
     let lines = [];
     let lastEnd = -1;
-    for (let k = 1; k <= n; k++) {
-        let center = step * k;
-        let start = center - DURATION / 2;
-        if (start < 2) start = 2;                                   // نەک ڕێک لە چرکەی یەکەم
-        if (start + DURATION > usable) start = Math.max(2, usable - DURATION);
-        if (start < lastEnd + 1) start = lastEnd + 1;               // نەخشاندنی سەریەک
+    for (let k = 0; k < n; k++) {
+        // ناوەڕاستی بەشەکەی خۆی (دابەشکردنی ڕێژەیی بەسەر سەرەتا و ناوەڕاست و کۆتاییدا)
+        let slotStart = winStart + slot * k;
+        let center = slotStart + slot / 2;
+        // جوڵانێکی بچووکی هەڕەمەکی تا ڕێک لە خاڵی مەکانیکی نەبێت
+        let jitter = (Math.random() - 0.5) * slot * 0.30;
+        let start = center + jitter - DURATION / 2;
+        let minStart = slotStart + slot * 0.05;
+        let maxStart = slotStart + slot * 0.95 - DURATION;
+        if (maxStart < minStart) maxStart = minStart;
+        if (start < minStart) start = minStart;
+        if (start > maxStart) start = maxStart;
+        if (start < lastEnd + 2) start = lastEnd + 2;
+        if (start + DURATION > total - 2) start = Math.max(2, total - 2 - DURATION);
         let end = start + DURATION;
         lastEnd = end;
+
         const X = v => Math.round(v * sx), Y = v => Math.round(v * sy);
         const head = 'Dialogue: 0,' + secondsToAssTime(start) + ',' + secondsToAssTime(end) + ',' + LOGO_STYLE + ',,0,0,0,,';
-        // شوێنی کۆتایی لۆگۆ (سەرەوەی چەپ) و شوێنی چەپی خوارەوە لەسەر بنەمای 1920x1080
         const LX = 30, LY = 28, BLY = 1000, TRX = 1800, TRY = 60, WORD2 = 205;
 
-        const kind = kinds[(k - 1) % kinds.length];
-
+        const kind = kinds[k % kinds.length];
 
         if (kind === '2') {
-            // پێچەوانەکراوە: KURD لە چەپی خوارەوە، FOREST لە ڕاستی سەرەوە، هەردووکیان بۆ شوێنی لۆگۆ
             lines.push(head + '{\\alpha&H80&\\move(' + X(LX) + ',' + Y(BLY) + ',' + X(LX) + ',' + Y(LY) + ')}KURD');
             lines.push(head + '{\\alpha&H80&\\c&H4C891F&\\move(' + X(TRX) + ',' + Y(TRY) + ',' + X(LX + WORD2) + ',' + Y(LY) + ')}FOREST');
         } else if (kind === '3') {
-            // لە شوێنی لۆگۆکەوە دەرچوون بەرەو چەپی خوارەوە
             lines.push(head + '{\\alpha&H80&\\move(' + X(LX) + ',' + Y(LY) + ',' + X(LX) + ',' + Y(BLY) + ')}KURD {\\c&H4C891F&}FOREST');
         } else {
-            // بنەڕەت: لە ڕاستی خوارەوە بۆ شوێنی لۆگۆ
             lines.push(head + '{\\alpha&H80&\\move(' + X(TRX) + ',' + Y(BLY) + ',' + X(LX) + ',' + Y(LY) + ')}KURD {\\c&H4C891F&}FOREST');
         }
     }
 
-    // ستایلی دڵخواز: Logo-KurdForest,Michroma,55,... لەسەر بنەمای 1920x1080
     let fontSize = Math.max(8, Math.round(55 * sy));
     let outline = Math.max(0.5, 1.2 * sy).toFixed(1);
     let shadow = Math.max(0, 0.4 * sy).toFixed(1);
@@ -7305,7 +7336,9 @@ async function executeMergeAss() {
             let low = nm.toLowerCase().replace(/[\s_-]/g, '');
             if (!existingLogoStyle && low.indexOf('kurd') !== -1 && low.indexOf('forest') !== -1) existingLogoStyle = nm;
         });
-        const logo = buildKurdForestLogo(cleanDialogues, baseRes, logoCountVal, logoStyleVal, existingLogoStyle);
+        // درێژی فایلەکە تەنها لە دێڕە کۆتاییەکانەوە دەژمێردرێت (نەک لە فایلە خامەکانەوە)
+        const totalHint = detectAssTotalSeconds(cleanDialogues);
+        const logo = buildKurdForestLogo(cleanDialogues, baseRes, logoCountVal, logoStyleVal, existingLogoStyle, totalHint);
         if (!existingLogoStyle) {
             allStyles = allStyles.filter(s => s.split(',')[0].replace('Style:', '').trim().toLowerCase() !== logo.styleName.toLowerCase());
             cleanDialogues = cleanDialogues.filter(d => {
@@ -7615,5 +7648,18 @@ async function executeMergeAss() {
 })();
 </script>
 
+    <script>
+    // چاککردنی ئایفۆن/ئایپاد: iOS فایلەکانی .ass .vtt .sub .sup ناسیناوە و ڕێگە نادات هەڵیبژێردرێن،
+    // بۆیە لێرەدا سنووردارکردنی جۆری فایل لەسەر iOS لادەبرێت تا هەموو فایلەکان بتوانرێت هەڵبژێردرێن
+    (function () {
+        var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        if (isIOS) {
+            document.querySelectorAll('input[type="file"][accept]').forEach(function (inp) {
+                inp.removeAttribute('accept');
+            });
+        }
+    })();
+    </script>
 </body>
 </html>
