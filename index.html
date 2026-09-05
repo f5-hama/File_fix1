@@ -3705,15 +3705,31 @@ function updateRtlFixCount(input) {
     }
 }
 
-// چاککردنی ئاڕاستەی RTL: تاگەکان لە شوێنی خۆیان دەمێننەوە، بەڵام
-// هەر تاگێکی {...} کە دەکەوێتە ناوەڕاستی دێڕەکەوە بە نیشانەی RLM (\u200F)
-// دەگیردرێت لە پێش و پاشیەوە، تاکو FFmpeg/libass وا نەزانێت ئاڕاستە بۆ LTR گۆڕاوە.
+// چاککردنی ئاڕاستەی RTL بۆ هاردسەب (Termux / ffmpeg / libass / HandBrake):
+// - دێڕی تەکنیکی (وێنەکێشان \p1، تاگ بەبێ نووسین) وەک خۆی دەمێنێت
+// - نووسینی کوردی/عەرەبی دەخرێتە ناو بازنەی RLE...PDF تاکو ئاڕاستە نەگۆڕدرێت
+// - تاگەکانی ناوەڕاست بە RLM دەگیردرێن
+// - وشە/ژمارەی لاتینی ناو ڕستە بە LRE...PDF دەپارێزرێن تاکو پێشوپاش نەکرێن
+function isTechnicalAssText(text) {
+    if (!text) return true;
+    // دێڕی وێنەکێشان (drawing) — هەرگیز دەستکاری ناکرێت
+    if (/\\p[1-9]\d*/i.test(text)) return true;
+    // نووسینەکە بەبێ تاگ چی دەمێنێتەوە؟
+    const stripped = text.replace(/\{[^}]*\}/g, '').replace(/\\[Nnh]/g, ' ').trim();
+    if (!stripped) return true;
+    // هیچ پیتی کوردی/عەرەبی نییە
+    if (!/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(stripped)) return true;
+    return false;
+}
+
 function applyPureRtlFixToLine(text) {
     if (!text) return text;
-    if (!/[\u0600-\u06FF\u0750-\u077F]/.test(text)) return text;
+    if (isTechnicalAssText(text)) return text;
 
     const RLM = '\u200F';
     const RLE = '\u202B';
+    const LRE = '\u202A';
+    const PDF = '\u202C';
 
     // سڕینەوەی نیشانە کۆنەکان بۆ ئەوەی دووبارە نەبنەوە
     let clean = text.replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '');
@@ -3723,15 +3739,38 @@ function applyPureRtlFixToLine(text) {
     const leadingTags = leadingTagsMatch ? leadingTagsMatch[0] : '';
     let rest = clean.substring(leadingTags.length);
 
-    // تاگەکانی ناوەڕاست: RLM لە پێش و پاش هەر تاگێک دادەنرێت
-    rest = rest.replace(/(?:\{[^}]*\})+/g, function (m, offset, full) {
-        // تاگە کۆتاییەکان پێویستیان بە نیشانەی دوایی نییە
-        let atEnd = (offset + m.length) === full.length;
-        return RLM + m + (atEnd ? '' : RLM);
+    // پاراستنی وشە و ژمارەی لاتینی/ئینگلیزی ناو ڕستەکە
+    // (ناوی کەسایەتی، ژمارە، کاتژمێر... تاکو لە تێرموکس پێشوپاش نەکرێن)
+    const PLACE = '\u0001';
+    const BRK = '\u0002';
+    let stash = [];
+    let breaks = [];
+    // \N \n \h وەک خۆیان دەمێننەوە
+    rest = rest.replace(/\\[Nnh]/g, function (m) {
+        breaks.push(m);
+        return BRK;
+    });
+    rest = rest.replace(/\{[^}]*\}/g, function (m) {
+        stash.push(m);
+        return PLACE;
     });
 
-    return leadingTags + RLE + rest;
+    rest = rest.replace(/[A-Za-z0-9][A-Za-z0-9 .,:'’\-_&/()!?%+#]*[A-Za-z0-9)]|[A-Za-z0-9]/g, function (m) {
+        return LRE + m + PDF;
+    });
+
+    // گەڕاندنەوەی تاگەکان لەگەڵ RLM لە دەوریان (بە هەمان ڕیزبەندی)
+    let ti = 0, bi = 0;
+    rest = rest.replace(/[\u0001\u0002]/g, function (m) {
+        if (m === PLACE) return RLM + stash[ti++] + RLM;
+        return breaks[bi++];
+    });
+
+
+
+    return leadingTags + RLE + rest + PDF;
 }
+
 
 
 // جێبەجێکردنی RTL Fix بە تەواوی و بەبێ سڕینەوەی هیچ کۆدێکی ASS و SRT
