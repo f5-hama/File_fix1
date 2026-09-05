@@ -1,4 +1,4 @@
-const CACHE_NAME = 'subedit-v4.0025';
+const CACHE_NAME = 'subedit-v4.0026';
 
 // دۆزینەوەی خۆکاری ناوی بوخچەی GitHub Pages
 const GH_PATH = self.location.pathname.replace(/\/sw\.js$/, '');
