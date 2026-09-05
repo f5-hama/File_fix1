@@ -2628,6 +2628,7 @@ function restoreFromHistory(id) {
         isAssFormat = item.isAssFormat || false;
         isVttFormat = item.isVttFormat || false;
         assHeaderLines = item.assHeaderLines || [];
+        rawAssMasterEvents = item.rawAssMasterEvents || [];
         const modal = document.getElementById('history-modal');
         if (modal) modal.style.display = 'none';
         subtitleNotes = item.notes || [];
@@ -4027,7 +4028,14 @@ var rawAssMasterEvents = [];
 
 function isHeavyTypesettingLine(rawText) {
     if (!rawText) return false;
-    if (/\{\\p[1-9]\}/i.test(rawText)) return true;
+    // هەر تاگێک کە \p1..\p9 لەناویدا بێت (تەنانەت لەگەڵ تاگی تر وەک \pos، \fad) = ڤێکتەری تەکنیکی
+    if (/\{[^}]*\\p[1-9](?![a-zA-Z])[^}]*\}/i.test(rawText)) return true;
+    if (/\\p[1-9](?![a-zA-Z])/i.test(rawText) && /\bm\s+-?[0-9]/i.test(rawText)) return true;
+    // تاگی گرافیکی/شوێندانانی تایبەت بەبێ هیچ نووسینێک
+    {
+        let bare = rawText.replace(/\{[^}]*\}/g, '').replace(/\\[Nnh]/g, ' ').trim();
+        if (bare === '' && /\\(clip|iclip|move|org|pos|fad|fade|t\()/i.test(rawText)) return true;
+    }
     let noTags = rawText.replace(/\{[^}]*\}/g, '').trim();
     if (/^[mlbspc0-9\s\.\-]+$/i.test(noTags) && noTags.length > 20) return true;
     if (!/[\p{L}\p{N}]/u.test(noTags) && rawText.length > 120) return true;
@@ -4202,7 +4210,7 @@ function parseVTTContent(data) {
 function saveSession() {
     try {
         if (!isEditing) return;
-        const session = { originalData, currentFileName, isAssFormat, isVttFormat, assHeaderLines, savedState: getCurrentState(), notes: subtitleNotes };
+        const session = { originalData, currentFileName, isAssFormat, isVttFormat, assHeaderLines, rawAssMasterEvents, savedState: getCurrentState(), notes: subtitleNotes };
         localStorage.setItem('kf_autosave_session', JSON.stringify(session));
 
         saveToHistory({
@@ -4216,7 +4224,8 @@ function saveSession() {
             notes: subtitleNotes,
             isAssFormat,
             isVttFormat,
-            assHeaderLines
+            assHeaderLines,
+            rawAssMasterEvents
         });
     } catch(e) {
         console.warn("Storage full, session skipped safely.");
@@ -4238,6 +4247,7 @@ function resumeSession() {
             isAssFormat = session.isAssFormat || false; 
             isVttFormat = session.isVttFormat || false; 
             assHeaderLines = session.assHeaderLines || [];
+            rawAssMasterEvents = session.rawAssMasterEvents || [];
             subtitleNotes = session.notes || [];
             buildEditorUI(session.savedState || []);
         }
